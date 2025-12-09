@@ -47,6 +47,7 @@ async def file_tracking_pre_print_hook(
             "view_text_file",
             "read_file",
             "get_symbols_overview",
+            "get_operator_details",
             # "find_symbol",
             # "find_referencing_symbols",
             # "search_for_pattern",
@@ -86,6 +87,7 @@ async def file_tracking_pre_print_hook(
                                     "path",
                                     "filename",
                                     "relative_path",
+                                    "operator_name",
                                 ]:
                                     val = inputs.get(key)
                                     if val and isinstance(val, str):
@@ -114,8 +116,30 @@ async def file_tracking_pre_print_hook(
                             f,
                         )
                     )
+                elif "." not in f and f.split("_")[-1] in [
+                    "aggregator",
+                    "deduplicator",
+                    "filter",
+                    "mapper",
+                    "formatter",
+                    "grouper",
+                    "selector",
+                    "op",
+                ]:
+                    file_list.append(
+                        (
+                            data_juicer_doc_url
+                            + "en/main/docs/operators/"
+                            + f.split("_")[-1]
+                            + "/"
+                            + f
+                            + ".html",
+                            f,
+                        )
+                    )
                 else:
                     file_list.append((data_juicer_repo_url + f, f))
+            
             summary_text = "\n\n---\nReference: \n" + "\n".join(
                 f"- [{n}]({f})." for f, n in file_list
             )

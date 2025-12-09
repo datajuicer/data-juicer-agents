@@ -71,9 +71,7 @@ async def init_resources(self):
     print("🚀 Connecting to Redis...")
     await session_history_service.start()
     await long_memory_service.start()
-    print("🚀 Cloning data-juicer repository...")
 
-    serena_config_path = os.path.join(DATA_JUICER_PATH, ".serena")
     if not os.path.exists(DATA_JUICER_PATH):
         print("Cloning data-juicer repository...")
         try:
@@ -89,39 +87,73 @@ async def init_resources(self):
                 check=True,
             )
             print("✅ Successfully cloned data-juicer repository")
-
-            source_serena_config = os.path.join(
-                os.path.dirname(__file__), "config", ".serena"
-            )
-            if os.path.exists(source_serena_config):
-                try:
-                    shutil.copytree(
-                        source_serena_config, serena_config_path, dirs_exist_ok=True
-                    )
-                    print("✅ Successfully copied .serena configuration to data-juicer")
-                except Exception as e:
-                    print(f"⚠️ Failed to copy .serena configuration: {e}")
         except subprocess.CalledProcessError as e:
             print(f"❌ Failed to clone data-juicer repository: {e}")
+        print("Cloning data-juicer-hub repository...")
+        try:
+            subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "--depth",
+                    "1",
+                    "https://github.com/datajuicer/data-juicer-hub.git",
+                    f"{DATA_JUICER_PATH}/data-juicer-hub",
+                ],
+                check=True,
+            )
+            print("✅ Successfully cloned data-juicer-hub repository")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to clone data-juicer-hub repository: {e}")
     else:
         print("📁 data-juicer directory already exists")
 
-        if not os.path.exists(serena_config_path) and os.path.exists(
-            "./config/.serena"
-        ):
-            try:
-                shutil.copytree(
-                    "./config/.serena", serena_config_path, dirs_exist_ok=True
-                )
-                print("✅ Successfully copied .serena configuration to data-juicer")
-            except Exception as e:
-                print(f"⚠️ Failed to copy .serena configuration: {e}")
+    serena_config_dir = os.path.join(DATA_JUICER_PATH, ".serena")
+    os.makedirs(serena_config_dir, exist_ok=True)
+    source_serena_config = os.path.join(
+        os.path.dirname(__file__), "config", "project.yml"
+    )
+    if os.path.exists(source_serena_config):
+        try:
+            shutil.copy(source_serena_config, os.path.join(serena_config_dir, "project.yml"))
+            print("✅ Successfully copied .serena configuration to data-juicer")
+        except Exception as e:
+            print(f"⚠️ Failed to copy .serena configuration: {e}")
+    else:
+        print(f"⚠️ {source_serena_config} not found")
 
     if mcp_clients:
         for mcp_client in mcp_clients:
             print("🚀 Connecting to MCP server...")
             await mcp_client.connect()
-            await toolkit.register_mcp_client(mcp_client)
+            await toolkit.register_mcp_client(
+                mcp_client,
+                disable_funcs=[
+                    "activate_project",
+                    "create_text_file",
+                    "delete_lines",
+                    "delete_memory",
+                    "execute_shell_command",
+                    "insert_after_symbol",
+                    "insert_at_line",
+                    "insert_before_symbol",
+                    "onboarding",
+                    "remove_project",
+                    "replace_lines",
+                    "replace_symbol_body",
+                    "restart_language_server",
+                    "switch_modes",
+                    "write_memory",
+                    "get_current_config",
+                    "check_onboarding_performed",
+                    "edit_memory",
+                    "record_to_memory",
+                    "retrieve_from_memory",
+                    "rename_symbol",
+                    "replace_content",
+                    "initial_instructions"
+                ],
+            )
 
 
 @app.shutdown
