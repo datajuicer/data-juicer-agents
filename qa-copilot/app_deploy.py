@@ -185,7 +185,7 @@ async def query_func(
 
     async for msg, last in stream_printing_messages(
         agents=[agent],
-        coroutine_task=agent(msgs),
+        coroutine_task=agent(msgs[-1]),
     ):
         yield msg, last
 
