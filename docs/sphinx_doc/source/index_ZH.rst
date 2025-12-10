@@ -4,7 +4,7 @@
 .. toctree::
    :maxdepth: 2
 
-   docs_index/index_ZH
+   docs_index_ZH
 
 .. toctree::
    :maxdepth: 2

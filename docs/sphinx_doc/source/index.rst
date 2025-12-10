@@ -4,7 +4,7 @@
 .. toctree::
    :maxdepth: 2
 
-   docs_index/index
+   docs_index
 
 .. toctree::
    :maxdepth: 2
