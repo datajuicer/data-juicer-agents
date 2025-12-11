@@ -1,0 +1,776 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DataJuicer Agents &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=b26f9bd0" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=8a448e45"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script src="_static/sidebar.js?v=9ff78125"></script>
+    <link rel="icon" href="_static/icon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DOCS" href="docs_index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        🌐 en
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content">
+        
+        <a href="./../../en/main/index.html"
+           class="dropdown-item active">
+          English
+        </a>
+        
+        <a href="./../../zh_CN/main/index_ZH.html"
+           class="dropdown-item ">
+          简体中文
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        📦 main
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content version-list">
+        
+        <a href="./../main/index.html"
+           class="dropdown-item active">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        🌐 en
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content">
+        
+        <a href="./../../en/main/index.html"
+           class="dropdown-item active">
+          English
+        </a>
+        
+        <a href="./../../zh_CN/main/index_ZH.html"
+           class="dropdown-item ">
+          简体中文
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        📦 main
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content version-list">
+        
+        <a href="./../main/index.html"
+           class="dropdown-item active">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="datajuicer-agents">
+<h1>DataJuicer Agents<a class="headerlink" href="#datajuicer-agents" title="Link to this heading">#</a></h1>
+<p>A multi-agent data processing system built on <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a> and <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer (DJ)</a>. This project demonstrates how to leverage the natural language understanding capabilities of large language models, enabling non-expert users to easily harness the powerful data processing capabilities of Data-Juicer.</p>
+<section id="why-datajuicer-agents">
+<h2>🎯 Why DataJuicer Agents?<a class="headerlink" href="#why-datajuicer-agents" title="Link to this heading">#</a></h2>
+<p>In the actual work of large model R&amp;D and applications, <strong>data processing remains a high-cost, low-efficiency, and hard-to-reproduce process</strong>. Many teams spend more time on data analysis, cleaning and synthesis than on model training, requirement alignment and app development.</p>
+<p>We hope to liberate developers from tedious script assembly through agent technology, making data R&amp;D closer to a “think and get” experience.</p>
+<p><strong>Data directly defines the upper limit of model capabilities</strong>. What truly determines model performance are multiple dimensions such as <strong>quality, diversity, harmfulness control, and task matching</strong> of data. Optimizing data is essentially optimizing the model itself. To do this efficiently, we need a systematic toolset.</p>
+<p>DataJuicer Agents is designed to support the new paradigm of <strong>data-model co-optimization</strong> as an intelligent collaboration system.</p>
+</section>
+<section id="table-of-contents">
+<h2>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#datajuicer-agents">DataJuicer Agents</a></p>
+<ul>
+<li><p><a class="reference internal" href="#why-datajuicer-agents">🎯 Why DataJuicer Agents?</a></p></li>
+<li><p><a class="reference internal" href="#table-of-contents">📋 Table of Contents</a></p></li>
+<li><p><a class="reference internal" href="#what-does-this-agent-do">What Does This Agent Do?</a></p></li>
+<li><p><a class="reference internal" href="#architecture">Architecture</a></p>
+<ul>
+<li><p><a class="reference internal" href="#multi-agent-routing-architecture">Multi-Agent Routing Architecture</a></p></li>
+<li><p><a class="reference internal" href="#two-integration-modes">Two Integration Modes</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#roadmap">Roadmap</a></p>
+<ul>
+<li><p><a class="reference internal" href="#data-juicer-q-a-agent-demo-available">Data-Juicer Q&amp;A Agent (Demo Available)</a></p></li>
+<li><p><a class="reference internal" href="#interactive-data-analysis-and-visualization-agent-in-development">Interactive Data Analysis and Visualization Agent (In Development)</a></p></li>
+<li><p><a class="reference internal" href="#other-directions">Other Directions</a></p></li>
+<li><p><a class="reference internal" href="#common-issues">Common Issues</a></p></li>
+<li><p><a class="reference internal" href="#optimization-recommendations">Optimization Recommendations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#related-resources">Related Resources</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="what-does-this-agent-do">
+<h2>What Does This Agent Do?<a class="headerlink" href="#what-does-this-agent-do" title="Link to this heading">#</a></h2>
+<p>Data-Juicer (DJ) is an <strong>open-source processing system covering the full lifecycle of large model data</strong>, providing four core capabilities:</p>
+<ul class="simple">
+<li><p><strong>Full-Stack Operator Library (DJ-OP)</strong>: Nearly 200 high-performance, reusable multimodal operators covering text, images, and audio/video</p></li>
+<li><p><strong>High-Performance Engine (DJ-Core)</strong>: Built on Ray, supporting TB-level data, 10K-core distributed computing, with operator fusion and multi-granularity fault tolerance</p></li>
+<li><p><strong>Collaborative Development Platform (DJ-Sandbox)</strong>: Introduces A/B Test and Scaling Law concepts, using small-scale experiments to drive large-scale optimization</p></li>
+<li><p><strong>Natural Language Interaction Layer (DJ-Agents)</strong>: Enables developers to build data pipelines through conversational interfaces using Agent technology</p></li>
+</ul>
+<p>DataJuicer Agents is not a simple Q&amp;A bot, but an <strong>intelligent collaborator for data processing</strong>. Specifically, it can:</p>
+<ul class="simple">
+<li><p><strong>Intelligent Query</strong>: Automatically match the most suitable operators based on natural language descriptions (precisely locating from nearly 200 operators)</p></li>
+<li><p><strong>Automated Pipeline</strong>: Describe data processing needs, automatically generate Data-Juicer YAML configurations and execute them</p></li>
+<li><p><strong>Custom Extension</strong>: Help users develop custom operators and seamlessly integrate them into local environments</p></li>
+</ul>
+<p><strong>Our goal: Let developers focus on “what to do” rather than “how to do it”</strong>.</p>
+</section>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<section id="multi-agent-routing-architecture">
+<h3>Multi-Agent Routing Architecture<a class="headerlink" href="#multi-agent-routing-architecture" title="Link to this heading">#</a></h3>
+<p>DataJuicer Agents adopts a <strong>multi-agent routing architecture</strong>, which is key to system scalability. When a user inputs a natural language request, the <strong>Router Agent</strong> first performs task triage to determine whether it’s a standard data processing task or a custom requirement that needs new capabilities.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>User Query
+  ↓
+Router Agent (Filtering &amp; Decision) ← query_dj_operators (operator retrieval)
+  │
+  ├─ High-match operator found
+  │  ↓
+  │  DJ Agent (Standard Data Processing Task)
+  |  ├── Preview data samples (confirm field names and data formats)
+  │  ├── get_ops_signature (retrieve full parameter signatures)
+  │  ├── Generate YAML configuration
+  │  └── execute_safe_command (run dj-process, dj-analyze)
+  │
+  └─ No high-match operator found
+     ↓
+     Dev Agent (Custom Operator Development &amp; Integration)
+     ├── get_basic_files (retrieve base classes and registration mechanism)
+     ├── get_operator_example (retrieve similar operator examples)
+     └── Generate compliant operator code
+     └── Local integration (register to user-specified path)
+</pre></div>
+</div>
+</section>
+<section id="two-integration-modes">
+<h3>Two Integration Modes<a class="headerlink" href="#two-integration-modes" title="Link to this heading">#</a></h3>
+<p>Agent integration with DataJuicer has two modes to adapt to different usage scenarios:</p>
+<ul class="simple">
+<li><p><strong>Tool Binding Mode</strong>: Agent calls DataJuicer command-line tools (such as <code class="docutils literal notranslate"><span class="pre">dj-analyze</span></code>, <code class="docutils literal notranslate"><span class="pre">dj-process</span></code>), compatible with existing user habits, low migration cost</p></li>
+<li><p><strong>MCP Binding Mode</strong>: Agent directly calls DataJuicer’s MCP (Model Context Protocol) interface, no need to generate intermediate YAML files, directly run operators or data recipes, better performance</p></li>
+</ul>
+<p>These two modes are automatically selected by the Agent based on task complexity and performance requirements, ensuring both flexibility and efficiency.</p>
+</section>
+</section>
+<section id="roadmap">
+<h2>Roadmap<a class="headerlink" href="#roadmap" title="Link to this heading">#</a></h2>
+<p>The Data-Juicer agent ecosystem is rapidly expanding. Here are the new agents currently in development or planned:</p>
+<section id="data-juicer-q-a-agent-demo-available">
+<h3>Data-Juicer Q&amp;A Agent (Demo Available)<a class="headerlink" href="#data-juicer-q-a-agent-demo-available" title="Link to this heading">#</a></h3>
+<p>Provides users with detailed answers about Data-Juicer operators, concepts, and best practices.</p>
+<video controls width="100%" height="auto" playsinline>
+    <source src="https://github.com/user-attachments/assets/a8392691-81cf-4a25-94da-967dcf92c685" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<p>The Q&amp;A agent can currently be viewed and tried out <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/qa-copilot">here</a>.</p>
+</section>
+<section id="interactive-data-analysis-and-visualization-agent-in-development">
+<h3>Interactive Data Analysis and Visualization Agent (In Development)<a class="headerlink" href="#interactive-data-analysis-and-visualization-agent-in-development" title="Link to this heading">#</a></h3>
+<p>We are building a more advanced <strong>human-machine collaborative data optimization workflow</strong> that introduces human feedback:</p>
+<ul class="simple">
+<li><p>Users can view statistics, attribution analysis, and visualization results</p></li>
+<li><p>Dynamically edit recipes, approve or reject suggestions</p></li>
+<li><p>Underpinned by <code class="docutils literal notranslate"><span class="pre">dj.analyzer</span></code> (data analysis), <code class="docutils literal notranslate"><span class="pre">dj.attributor</span></code> (effect attribution), and <code class="docutils literal notranslate"><span class="pre">dj.sandbox</span></code> (experiment management)</p></li>
+<li><p>Supports closed-loop optimization based on validation tasks</p></li>
+</ul>
+<p>This interactive recipe can currently be viewed and tried out <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/README.md">here</a>.</p>
+</section>
+<section id="other-directions">
+<h3>Other Directions<a class="headerlink" href="#other-directions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Data Processing Agent Benchmarking</strong>: Quantify the performance of different Agents in terms of accuracy, efficiency, and robustness</p></li>
+<li><p><strong>Data “Health Check Report” &amp; Data Intelligent Recommendation</strong>: Automatically diagnose data problems and recommend optimization solutions</p></li>
+<li><p><strong>Router Agent Enhancement</strong>: More seamless, e.g., when operators are lacking → Code Development Agent → Data Processing Agent</p></li>
+<li><p><strong>MCP Further Optimization</strong>: Embedded LLM, users can directly use MCP connected to their local environment (e.g., IDE) to get an experience similar to current data processing agents</p></li>
+<li><p><strong>Knowledge Base and RAG-oriented Data Agents</strong></p></li>
+<li><p><strong>Better Automatic Processing Solution Generation</strong>: Less token usage, more efficient, higher quality processing results</p></li>
+<li><p><strong>Data Workflow Template Reuse and Automatic Tuning</strong>: Based on DataJuicer community data recipes</p></li>
+<li><p>……</p></li>
+</ul>
+</section>
+<section id="common-issues">
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">#</a></h3>
+<p><strong>Q: How to get DashScope API key?</strong>
+A: Visit <a class="reference external" href="https://dashscope.aliyun.com/">DashScope official website</a> to register an account and apply for an API key.</p>
+<p><strong>Q: Why does operator retrieval fail?</strong>
+A: Please check network connection and API key configuration, or try switching to vector retrieval mode.</p>
+<p><strong>Q: How to debug custom operators?</strong>
+A: Ensure Data-Juicer path is configured correctly and check the example code provided by the code development agent.</p>
+<p><strong>Q: What to do if MCP service connection fails?</strong>
+A: Check if the MCP server is running and confirm the URL address in the configuration file is correct.</p>
+<p><strong>Q: Error: requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: <a class="reference external" href="http://localhost:3000/trpc/pushMessage">http://localhost:3000/trpc/pushMessage</a></strong>
+A: Agents handle data via file references (paths) rather than direct uploads. Please confirm whether any non-text files were submitted.</p>
+</section>
+<section id="optimization-recommendations">
+<h3>Optimization Recommendations<a class="headerlink" href="#optimization-recommendations" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>For large-scale data processing, it is recommended to use DataJuicer’s distributed mode</p></li>
+<li><p>Set batch size appropriately to balance memory usage and processing speed</p></li>
+<li><p>For more advanced data processing features (synthesis, Data-Model Co-Development), please refer to DataJuicer <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation</a></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="related-resources">
+<h2>Related Resources<a class="headerlink" href="#related-resources" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>DataJuicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.</p></li>
+</ul>
+<p><em>Welcome to visit GitHub, Star, Fork, submit Issues, and join the community!</em></p>
+<ul class="simple">
+<li><p><strong>Project Repositories</strong>:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">DataJuicer</a></p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Contributing</strong>: Welcome to submit Issues and Pull Requests to improve AgentScope, DataJuicer Agents, and DataJuicer. If you encounter problems during use or have feature suggestions, please feel free to contact us.</p>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs_index.html">DOCS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro.html">Agent Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/Advanced.html">Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/Extension.html">Customization and Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/README.html">Q&amp;A Copilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html">data_juicer_agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.core.html">data_juicer_agents.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html">data_juicer_agents.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.cli.html">data_juicer_agents.cli module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="docs_index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DOCS</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-datajuicer-agents">🎯 Why DataJuicer Agents?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-does-this-agent-do">What Does This Agent Do?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-agent-routing-architecture">Multi-Agent Routing Architecture</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-integration-modes">Two Integration Modes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roadmap">Roadmap</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-juicer-q-a-agent-demo-available">Data-Juicer Q&amp;A Agent (Demo Available)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-data-analysis-and-visualization-agent-in-development">Interactive Data Analysis and Visualization Agent (In Development)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-directions">Other Directions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-recommendations">Optimization Recommendations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-resources">Related Resources</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

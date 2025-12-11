@@ -1,0 +1,767 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DataJuicer 智能体 &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=b26f9bd0" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/translations.js?v=beaddf03"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'README_ZH';</script>
+    <script src="_static/sidebar.js?v=9ff78125"></script>
+    <link rel="icon" href="_static/icon.png"/>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        🌐 zh-CN
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content">
+        
+        <a href="./../../en/main/README.html"
+           class="dropdown-item ">
+          English
+        </a>
+        
+        <a href="./../../zh_CN/main/README_ZH.html"
+           class="dropdown-item ">
+          简体中文
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        📦 main
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content version-list">
+        
+        <a href="./../main/README_ZH.html"
+           class="dropdown-item active">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        🌐 zh-CN
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content">
+        
+        <a href="./../../en/main/README.html"
+           class="dropdown-item ">
+          English
+        </a>
+        
+        <a href="./../../zh_CN/main/README_ZH.html"
+           class="dropdown-item ">
+          简体中文
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown">
+    <div class="navbar-dropdown-trigger">
+      <span class="dropdown-label">
+        📦 main
+      </span>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+    <div class="navbar-dropdown-panel">
+      <div class="dropdown-content version-list">
+        
+        <a href="./../main/README_ZH.html"
+           class="dropdown-item active">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DataJuicer 智能体</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="datajuicer">
+<h1>DataJuicer 智能体<a class="headerlink" href="#datajuicer" title="Link to this heading">#</a></h1>
+<p>基于 <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a> 和 <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer (DJ)</a> 构建的数据处理多智能体系统。该项目展示了如何利用大模型的自然语言理解能力，让非专家用户也能轻松使用 Data-Juicer 的强大数据处理能力。</p>
+<section id="datajuicer-agents">
+<h2>🎯 为什么需要 DataJuicer Agents？<a class="headerlink" href="#datajuicer-agents" title="Link to this heading">#</a></h2>
+<p>在大模型研发和应用的实际工作中，<strong>数据处理仍然是一个高成本、低效率、难复现的环节</strong>。很多团队花在数据分析、清洗、合成等阶段的时间，往往超过模型训练、需求对齐、应用功能开发。</p>
+<p>我们希望通过智能体技术，把开发者从繁琐的脚本拼凑中解放出来，让数据研发更接近&quot;所想即所得&quot;的体验。</p>
+<p><strong>数据直接定义了模型能力的上限</strong>。真正决定模型表现的，是数据的<strong>质量、多样性、有害性控制、任务匹配度</strong>等多个维度。优化数据，本质上就是在优化模型本身。而要高效地做这件事，我们需要一套系统化的工具。</p>
+<p>DataJuicer Agents 正是为支撑<strong>数据与模型协同优化</strong>这一新范式而设计的智能协作系统。</p>
+</section>
+<section id="id1">
+<h2>📋 目录<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#datajuicer">DataJuicer 智能体</a></p>
+<ul>
+<li><p><a class="reference internal" href="#datajuicer-agents">🎯 为什么需要 DataJuicer Agents？</a></p></li>
+<li><p><a class="reference internal" href="#id1">📋 目录</a></p></li>
+<li><p><a class="reference internal" href="#id2">这个智能体做了什么？</a></p></li>
+<li><p><a class="reference internal" href="#id3">架构</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4">多智能体路由架构</a></p></li>
+<li><p><a class="reference internal" href="#id5">两种集成方式</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#roadmap">Roadmap</a></p>
+<ul>
+<li><p><a class="reference internal" href="#data-juicer">Data-Juicer 问答智能体 (演示可用)</a></p></li>
+<li><p><a class="reference internal" href="#id6">交互式数据分析与可视化智能体 (开发中)</a></p></li>
+<li><p><a class="reference internal" href="#id7">其它方向</a></p></li>
+<li><p><a class="reference internal" href="#id8">常见问题</a></p></li>
+<li><p><a class="reference internal" href="#id9">优化建议</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id10">相关资源</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h2>这个智能体做了什么？<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>Data-Juicer (DJ) 是一个<strong>覆盖大模型数据全生命周期的开源处理系统</strong>，提供四个核心能力：</p>
+<ul class="simple">
+<li><p><strong>全栈算子库（DJ-OP）</strong>：近 200 个高性能、可复用的多模态算子，覆盖文本、图像、音视频</p></li>
+<li><p><strong>高性能引擎（DJ-Core）</strong>：基于 Ray 构建，支持 TB 级数据、万核分布式计算，具备算子融合与多粒度容错</p></li>
+<li><p><strong>协同开发平台（DJ-Sandbox）</strong>：引入 A/B Test 与 Scaling Law 思想，用小规模实验驱动大规模优化</p></li>
+<li><p><strong>自然语言交互层（DJ-Agents）</strong>：通过 Agent 技术，让开发者用对话方式构建数据流水线</p></li>
+</ul>
+<p>DataJuicer Agents 不是一个简单的问答机器人，而是一个<strong>数据处理的智能协作者</strong>。具体来说，它能：</p>
+<ul class="simple">
+<li><p><strong>智能查询</strong>：根据自然语言描述，自动匹配最合适的算子（从近200个算子中精准定位）</p></li>
+<li><p><strong>自动化流程</strong>：描述数据处理需求，自动生成 Data-Juicer YAML 配置并执行</p></li>
+<li><p><strong>自定义扩展</strong>：帮助用户开发自定义算子，无缝集成到本地环境</p></li>
+</ul>
+<p><strong>我们的目标是：让开发者专注于&quot;做什么&quot;，而不是&quot;怎么做&quot;</strong>。</p>
+</section>
+<section id="id3">
+<h2>架构<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<section id="id4">
+<h3>多智能体路由架构<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>DataJuicer Agents 采用<strong>多智能体路由架构</strong>，当用户输入一个自然语言请求，首先由 <strong>Router Agent</strong> 进行任务分诊，判断这是标准的数据处理任务，还是需要开发新能力的定制需求。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>用户查询
+  ↓
+Router Agent (筛选&amp;决策) ← query_dj_operators （算子检索）
+  │
+  ├─ 找到高匹配算子
+  │  ↓
+  │  DJ Agent (标准数据处理任务)
+  |  ├── 预览数据样本（确认字段名和数据格式）
+  │  ├── get_ops_signature（获取完整参数签名）
+  │  ├── 生成 YAML 配置
+  │  └── execute_safe_command (执行 dj-process, dj-analyze)
+  │
+  └─ 未找到高匹配算子
+     ↓
+     Dev Agent (自定义算子开发集成)
+     ├── get_basic_files (获取基类和注册机制)
+     ├── get_operator_example (获取相似算子示例)
+     └── 生成符合规范的算子代码
+     └── 本地集成（注册到用户指定路径）
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>两种集成方式<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>Agent 与 DataJuicer 的集成有两种方式，以适应不同使用场景：</p>
+<ul class="simple">
+<li><p><strong>绑定工具模式</strong>：Agent 调用 DataJuicer 的命令行工具（如 <code class="docutils literal notranslate"><span class="pre">dj-analyze</span></code>、<code class="docutils literal notranslate"><span class="pre">dj-process</span></code>），兼容现有用户习惯，迁移成本低</p></li>
+<li><p><strong>绑定 MCP 模式</strong>：Agent 直接调用 DataJuicer 的 MCP（Model Context Protocol）接口，无需生成中间 YAML 文件，直接运行算子或数据菜谱，性能更优</p></li>
+</ul>
+<p>这两种方式由 Agent 根据任务复杂度和性能需求自动选择，确保灵活性与效率兼得。</p>
+</section>
+</section>
+<section id="roadmap">
+<h2>Roadmap<a class="headerlink" href="#roadmap" title="Link to this heading">#</a></h2>
+<p>Data-Juicer 智能体生态系统正在快速扩展，以下是当前正在开发或计划中的新智能体：</p>
+<section id="data-juicer">
+<h3>Data-Juicer 问答智能体 (演示可用)<a class="headerlink" href="#data-juicer" title="Link to this heading">#</a></h3>
+<p>为用户提供关于 Data-Juicer 算子、概念和最佳实践的详细解答。</p>
+<video controls width="100%" height="auto" playsinline>
+    <source src="https://github.com/user-attachments/assets/a8392691-81cf-4a25-94da-967dcf92c685" type="video/mp4">
+    您的浏览器不支持视频标签。
+</video>
+<p>问答智能体目前可在<a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/qa-copilot">此处</a>查看并试用。</p>
+</section>
+<section id="id6">
+<h3>交互式数据分析与可视化智能体 (开发中)<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>我们正在构建更高级的<strong>人机协同数据优化工作流</strong>，引入人类反馈：</p>
+<ul class="simple">
+<li><p>用户可查看统计、归因分析以及可视化结果</p></li>
+<li><p>动态编辑菜谱，批准或拒绝建议</p></li>
+<li><p>底层由 <code class="docutils literal notranslate"><span class="pre">dj.analyzer</span></code>（数据分析）、<code class="docutils literal notranslate"><span class="pre">dj.attributor</span></code>（效果归因）、<code class="docutils literal notranslate"><span class="pre">dj.sandbox</span></code>（实验管理）共同支撑</p></li>
+<li><p>支持基于验证任务的闭环优化</p></li>
+</ul>
+<p>该交互式菜谱目前可在<a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/README_ZH.md">此处</a>查看并试用。</p>
+</section>
+<section id="id7">
+<h3>其它方向<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>数据处理智能体 Benchmarking</strong>：量化不同 Agent 在准确性、效率、鲁棒性上的表现</p></li>
+<li><p><strong>数据&quot;体检报告&quot; &amp; 数据智能推荐</strong>：自动诊断数据问题并推荐优化方案</p></li>
+<li><p><strong>Router Agent 增强</strong>：更无感丝滑，譬如当缺乏算子时→代码开发Agent→数据处理agent</p></li>
+<li><p><strong>MCP 进一步优化</strong>：内嵌 LLM，用户可直接使用 MCP 链接自己本地环境如IDE，获得目前数据处理 agent 类似的体验</p></li>
+<li><p><strong>面向知识库、RAG 的数据智能体</strong></p></li>
+<li><p><strong>更好的处理方案自动生成</strong>：更少 token 用量，更高效，更优质处理结果</p></li>
+<li><p><strong>数据工作流模版复用及自动调优</strong>：基于 DataJuicer 社区数据菜谱</p></li>
+<li><p>......</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>常见问题<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p><strong>Q: 如何获取 DashScope API 密钥？</strong>
+A: 访问 <a class="reference external" href="https://dashscope.aliyun.com/">DashScope 官网</a> 注册账号并申请 API 密钥。</p>
+<p><strong>Q: 为什么算子检索失败？</strong>
+A: 请检查网络连接和 API 密钥配置，或尝试切换到向量检索模式。</p>
+<p><strong>Q: 如何调试自定义算子？</strong>
+A: 确保 Data-Juicer 路径配置正确，并查看代码开发智能体提供的示例代码。</p>
+<p><strong>Q: MCP 服务连接失败怎么办？</strong>
+A: 检查 MCP 服务器是否正在运行，确认配置文件中的 URL 地址正确。</p>
+<p><strong>Q: 报错requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: <a class="reference external" href="http://localhost:3000/trpc/pushMessage">http://localhost:3000/trpc/pushMessage</a></strong>
+A: 请检查是否在agentscope studio中上传了非文本信息（例如数据文件），agent通过文件路径等进行数据处理，暂不接受直接上传文件。</p>
+</section>
+<section id="id9">
+<h3>优化建议<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>对于大规模数据处理，建议使用DataJuicer提供的分布式模式</p></li>
+<li><p>合理设置批处理大小以平衡内存使用和处理速度</p></li>
+<li><p>更多进阶数据处理（合成、Data-Model Co-Development）等特性能力请参考DataJuicer<a class="reference external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH">文档页</a></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id10">
+<h2>相关资源<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>DataJuicer 已经被用于大量通义和阿里云内外部用户，背后也衍生了多项研究。所有代码持续维护增强中。</p></li>
+</ul>
+<p><em>欢迎访问 GitHub，Star、Fork、提 Issue，以及加入社区共建！</em></p>
+<ul class="simple">
+<li><p><strong>项目地址</strong>：</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">DataJuicer</a></p></li>
+</ul>
+</li>
+</ul>
+<p><strong>贡献指南</strong>：欢迎提交 Issue 和 Pull Request 来改进 agentscope、DataJuicer Agents 及 DataJuicer。如果您在使用过程中遇到问题或有功能建议，请随时联系我们。</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datajuicer-agents">🎯 为什么需要 DataJuicer Agents？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">📋 目录</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">这个智能体做了什么？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">架构</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">多智能体路由架构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">两种集成方式</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roadmap">Roadmap</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-juicer">Data-Juicer 问答智能体 (演示可用)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">交互式数据分析与可视化智能体 (开发中)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">其它方向</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">常见问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">优化建议</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">相关资源</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/README_ZH.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
