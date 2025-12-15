@@ -2,15 +2,19 @@
 import os
 import copy
 import json
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 from op_manager.dj_op_retriever import DJOperatorRetriever
 
-from agentscope_runtime.engine.schemas.agent_schemas import Message
 
 from agentscope.tool import Toolkit
 from agentscope.agent import ReActAgent
 from agentscope.mcp import StdIOStatefulClient
+
+from agentscope_runtime.engine.schemas.agent_schemas import Message
+from agentscope_runtime.engine.services.memory.redis_memory_service import (
+    RedisMemoryService,
+)
 
 
 data_juicer_repo_url = "https://github.com/datajuicer/data-juicer/blob/main/"
@@ -139,7 +143,7 @@ async def file_tracking_pre_print_hook(
                     )
                 else:
                     file_list.append((data_juicer_repo_url + f, f))
-            
+
             summary_text = "\n\n---\nReference: \n" + "\n".join(
                 f"- [{n}]({f})." for f, n in file_list
             )
@@ -167,6 +171,75 @@ class MessageWithFeedback(Message):
     """Extended Message class with feedback support."""
 
     feedback: Optional[Dict[str, Any]] = None
+
+
+class FeedbackRedisMemoryService(RedisMemoryService):
+    """Redis memory service with feedback support."""
+
+    def _serialize(self, messages: List[MessageWithFeedback]) -> str:
+        """Serialize messages with feedback to JSON."""
+        return json.dumps([msg.model_dump() for msg in messages], ensure_ascii=False)
+
+    def _deserialize(self, messages_json: str) -> List[MessageWithFeedback]:
+        """Deserialize JSON to messages with feedback."""
+        if not messages_json:
+            return []
+        return [
+            MessageWithFeedback.model_validate(m) for m in json.loads(messages_json)
+        ]
+
+    async def update_message_feedback(
+        self,
+        user_id: str,
+        msg_id: str,
+        feedback: Dict[str, Any],
+        session_id: Optional[str] = None,
+    ) -> bool:
+        """
+        Updates the feedback for a specific message.
+
+        Args:
+            user_id (str): The ID of the user
+            msg_id (str): The ID of the message to update
+            feedback (Dict[str, Any]): The feedback data to add
+            session_id (Optional[str]): The session ID. If None, searches all sessions
+
+        Returns:
+            bool: True if message was found and updated, False otherwise
+        """
+        if not self._redis:
+            raise RuntimeError("Redis connection is not available")
+
+        key = self._user_key(user_id)
+
+        # Determine which sessions to search
+        if session_id:
+            sessions_to_search = [session_id]
+        else:
+            sessions_to_search = await self._redis.hkeys(key)
+
+        # Search for the message in sessions
+        for sid in sessions_to_search:
+            msgs_json = await self._redis.hget(key, sid)
+            if not msgs_json:
+                continue
+
+            msgs = self._deserialize(msgs_json)
+            message_found = False
+
+            # Find and update the message
+            for msg in msgs:
+                if msg.metadata.get("original_id") == msg_id:
+                    msg.feedback = feedback
+                    message_found = True
+                    break
+
+            if message_found:
+                # Save updated messages back to Redis
+                await self._redis.hset(key, sid, self._serialize(msgs))
+                return True
+
+        return False
 
 
 class DeepCopyableToolkit(Toolkit):

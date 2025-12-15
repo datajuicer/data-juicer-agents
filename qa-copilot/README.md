@@ -167,11 +167,10 @@ serena_command = [
 
 ## License
 
-This project uses the same license as the main project. For details, please refer to the [LICENSE](../../LICENSE) file.
+This project uses the same license as the main project. For details, please refer to the [LICENSE](../LICENSE) file.
 
 ## Related Links
 
-- [InteRecipe Main Project](../README.md)
 - [Data-Juicer Official Repository](https://github.com/datajuicer/data-juicer)
 - [AgentScope Framework](https://github.com/agentscope-ai/agentscope)
 - [Serena MCP](https://github.com/oraios/serena)

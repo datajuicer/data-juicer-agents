@@ -168,11 +168,10 @@ serena_command = [
 
 ## 许可证
 
-本项目采用与主项目相同的许可证。详情请参阅 [LICENSE](../../LICENSE) 文件。
+本项目采用与主项目相同的许可证。详情请参阅 [LICENSE](../LICENSE) 文件。
 
 ## 相关链接
 
-- [InteRecipe 主项目](../README_ZH.md)
 - [Data-Juicer 官方仓库](https://github.com/datajuicer/data-juicer)
 - [AgentScope 框架](https://github.com/agentscope-ai/agentscope)
 - [Serena MCP](https://github.com/oraios/serena)
