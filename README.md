@@ -2,7 +2,7 @@
 
 A multi-agent data processing system built on [Data-Juicer (DJ)](https://github.com/datajuicer/data-juicer) and [AgentScope](https://github.com/agentscope-ai/agentscope).
 
-![dj_agents_ecosystem_position.png](docs%2Fimgs%2Fdj_agents_ecosystem_position.png)
+![dj_agents_ecosystem_position.png](docs/imgs/dj_agents_ecosystem_position.png)
 
 - Data-Juicer Agents (<font color=f7b125>DJ-Agents</font>) is a key component of the <font color=24bceb>interface layer</font> of the Data-Juicer ecosystem, bridging <font color=9c36b5>users</font> with the powerful Data-Juicer <font color=5141bf>infrastructure</font> and <font color=2479cb>toolkit</font> for building data-centric <font color=40c057>applications</font>. 
 - Unlike traditional API- or CLI-based interaction mechanisms, DJ-Agents leverage agent-based interaction, tool use, and extensibility to enable non-expert users to access Data-Juicer’s data-processing capabilities through intuitive natural-language interactions.
