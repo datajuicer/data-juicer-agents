@@ -53,7 +53,7 @@ then **Data-Juicer Agents** is designed for you!
 
 ## What Does This Agent Do?
 
-DJ-Agents is a series of intelligent agents can:
+DJ-Agents is a series of intelligent agents that can:
 
 - **Intelligent Q&A**: Deliver accurate, comprehensive answers to user questions related to Data-Juicer ecosystem
 - **Operator Retrieval**: Automatically match the most suitable operators based on natural language descriptions (precisely locating from ~200 operators)
