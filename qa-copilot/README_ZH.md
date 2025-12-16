@@ -75,7 +75,8 @@ Content-Type: application/json
       "content": [{"type": "text", "text": "如何使用Data-Juicer进行数据清洗？"}]
     }
   ],
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -85,7 +86,8 @@ POST /memory
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -95,19 +97,16 @@ POST /clear
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
-#### 4. 提交反馈
+#### 4. 获取会话列表
 ```http
-POST /feedback
+POST /sessions
 Content-Type: application/json
-
 {
-  "message_id": "msg_id",
-  "feedback": "like",  // "like" 或 "dislike"
-  "session_id": "your_session_id",
   "user_id": "user_id"
 }
 ```

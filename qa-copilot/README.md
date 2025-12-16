@@ -74,7 +74,8 @@ Content-Type: application/json
       "content": [{"type": "text", "text": "How to use Data-Juicer for data cleaning?"}]
     }
   ],
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -84,7 +85,8 @@ POST /memory
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -94,19 +96,16 @@ POST /clear
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
-#### 4. Submit Feedback
+#### 4. Get Session List
 ```http
-POST /feedback
+POST /sessions
 Content-Type: application/json
-
 {
-  "message_id": "msg_id",
-  "feedback": "like",  // "like" or "dislike"
-  "session_id": "your_session_id",
   "user_id": "user_id"
 }
 ```

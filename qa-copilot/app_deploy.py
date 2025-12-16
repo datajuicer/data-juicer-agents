@@ -16,7 +16,6 @@ from agent_helper import (
     toolkit,
     mcp_clients,
     file_tracking_pre_print_hook,
-    FeedbackRedisMemoryService,
 )
 from agentscope_runtime.engine.app import AgentApp
 from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
@@ -34,9 +33,9 @@ from agentscope_runtime.engine.services.session_history import (
     RedisSessionHistoryService,
 )
 
-# from agentscope_runtime.engine.services.memory.redis_memory_service import (
-#     RedisMemoryService,
-# )
+from agentscope_runtime.engine.services.memory.redis_memory_service import (
+    RedisMemoryService,
+)
 
 DEFAULT_DATA_JUICER_PATH = os.path.join(os.getcwd(), "data-juicer")
 DATA_JUICER_PATH = os.getenv("DATA_JUICER_PATH") or DEFAULT_DATA_JUICER_PATH
@@ -47,7 +46,7 @@ app = AgentApp(
 
 
 # Initialize services
-long_memory_service = FeedbackRedisMemoryService()
+long_memory_service = RedisMemoryService()
 session_history_service = RedisSessionHistoryService()
 state_service = InMemoryStateService()
 model = DashScopeChatModel(
@@ -56,14 +55,6 @@ model = DashScopeChatModel(
     stream=True,
 )
 formatter = DashScopeChatFormatter()
-
-
-class FeedbackRequest(BaseModel):
-    message_id: str
-    feedback: str  # 'like' or 'dislike'
-    session_id: str
-    user_id: str = ""  # Default to empty string for compatibility
-    timestamp: Optional[int] = None
 
 
 @app.init
@@ -289,12 +280,9 @@ async def get_sessions(request: AgentRequest):
 
         session_list = []
         for session in sessions:
-            full_session = await session_history_service.get_session(
-                user_id, session.id
-            )
             preview = "New Chat"
-            if full_session and full_session.messages:
-                first_msg = full_session.messages[0]
+            if session and session.messages:
+                first_msg = session.messages[0]
                 if hasattr(first_msg, "content"):
                     if isinstance(first_msg.content, list):
                         for item in first_msg.content:
@@ -323,43 +311,6 @@ async def get_sessions(request: AgentRequest):
     except Exception as e:
         print(f"[{user_id}] ❌ Error fetching sessions: {str(e)}")
         return {"sessions": []}
-
-
-@app.endpoint("/feedback")
-async def handle_feedback(request: FeedbackRequest):
-    """Record user feedback (like/dislike) for a message."""
-    message_id = request.message_id
-    session_id = request.session_id
-    user_id = request.user_id
-    feedback_data = {"type": request.feedback, "timestamp": request.timestamp}
-
-    try:
-        # Update feedback in Redis memory
-        success = await long_memory_service.update_message_feedback(
-            user_id=user_id,
-            msg_id=message_id,
-            feedback=feedback_data,
-            session_id=session_id,
-        )
-
-        if success:
-            return {
-                "status": "ok",
-                "message": "Feedback recorded successfully",
-                "message_id": message_id,
-            }
-        else:
-            return {
-                "status": "error",
-                "message": "Message not found",
-                "message_id": message_id,
-            }
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Failed to save feedback: {str(e)}",
-            "message_id": message_id,
-        }
 
 
 if __name__ == "__main__":
