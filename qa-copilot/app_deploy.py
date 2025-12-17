@@ -54,7 +54,7 @@ app = AgentApp(
 if DISABLE_DATABASE:
     print("⚠️  Database disabled - running in memory-only mode")
     long_memory_service = None
-    session_history_service = TTLInMemorySessionHistoryService(ttl_seconds=20, cleanup_interval=6)
+    session_history_service = TTLInMemorySessionHistoryService(ttl_seconds=60 * 60 * 12, cleanup_interval=60 * 60 * 6)
 else:
     long_memory_service = RedisMemoryService()
     session_history_service = RedisSessionHistoryService()
@@ -335,4 +335,4 @@ async def get_sessions(request: AgentRequest):
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8095)
+    app.run(host="127.0.0.1", port=8080)

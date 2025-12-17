@@ -76,8 +76,8 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
         for user_id, session_id in expired:
             try:
                 await super().delete_session(user_id, session_id)
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"Failed to delete expired session {session_id} for user {user_id}: {e}")
 
     async def create_session(self, user_id: str, session_id: Optional[str] = None) -> Session:
         s = await super().create_session(user_id, session_id=session_id)
