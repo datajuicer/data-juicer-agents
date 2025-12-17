@@ -521,7 +521,7 @@
 <h3>环境要求<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Python &gt;= 3.10</p></li>
-<li><p>Redis 服务器</p></li>
+<li><p>Redis 服务器（可选 - 可通过 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 禁用）</p></li>
 <li><p>DashScope API Key（用于大语言模型调用）</p></li>
 </ul>
 </section>
@@ -535,7 +535,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </pre></div>
 </div>
 </li>
-<li><p>安装和启动 Redis</p>
+<li><p>安装和启动 Redis（可选 - 如果使用 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 则可跳过）</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>redis-server
 redis-server<span class="w"> </span>--daemonize<span class="w"> </span>yes
@@ -545,6 +545,7 @@ brew<span class="w"> </span>install<span class="w"> </span>redis
 brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
 </pre></div>
 </div>
+<p><strong>注意</strong>：如果设置 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>，系统将以纯内存模式运行而无需 Redis。会话历史将存储在内存中，并在 20 秒无活动后自动清理。</p>
 </li>
 </ol>
 </section>
@@ -553,6 +554,9 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <ol class="arabic">
 <li><p>设置环境变量</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
+
+<span class="c1"># 可选：禁用数据库（Redis）- 以纯内存模式运行</span>
+<span class="c1"># export DISABLE_DATABASE=1</span>
 </pre></div>
 </div>
 </li>
@@ -587,7 +591,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;如何使用Data-Juicer进行数据清洗？&quot;}]</span>
 <span class="err">    }</span>
 <span class="err">  ],</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;</span>
+<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
+<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -598,7 +603,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;</span>
+<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
+<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -609,20 +615,17 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;</span>
+<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
+<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
 <span class="err">}</span>
 </pre></div>
 </div>
 </section>
 <section id="id10">
-<h4>4. 提交反馈<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /feedback</span>
+<h4>4. 获取会话列表<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /sessions</span>
 <span class="err">Content-Type: application/json</span>
-
 <span class="err">{</span>
-<span class="err">  &quot;message_id&quot;: &quot;msg_id&quot;,</span>
-<span class="err">  &quot;feedback&quot;: &quot;like&quot;,  // &quot;like&quot; 或 &quot;dislike&quot;</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
 <span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
 <span class="err">}</span>
 </pre></div>
@@ -693,12 +696,11 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </section>
 <section id="id15">
 <h2>许可证<a class="headerlink" href="#id15" title="Link to this heading">#</a></h2>
-<p>本项目采用与主项目相同的许可证。详情请参阅 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/../LICENSE">LICENSE</a> 文件。</p>
+<p>本项目采用与主项目相同的许可证。详情请参阅 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/LICENSE">LICENSE</a> 文件。</p>
 </section>
 <section id="id16">
 <h2>相关链接<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../README_ZH.html"><span class="std std-doc">InteRecipe 主项目</span></a></p></li>
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer 官方仓库</a></p></li>
 <li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope 框架</a></p></li>
 <li><p><a class="reference external" href="https://github.com/oraios/serena">Serena MCP</a></p></li>
@@ -765,7 +767,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">1. 问答对话</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2. 获取会话历史</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3. 清除会话历史</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4. 提交反馈</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4. 获取会话列表</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI</a></li>

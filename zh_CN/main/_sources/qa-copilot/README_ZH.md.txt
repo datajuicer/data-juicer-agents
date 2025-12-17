@@ -14,7 +14,7 @@ Q&A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框�
 ### 环境要求
 
 - Python >= 3.10
-- Redis 服务器
+- Redis 服务器（可选 - 可通过 `DISABLE_DATABASE=1` 禁用）
 - DashScope API Key（用于大语言模型调用）
 
 ### 安装
@@ -26,7 +26,7 @@ Q&A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框�
    cd qa-copilot
    ```
 
-2. 安装和启动 Redis
+2. 安装和启动 Redis（可选 - 如果使用 `DISABLE_DATABASE=1` 则可跳过）
    ```bash
    # Ubuntu/Debian
    sudo apt-get install redis-server
@@ -37,11 +37,16 @@ Q&A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框�
    brew services start redis
    ```
 
+   **注意**：如果设置 `DISABLE_DATABASE=1`，系统将以纯内存模式运行而无需 Redis。会话历史将存储在内存中，并在 20 秒无活动后自动清理。
+
 ### 配置
 
 1. 设置环境变量
    ```bash
    export DASHSCOPE_API_KEY="your_dashscope_api_key"
+   
+   # 可选：禁用数据库（Redis）- 以纯内存模式运行
+   # export DISABLE_DATABASE=1
    ```
 
 2. 配置 Data-Juicer 路径
@@ -75,7 +80,8 @@ Content-Type: application/json
       "content": [{"type": "text", "text": "如何使用Data-Juicer进行数据清洗？"}]
     }
   ],
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -85,7 +91,8 @@ POST /memory
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -95,19 +102,16 @@ POST /clear
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
-#### 4. 提交反馈
+#### 4. 获取会话列表
 ```http
-POST /feedback
+POST /sessions
 Content-Type: application/json
-
 {
-  "message_id": "msg_id",
-  "feedback": "like",  // "like" 或 "dislike"
-  "session_id": "your_session_id",
   "user_id": "user_id"
 }
 ```
@@ -168,11 +172,10 @@ serena_command = [
 
 ## 许可证
 
-本项目采用与主项目相同的许可证。详情请参阅 [LICENSE](../../LICENSE) 文件。
+本项目采用与主项目相同的许可证。详情请参阅 [LICENSE](../LICENSE) 文件。
 
 ## 相关链接
 
-- [InteRecipe 主项目](../README_ZH.md)
 - [Data-Juicer 官方仓库](https://github.com/datajuicer/data-juicer)
 - [AgentScope 框架](https://github.com/agentscope-ai/agentscope)
 - [Serena MCP](https://github.com/oraios/serena)
