@@ -16,6 +16,7 @@ from agent_helper import (
     toolkit,
     mcp_clients,
     file_tracking_pre_print_hook,
+    TTLInMemorySessionHistoryService,
 )
 from agentscope_runtime.engine.app import AgentApp
 from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
@@ -40,14 +41,24 @@ from agentscope_runtime.engine.services.memory.redis_memory_service import (
 DEFAULT_DATA_JUICER_PATH = os.path.join(os.getcwd(), "data-juicer")
 DATA_JUICER_PATH = os.getenv("DATA_JUICER_PATH") or DEFAULT_DATA_JUICER_PATH
 
+# Database configuration - set DISABLE_DATABASE=1 to disable all backend databases
+DISABLE_DATABASE = os.getenv("DISABLE_DATABASE", "false") == "1"
+
 app = AgentApp(
     agent_name="Juicer",
 )
 
 
-# Initialize services
-long_memory_service = RedisMemoryService()
-session_history_service = RedisSessionHistoryService()
+
+# Initialize services conditionally based on database configuration
+if DISABLE_DATABASE:
+    print("⚠️  Database disabled - running in memory-only mode")
+    long_memory_service = None
+    session_history_service = TTLInMemorySessionHistoryService(ttl_seconds=20, cleanup_interval=6)
+else:
+    long_memory_service = RedisMemoryService()
+    session_history_service = RedisSessionHistoryService()
+
 state_service = InMemoryStateService()
 model = DashScopeChatModel(
     "qwen-max",
@@ -61,9 +72,12 @@ formatter = DashScopeChatFormatter()
 async def init_resources(self):
     print("🚀 Starting resources...")
     await state_service.start()
-    print("🚀 Connecting to Redis...")
     await session_history_service.start()
-    await long_memory_service.start()
+    if not DISABLE_DATABASE:
+        print("🚀 Connecting to Redis...")
+        await long_memory_service.start()
+    else:
+        print("ℹ️  Skipping database connections (DISABLE_DATABASE=1)")
 
     if not os.path.exists(DATA_JUICER_PATH):
         print("Cloning data-juicer repository...")
@@ -154,10 +168,11 @@ async def init_resources(self):
 @app.shutdown
 async def cleanup_resources(self):
     await state_service.stop()
-
-    print("🛑 Shutting down Redis...")
     await session_history_service.stop()
-    await long_memory_service.stop()
+
+    if not DISABLE_DATABASE:
+        print("🛑 Shutting down Redis...")
+        await long_memory_service.stop()
 
     if mcp_clients:
         for mcp_client in mcp_clients:
@@ -182,24 +197,30 @@ async def query_func(
 
     _toolkit = deepcopy(toolkit)
 
-    agent = ReActAgent(
-        name="Juicer",
-        formatter=formatter,
-        model=model,
-        sys_prompt=prompts.QA,
-        toolkit=_toolkit,
-        parallel_tool_calls=True,
-        memory=AgentScopeSessionHistoryMemory(
+    # Build agent configuration
+    agent_config = {
+        "name": "Juicer",
+        "formatter": formatter,
+        "model": model,
+        "sys_prompt": prompts.QA,
+        "toolkit": _toolkit,
+        "parallel_tool_calls": True,
+        "memory": AgentScopeSessionHistoryMemory(
             service=session_history_service,
             session_id=session_id,
             user_id=user_id,
         ),
-        long_term_memory=AgentScopeLongTermMemory(
+    }
+
+    # Add memory services only if database is enabled
+    if not DISABLE_DATABASE:
+        agent_config["long_term_memory"] = AgentScopeLongTermMemory(
             service=long_memory_service,
             session_id=session_id,
             user_id=user_id,
-        ),
-    )
+        )
+
+    agent = ReActAgent(**agent_config)
     agent.set_console_output_enabled(enabled=False)
     agent.register_instance_hook(
         hook_type="pre_print",
@@ -229,7 +250,7 @@ async def query_func(
 async def get_memory(request: AgentRequest):
     """Retrieve conversation history for a session."""
     session_id = request.session_id
-    user_id = request.user_id
+    user_id = request.user_id or session_id
     print(f"[{user_id}] 📥 Fetching memory for session: {session_id}")
 
     memories = await session_history_service.get_session(user_id, session_id)
@@ -263,7 +284,7 @@ async def get_memory(request: AgentRequest):
 async def clear_memory(request: AgentRequest):
     """Clear conversation history for a session."""
     session_id = request.session_id
-    user_id = request.user_id
+    user_id = request.user_id or session_id
     print(f"[{user_id}] 🧹 Clearing memory for session: {session_id}")
     await session_history_service.delete_session(user_id, session_id)
     return {"status": "ok"}
@@ -314,4 +335,4 @@ async def get_sessions(request: AgentRequest):
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8080)
+    app.run(host="127.0.0.1", port=8095)

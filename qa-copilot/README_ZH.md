@@ -14,7 +14,7 @@ Q&A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框�
 ### 环境要求
 
 - Python >= 3.10
-- Redis 服务器
+- Redis 服务器（可选 - 可通过 `DISABLE_DATABASE=1` 禁用）
 - DashScope API Key（用于大语言模型调用）
 
 ### 安装
@@ -26,7 +26,7 @@ Q&A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框�
    cd qa-copilot
    ```
 
-2. 安装和启动 Redis
+2. 安装和启动 Redis（可选 - 如果使用 `DISABLE_DATABASE=1` 则可跳过）
    ```bash
    # Ubuntu/Debian
    sudo apt-get install redis-server
@@ -37,11 +37,16 @@ Q&A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框�
    brew services start redis
    ```
 
+   **注意**：如果设置 `DISABLE_DATABASE=1`，系统将以纯内存模式运行而无需 Redis。会话历史将存储在内存中，并在 20 秒无活动后自动清理。
+
 ### 配置
 
 1. 设置环境变量
    ```bash
    export DASHSCOPE_API_KEY="your_dashscope_api_key"
+   
+   # 可选：禁用数据库（Redis）- 以纯内存模式运行
+   # export DISABLE_DATABASE=1
    ```
 
 2. 配置 Data-Juicer 路径

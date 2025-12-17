@@ -14,7 +14,7 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
 ### Prerequisites
 
 - Python >= 3.10
-- Redis server
+- Redis server (optional - can be disabled with `DISABLE_DATABASE=1`)
 - DashScope API Key (for large language model calls)
 
 ### Installation
@@ -26,7 +26,7 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
    cd qa-copilot
    ```
 
-2. Install and start Redis
+2. Install and start Redis (optional - skip if using `DISABLE_DATABASE=1`)
    ```bash
    # Ubuntu/Debian
    sudo apt-get install redis-server
@@ -37,11 +37,16 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
    brew services start redis
    ```
 
+   **Note**: If you set `DISABLE_DATABASE=1`, the system will run in memory-only mode without requiring Redis. Session history will be stored in memory with automatic cleanup after 20 seconds of inactivity.
+
 ### Configuration
 
 1. Set environment variables
    ```bash
    export DASHSCOPE_API_KEY="your_dashscope_api_key"
+   
+   # Optional: Disable database (Redis) - run in memory-only mode
+   # export DISABLE_DATABASE=1
    ```
 
 2. Configure Data-Juicer path
