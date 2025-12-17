@@ -14,7 +14,7 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
 ### Prerequisites
 
 - Python >= 3.10
-- Redis server
+- Redis server (optional - can be disabled with `DISABLE_DATABASE=1`)
 - DashScope API Key (for large language model calls)
 
 ### Installation
@@ -26,7 +26,7 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
    cd qa-copilot
    ```
 
-2. Install and start Redis
+2. Install and start Redis (optional - skip if using `DISABLE_DATABASE=1`)
    ```bash
    # Ubuntu/Debian
    sudo apt-get install redis-server
@@ -37,11 +37,16 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
    brew services start redis
    ```
 
+   **Note**: If you set `DISABLE_DATABASE=1`, the system will run in memory-only mode without requiring Redis. Session history will be stored in memory with automatic cleanup after 20 seconds of inactivity.
+
 ### Configuration
 
 1. Set environment variables
    ```bash
    export DASHSCOPE_API_KEY="your_dashscope_api_key"
+   
+   # Optional: Disable database (Redis) - run in memory-only mode
+   # export DISABLE_DATABASE=1
    ```
 
 2. Configure Data-Juicer path
@@ -74,7 +79,8 @@ Content-Type: application/json
       "content": [{"type": "text", "text": "How to use Data-Juicer for data cleaning?"}]
     }
   ],
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -84,7 +90,8 @@ POST /memory
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
@@ -94,19 +101,16 @@ POST /clear
 Content-Type: application/json
 
 {
-  "session_id": "your_session_id"
+  "session_id": "your_session_id",
+  "user_id": "user_id"
 }
 ```
 
-#### 4. Submit Feedback
+#### 4. Get Session List
 ```http
-POST /feedback
+POST /sessions
 Content-Type: application/json
-
 {
-  "message_id": "msg_id",
-  "feedback": "like",  // "like" or "dislike"
-  "session_id": "your_session_id",
   "user_id": "user_id"
 }
 ```
@@ -167,11 +171,10 @@ serena_command = [
 
 ## License
 
-This project uses the same license as the main project. For details, please refer to the [LICENSE](../../LICENSE) file.
+This project uses the same license as the main project. For details, please refer to the [LICENSE](../LICENSE) file.
 
 ## Related Links
 
-- [InteRecipe Main Project](../README.md)
 - [Data-Juicer Official Repository](https://github.com/datajuicer/data-juicer)
 - [AgentScope Framework](https://github.com/agentscope-ai/agentscope)
 - [Serena MCP](https://github.com/oraios/serena)

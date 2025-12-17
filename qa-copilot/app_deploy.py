@@ -16,6 +16,7 @@ from agent_helper import (
     toolkit,
     mcp_clients,
     file_tracking_pre_print_hook,
+    TTLInMemorySessionHistoryService,
 )
 from agentscope_runtime.engine.app import AgentApp
 from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
@@ -29,24 +30,35 @@ from agentscope_runtime.adapters.agentscope.memory import (
 from agentscope_runtime.engine.services.agent_state import (
     InMemoryStateService,
 )
-from agentscope_runtime.engine.services.memory.redis_memory_service import (
-    RedisMemoryService,
-)
 from agentscope_runtime.engine.services.session_history import (
     RedisSessionHistoryService,
 )
 
+from agentscope_runtime.engine.services.memory.redis_memory_service import (
+    RedisMemoryService,
+)
+
 DEFAULT_DATA_JUICER_PATH = os.path.join(os.getcwd(), "data-juicer")
 DATA_JUICER_PATH = os.getenv("DATA_JUICER_PATH") or DEFAULT_DATA_JUICER_PATH
+
+# Database configuration - set DISABLE_DATABASE=1 to disable all backend databases
+DISABLE_DATABASE = os.getenv("DISABLE_DATABASE", "false") == "1"
 
 app = AgentApp(
     agent_name="Juicer",
 )
 
 
-# Initialize services
-long_memory_service = RedisMemoryService()
-session_history_service = RedisSessionHistoryService()
+
+# Initialize services conditionally based on database configuration
+if DISABLE_DATABASE:
+    print("⚠️  Database disabled - running in memory-only mode")
+    long_memory_service = None
+    session_history_service = TTLInMemorySessionHistoryService(ttl_seconds=60 * 60 * 12, cleanup_interval=60 * 60 * 6)
+else:
+    long_memory_service = RedisMemoryService()
+    session_history_service = RedisSessionHistoryService()
+
 state_service = InMemoryStateService()
 model = DashScopeChatModel(
     "qwen-max",
@@ -56,21 +68,16 @@ model = DashScopeChatModel(
 formatter = DashScopeChatFormatter()
 
 
-class FeedbackRequest(BaseModel):
-    message_id: str
-    feedback: str  # 'like' or 'dislike'
-    session_id: str
-    user_id: str = ""  # Default to empty string for compatibility
-    timestamp: Optional[int] = None
-
-
 @app.init
 async def init_resources(self):
     print("🚀 Starting resources...")
     await state_service.start()
-    print("🚀 Connecting to Redis...")
     await session_history_service.start()
-    await long_memory_service.start()
+    if not DISABLE_DATABASE:
+        print("🚀 Connecting to Redis...")
+        await long_memory_service.start()
+    else:
+        print("ℹ️  Skipping database connections (DISABLE_DATABASE=1)")
 
     if not os.path.exists(DATA_JUICER_PATH):
         print("Cloning data-juicer repository...")
@@ -115,7 +122,9 @@ async def init_resources(self):
     )
     if os.path.exists(source_serena_config):
         try:
-            shutil.copy(source_serena_config, os.path.join(serena_config_dir, "project.yml"))
+            shutil.copy(
+                source_serena_config, os.path.join(serena_config_dir, "project.yml")
+            )
             print("✅ Successfully copied .serena configuration to data-juicer")
         except Exception as e:
             print(f"⚠️ Failed to copy .serena configuration: {e}")
@@ -151,7 +160,7 @@ async def init_resources(self):
                     "retrieve_from_memory",
                     "rename_symbol",
                     "replace_content",
-                    "initial_instructions"
+                    "initial_instructions",
                 ],
             )
 
@@ -159,10 +168,11 @@ async def init_resources(self):
 @app.shutdown
 async def cleanup_resources(self):
     await state_service.stop()
-
-    print("🛑 Shutting down Redis...")
     await session_history_service.stop()
-    await long_memory_service.stop()
+
+    if not DISABLE_DATABASE:
+        print("🛑 Shutting down Redis...")
+        await long_memory_service.stop()
 
     if mcp_clients:
         for mcp_client in mcp_clients:
@@ -187,24 +197,30 @@ async def query_func(
 
     _toolkit = deepcopy(toolkit)
 
-    agent = ReActAgent(
-        name="Juicer",
-        formatter=formatter,
-        model=model,
-        sys_prompt=prompts.QA,
-        toolkit=_toolkit,
-        parallel_tool_calls=True,
-        memory=AgentScopeSessionHistoryMemory(
+    # Build agent configuration
+    agent_config = {
+        "name": "Juicer",
+        "formatter": formatter,
+        "model": model,
+        "sys_prompt": prompts.QA,
+        "toolkit": _toolkit,
+        "parallel_tool_calls": True,
+        "memory": AgentScopeSessionHistoryMemory(
             service=session_history_service,
             session_id=session_id,
             user_id=user_id,
         ),
-        long_term_memory=AgentScopeLongTermMemory(
+    }
+
+    # Add memory services only if database is enabled
+    if not DISABLE_DATABASE:
+        agent_config["long_term_memory"] = AgentScopeLongTermMemory(
             service=long_memory_service,
             session_id=session_id,
             user_id=user_id,
-        ),
-    )
+        )
+
+    agent = ReActAgent(**agent_config)
     agent.set_console_output_enabled(enabled=False)
     agent.register_instance_hook(
         hook_type="pre_print",
@@ -234,7 +250,7 @@ async def query_func(
 async def get_memory(request: AgentRequest):
     """Retrieve conversation history for a session."""
     session_id = request.session_id
-    user_id = request.user_id
+    user_id = request.user_id or session_id
     print(f"[{user_id}] 📥 Fetching memory for session: {session_id}")
 
     memories = await session_history_service.get_session(user_id, session_id)
@@ -251,7 +267,13 @@ async def get_memory(request: AgentRequest):
                 content_text = msg.content
 
         if content_text.strip() and hasattr(msg, "role"):
-            messages.append({"role": msg.role, "content": content_text.strip()})
+            messages.append(
+                {
+                    "role": msg.role,
+                    "content": content_text.strip(),
+                    "id": msg.metadata.get("original_id", msg.id),
+                }
+            )
 
     response = {"messages": messages}
     print(f"[{user_id}] 📤 Returning {len(messages)} messages")
@@ -262,47 +284,54 @@ async def get_memory(request: AgentRequest):
 async def clear_memory(request: AgentRequest):
     """Clear conversation history for a session."""
     session_id = request.session_id
-    user_id = request.user_id
+    user_id = request.user_id or session_id
     print(f"[{user_id}] 🧹 Clearing memory for session: {session_id}")
     await session_history_service.delete_session(user_id, session_id)
     return {"status": "ok"}
 
 
-@app.endpoint("/feedback")
-async def handle_feedback(request: FeedbackRequest):
-    """Record user feedback (like/dislike) for a message."""
-    message_id = request.message_id
-    session_id = request.session_id
+@app.endpoint("/sessions")
+async def get_sessions(request: AgentRequest):
+    """Get all sessions for a user."""
     user_id = request.user_id
-    feedback_data = {"type": request.feedback, "timestamp": request.timestamp}
+    print(f"[{user_id}] 📋 Fetching all sessions")
 
     try:
-        # Update feedback in Redis memory
-        success = await session_history_service.update_message_feedback(
-            user_id=user_id,
-            msg_id=message_id,
-            feedback=feedback_data,
-            session_id=session_id,
-        )
+        sessions = await session_history_service.list_sessions(user_id)
 
-        if success:
-            return {
-                "status": "ok",
-                "message": "Feedback recorded successfully",
-                "message_id": message_id,
-            }
-        else:
-            return {
-                "status": "error",
-                "message": "Message not found",
-                "message_id": message_id,
-            }
+        session_list = []
+        for session in sessions:
+            preview = "New Chat"
+            if session and session.messages:
+                first_msg = session.messages[0]
+                if hasattr(first_msg, "content"):
+                    if isinstance(first_msg.content, list):
+                        for item in first_msg.content:
+                            if getattr(item, "type", None) == "text":
+                                preview = getattr(item, "text", "")[:50]
+                                break
+                    elif isinstance(first_msg.content, str):
+                        preview = first_msg.content[:50]
+
+            session_list.append(
+                {
+                    "session_id": session.id,
+                    "preview": preview,
+                    "created_at": (
+                        session.created_at if hasattr(session, "created_at") else None
+                    ),
+                    "updated_at": (
+                        session.updated_at if hasattr(session, "updated_at") else None
+                    ),
+                }
+            )
+
+        print(f"[{user_id}] 📤 Returning {len(session_list)} sessions")
+        return {"sessions": session_list}
+
     except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Failed to save feedback: {str(e)}",
-            "message_id": message_id,
-        }
+        print(f"[{user_id}] ❌ Error fetching sessions: {str(e)}")
+        return {"sessions": []}
 
 
 if __name__ == "__main__":
