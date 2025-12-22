@@ -62,8 +62,8 @@ else:
 
 state_service = InMemoryStateService()
 model = DashScopeChatModel(
-    # "qwen-plus-2025-07-14",
-    "qwen-max",
+    "qwen-plus-2025-07-14",
+    # "qwen-max",
     api_key=os.getenv("DASHSCOPE_API_KEY"),
     stream=True,
     enable_thinking=False,
