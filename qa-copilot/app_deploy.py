@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-import asyncio
-from typing import Optional
-from pydantic import BaseModel
-import os
-import subprocess
 import shutil
 import prompts
 from copy import deepcopy
+from pathlib import Path
 
 from agentscope.model import DashScopeChatModel
 from agentscope.formatter import DashScopeChatFormatter
@@ -37,9 +33,14 @@ from agentscope_runtime.engine.services.session_history import (
 from agentscope_runtime.engine.services.memory.redis_memory_service import (
     RedisMemoryService,
 )
+import oyaml as yaml
+import os
 
-DEFAULT_DATA_JUICER_PATH = os.path.join(os.getcwd(), "data-juicer")
-DATA_JUICER_PATH = os.getenv("DATA_JUICER_PATH") or DEFAULT_DATA_JUICER_PATH
+DEFAULT_DJ_HOME_PATH = Path.cwd() / "data-juicer-home"
+DJ_HOME_PATH = Path(os.getenv("DJ_HOME_PATH") or DEFAULT_DJ_HOME_PATH)
+FILE_PATH = Path(__file__).parent
+SOURCE_SERENA_PROJECT_YML = FILE_PATH / "config" / "project.yml"
+SOURCE_SERENA_CONFIG = FILE_PATH / "config" / "serena_config.yml"
 
 # Database configuration - set DISABLE_DATABASE=1 to disable all backend databases
 DISABLE_DATABASE = os.getenv("DISABLE_DATABASE", "false") == "1"
@@ -48,24 +49,44 @@ app = AgentApp(
     agent_name="Juicer",
 )
 
-
-
 # Initialize services conditionally based on database configuration
 if DISABLE_DATABASE:
     print("⚠️  Database disabled - running in memory-only mode")
     long_memory_service = None
-    session_history_service = TTLInMemorySessionHistoryService(ttl_seconds=60 * 60 * 12, cleanup_interval=60 * 60 * 6)
+    session_history_service = TTLInMemorySessionHistoryService(
+        ttl_seconds=60 * 60 * 12, cleanup_interval=60 * 60 * 6
+    )
 else:
     long_memory_service = RedisMemoryService()
     session_history_service = RedisSessionHistoryService()
 
 state_service = InMemoryStateService()
 model = DashScopeChatModel(
+    # "qwen-plus-2025-07-14",
     "qwen-max",
     api_key=os.getenv("DASHSCOPE_API_KEY"),
     stream=True,
+    enable_thinking=False,
 )
 formatter = DashScopeChatFormatter()
+
+
+def append_project_to_serena(new_project_path, serena_cfg_path):
+    with open(SOURCE_SERENA_CONFIG, "r") as file:
+        data = yaml.safe_load(file)
+
+    if "projects" not in data:
+        data["projects"] = []
+
+    if str(new_project_path) not in data["projects"]:
+        data["projects"].append(str(new_project_path))
+    else:
+        return
+
+    with open(serena_cfg_path, "w") as file:
+        yaml.dump(data, file, default_flow_style=False, sort_keys=False)
+
+    print(f"Successfully added project path: {new_project_path}")
 
 
 @app.init
@@ -79,57 +100,28 @@ async def init_resources(self):
     else:
         print("ℹ️  Skipping database connections (DISABLE_DATABASE=1)")
 
-    if not os.path.exists(DATA_JUICER_PATH):
-        print("Cloning data-juicer repository...")
-        try:
-            subprocess.run(
-                [
-                    "git",
-                    "clone",
-                    "--depth",
-                    "1",
-                    "https://github.com/datajuicer/data-juicer.git",
-                    f"{DATA_JUICER_PATH}",
-                ],
-                check=True,
-            )
-            print("✅ Successfully cloned data-juicer repository")
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to clone data-juicer repository: {e}")
-        print("Cloning data-juicer-hub repository...")
-        try:
-            subprocess.run(
-                [
-                    "git",
-                    "clone",
-                    "--depth",
-                    "1",
-                    "https://github.com/datajuicer/data-juicer-hub.git",
-                    f"{DATA_JUICER_PATH}/data-juicer-hub",
-                ],
-                check=True,
-            )
-            print("✅ Successfully cloned data-juicer-hub repository")
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to clone data-juicer-hub repository: {e}")
-    else:
-        print("📁 data-juicer directory already exists")
+    if not DJ_HOME_PATH.exists():
+        raise RuntimeError(f"data-juicer not found at {DJ_HOME_PATH}")
 
-    serena_config_dir = os.path.join(DATA_JUICER_PATH, ".serena")
-    os.makedirs(serena_config_dir, exist_ok=True)
-    source_serena_config = os.path.join(
-        os.path.dirname(__file__), "config", "project.yml"
-    )
-    if os.path.exists(source_serena_config):
+    project_serena_dir = DJ_HOME_PATH / ".serena"
+    project_serena_dir.mkdir(parents=True, exist_ok=True)
+
+    if SOURCE_SERENA_PROJECT_YML.exists():
         try:
             shutil.copy(
-                source_serena_config, os.path.join(serena_config_dir, "project.yml")
+                SOURCE_SERENA_PROJECT_YML,
+                project_serena_dir / "project.yml",
             )
             print("✅ Successfully copied .serena configuration to data-juicer")
         except Exception as e:
             print(f"⚠️ Failed to copy .serena configuration: {e}")
     else:
-        print(f"⚠️ {source_serena_config} not found")
+        print(f"⚠️ {SOURCE_SERENA_PROJECT_YML} not found")
+
+    home_serena_config = Path.home() / ".serena" / "serena_config.yml"
+
+    if SOURCE_SERENA_CONFIG.exists():
+        append_project_to_serena(DJ_HOME_PATH, home_serena_config)
 
     if mcp_clients:
         for mcp_client in mcp_clients:
@@ -237,8 +229,8 @@ async def query_func(
     ):
         yield msg, last
 
+    # Save final state
     state = agent.state_dict()
-
     await state_service.save_state(
         user_id=user_id,
         session_id=session_id,

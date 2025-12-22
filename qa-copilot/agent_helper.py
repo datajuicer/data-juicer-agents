@@ -4,9 +4,12 @@ import copy
 import json
 import asyncio
 import time
+from pathlib import Path
 from typing import Optional, Dict, Any, List, Union
 
-from agentscope_runtime.engine.services.session_history import InMemorySessionHistoryService
+from agentscope_runtime.engine.services.session_history import (
+    InMemorySessionHistoryService,
+)
 from agentscope_runtime.engine.schemas.session import Session
 from agentscope_runtime.engine.schemas.agent_schemas import Message
 
@@ -16,13 +19,17 @@ from agentscope.tool import Toolkit
 from agentscope.agent import ReActAgent
 from agentscope.mcp import StdIOStatefulClient
 
-data_juicer_repo_url = "https://github.com/datajuicer/data-juicer/blob/main/"
-data_juicer_doc_url = "https://datajuicer.github.io/data-juicer/"
+data_juicer_repo_url = "https://github.com/datajuicer/{repo_name}/blob/main/"
+data_juicer_doc_url = "https://datajuicer.github.io/{repo_name}/"
 
-DATA_JUICER_PATH = os.getenv("DATA_JUICER_PATH", "/data-juicer")
+DEFAULT_DJ_HOME_PATH = Path.cwd() / "data-juicer-home"
+DJ_HOME_PATH = Path(os.getenv("DJ_HOME_PATH") or DEFAULT_DJ_HOME_PATH)
+
 
 class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
-    def __init__(self, ttl_seconds: int = 3600, cleanup_interval: int = 60, *args, **kwargs):
+    def __init__(
+        self, ttl_seconds: int = 3600, cleanup_interval: int = 60, *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self._ttl_seconds = ttl_seconds
         self._cleanup_interval = cleanup_interval
@@ -77,9 +84,13 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
             try:
                 await super().delete_session(user_id, session_id)
             except Exception as e:
-                print(f"Failed to delete expired session {session_id} for user {user_id}: {e}")
+                print(
+                    f"Failed to delete expired session {session_id} for user {user_id}: {e}"
+                )
 
-    async def create_session(self, user_id: str, session_id: Optional[str] = None) -> Session:
+    async def create_session(
+        self, user_id: str, session_id: Optional[str] = None
+    ) -> Session:
         s = await super().create_session(user_id, session_id=session_id)
         async with self._ttl_lock:
             self._touch(user_id, s.id)
@@ -110,6 +121,17 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
         await super().delete_session(user_id, session_id)
 
 
+def split_first_dir(path):
+    try:
+        p = Path(path)
+        parts = list(p.parts)
+        if len(parts) > 1:
+            return parts[0], str(Path(*parts[1:]))
+        else:
+            return None, path
+    except:
+        return None, path
+
 
 async def file_tracking_pre_print_hook(
     self: "ReActAgent",
@@ -117,9 +139,9 @@ async def file_tracking_pre_print_hook(
 ) -> dict[str, Any] | None:
     """
     The statistics file is accessed and appended to the last message.
+    Only tracks files from successful tool executions.
     """
     try:
-        # 1. Logic is executed only on the last reply (last=True)
         if not kwargs.get("last", False):
             return None
 
@@ -134,66 +156,82 @@ async def file_tracking_pre_print_hook(
 
         accessed_files = set()
 
-        # Define focused tool keywords
         target_tools = {
             "view_text_file",
             "read_file",
             "get_symbols_overview",
             "get_operator_details",
-            # "find_symbol",
-            # "find_referencing_symbols",
-            # "search_for_pattern",
         }
 
         history = await self.memory.get_memory()
 
-        # 3. Traverse all messages looking for tool_use
+        tool_id_to_file = {}
+        tool_id_to_success = {}
+
         for message in reversed(history):
             if getattr(message, "role", None) == "user":
                 break
 
             content = getattr(message, "content", None)
 
-            # Only deal with structures where content is a list
             if isinstance(content, list):
                 for block in content:
-                    if isinstance(block, dict) and block.get("type") == "tool_use":
-                        tool_name = block.get("name", "")
+                    if not isinstance(block, dict):
+                        continue
 
-                        # Hit File Reading Class Tool
+                    # 1. Record information of all tool_use blocks
+                    if block.get("type") == "tool_use":
+                        tool_name = block.get("name", "")
+                        tool_id = block.get("id", "")
+
                         if any(t in tool_name.lower() for t in target_tools):
                             inputs = block.get("input", {})
 
-                            # Handling cases where inputs may be JSON strings
                             if isinstance(inputs, str):
                                 try:
                                     inputs = json.loads(inputs)
                                 except json.JSONDecodeError:
                                     continue
 
-                            # Extract file path (try common parameter name)
                             if isinstance(inputs, dict):
                                 for key in [
-                                    "file_path",
-                                    "filepath",
-                                    "path",
-                                    "filename",
                                     "relative_path",
                                     "operator_name",
                                 ]:
                                     val = inputs.get(key)
                                     if val and isinstance(val, str):
-                                        accessed_files.add(val)
+                                        tool_id_to_file[tool_id] = val
+
+                    # 2. Check the tool_result block to determine if execution is successful
+                    elif block.get("type") == "tool_result":
+                        tool_use_id = block.get("id", "")
+                        output = block.get("output", [])
+
+                        # Determine whether it is successful: check whether there is an error message in output
+                        is_success = True
+                        if isinstance(output, list):
+                            for item in output:
+                                if isinstance(item, dict):
+                                    text = item.get("text", "")
+                                    if "Error executing tool" in text:
+                                        is_success = False
                                         break
 
-        # 4. If the file is found, splice it into msg's text block
+                        tool_id_to_success[tool_use_id] = is_success
+
+        # 3. Add only successful files
+        for tool_id, file_path in tool_id_to_file.items():
+            if tool_id_to_success.get(tool_id, False):
+                accessed_files.add(file_path)
+
         if accessed_files:
             file_list = []
             for f in accessed_files:
+                repo_name, f = split_first_dir(f)
                 if f.endswith("_ZH.md"):
                     file_list.append(
                         (
-                            data_juicer_doc_url
+                            data_juicer_doc_url.format(repo_name=repo_name)
                             + "zh_CN/main/"
                             + f.replace(".md", ".html"),
                             f,
@@ -202,7 +240,7 @@ async def file_tracking_pre_print_hook(
                 elif f.endswith(".md"):
                     file_list.append(
                         (
-                            data_juicer_doc_url
+                            data_juicer_doc_url.format(repo_name=repo_name)
                             + "en/main/"
                             + f.replace(".md", ".html"),
                             f,
@@ -220,7 +258,7 @@ async def file_tracking_pre_print_hook(
                 ]:
                     file_list.append(
                         (
-                            data_juicer_doc_url
+                            data_juicer_doc_url.format(repo_name="data-juicer")
                             + "en/main/docs/operators/"
                             + f.split("_")[-1]
                             + "/"
@@ -230,10 +268,12 @@ async def file_tracking_pre_print_hook(
                         )
                     )
                 else:
-                    file_list.append((data_juicer_repo_url + f, f))
+                    file_list.append(
+                        (data_juicer_repo_url.format(repo_name=repo_name) + f, f)
+                    )
 
-            summary_text = "\n\n---\nReference: \n" + "\n".join(
-                f"- [{n}]({f})." for f, n in file_list
+            summary_text = "\n\n---\n# Juicer Read: \n" + "\n".join(
+                f"- [`{n}`]({f})." for f, n in file_list
             )
 
             # Modify current message content
@@ -241,7 +281,7 @@ async def file_tracking_pre_print_hook(
                 for block in msg.content:
                     if block.get("type") == "text":
                         # Prevent duplicate additions (if retry mechanism is available)
-                        if "Reference: " not in block["text"]:
+                        if "Juicer Read: " not in block["text"]:
                             block["text"] += summary_text
                             print(
                                 f"📋 [Agent {self.name}] Append file summary: {len(file_list)} files."
@@ -289,7 +329,7 @@ serena_command = [
     "serena",
     "start-mcp-server",
     "--project",
-    DATA_JUICER_PATH,
+    str(DJ_HOME_PATH),
     "--mode",
     "planning",
 ]
