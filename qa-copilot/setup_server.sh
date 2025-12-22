@@ -42,10 +42,13 @@ clone_if_missing() {
     git clone --depth 1 "$repo_url" "$target_dir"
 
     # If the cloned repo has a .gitignore, merge its rules into root .gitignore
-    local repo_gitignore="$target_dir/.gitignore"
-    if [[ -f "$repo_gitignore" ]]; then
-      echo "[INFO] Adding .gitignore rules from $dir_name"
-      add_gitignore_rules "$repo_gitignore"
+    # Skip this step if dir_name is "data-juicer-agents"
+    if [[ "$dir_name" != "data-juicer-agents" ]]; then
+      local repo_gitignore="$target_dir/.gitignore"
+      if [[ -f "$repo_gitignore" ]]; then
+        echo "[INFO] Adding .gitignore rules from $dir_name"
+        add_gitignore_rules "$repo_gitignore"
+      fi
     fi
   fi
 }
