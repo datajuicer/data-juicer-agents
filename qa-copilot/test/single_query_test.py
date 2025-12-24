@@ -38,9 +38,10 @@ def single_query(query_text, url=None, session_id=None, verbose=False):
         if not line:
             continue
         try:
-            data = json.loads(line.split("data: ")[1])
+            line_data = line.split("data: ", 1)[1]
+            data = json.loads(line_data)
             status, text = data.get("status", ""), data.get("text", "")
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, IndexError):
             status, text = "error", line
         if status == "in_progress" and text and first_token_time is None:
             first_token_time = time.perf_counter()
