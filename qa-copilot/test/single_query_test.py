@@ -64,7 +64,10 @@ def main():
     print(f"===== Full Text =====")
     print(response['full_text'])
     print("\n===== Query Stats =====")
-    print(f"First Token Duration: {response['first_token_duration']:.3f} s")
+    if response['first_token_duration'] is not None:
+        print(f"First Token Duration: {response['first_token_duration']:.3f} s")
+    else:
+        print("First Token Duration: N/A")
     print(f"Total Time: {response['total_duration']:.3f} s")
 
 
