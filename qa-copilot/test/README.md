@@ -67,4 +67,4 @@ Columns: ['query', 'type', 'lang']
 ...
 ```
 
-The results will be saved in `test_results.parquet`, with new columns `total_duration`, `first_toen_duration`, `full_text`.
+The results will be saved in `test_results.parquet`, with new columns `total_duration`, `first_token_duration`, `full_text`.
