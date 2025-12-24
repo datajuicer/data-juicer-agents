@@ -48,7 +48,7 @@ Total Time: <total time> s
 
 #### 3.2 Parallel Evaluation for multiple test cases
 
-Test cases are 
+To run all test cases in parallel:
 
 ```bash
 python run_tests.py
