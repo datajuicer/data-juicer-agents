@@ -9,8 +9,8 @@ from single_query_test import single_query
 
 def main():
     # Configuration
-    input_file = f"{os.path.dirname(os.path.abspath(__file__))}/test_cases.parquet"
-    output_file = f"{os.path.dirname(os.path.abspath(__file__))}/test_results.parquet"
+    input_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_cases.parquet')
+    output_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_results.parquet')
     url = os.environ.get("DJ_COPILOT_TEST_URL", "http://127.0.0.1:8080/process")
     max_workers = 10  # Number of concurrent threads, adjust based on server performance
 
