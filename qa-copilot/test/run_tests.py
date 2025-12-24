@@ -42,7 +42,6 @@ def main():
     print(f"Concurrent threads: {max_workers}")
     
     results_lock = Lock()
-    completed_count = 0
     
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit all tasks
@@ -63,15 +62,6 @@ def main():
                         df.at[idx, "full_text"] = result_dict.get("full_text", "")
                         df.at[idx, "total_duration"] = result_dict["total_duration"]
                         df.at[idx, "first_token_duration"] = result_dict["first_token_duration"]
-                        completed_count += 1
-                        if "status" in df.columns:
-                            success_count = (df["status"] == "success").sum()
-                        else:
-                            success_count = completed_count
-                        pbar.set_postfix({
-                            "success": success_count,
-                            "failed": completed_count - success_count
-                        })
                 except Exception as e:
                     print(f"\nException occurred while processing task: {e}")
                 finally:
