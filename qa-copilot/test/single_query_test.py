@@ -48,7 +48,7 @@ def single_query(query_text, url=None, session_id=None, verbose=False):
             texts.append(text)
 
     complete_time = time.perf_counter()
-    first_token_duration = first_token_time - start_time
+    first_token_duration = first_token_time - start_time if first_token_time is not None else None
     total_duration = complete_time - start_time
     full_text = "".join(texts)
 
