@@ -272,7 +272,7 @@ async def file_tracking_pre_print_hook(
                         (data_juicer_repo_url.format(repo_name=repo_name) + f, f)
                     )
 
-            summary_text = "\n\n---\n# Reference: \n" + "\n".join(
+            summary_text = "\n\n# Reference: \n" + "\n".join(
                 f"- [`{n}`]({f})." for f, n in file_list
             )
 
