@@ -129,7 +129,7 @@ def split_first_dir(path):
             return parts[0], str(Path(*parts[1:]))
         else:
             return None, path
-    except:
+    except Exception:
         return None, path
 
 

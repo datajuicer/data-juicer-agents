@@ -11,10 +11,6 @@ add_gitignore_rules() {
   # Ensure root .gitignore exists
   touch "$root_ignore"
 
-  # Use a temporary file for deduplication
-  local temp_file=$(mktemp)
-  cp "$root_ignore" "$temp_file"
-
   # Read each line from source, skip empty/comment, add if not already present
   while IFS= read -r line || [[ -n "$line" ]]; do
     trimmed=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')

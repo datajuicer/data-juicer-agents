@@ -3,6 +3,7 @@
 
 import logging
 import re
+import traceback
 from typing import List, Dict
 
 from agentscope.tool import ToolResponse
@@ -89,7 +90,6 @@ class DJOperatorRetriever:
             )
 
         except Exception as e:
-            import traceback
             traceback.print_exc()
             logging.error(f"Error searching operators: {str(e)}")
             return ToolResponse(
