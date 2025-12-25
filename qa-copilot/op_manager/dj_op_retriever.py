@@ -3,6 +3,7 @@
 
 import logging
 import re
+import traceback
 from typing import List, Dict
 
 from agentscope.tool import ToolResponse
@@ -38,7 +39,7 @@ class DJOperatorRetriever:
 
         Args:
             query (str): Description of data processing requirement.
-            Note: You must use **English** query to search!
+            Note: It is recommended to use English query.
                 Examples:
                 - "filter low quality text"
                 - "remove duplicate images"
@@ -50,21 +51,6 @@ class DJOperatorRetriever:
             ToolResponse with list of relevant operator names and brief descriptions.
             For detailed information about a specific operator, use get_operator_details().
         """
-        # Validate English query (basic ASCII check)
-        if not query.isascii():
-            error_msg = "Query must be in English (non-ASCII characters detected)"
-            return ToolResponse(
-                    metadata={
-                        "success": False,
-                        "error": error_msg,
-                    },
-                    content=[
-                        TextBlock(
-                            type="text",
-                            text=f"Error searching operators: {error_msg}",
-                        ),
-                    ],
-                )
         try:
             limit = max(1, min(limit, 30))
 
@@ -104,6 +90,7 @@ class DJOperatorRetriever:
             )
 
         except Exception as e:
+            traceback.print_exc()
             logging.error(f"Error searching operators: {str(e)}")
             return ToolResponse(
                 metadata={
@@ -234,8 +221,8 @@ class DJOperatorRetriever:
             result += f"   {op['brief_description']}\n\n"
 
         result += "---\n\n"
-        result += '💡 **Tip**: Use `get_operator_details(operator_name="xxx")` '
-        result += "to get full documentation for any operator.\n"
+        result += "**Tip**: If results don't match your need, try rewriting the query—rephrase the intent, "
+        result += "use synonyms, or emphasize different constraints. Retry search 1-3 times with different formulations."
 
         return result
 
@@ -268,10 +255,10 @@ class DJOperatorRetriever:
         op_type = op_info["class_name"].split("_")[-1]
 
         details += (
-            f"\ncode path: data_juicer/core/{op_type}/{op_info['class_name']}.py\n"
+            f"\ncode path: data-juicer/data_juicer/core/{op_type}/{op_info['class_name']}.py\n"
         )
-        details += f"test path: tests/ops/{op_type}/test_{op_info['class_name']}.py\n"
-        details += f"op_doc path: docs/operators/{op_type}/{op_info['class_name']}.md\n"
+        details += f"test path: data-juicer/tests/ops/{op_type}/test_{op_info['class_name']}.py\n"
+        details += f"op_doc path: data-juicer/docs/operators/{op_type}/{op_info['class_name']}.md\n"
 
         details += "```\n"
 

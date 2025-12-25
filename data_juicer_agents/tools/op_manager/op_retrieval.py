@@ -121,7 +121,7 @@ def _load_cached_index() -> bool:
 
         embeddings = DashScopeEmbeddings(
             dashscope_api_key=os.environ.get("DASHSCOPE_API_KEY"),
-            model="text-embedding-v1",
+            model="text-embedding-v3",
         )
 
         _cached_vector_store = FAISS.load_local(
@@ -324,7 +324,7 @@ def _build_vector_index():
 
     embeddings = DashScopeEmbeddings(
         dashscope_api_key=os.environ.get("DASHSCOPE_API_KEY"),
-        model="text-embedding-v1",
+        model="text-embedding-v3",
     )
 
     metadatas = [{"index": i} for i in range(len(tool_descriptions))]

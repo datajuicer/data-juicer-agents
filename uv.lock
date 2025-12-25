@@ -1274,7 +1274,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agentscope", specifier = ">=1.0.5" },
+    { name = "agentscope", specifier = ">=1.0.7" },
     { name = "agentscope-runtime", specifier = ">=1.0.0" },
     { name = "black", marker = "extra == 'dev'" },
     { name = "faiss-cpu", specifier = ">=1.13.1" },

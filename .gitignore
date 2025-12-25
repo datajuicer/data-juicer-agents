@@ -142,5 +142,4 @@ logs/
 cache_retrieve/
 vector_index_cache/
 interactive_recipe/qa-copilot/asset/text_material/
-data-juicer/
-data_juicer_hub/
+*.bak
