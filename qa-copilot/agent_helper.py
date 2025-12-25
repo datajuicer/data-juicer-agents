@@ -272,7 +272,7 @@ async def file_tracking_pre_print_hook(
                         (data_juicer_repo_url.format(repo_name=repo_name) + f, f)
                     )
 
-            summary_text = "\n\n---\n# Juicer Read: \n" + "\n".join(
+            summary_text = "\n\n---\n# Reference: \n" + "\n".join(
                 f"- [`{n}`]({f})." for f, n in file_list
             )
 
@@ -281,7 +281,7 @@ async def file_tracking_pre_print_hook(
                 for block in msg.content:
                     if block.get("type") == "text":
                         # Prevent duplicate additions (if retry mechanism is available)
-                        if "Juicer Read: " not in block["text"]:
+                        if "Reference: " not in block["text"]:
                             block["text"] += summary_text
                             print(
                                 f"📋 [Agent {self.name}] Append file summary: {len(file_list)} files."
