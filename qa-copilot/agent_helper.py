@@ -273,7 +273,7 @@ async def file_tracking_pre_print_hook(
                     )
 
             summary_text = "\n\n# Reference: \n" + "\n".join(
-                f"- [`{n}`]({f})." for f, n in file_list
+                f"- [{n}]({f})." for f, n in file_list
             )
 
             # Modify current message content

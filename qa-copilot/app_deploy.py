@@ -120,7 +120,9 @@ async def init_resources(self):
 
     home_serena_config = Path.home() / ".serena" / "serena_config.yml"
 
-    if SOURCE_SERENA_CONFIG.exists():
+    if SOURCE_SERENA_CONFIG.resolve().exists():
+        if not home_serena_config.parent.exists():
+            home_serena_config.parent.mkdir(parents=True, exist_ok=True)
         append_project_to_serena(DJ_HOME_PATH, home_serena_config)
 
     if mcp_clients:

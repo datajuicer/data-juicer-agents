@@ -22,8 +22,6 @@ add_gitignore_rules() {
       echo "$trimmed" >> "$root_ignore"
     fi
   done < "$source_file"
-
-  rm -f "$temp_file"
 }
 
 clone_if_missing() {

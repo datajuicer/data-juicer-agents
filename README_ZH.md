@@ -96,7 +96,7 @@ Data-Juicer 智能体生态系统正在快速扩展，以下是当前正在开�
     您的浏览器不支持视频标签。
 </video>
 
-问答智能体目前可在[此处](https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/qa-copilot)查看并试用。
+问答智能体目前可在[此处](https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot)查看并试用。
 
 ### 交互式数据分析与可视化智能体 (开发中)
 

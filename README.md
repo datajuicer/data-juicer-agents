@@ -96,7 +96,7 @@ Provides users with detailed answers about Data-Juicer operators, concepts, and 
     Your browser does not support the video tag.
 </video>
 
-The Q&A agent can currently be viewed and tried out [here](https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/qa-copilot).
+The Q&A agent can currently be viewed and tried out [here](https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot).
 
 ### Interactive Data Analysis and Visualization Agent (In Development)
 
