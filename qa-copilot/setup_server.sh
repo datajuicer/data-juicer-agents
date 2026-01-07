@@ -109,6 +109,8 @@ if [ "$DISABLE_DATABASE" != "1" ]; then
     fi
 fi
 
+# Logs
+export DJ_COPILOT_ENABLE_LOGGING="${DJ_COPILOT_ENABLE_LOGGING:-false}"
 
 echo "🚀 Starting QA Copilot Web Server..."
 python app_deploy.py
