@@ -293,9 +293,6 @@ async def query_func(
     )
     
     # ========== Safe Check ==========
-    if _check_user_input_safety_func is None:
-        _check_user_input_safety_func = await _load_safe_check_handler()
-    
     is_safe, error_msg = await _check_user_input_safety_func(msgs[-1], user_id)
     if not is_safe:
         yield error_msg, True
