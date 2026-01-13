@@ -14,6 +14,7 @@ from agentscope_runtime.engine.schemas.session import Session
 from agentscope_runtime.engine.schemas.agent_schemas import Message
 
 from op_manager.dj_op_retriever import DJOperatorRetriever
+from session_logger import SessionLogger
 
 from agentscope.tool import Toolkit
 from agentscope.agent import ReActAgent
@@ -140,6 +141,7 @@ async def file_tracking_pre_print_hook(
     """
     The statistics file is accessed and appended to the last message.
     Only tracks files from successful tool executions.
+    Also logs a summary of accessed files into session logger if available.
     """
     try:
         if not kwargs.get("last", False):
@@ -273,7 +275,7 @@ async def file_tracking_pre_print_hook(
                     )
 
             summary_text = "\n\n# Reference: \n" + "\n".join(
-                f"- [`{n}`]({f})." for f, n in file_list
+                f"- [{n}]({f})." for f, n in file_list
             )
 
             # Modify current message content
@@ -287,6 +289,24 @@ async def file_tracking_pre_print_hook(
                                 f"📋 [Agent {self.name}] Append file summary: {len(file_list)} files."
                             )
                         break
+
+            # Log summary to session logger if attached to agent
+            if hasattr(self, "session_logger") and isinstance(
+                self.session_logger, SessionLogger
+            ):
+                try:
+                    await self.session_logger.log_event(
+                        {
+                            "type": "tool_summary",
+                            "items": [
+                                {"name": name, "url": url}
+                                for url, name in file_list
+                            ],
+                            "file_count": len(file_list),
+                        }
+                    )
+                except Exception as e:
+                    print(f"⚠️ Warning: Error logging tool summary: {e}")
 
         return kwargs
 

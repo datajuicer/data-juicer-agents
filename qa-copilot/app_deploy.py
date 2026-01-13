@@ -7,6 +7,7 @@ from pathlib import Path
 from agentscope.model import DashScopeChatModel
 from agentscope.formatter import DashScopeChatFormatter
 from agentscope.agent import ReActAgent
+from agentscope.message import Msg
 
 from agent_helper import (
     toolkit,
@@ -35,6 +36,12 @@ from agentscope_runtime.engine.services.memory.redis_memory_service import (
 )
 import oyaml as yaml
 import os
+import sys
+import importlib.util
+import time
+from typing import Optional, Tuple, Any, Callable, Awaitable
+
+from session_logger import SessionLogger, ENABLE_SESSION_LOGGING
 
 DEFAULT_DJ_HOME_PATH = Path.cwd() / "data-juicer-home"
 DJ_HOME_PATH = Path(os.getenv("DJ_HOME_PATH") or DEFAULT_DJ_HOME_PATH)
@@ -44,6 +51,12 @@ SOURCE_SERENA_CONFIG = FILE_PATH / "config" / "serena_config.yml"
 
 # Database configuration - set DISABLE_DATABASE=1 to disable all backend databases
 DISABLE_DATABASE = os.getenv("DISABLE_DATABASE", "false") == "1"
+
+# Session logging configuration - set DJ_COPILOT_ENABLE_LOGGING=false to disable
+if not ENABLE_SESSION_LOGGING:
+    print("ℹ️  Session logging disabled (DJ_COPILOT_ENABLE_LOGGING=false)")
+else:
+    print("✅ Session logging enabled")
 
 app = AgentApp(
     agent_name="Juicer",
@@ -71,6 +84,80 @@ model = DashScopeChatModel(
 formatter = DashScopeChatFormatter()
 
 
+# ========== Safe Check Dynamic Import ==========
+async def _dummy_check_user_input_safety(user_input: Any, user_id: str) -> Tuple[bool, Optional[Msg]]:
+    """
+    Dummy function used when safe check module is not available.
+    Defaults to allowing all inputs through.
+    """
+    return True, None
+
+
+async def _load_safe_check_handler():
+    """
+    Dynamically load safe check handler.
+    Load module based on environment variable SAFE_CHECK_HANDLER_PATH,
+    return dummy function if not set or loading fails.
+    """
+    safe_check_path = os.getenv("SAFE_CHECK_HANDLER_PATH")
+    
+    if not safe_check_path:
+        print("ℹ️  SAFE_CHECK_HANDLER_PATH not set, using dummy safe check (all inputs allowed)")
+        return _dummy_check_user_input_safety
+    
+    try:
+        # If path is a file path (ends with .py)
+        if safe_check_path.endswith('.py') and os.path.exists(safe_check_path):
+            spec = importlib.util.spec_from_file_location("safe_check_handler", safe_check_path)
+            if spec is None or spec.loader is None:
+                raise ImportError(f"Cannot load spec from {safe_check_path}")
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+        else:
+            # Import as module name
+            module = importlib.import_module(safe_check_path)
+        
+        if hasattr(module, 'check_user_input_safety'):
+            check_func = module.check_user_input_safety
+            print(f"✅ Loaded safe check handler from: {safe_check_path}")
+            return check_func
+        else:
+            raise AttributeError(f"Module {safe_check_path} does not have 'check_user_input_safety'")
+    
+    except Exception as e:
+        print(f"⚠️  Failed to load safe check handler from {safe_check_path}: {e}")
+        print("ℹ️  Falling back to dummy safe check (all inputs allowed)")
+        return _dummy_check_user_input_safety
+
+
+# Global variable to store check function
+_check_user_input_safety_func: Optional[Callable[[Any, str], Awaitable[Tuple[bool, Optional[Msg]]]]] = None
+
+# ========== End Safe Check Dynamic Import ==========
+
+
+def _extract_user_text(user_input: Any) -> str:
+    """Extract plain text from user message for logging."""
+    user_text = ""
+
+    if hasattr(user_input, "content"):
+        content = user_input.content
+        if isinstance(content, list):
+            for item in content:
+                if getattr(item, "type", None) == "text":
+                    user_text += getattr(item, "text", "")
+                elif isinstance(item, dict) and item.get("type") == "text":
+                    user_text += item.get("text", "")
+        elif isinstance(content, str):
+            user_text = content
+    elif isinstance(user_input, str):
+        user_text = user_input
+    elif isinstance(user_input, dict):
+        user_text = user_input.get("content", "")
+
+    return user_text
+
+
 def append_project_to_serena(new_project_path, serena_cfg_path):
     with open(SOURCE_SERENA_CONFIG, "r") as file:
         data = yaml.safe_load(file)
@@ -91,7 +178,12 @@ def append_project_to_serena(new_project_path, serena_cfg_path):
 
 @app.init
 async def init_resources(self):
+    global _check_user_input_safety_func
     print("🚀 Starting resources...")
+    
+    # Initialize safe check handler
+    _check_user_input_safety_func = await _load_safe_check_handler()
+    
     await state_service.start()
     await session_history_service.start()
     if not DISABLE_DATABASE:
@@ -120,7 +212,8 @@ async def init_resources(self):
 
     home_serena_config = Path.home() / ".serena" / "serena_config.yml"
 
-    if SOURCE_SERENA_CONFIG.exists():
+    if SOURCE_SERENA_CONFIG.resolve().exists():
+        home_serena_config.parent.mkdir(parents=True, exist_ok=True)
         append_project_to_serena(DJ_HOME_PATH, home_serena_config)
 
     if mcp_clients:
@@ -179,9 +272,34 @@ async def query_func(
     request: AgentRequest = None,
     **kwargs,
 ):
+    global _check_user_input_safety_func
     session_id = request.session_id
-    user_id = request.user_id
+    user_id = request.user_id or session_id
 
+    # Timing metrics
+    start_time = time.perf_counter()
+    first_token_time: Optional[float] = None
+
+    # Initialize session logger (per query)
+    logger = SessionLogger(session_id=session_id, user_id=user_id)
+
+    # Log metadata and user input
+    user_input = msgs[-1] if msgs else None
+    user_text = _extract_user_text(user_input) if user_input is not None else ""
+    await logger.log_event(
+        {
+            "type": "user_input",
+            "content": user_text,
+        }
+    )
+    
+    # ========== Safe Check ==========
+    is_safe, error_msg = await _check_user_input_safety_func(msgs[-1], user_id)
+    if not is_safe:
+        yield error_msg, True
+        return
+    # ========== End Safe Check ==========
+    
     state = await state_service.export_state(
         session_id=session_id,
         user_id=user_id,
@@ -213,6 +331,8 @@ async def query_func(
         )
 
     agent = ReActAgent(**agent_config)
+    # Attach session logger to agent so hooks can log tool usage
+    agent.session_logger = logger
     agent.set_console_output_enabled(enabled=False)
     agent.register_instance_hook(
         hook_type="pre_print",
@@ -223,10 +343,31 @@ async def query_func(
     if state:
         agent.load_state_dict(state)
 
+    final_response = ""
+
     async for msg, last in stream_printing_messages(
         agents=[agent],
         coroutine_task=agent(msgs[-1]),
     ):
+        if first_token_time is None and hasattr(msg, "content") and isinstance(msg.content, list):
+            for item in msg.content:
+                if item.get("type", None) == "text" and item.get("text", "").strip():
+                    first_token_time = time.perf_counter()
+                    break
+
+        # Log every chunk where last=True for trace
+        if last:
+            if hasattr(msg, "content") and isinstance(msg.content, list):
+                for item in msg.content:
+                    if item.get("type", None) == "text" and item.get("text", "").strip():
+                        final_response = item["text"]
+            await logger.log_event(
+                {
+                    "type": "last_chunk",
+                    "msg": str(msg),
+                }
+            )
+
         yield msg, last
 
     # Save final state
@@ -235,6 +376,22 @@ async def query_func(
         user_id=user_id,
         session_id=session_id,
         state=state,
+    )
+
+    # Compute timing metrics and log final response
+    complete_time = time.perf_counter()
+    first_token_duration = (
+        first_token_time - start_time if first_token_time is not None else None
+    )
+    total_duration = complete_time - start_time
+
+    await logger.log_event(
+        {
+            "type": "final_response",
+            "content": final_response,
+            "first_token_duration": first_token_duration,
+            "total_duration": total_duration,
+        }
     )
 
 
@@ -327,4 +484,5 @@ async def get_sessions(request: AgentRequest):
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8080)
+    host = os.getenv("DJ_COPILOT_SERVICE_HOST", "127.0.0.1")
+    app.run(host=host, port=8080)
