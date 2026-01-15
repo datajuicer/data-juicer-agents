@@ -1,6 +1,5 @@
 <div align="center">
-<img src="docs/imgs/dj_agents_logo.png" width=60%>
-<br/>
+<img src="docs/imgs/dj_agents_logo.png" width=70%>
 <br/>
 
 # Data-Juicer Agents: Towards Agentic Data Processing
@@ -17,7 +16,9 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem. Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
 
 
-https://github.com/user-attachments/assets/d985aa1a-c89d-4bbb-af63-c02ad7563717
+<div align="center">
+<img src="docs/imgs/dj_copilot_demo.gif" width=90%>
+</div>
 
 
 ## Overview
