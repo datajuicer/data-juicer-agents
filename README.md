@@ -2,7 +2,6 @@
 <img src="docs/imgs/dj_agents_logo.png" width=60%>
 <br/>
 <br/>
-<br/>
 
 # Data-Juicer Agents: Towards Agentic Data Processing
 
