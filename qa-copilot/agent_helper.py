@@ -1,11 +1,36 @@
 # -*- coding: utf-8 -*-
+# Copyright 2025 Alibaba
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# ==============================================================================
+# This file contains code from alias
+# Original repository: https://github.com/agentscope-ai/agentscope-samples/tree/main/alias
+#
+# Modifications made by data-juicer, 2026
+# ==============================================================================
 import os
-import copy
-import json
 import asyncio
 import time
-from pathlib import Path
-from typing import Optional, Dict, Any, List, Union
+import traceback
+from loguru import logger
+from typing import Optional, Dict, Any, List, Union, Literal
+from pydantic import BaseModel, Field
+
+from agentscope.mcp import HttpStatelessClient
+from agentscope.embedding import DashScopeTextEmbedding
+from agentscope.rag import SimpleKnowledge, QdrantStore
+from agentscope.tool import execute_shell_command, Toolkit
 
 from agentscope_runtime.engine.services.session_history import (
     InMemorySessionHistoryService,
@@ -14,17 +39,6 @@ from agentscope_runtime.engine.schemas.session import Session
 from agentscope_runtime.engine.schemas.agent_schemas import Message
 
 from op_manager.dj_op_retriever import DJOperatorRetriever
-from session_logger import SessionLogger
-
-from agentscope.tool import Toolkit
-from agentscope.agent import ReActAgent
-from agentscope.mcp import StdIOStatefulClient
-
-data_juicer_repo_url = "https://github.com/datajuicer/{repo_name}/blob/main/"
-data_juicer_doc_url = "https://datajuicer.github.io/{repo_name}/"
-
-DEFAULT_DJ_HOME_PATH = Path.cwd() / "data-juicer-home"
-DJ_HOME_PATH = Path(os.getenv("DJ_HOME_PATH") or DEFAULT_DJ_HOME_PATH)
 
 
 class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
@@ -122,244 +136,123 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
         await super().delete_session(user_id, session_id)
 
 
-def split_first_dir(path):
+class FeedbackData(BaseModel):
+    message_id: str = Field(..., description="The ID of the message being rated")
+    feedback_type: Literal["like", "dislike"] = Field(
+        ..., description="Must be 'like' or 'dislike'"
+    )
+    comment: str = Field("", description="Optional user comment")
+
+
+class FeedbackRequest(BaseModel):
+    data: FeedbackData
+    session_id: str
+    user_id: Optional[str] = None
+    id: Optional[str] = None
+
+
+async def add_qa_tools(
+    toolkit: Toolkit,
+):
     try:
-        p = Path(path)
-        parts = list(p.parts)
-        if len(parts) > 1:
-            return parts[0], str(Path(*parts[1:]))
+        # Check and initialize RAG data if needed
+        from rag_utils.create_rag_file import (
+            check_rag_initialized,
+            initialize_rag,
+            SCRIPT_DIR,
+        )
+
+        collection_name = "dj_faq"
+        is_initialized = await check_rag_initialized(collection_name)
+
+        if not is_initialized:
+            logger.info("RAG data not found. Initializing RAG data...")
+            # Check for custom FAQ file in the qaagent_tools directory
+            custom_faq_file = SCRIPT_DIR / "faq.txt"
+
+            if custom_faq_file.exists():
+                logger.info(f"Using FAQ file: {custom_faq_file}")
+                await initialize_rag(
+                    faq_file_path=custom_faq_file,
+                    collection_name=collection_name,
+                )
+            else:
+                logger.warning(
+                    f"FAQ file not found at {custom_faq_file}. "
+                    "Please ensure faq.txt exists "
+                    "in the rag_utils directory.",
+                )
+                logger.info("Attempting to use default FAQ file...")
+                await initialize_rag(collection_name=collection_name)
+            logger.info("RAG data initialization completed.")
         else:
-            return None, path
-    except Exception:
-        return None, path
-
-
-async def file_tracking_pre_print_hook(
-    self: "ReActAgent",
-    kwargs: dict[str, Any],
-) -> dict[str, Any] | None:
-    """
-    The statistics file is accessed and appended to the last message.
-    Only tracks files from successful tool executions.
-    Also logs a summary of accessed files into session logger if available.
-    """
-    try:
-        if not kwargs.get("last", False):
-            return None
-
-        msg = kwargs["msg"]
-
-        if isinstance(msg.content, str):
-            return None
-        if isinstance(msg.content, list):
-            for block in msg.content:
-                if block.get("type") != "text":
-                    return None
-
-        accessed_files = set()
-
-        target_tools = {
-            "view_text_file",
-            "read_file",
-            "get_symbols_overview",
-            "get_operator_details",
-        }
-
-        history = await self.memory.get_memory()
-
-        tool_id_to_file = {}
-        tool_id_to_success = {}
-
-        for message in reversed(history):
-            if getattr(message, "role", None) == "user":
-                break
-
-            content = getattr(message, "content", None)
-
-            if isinstance(content, list):
-                for block in content:
-                    if not isinstance(block, dict):
-                        continue
-
-                    # 1. Record information of all tool_use blocks
-                    if block.get("type") == "tool_use":
-                        tool_name = block.get("name", "")
-                        tool_id = block.get("id", "")
-
-                        if any(t in tool_name.lower() for t in target_tools):
-                            inputs = block.get("input", {})
-
-                            if isinstance(inputs, str):
-                                try:
-                                    inputs = json.loads(inputs)
-                                except json.JSONDecodeError:
-                                    continue
-
-                            if isinstance(inputs, dict):
-                                for key in [
-                                    "relative_path",
-                                    "operator_name",
-                                ]:
-                                    val = inputs.get(key)
-                                    if val and isinstance(val, str):
-                                        tool_id_to_file[tool_id] = val
-
-                    # 2. Check the tool_result block to determine if execution is successful
-                    elif block.get("type") == "tool_result":
-                        tool_use_id = block.get("id", "")
-                        output = block.get("output", [])
-
-                        # Determine whether it is successful: check whether there is an error message in output
-                        is_success = True
-                        if isinstance(output, list):
-                            for item in output:
-                                if isinstance(item, dict):
-                                    text = item.get("text", "")
-                                    if "Error executing tool" in text:
-                                        is_success = False
-                                        break
-
-                        tool_id_to_success[tool_use_id] = is_success
-
-        # 3. Add only successful files
-        for tool_id, file_path in tool_id_to_file.items():
-            if tool_id_to_success.get(tool_id, False):
-                accessed_files.add(file_path)
-
-        if accessed_files:
-            file_list = []
-            for f in accessed_files:
-                repo_name, f = split_first_dir(f)
-                if f.endswith("_ZH.md"):
-                    file_list.append(
-                        (
-                            data_juicer_doc_url.format(repo_name=repo_name)
-                            + "zh_CN/main/"
-                            + f.replace(".md", ".html"),
-                            f,
-                        )
-                    )
-                elif f.endswith(".md"):
-                    file_list.append(
-                        (
-                            data_juicer_doc_url.format(repo_name=repo_name)
-                            + "en/main/"
-                            + f.replace(".md", ".html"),
-                            f,
-                        )
-                    )
-                elif "." not in f and f.split("_")[-1] in [
-                    "aggregator",
-                    "deduplicator",
-                    "filter",
-                    "mapper",
-                    "formatter",
-                    "grouper",
-                    "selector",
-                    "op",
-                ]:
-                    file_list.append(
-                        (
-                            data_juicer_doc_url.format(repo_name="data-juicer")
-                            + "en/main/docs/operators/"
-                            + f.split("_")[-1]
-                            + "/"
-                            + f
-                            + ".html",
-                            f,
-                        )
-                    )
-                else:
-                    file_list.append(
-                        (data_juicer_repo_url.format(repo_name=repo_name) + f, f)
-                    )
-
-            summary_text = "\n\n# Reference: \n" + "\n".join(
-                f"- [{n}]({f})." for f, n in file_list
+            logger.info(
+                "RAG data already initialized. Skipping initialization.",
             )
 
-            # Modify current message content
-            if isinstance(msg.content, list):
-                for block in msg.content:
-                    if block.get("type") == "text":
-                        # Prevent duplicate additions (if retry mechanism is available)
-                        if "Reference: " not in block["text"]:
-                            block["text"] += summary_text
-                            print(
-                                f"📋 [Agent {self.name}] Append file summary: {len(file_list)} files."
-                            )
-                        break
-
-            # Log summary to session logger if attached to agent
-            if hasattr(self, "session_logger") and isinstance(
-                self.session_logger, SessionLogger
-            ):
-                try:
-                    await self.session_logger.log_event(
-                        {
-                            "type": "tool_summary",
-                            "items": [
-                                {"name": name, "url": url}
-                                for url, name in file_list
-                            ],
-                            "file_count": len(file_list),
-                        }
-                    )
-                except Exception as e:
-                    print(f"⚠️ Warning: Error logging tool summary: {e}")
-
-        return kwargs
-
+        knowledge = SimpleKnowledge(
+            embedding_store=QdrantStore(
+                # location=":memory:",
+                location=None,
+                client_kwargs={
+                    "host": os.getenv("QDRANT_HOST", "127.0.0.1"),  # Qdrant server address
+                    "port": int(os.getenv("QDRANT_PORT", "6333")),  # Qdrant server port
+                },
+                collection_name="dj_faq",
+                dimensions=1024,  # The dimension of the embedding vectors
+            ),
+            embedding_model=DashScopeTextEmbedding(
+                api_key=os.environ["DASHSCOPE_API_KEY"],
+                model_name="text-embedding-v4",
+            ),
+        )
+        toolkit.register_tool_function(
+            knowledge.retrieve_knowledge,
+            func_description=(  # Provide a clear description for the tool
+                "Quickly retrieve answers to questions related to "
+                "the Data-juicer FAQ. The `query` parameter is crucial "
+                "for retrieval quality."
+                "You may try multiple different queries to get the best "
+                "results. Adjust the `limit` and `score_threshold` "
+                "parameters to control the number and relevance of results."
+            ),
+            # group_name="qa_mode",
+        )
     except Exception as e:
-        print(f"⚠️ Warning: Error in file tracking hook: {e}")
-        return None
+        print(traceback.format_exc())
+        raise e from None
 
+    github_token = os.getenv("GITHUB_TOKEN")
+    if not github_token:
+        logger.error(
+            "Missing GITHUB_TOKEN; GitHub MCP tools cannot be used. "
+            "Please export GITHUB_TOKEN in your environment before "
+            "proceeding.",
+        )
+    else:
+        try:
+            github_client = HttpStatelessClient(
+                name="github",
+                transport="streamable_http",
+                url="https://api.githubcopilot.com/mcp/",
+                headers={"Authorization": (f"Bearer {github_token}")},
+            )
 
-class DeepCopyableToolkit(Toolkit):
-    def __deepcopy__(self, memo):
-        new_toolkit = DeepCopyableToolkit()
+            await toolkit.register_mcp_client(
+                github_client,
+                enable_funcs=[
+                    "search_repositories",
+                    "search_code",
+                    "get_file_contents",
+                ],
+                # group_name="qa_mode",
+            )
+            # toolkit.register_tool_function(execute_shell_command)
+        except Exception as e:
+            print(traceback.format_exc())
+            raise e from None
 
-        for key, value in self.__dict__.items():
-            try:
-                new_toolkit.__dict__[key] = copy.deepcopy(value, memo)
-            except (TypeError, AttributeError):
-                # Fallback to shallow copy for non-deepcopyable objects
-                if isinstance(value, (dict, list, set)):
-                    new_toolkit.__dict__[key] = value.copy()
-                else:
-                    new_toolkit.__dict__[key] = value
-
-        memo[id(self)] = new_toolkit
-        return new_toolkit
-
-
-toolkit = DeepCopyableToolkit()
-
-# Initialize and register DJ Operator Retriever tools
-dj_retriever = DJOperatorRetriever()
-toolkit.register_tool_function(dj_retriever.search_operators)
-toolkit.register_tool_function(dj_retriever.get_operator_details)
-
-serena_command = [
-    "uvx",
-    "--with",
-    "pyright[nodejs]",
-    "--from",
-    "git+https://github.com/oraios/serena",
-    "serena",
-    "start-mcp-server",
-    "--project",
-    str(DJ_HOME_PATH),
-    "--mode",
-    "planning",
-]
-
-mcp_clients = []
-
-mcp_clients.append(
-    StdIOStatefulClient(
-        name="Serena",
-        command=serena_command[0],
-        args=serena_command[1:],
-    )
-)
+    # Initialize and register DJ Operator Retriever tools
+    dj_retriever = DJOperatorRetriever()
+    toolkit.register_tool_function(dj_retriever.search_operators)
+    toolkit.register_tool_function(dj_retriever.get_operator_details)
