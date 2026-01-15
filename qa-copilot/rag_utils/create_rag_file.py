@@ -48,8 +48,8 @@ SCRIPT_DIR = Path(__file__).parent
 # Qdrant storage directory (relative to script location)
 QDRANT_STORAGE_DIR = SCRIPT_DIR / "qdrant_storage"
 QDRANT_CONTAINER_NAME = "qdrant"
-QDRANT_HOST = "127.0.0.1"
-QDRANT_PORT = 6333
+QDRANT_HOST = os.getenv("QDRANT_HOST", "127.0.0.1")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
 
 
 def check_docker_available() -> bool:
@@ -361,8 +361,8 @@ async def initialize_rag(
         embedding_store=QdrantStore(
             location=None,
             client_kwargs={
-                "host": QDRANT_HOST,  # Qdrant server address
-                "port": QDRANT_PORT,  # Qdrant server port
+                "host": os.getenv("QDRANT_HOST", "127.0.0.1"),  # Qdrant server address
+                "port": int(os.getenv("QDRANT_PORT", "6333")),  # Qdrant server port
             },
             collection_name=collection_name,
             dimensions=1024,  # The dimension of the embedding vectors

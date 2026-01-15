@@ -32,7 +32,6 @@ dependencies = [
     "hf-transfer>=0.1.9",
     "transformers>=4.57.3",
     "oyaml",
-    "qdrant-client>=1.16.2",
 ]
 
 [project.scripts]
@@ -40,6 +39,7 @@ dj-agents = "data_juicer_agents.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=6.0", "black", "flake8", "mypy"]
+qa = ["qdrant-client>=1.16.2"]
 
 [project.urls]
 Homepage = "https://github.com/datajuicer/data-juicer-agents"

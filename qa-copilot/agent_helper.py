@@ -195,8 +195,8 @@ async def add_qa_tools(
                 # location=":memory:",
                 location=None,
                 client_kwargs={
-                    "host": "127.0.0.1",  # Qdrant server address
-                    "port": 6333,  # Qdrant server port
+                    "host": os.getenv("QDRANT_HOST", "127.0.0.1"),  # Qdrant server address
+                    "port": int(os.getenv("QDRANT_PORT", "6333")),  # Qdrant server port
                 },
                 collection_name="dj_faq",
                 dimensions=1024,  # The dimension of the embedding vectors
@@ -247,7 +247,7 @@ async def add_qa_tools(
                 ],
                 # group_name="qa_mode",
             )
-            toolkit.register_tool_function(execute_shell_command)
+            # toolkit.register_tool_function(execute_shell_command)
         except Exception as e:
             print(traceback.format_exc())
             raise e from None

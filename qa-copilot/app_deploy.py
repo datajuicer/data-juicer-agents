@@ -236,6 +236,7 @@ async def query_func(
         "model": model,
         "sys_prompt": prompts.QA,
         "toolkit": toolkit,
+        "parallel_tool_calls": True,
         "memory": AgentScopeSessionHistoryMemory(
             service=session_history_service,
             session_id=session_id,
