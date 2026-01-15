@@ -16,12 +16,9 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 
 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem. Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
 
-<div align="center">
-<video controls width="70%" height="auto" playsinline>
-    <source src="https://github.com/user-attachments/assets/d985aa1a-c89d-4bbb-af63-c02ad7563717" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
-</div>
+
+  <source src="https://github.com/user-attachments/assets/d985aa1a-c89d-4bbb-af63-c02ad7563717" type="video/mp4">
+
 
 ## Overview
 This repo maintains a suite of agents that enable users to interact with Data-Juicer's powerful data processing capabilities through natural language.
