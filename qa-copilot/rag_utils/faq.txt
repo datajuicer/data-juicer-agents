@@ -1,0 +1,1 @@
+'id': 'FAQ_001', 'question': 'What is Data-Juicer?', 'answer': 'Data-Juicer is a one-stop system to process text and multimodal data for and with foundation models (typically LLMs). It's designed to help researchers and developers efficiently handle the complex data processing needs of large language models and multimodal AI systems.'

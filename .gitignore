@@ -143,3 +143,4 @@ cache_retrieve/
 vector_index_cache/
 interactive_recipe/qa-copilot/asset/text_material/
 *.bak
+qdrant_storage/
