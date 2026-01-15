@@ -43,11 +43,11 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/data_juicer_agents.tools.router_helpers';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
@@ -518,11 +518,11 @@
                 <article class="bd-article">
                   
   <section id="module-data_juicer_agents.tools.router_helpers">
-<span id="data-juicer-agents-tools-router-helpers-module"></span><h1>data_juicer_agents.tools.router_helpers module<a class="headerlink" href="#module-data_juicer_agents.tools.router_helpers" title="Link to this heading">#</a></h1>
+<span id="data-juicer-agents-tools-router-helpers-module"></span><h1>data_juicer_agents.tools.router_helpers module<a class="headerlink" href="#module-data_juicer_agents.tools.router_helpers" title="链接到此标题。">#</a></h1>
 <p>Router agent using implicit routing</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.router_helpers.query_dj_operators">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.router_helpers.</span></span><span class="sig-name descname"><span class="pre">query_dj_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ToolResponse</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/router_helpers.html#query_dj_operators"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.router_helpers.query_dj_operators" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.router_helpers.</span></span><span class="sig-name descname"><span class="pre">query_dj_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ToolResponse</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/router_helpers.html#query_dj_operators"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.router_helpers.query_dj_operators" title="链接到此定义。">#</a></dt>
 <dd><p>Query DataJuicer operators by natural language description.</p>
 <p>Retrieves relevant operators from DataJuicer library based on user query.
 Supports matching by functionality, data type, and processing scenarios.</p>
@@ -544,7 +544,7 @@ Supports matching by functionality, data type, and processing scenarios.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.router_helpers.agent_to_tool">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.router_helpers.</span></span><span class="sig-name descname"><span class="pre">agent_to_tool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AgentBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/router_helpers.html#agent_to_tool"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.router_helpers.agent_to_tool" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.router_helpers.</span></span><span class="sig-name descname"><span class="pre">agent_to_tool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AgentBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/router_helpers.html#agent_to_tool"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.router_helpers.agent_to_tool" title="链接到此定义。">#</a></dt>
 <dd><p>Convert any agent to a tool function that can be registered in toolkit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数<span class="colon">:</span></dt>
@@ -562,7 +562,7 @@ Supports matching by functionality, data type, and processing scenarios.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.router_helpers.refresh_operators_info">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.router_helpers.</span></span><span class="sig-name descname"><span class="pre">refresh_operators_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/router_helpers.html#refresh_operators_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.router_helpers.refresh_operators_info" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.router_helpers.</span></span><span class="sig-name descname"><span class="pre">refresh_operators_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/router_helpers.html#refresh_operators_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.router_helpers.refresh_operators_info" title="链接到此定义。">#</a></dt>
 <dd><p>Refresh DataJuicer operators information during runtime.</p>
 <p>This function should be called when new operators are developed or when
 the operator library needs to be updated during the agent's lifecycle.</p>
@@ -662,7 +662,7 @@ the operator library needs to be updated during the agent's lifecycle.</p>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

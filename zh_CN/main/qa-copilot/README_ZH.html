@@ -43,11 +43,11 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'qa-copilot/README_ZH';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
@@ -541,38 +541,51 @@
                 <article class="bd-article">
                   
   <section id="q-a-copilot">
-<h1>Q&amp;A Copilot<a class="headerlink" href="#q-a-copilot" title="Link to this heading">#</a></h1>
-<p>Q&amp;A Copilot 是 InteRecipe 系统的智能问答组件，基于 AgentScope 框架构建的专业 Data-Juicer AI 助手。</p>
+<h1>Q&amp;A Copilot<a class="headerlink" href="#q-a-copilot" title="链接到此标题。">#</a></h1>
+<p>Q&amp;A Copilot 是 InteRecipe 系统中的智能问答组件，基于 AgentScope 框架构建，是一款面向 Data-Juicer 的专业 AI 助手。</p>
 <section id="id1">
-<h2>核心组件<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>核心组件<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
 <ul class="simple">
-<li><p>Juicy Agent：基于 ReActAgent 的智能问答代理</p></li>
-<li><p>MCP 集成：通过 Serena MCP 服务器提供代码分析能力</p></li>
-<li><p>Redis 存储：支持会话历史和反馈数据持久化</p></li>
-<li><p>Web API：提供 RESTful 接口供前端调用</p></li>
+<li><p><strong>Juicy Agent</strong>：基于 ReActAgent 构建的智能问答代理</p></li>
+<li><p><strong>FAQ RAG 系统</strong>：基于 Qdrant 向量数据库和 DashScope 文本嵌入模型，提供快速准确的 FAQ 检索能力</p></li>
+<li><p><strong>MCP 集成</strong>：通过 GitHub MCP Server 提供在线 GitHub 搜索能力</p></li>
+<li><p><strong>Redis 存储</strong>：支持会话历史记录和用户反馈数据的持久化存储</p></li>
+<li><p><strong>Web API</strong>：提供 RESTful 接口，便于前端集成</p></li>
 </ul>
 </section>
 <section id="id2">
-<h2>快速开始<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>快速开始<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <section id="id3">
-<h3>环境要求<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3>前置要求<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h3>
 <ul class="simple">
 <li><p>Python &gt;= 3.10</p></li>
-<li><p>Redis 服务器（可选 - 可通过 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 禁用）</p></li>
-<li><p>DashScope API Key（用于大语言模型调用）</p></li>
+<li><p>Docker（用于运行 Qdrant 向量数据库）</p></li>
+<li><p>Redis 服务器（可选 —— 可通过设置 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 禁用）</p></li>
+<li><p>DashScope API Key（用于调用大语言模型和文本嵌入）</p></li>
 </ul>
 </section>
 <section id="id4">
-<h3>安装<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<h3>安装步骤<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
 <ol class="arabic">
-<li><p>安装依赖</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>../
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+<li><p>安装依赖项</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>..
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>qa<span class="o">]</span>
 <span class="nb">cd</span><span class="w"> </span>qa-copilot
 </pre></div>
 </div>
 </li>
-<li><p>安装和启动 Redis（可选 - 如果使用 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 则可跳过）</p>
+<li><p>安装 Docker（用于 Qdrant 向量数据库）</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>docker.io
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
+
+<span class="c1"># macOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>docker
+</pre></div>
+</div>
+<p><strong>注意</strong>：系统启动时会自动检查并启动 Qdrant Docker 容器。如果 FAQ 数据未初始化，系统会自动从 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> 文件读取并初始化 RAG 数据。</p>
+</li>
+<li><p>安装并启动 Redis（可选 —— 若使用 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 则可跳过）</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>redis-server
 redis-server<span class="w"> </span>--daemonize<span class="w"> </span>yes
@@ -582,24 +595,26 @@ brew<span class="w"> </span>install<span class="w"> </span>redis
 brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
 </pre></div>
 </div>
-<p><strong>注意</strong>：如果设置 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>，系统将以纯内存模式运行而无需 Redis。会话历史将存储在内存中，并在 20 秒无活动后自动清理。</p>
+<p><strong>注意</strong>：如果设置了 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>，系统将以纯内存模式运行，无需 Redis。会话历史将仅保存在内存中，并在用户 20 秒无操作后自动清理。</p>
 </li>
 </ol>
 </section>
 <section id="id5">
-<h3>配置<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>配置说明<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
 <ol class="arabic">
 <li><p>设置环境变量</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span>
 
-<span class="c1"># 可选：禁用数据库（Redis）- 以纯内存模式运行</span>
+<span class="c1"># 可选：禁用数据库（Redis）—— 启用纯内存模式</span>
 <span class="c1"># export DISABLE_DATABASE=1</span>
 </pre></div>
 </div>
 </li>
-<li><p>配置 Data-Juicer 路径</p>
-<p>编辑 <code class="docutils literal notranslate"><span class="pre">setup_server.sh</span></code> 文件，将 <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code> 替换为你本地 data-juicer 仓库的绝对路径：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_PATH</span><span class="o">=</span><span class="s2">&quot;/path/to/your/data-juicer&quot;</span>
+<li><p>配置 FAQ 文件（可选）</p>
+<p>系统默认使用 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> 作为 FAQ 数据源。您可以编辑此文件来自定义 FAQ 内容。FAQ 文件格式示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_001&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;什么是 Data-Juicer?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;Data-Juicer 是一个...&#39;</span>
+<span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_002&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;如何安装?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;您可以通过...&#39;</span>
 </pre></div>
 </div>
 </li>
@@ -607,17 +622,23 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>setup_server.sh
 </pre></div>
 </div>
+<p>首次启动时，系统会自动：</p>
+<ul class="simple">
+<li><p>检查并启动 Qdrant Docker 容器（端口 6333）</p></li>
+<li><p>初始化 FAQ RAG 数据（如果尚未初始化）</p></li>
+<li><p>启动 Web API 服务</p></li>
+</ul>
 </li>
 </ol>
 </section>
 </section>
 <section id="id6">
-<h2>使用说明<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<h2>使用方式<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
 <section id="web-api">
-<h3>Web API 接口<a class="headerlink" href="#web-api" title="Link to this heading">#</a></h3>
-<p>启动服务后，系统将提供以下 API 接口：</p>
+<h3>Web API 接口<a class="headerlink" href="#web-api" title="链接到此标题。">#</a></h3>
+<p>服务启动后，系统将提供以下 API 接口：</p>
 <section id="id7">
-<h4>1. 问答对话<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<h4>1. 问答对话<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h4>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /process</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -625,7 +646,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">  &quot;input&quot;: [</span>
 <span class="err">    {</span>
 <span class="err">      &quot;role&quot;: &quot;user&quot;, </span>
-<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;如何使用Data-Juicer进行数据清洗？&quot;}]</span>
+<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;如何使用 Data-Juicer 进行数据清洗？&quot;}]</span>
 <span class="err">    }</span>
 <span class="err">  ],</span>
 <span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
@@ -635,7 +656,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="id8">
-<h4>2. 获取会话历史<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<h4>2. 获取会话历史<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h4>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /memory</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -647,7 +668,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="id9">
-<h4>3. 清除会话历史<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<h4>3. 清除会话历史<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h4>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /clear</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -659,7 +680,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="id10">
-<h4>4. 获取会话列表<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<h4>4. 获取会话列表<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h4>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /sessions</span>
 <span class="err">Content-Type: application/json</span>
 <span class="err">{</span>
@@ -668,21 +689,51 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </pre></div>
 </div>
 </section>
+<section id="id11">
+<h4>5. 提交用户反馈<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h4>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /feedback</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{</span>
+<span class="err">  &quot;data&quot;: {</span>
+<span class="err">    &quot;message_id&quot;: &quot;message_id_here&quot;,</span>
+<span class="err">    &quot;feedback_type&quot;: &quot;like&quot;,</span>
+<span class="err">    &quot;comment&quot;: &quot;可选的用户评论&quot;</span>
+<span class="err">  },</span>
+<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
+<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">}</span>
+</pre></div>
+</div>
+<p><strong>参数说明：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">message_id</span></code>：要反馈的消息 ID（必填）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feedback_type</span></code>：反馈类型，可选值为 <code class="docutils literal notranslate"><span class="pre">&quot;like&quot;</span></code>（点赞）或 <code class="docutils literal notranslate"><span class="pre">&quot;dislike&quot;</span></code>（点踩）（必填）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comment</span></code>：可选的用户评论文本（选填）</p></li>
+</ul>
+<p><strong>响应示例：</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feedback recorded successfully&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="webui">
-<h3>WebUI<a class="headerlink" href="#webui" title="Link to this heading">#</a></h3>
-<p>你可以直接在终端中运行以下命令：</p>
+<h3>WebUI 界面<a class="headerlink" href="#webui" title="链接到此标题。">#</a></h3>
+<p>您只需在终端中运行以下命令即可启动 WebUI：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npx<span class="w"> </span>@agentscope-ai/chat<span class="w"> </span>agentscope-runtime-webui<span class="w"> </span>--url<span class="w"> </span>http://localhost:8080/process
 </pre></div>
 </div>
-<p>更多信息请参考 <a class="reference external" href="https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx">AgentScope Runtime WebUI</a>。</p>
+<p>更多详情请参考 <a class="reference external" href="https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx">AgentScope Runtime WebUI</a>。</p>
 </section>
 </section>
-<section id="id11">
-<h2>配置说明<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
 <section id="id12">
-<h3>模型配置<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
-<p>在 <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code> 中可以配置使用的语言模型：</p>
+<h2>配置详解<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h2>
+<section id="id13">
+<h3>模型配置<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h3>
+<p>在 <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code> 文件中，您可以配置所使用的语言模型：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">=</span><span class="n">DashScopeChatModel</span><span class="p">(</span>
     <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>  <span class="c1"># 模型名称</span>
     <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
@@ -691,56 +742,79 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </pre></div>
 </div>
 </section>
-<section id="mcp">
-<h3>MCP 服务配置<a class="headerlink" href="#mcp" title="Link to this heading">#</a></h3>
-<p>系统使用 Serena MCP 服务器提供代码分析能力：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">serena_command</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;uvx&quot;</span><span class="p">,</span> <span class="s2">&quot;--with&quot;</span><span class="p">,</span> <span class="s2">&quot;pyright[nodejs]&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--from&quot;</span><span class="p">,</span> <span class="s2">&quot;git+https://github.com/oraios/serena&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;serena&quot;</span><span class="p">,</span> <span class="s2">&quot;start-mcp-server&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--project&quot;</span><span class="p">,</span> <span class="n">DATA_JUICER_PATH</span><span class="p">,</span>
-    <span class="s2">&quot;--mode&quot;</span><span class="p">,</span> <span class="s2">&quot;planning&quot;</span><span class="p">,</span>
-<span class="p">]</span>
-</pre></div>
-</div>
+<section id="faq-rag">
+<h3>FAQ RAG 配置<a class="headerlink" href="#faq-rag" title="链接到此标题。">#</a></h3>
+<p>FAQ RAG 系统使用以下配置：</p>
+<ul class="simple">
+<li><p><strong>向量数据库</strong>：Qdrant（通过 Docker 容器运行）</p></li>
+<li><p><strong>嵌入模型</strong>：DashScope text-embedding-v4</p></li>
+<li><p><strong>向量维度</strong>：1024</p></li>
+<li><p><strong>数据源</strong>：<code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code></p></li>
+<li><p><strong>存储位置</strong>：<code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code></p></li>
+</ul>
+<p>系统会在启动时自动检查 RAG 数据是否已初始化。如果未初始化，会自动读取 FAQ 文件并创建向量索引。</p>
 </section>
 </section>
-<section id="id13">
-<h2>故障排除<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
 <section id="id14">
-<h3>常见问题<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<h2>故障排查<a class="headerlink" href="#id14" title="链接到此标题。">#</a></h2>
+<section id="id15">
+<h3>常见问题<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h3>
 <ol class="arabic simple">
-<li><p>Redis 连接失败</p>
+<li><p><strong>Docker/Qdrant 相关问题</strong></p>
+<ul class="simple">
+<li><p>确保 Docker 服务正在运行：<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">--version</span></code></p></li>
+<li><p>检查 Qdrant 容器状态：<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">qdrant</span></code></p></li>
+<li><p>手动启动 Qdrant 容器：<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">start</span> <span class="pre">qdrant</span></code></p></li>
+<li><p>检查 Qdrant 端口是否被占用：<code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6333</span></code></p></li>
+<li><p>如果需要重新初始化 RAG 数据，删除 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code> 目录后重启服务</p></li>
+</ul>
+</li>
+<li><p><strong>Redis 连接失败</strong></p>
 <ul class="simple">
 <li><p>确保 Redis 服务正在运行：<code class="docutils literal notranslate"><span class="pre">redis-cli</span> <span class="pre">ping</span></code></p></li>
 <li><p>检查 Redis 端口是否被占用：<code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code></p></li>
 </ul>
 </li>
-<li><p>MCP 服务启动失败</p>
+<li><p><strong>MCP 服务启动失败</strong></p>
 <ul class="simple">
-<li><p>确保 <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code> 路径正确且存在</p></li>
-<li><p>检查是否安装了 Node.js（Serena MCP 依赖）</p></li>
+<li><p>确认 <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> 已正确设置且有效</p></li>
 </ul>
 </li>
-<li><p>API Key 错误</p>
+<li><p><strong>API Key 错误</strong></p>
 <ul class="simple">
-<li><p>验证 <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> 环境变量是否正确设置</p></li>
-<li><p>确认 API Key 有效且有足够的配额</p></li>
+<li><p>检查 <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> 环境变量是否已正确配置</p></li>
+<li><p>确认该 API Key 有效且配额充足</p></li>
+</ul>
+</li>
+<li><p><strong>FAQ 检索无结果</strong></p>
+<ul class="simple">
+<li><p>确认 FAQ 文件 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> 存在且格式正确</p></li>
+<li><p>检查 Qdrant 容器是否正常运行</p></li>
+<li><p>查看日志确认 RAG 数据是否已成功初始化</p></li>
 </ul>
 </li>
 </ol>
 </section>
 </section>
-<section id="id15">
-<h2>许可证<a class="headerlink" href="#id15" title="Link to this heading">#</a></h2>
-<p>本项目采用与主项目相同的许可证。详情请参阅 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/LICENSE">LICENSE</a> 文件。</p>
-</section>
 <section id="id16">
-<h2>相关链接<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
+<h2>致谢<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h2>
+<p>本项目的部分代码参考并改编自以下开源项目：</p>
+<ul class="simple">
+<li><p><strong>FAQ RAG 系统 &amp; GitHub MCP 集成</strong>：基于 <a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples/tree/main/alias">AgentScope Samples - Alias</a> 项目的实现进行改编</p></li>
+</ul>
+<p>感谢 AgentScope 团队提供的优秀框架和示例代码！</p>
+</section>
+<section id="id17">
+<h2>许可证<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
+<p>本项目采用与主项目相同的许可证。详细信息请参阅 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/LICENSE">LICENSE</a> 文件。</p>
+</section>
+<section id="id18">
+<h2>相关链接<a class="headerlink" href="#id18" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer 官方仓库</a></p></li>
 <li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope 框架</a></p></li>
-<li><p><a class="reference external" href="https://github.com/oraios/serena">Serena MCP</a></p></li>
+<li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples">AgentScope Samples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/github/github-mcp-server">GitHub MCP Server</a></p></li>
 </ul>
 </section>
 </section>
@@ -794,33 +868,35 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
     <ul class="nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">核心组件</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">快速开始</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">环境要求</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">安装</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">配置</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">前置要求</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">安装步骤</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">配置说明</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">使用说明</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">使用方式</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#web-api">Web API 接口</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">1. 问答对话</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2. 获取会话历史</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3. 清除会话历史</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4. 获取会话列表</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5. 提交用户反馈</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI 界面</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">配置说明</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">模型配置</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mcp">MCP 服务配置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">配置详解</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型配置</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#faq-rag">FAQ RAG 配置</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">故障排除</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">常见问题</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">故障排查</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">常见问题</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">许可证</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">相关链接</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">致谢</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">许可证</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">相关链接</a></li>
 </ul>
   </nav></div>
 
@@ -873,7 +949,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

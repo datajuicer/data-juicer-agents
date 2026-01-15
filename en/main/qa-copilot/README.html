@@ -43,8 +43,8 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'qa-copilot/README';</script>
@@ -546,7 +546,8 @@
 <h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Juicy Agent: Intelligent Q&amp;A agent based on ReActAgent</p></li>
-<li><p>MCP Integration: Code analysis capabilities through Serena MCP server</p></li>
+<li><p>FAQ RAG System: Fast and accurate FAQ retrieval powered by Qdrant vector database and DashScope text embedding model</p></li>
+<li><p>MCP Integration: Online GitHub search capabilities through GitHub MCP Server</p></li>
 <li><p>Redis Storage: Supports session history and feedback data persistence</p></li>
 <li><p>Web API: Provides RESTful interfaces for frontend integration</p></li>
 </ul>
@@ -557,8 +558,9 @@
 <h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Python &gt;= 3.10</p></li>
+<li><p>Docker (for running Qdrant vector database)</p></li>
 <li><p>Redis server (optional - can be disabled with <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>)</p></li>
-<li><p>DashScope API Key (for large language model calls)</p></li>
+<li><p>DashScope API Key (for large language model calls and text embedding)</p></li>
 </ul>
 </section>
 <section id="installation">
@@ -570,6 +572,17 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <span class="nb">cd</span><span class="w"> </span>qa-copilot
 </pre></div>
 </div>
+</li>
+<li><p>Install Docker (for Qdrant vector database)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>docker.io
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
+
+<span class="c1"># macOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>docker
+</pre></div>
+</div>
+<p><strong>Note</strong>: The system will automatically check and start the Qdrant Docker container on startup. If FAQ data is not initialized, the system will automatically read from <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> and initialize the RAG data.</p>
 </li>
 <li><p>Install and start Redis (optional - skip if using <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
@@ -590,15 +603,17 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <ol class="arabic">
 <li><p>Set environment variables</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span>
 
 <span class="c1"># Optional: Disable database (Redis) - run in memory-only mode</span>
 <span class="c1"># export DISABLE_DATABASE=1</span>
 </pre></div>
 </div>
 </li>
-<li><p>Configure Data-Juicer path</p>
-<p>Edit the <code class="docutils literal notranslate"><span class="pre">setup_server.sh</span></code> file and replace <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code> with the absolute path to your local data-juicer repository:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_PATH</span><span class="o">=</span><span class="s2">&quot;/path/to/your/data-juicer&quot;</span>
+<li><p>Configure FAQ file (optional)</p>
+<p>The system uses <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> as the FAQ data source by default. You can edit this file to customize FAQ content. FAQ file format example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_001&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;What is Data-Juicer?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;Data-Juicer is a...&#39;</span>
+<span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_002&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;How to install?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;You can install by...&#39;</span>
 </pre></div>
 </div>
 </li>
@@ -606,6 +621,12 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>setup_server.sh
 </pre></div>
 </div>
+<p>On first startup, the system will automatically:</p>
+<ul class="simple">
+<li><p>Check and start the Qdrant Docker container (port 6333)</p></li>
+<li><p>Initialize FAQ RAG data (if not already initialized)</p></li>
+<li><p>Start the Web API service</p></li>
+</ul>
 </li>
 </ol>
 </section>
@@ -667,6 +688,36 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </pre></div>
 </div>
 </section>
+<section id="submit-user-feedback">
+<h4>5. Submit User Feedback<a class="headerlink" href="#submit-user-feedback" title="Link to this heading">#</a></h4>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /feedback</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{</span>
+<span class="err">  &quot;data&quot;: {</span>
+<span class="err">    &quot;message_id&quot;: &quot;message_id_here&quot;,</span>
+<span class="err">    &quot;feedback_type&quot;: &quot;like&quot;,</span>
+<span class="err">    &quot;comment&quot;: &quot;optional user comment&quot;</span>
+<span class="err">  },</span>
+<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
+<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">}</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">message_id</span></code>: The ID of the message to provide feedback on (required)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feedback_type</span></code>: Type of feedback, either <code class="docutils literal notranslate"><span class="pre">&quot;like&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;dislike&quot;</span></code> (required)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comment</span></code>: Optional user comment text (optional)</p></li>
+</ul>
+<p><strong>Response example:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feedback recorded successfully&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="webui">
 <h3>WebUI<a class="headerlink" href="#webui" title="Link to this heading">#</a></h3>
@@ -690,18 +741,17 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </pre></div>
 </div>
 </section>
-<section id="mcp-service-configuration">
-<h3>MCP Service Configuration<a class="headerlink" href="#mcp-service-configuration" title="Link to this heading">#</a></h3>
-<p>The system uses Serena MCP server to provide code analysis capabilities:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">serena_command</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;uvx&quot;</span><span class="p">,</span> <span class="s2">&quot;--with&quot;</span><span class="p">,</span> <span class="s2">&quot;pyright[nodejs]&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--from&quot;</span><span class="p">,</span> <span class="s2">&quot;git+https://github.com/oraios/serena&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;serena&quot;</span><span class="p">,</span> <span class="s2">&quot;start-mcp-server&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--project&quot;</span><span class="p">,</span> <span class="n">DATA_JUICER_PATH</span><span class="p">,</span>
-    <span class="s2">&quot;--mode&quot;</span><span class="p">,</span> <span class="s2">&quot;planning&quot;</span><span class="p">,</span>
-<span class="p">]</span>
-</pre></div>
-</div>
+<section id="faq-rag-configuration">
+<h3>FAQ RAG Configuration<a class="headerlink" href="#faq-rag-configuration" title="Link to this heading">#</a></h3>
+<p>The FAQ RAG system uses the following configuration:</p>
+<ul class="simple">
+<li><p><strong>Vector Database</strong>: Qdrant (running in Docker container)</p></li>
+<li><p><strong>Embedding Model</strong>: DashScope text-embedding-v4</p></li>
+<li><p><strong>Vector Dimension</strong>: 1024</p></li>
+<li><p><strong>Data Source</strong>: <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code></p></li>
+<li><p><strong>Storage Location</strong>: <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code></p></li>
+</ul>
+<p>The system automatically checks if RAG data is initialized on startup. If not initialized, it will automatically read the FAQ file and create vector indexes.</p>
 </section>
 </section>
 <section id="troubleshooting">
@@ -709,26 +759,49 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <section id="common-issues">
 <h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>Redis connection failure</p>
+<li><p><strong>Docker/Qdrant Issues</strong></p>
+<ul class="simple">
+<li><p>Ensure Docker service is running: <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">--version</span></code></p></li>
+<li><p>Check Qdrant container status: <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">qdrant</span></code></p></li>
+<li><p>Manually start Qdrant container: <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">start</span> <span class="pre">qdrant</span></code></p></li>
+<li><p>Check if Qdrant port is occupied: <code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6333</span></code></p></li>
+<li><p>To reinitialize RAG data, delete the <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code> directory and restart the service</p></li>
+</ul>
+</li>
+<li><p><strong>Redis connection failure</strong></p>
 <ul class="simple">
 <li><p>Ensure Redis service is running: <code class="docutils literal notranslate"><span class="pre">redis-cli</span> <span class="pre">ping</span></code></p></li>
 <li><p>Check if Redis port is occupied: <code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code></p></li>
 </ul>
 </li>
-<li><p>MCP service startup failure</p>
+<li><p><strong>MCP service startup failure</strong></p>
 <ul class="simple">
-<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code> is correct and exists</p></li>
-<li><p>Check if Node.js is installed (Serena MCP dependency)</p></li>
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> is correct and exists</p></li>
 </ul>
 </li>
-<li><p>API Key error</p>
+<li><p><strong>API Key error</strong></p>
 <ul class="simple">
 <li><p>Verify <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> environment variable is correctly set</p></li>
 <li><p>Confirm API Key is valid and has sufficient quota</p></li>
 </ul>
 </li>
+<li><p><strong>FAQ retrieval returns no results</strong></p>
+<ul class="simple">
+<li><p>Confirm FAQ file <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> exists and is properly formatted</p></li>
+<li><p>Check if Qdrant container is running normally</p></li>
+<li><p>Review logs to confirm RAG data was successfully initialized</p></li>
+</ul>
+</li>
 </ol>
 </section>
+</section>
+<section id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading">#</a></h2>
+<p>Parts of this project’s code are adapted from the following open-source projects:</p>
+<ul class="simple">
+<li><p><strong>FAQ RAG System &amp; GitHub MCP Integration</strong>: Adapted from the implementation in <a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples/tree/main/alias">AgentScope Samples - Alias</a></p></li>
+</ul>
+<p>Special thanks to the AgentScope team for their excellent framework and sample code!</p>
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
@@ -739,7 +812,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer Official Repository</a></p></li>
 <li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope Framework</a></p></li>
-<li><p><a class="reference external" href="https://github.com/oraios/serena">Serena MCP</a></p></li>
+<li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples">AgentScope Samples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/github/github-mcp-server">GitHub MCP Server</a></p></li>
 </ul>
 </section>
 </section>
@@ -804,6 +878,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-session-history">2. Get Session History</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-session-history">3. Clear Session History</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-session-list">4. Get Session List</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#submit-user-feedback">5. Submit User Feedback</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI</a></li>
@@ -811,13 +886,14 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-details">Configuration Details</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-configuration">Model Configuration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mcp-service-configuration">MCP Service Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#faq-rag-configuration">FAQ RAG Configuration</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-links">Related Links</a></li>
 </ul>
@@ -872,7 +948,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

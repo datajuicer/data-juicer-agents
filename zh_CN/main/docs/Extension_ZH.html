@@ -43,11 +43,11 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/Extension_ZH';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
@@ -541,13 +541,13 @@
                 <article class="bd-article">
                   
   <section id="id1">
-<h1>定制化与扩展<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>定制化与扩展<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
 <section id="prompts">
-<h2>自定义 Prompts<a class="headerlink" href="#prompts" title="Link to this heading">#</a></h2>
+<h2>自定义 Prompts<a class="headerlink" href="#prompts" title="链接到此标题。">#</a></h2>
 <p>所有 Agent 的系统提示词都定义在 <code class="docutils literal notranslate"><span class="pre">prompts.py</span></code> 文件中。</p>
 </section>
 <section id="id2">
-<h2>更换模型<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>更换模型<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <p>你可以在 <code class="docutils literal notranslate"><span class="pre">main.py</span></code> 中为不同 Agent 指定不同模型。例如：</p>
 <ul class="simple">
 <li><p>主 Agent 使用 <code class="docutils literal notranslate"><span class="pre">qwen-max</span></code> 处理复杂推理</p></li>
@@ -556,7 +556,7 @@
 <p>同时，Formatter 和 Memory 也可替换。这种设计让系统既能开箱即用，又能适配企业级需求。</p>
 </section>
 <section id="id3">
-<h2>扩展新智能体<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>扩展新智能体<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
 <p>DataJuicer Agents 是一个开放框架。核心在于 <code class="docutils literal notranslate"><span class="pre">agents2toolkit</span></code> 函数——它能将任意 Agent 自动包装为 Router 可调用的工具。</p>
 <p>只需将你的 Agent 实例加入 <code class="docutils literal notranslate"><span class="pre">agents</span></code> 列表，Router 就会在运行时动态生成对应工具，并根据任务语义自动路由。</p>
 <p>这意味着，你可以基于此框架，快速构建领域专属的数据智能体。</p>
@@ -666,7 +666,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

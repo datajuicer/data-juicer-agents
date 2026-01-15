@@ -43,8 +43,8 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="_static/documentation_options.js?v=8a448e45"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
@@ -553,24 +553,24 @@
 <section id="multi-agent-routing-architecture">
 <h3>Multi-Agent Routing Architecture<a class="headerlink" href="#multi-agent-routing-architecture" title="Link to this heading">#</a></h3>
 <p>DataJuicer Agents adopts a <strong>multi-agent routing architecture</strong>, which is key to system scalability. When a user inputs a natural language request, the <strong>Router Agent</strong> first performs task triage to determine whether it’s a standard data processing task or a custom requirement that needs new capabilities.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>User Query
-  ↓
-Router Agent (Filtering &amp; Decision) ← query_dj_operators (operator retrieval)
-  │
-  ├─ High-match operator found
-  │  ↓
-  │  DJ Agent (Standard Data Processing Task)
-  |  ├── Preview data samples (confirm field names and data formats)
-  │  ├── get_ops_signature (retrieve full parameter signatures)
-  │  ├── Generate YAML configuration
-  │  └── execute_safe_command (run dj-process, dj-analyze)
-  │
-  └─ No high-match operator found
-     ↓
-     Dev Agent (Custom Operator Development &amp; Integration)
-     ├── get_basic_files (retrieve base classes and registration mechanism)
-     ├── get_operator_example (retrieve similar operator examples)
-     └── Generate compliant operator code
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>User Query  
+  ↓  
+Router Agent (Filtering &amp; Decision) ← query_dj_operators (operator retrieval)  
+  │  
+  ├─ High-match operator found  
+  │  ↓  
+  │  DJ Agent (Standard Data Processing Task)  
+  |  ├── Preview data samples (confirm field names and data formats)  
+  │  ├── get_ops_signature (retrieve full parameter signatures)  
+  │  ├── Generate YAML configuration  
+  │  └── execute_safe_command (run dj-process, dj-analyze)  
+  │  
+  └─ No high-match operator found  
+     ↓  
+     Dev Agent (Custom Operator Development &amp; Integration)  
+     ├── get_basic_files (retrieve base classes and registration mechanism)  
+     ├── get_operator_example (retrieve similar operator examples)  
+     └── Generate compliant operator code  
      └── Local integration (register to user-specified path)
 </pre></div>
 </div>
@@ -793,7 +793,7 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

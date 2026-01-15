@@ -43,11 +43,11 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/Advanced_ZH';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
@@ -541,13 +541,13 @@
                 <article class="bd-article">
                   
   <section id="id1">
-<h1>高级功能<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>高级功能<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
 <section id="id2">
-<h2>算子检索<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>算子检索<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <p>算子检索是 Agent 能否精准工作的核心。DJ 智能体实现了一个智能算子检索工具，通过独立的 LLM 查询环节从 Data-Juicer 的近200个算子中快速找到最相关的算子。这是数据处理智能体和代码开发智能体能够准确运行的关键组件。</p>
 <p>我们没有采用单一方案，而是提供了三种模式，通过 <code class="docutils literal notranslate"><span class="pre">-r</span></code> 参数灵活选择：</p>
 <section id="id3">
-<h3>检索模式<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3>检索模式<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h3>
 <p><strong>LLM 检索 (默认)</strong></p>
 <ul class="simple">
 <li><p>使用 Qwen-Turbo 从语义层面理解用户需求，适合复杂、模糊的描述</p></li>
@@ -566,7 +566,7 @@
 </ul>
 </section>
 <section id="id4">
-<h3>使用<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<h3>使用<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
 <p>通过 <code class="docutils literal notranslate"><span class="pre">-r</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--retrieval-mode</span></code> 参数指定检索模式：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-agents<span class="w"> </span>--retrieval-mode<span class="w"> </span>vector
 </pre></div>
@@ -575,10 +575,10 @@
 </section>
 </section>
 <section id="mcp">
-<h2>MCP 智能体<a class="headerlink" href="#mcp" title="Link to this heading">#</a></h2>
+<h2>MCP 智能体<a class="headerlink" href="#mcp" title="链接到此标题。">#</a></h2>
 <p>除了命令行，DataJuicer 还原生支持 MCP 服务，这是提升性能的重要手段。MCP 服务可直接通过原生接口获取算子信息、执行数据处理，易于迁移和集成，无需单独的 LLM 查询和命令行调用。</p>
 <section id="id5">
-<h3>MCP 服务器类型<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>MCP 服务器类型<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
 <p>Data-Juicer 提供两类 MCP：</p>
 <p><strong>Recipe-Flow MCP（数据菜谱）</strong></p>
 <ul class="simple">
@@ -599,7 +599,7 @@
 </div></blockquote>
 </section>
 <section id="id6">
-<h3>配置<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<h3>配置<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
 <p>在 <code class="docutils literal notranslate"><span class="pre">configs/mcp_config.json</span></code> 中配置服务地址：</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -612,7 +612,7 @@
 </div>
 </section>
 <section id="id7">
-<h3>使用方法<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<h3>使用方法<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
 <p>启用 MCP 智能体替代数据处理智能体：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 启用 MCP 智能体和开发智能体</span>
 dj-agents<span class="w"> </span>--agents<span class="w"> </span>dj_mcp<span class="w"> </span>dj_dev
@@ -735,7 +735,7 @@ dj-agents<span class="w"> </span>-a<span class="w"> </span>dj_mcp<span class="w"
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

@@ -43,11 +43,11 @@
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
     <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'interactive_recipe/README_ZH';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
@@ -541,15 +541,15 @@
                 <article class="bd-article">
                   
   <section id="interecipe">
-<h1>🔧 InteRecipe：交互式数据处理配方生成流程<a class="headerlink" href="#interecipe" title="Link to this heading">#</a></h1>
+<h1>🔧 InteRecipe：交互式数据处理配方生成流程<a class="headerlink" href="#interecipe" title="链接到此标题。">#</a></h1>
 <section id="id1">
-<h2>概述<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>概述<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
 <p>本演示展示了使用 Data-Juicer 算子池（Operator Pool）进行<strong>交互式、渐进式的数据处理配方生成工作流</strong>。该系统支持用户和智能体协同构建、编辑和验证数据处理配方，具有高度的灵活性与透明性。</p>
 <img title="框架图" alt="InteRecipe 系统架构图" src="./asset/framework.png">
 </section>
 <hr class="docutils" />
 <section id="id2">
-<h2>使用方法<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>使用方法<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <p>在运行前，请设置以下环境变量：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span>your_dashscope_key
 </pre></div>
@@ -572,13 +572,13 @@ bash<span class="w"> </span>setup_server.sh
 关于 Q&amp;A Copilot 的详细配置，请参考 <a class="reference internal" href="../qa-copilot/README_ZH.html"><span class="std std-doc">qa-copilot/README_ZH.md</span></a>。</p>
 </div></blockquote>
 <section id="id3">
-<h3>算子池使用示例<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3>算子池使用示例<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h3>
 <p>查看 <code class="docutils literal notranslate"><span class="pre">./playground.ipynb</span></code> 文件。</p>
 </section>
 </section>
 <hr class="docutils" />
 <section id="operator-pool">
-<h2>✨ 核心功能：算子池（Operator Pool）<a class="headerlink" href="#operator-pool" title="Link to this heading">#</a></h2>
+<h2>✨ 核心功能：算子池（Operator Pool）<a class="headerlink" href="#operator-pool" title="链接到此标题。">#</a></h2>
 <p>算子池是一个类似有序字典的专用结构，用于存储所有候选的 Data-Juicer 算子（Operators），用于数据处理任务。</p>
 <p>每个算子包含以下信息：</p>
 <ul class="simple">
@@ -609,7 +609,7 @@ bash<span class="w"> </span>setup_server.sh
 </section>
 <hr class="docutils" />
 <section id="id4">
-<h2>模块说明<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>模块说明<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p><strong>LLM 助手模块</strong><br />
 用户可以向 LLM 助手咨询当前算子池状态及相关辅助信息。用户只需点击即可应用由 LLM 生成的建议。</p></li>
@@ -623,10 +623,10 @@ bash<span class="w"> </span>setup_server.sh
 </section>
 <hr class="docutils" />
 <section id="id5">
-<h2>开发路线图<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<h2>开发路线图<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
 <p>InteRecipe 将在未来版本中集成到 Data-Juicer Agents 体系中，实现更智能化的自动数据处理配方生成与优化。</p>
 <section id="llm">
-<h3>✅ LLM 助手模块<a class="headerlink" href="#llm" title="Link to this heading">#</a></h3>
+<h3>✅ LLM 助手模块<a class="headerlink" href="#llm" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 基础提示模板与对话框设计</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 建议响应格式化、解析与应用</p></li>
@@ -634,7 +634,7 @@ bash<span class="w"> </span>setup_server.sh
 </ul>
 </section>
 <section id="id6">
-<h3>✅ 数据分析模块<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<h3>✅ 数据分析模块<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 基础可视化功能</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 算子池中的分位数图</p></li>
@@ -643,21 +643,21 @@ bash<span class="w"> </span>setup_server.sh
 </ul>
 </section>
 <section id="id7">
-<h3>✅ 数据归因模块<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<h3>✅ 数据归因模块<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 基础归因器：基于文本嵌入相似度与皮尔逊相关系数的归因器</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 高级归因器：梯度相似度、上下文困惑度、LLM 归因等</p></li>
 </ul>
 </section>
 <section id="id8">
-<h3>✅ 沙箱模块<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<h3>✅ 沙箱模块<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 基础沙箱部署</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 监控功能</p></li>
 </ul>
 </section>
 <section id="id9">
-<h3>✅ 其他<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<h3>✅ 其他<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 配方画廊（Recipe Gallery）</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 纯代理工作流评估</p></li>
@@ -782,7 +782,7 @@ bash<span class="w"> </span>setup_server.sh
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>
