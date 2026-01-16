@@ -348,12 +348,9 @@ var AskAIWidget = (function () {
               // Handle tool use
               if (data.object === "message" && data.type === "plugin_call") {
                 if (Array.isArray(data.content)) {
-                  // Use Array.find() for more robust parsing instead of relying on array order
-                  const toolCallIdData = data.content.find(item => item?.type === "data" && item.data?.call_id);
-                  const toolCallArgsData = data.content.find(item => item?.type === "data" && item.data?.name);
-                  
-                  const toolCallWithId = toolCallIdData?.data || null;
-                  const toolCall = toolCallArgsData?.data || null;
+                  const toolCallWithId = data.content[0]?.type === "data" ? data.content[0].data : null;
+                  const toolCallWithArgs = data.content.length > 1 ? data.content[1] : data.content[0];
+                  const toolCall = toolCallWithArgs?.type === "data" ? toolCallWithArgs.data : null;
                   
                   if (toolCall && onToolUse) {
                     const toolName = toolCall.name || 'Unknown Tool';
