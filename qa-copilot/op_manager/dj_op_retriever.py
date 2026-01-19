@@ -255,10 +255,10 @@ class DJOperatorRetriever:
         op_type = op_info["class_name"].split("_")[-1]
 
         details += (
-            f"\ncode path: https://github.com/datajuicer/data-juicer/tree/main/data_juicer/core/{op_type}/{op_info['class_name']}.py\n"
+            f"\ncode path: https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/{op_type}/{op_info['class_name']}.py\n"
         )
-        details += f"test path: https://github.com/datajuicer/data-juicer/tree/main/tests/ops/{op_type}/test_{op_info['class_name']}.py\n"
-        details += f"op_doc path: https://github.com/datajuicer/data-juicer/tree/main/docs/operators/{op_type}/{op_info['class_name']}.md\n"
+        details += f"test path: https://github.com/datajuicer/data-juicer/blob/main/tests/ops/{op_type}/test_{op_info['class_name']}.py\n"
+        details += f"op_doc path: https://datajuicer.github.io/data-juicer/en/main/docs/operators/{op_type}/{op_info['class_name']}.md\n"
 
         details += "```\n"
 
