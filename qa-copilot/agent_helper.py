@@ -24,7 +24,7 @@ import asyncio
 import time
 import traceback
 from loguru import logger
-from typing import Optional, Dict, Any, List, Union, Literal
+from typing import Optional, Dict, Any, List, Union, Literal, Callable, Awaitable
 from pydantic import BaseModel, Field
 
 from agentscope.mcp import HttpStatelessClient
@@ -43,11 +43,17 @@ from op_manager.dj_op_retriever import DJOperatorRetriever
 
 class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
     def __init__(
-        self, ttl_seconds: int = 3600, cleanup_interval: int = 60, *args, **kwargs
+        self, 
+        ttl_seconds: int = 3600, 
+        cleanup_interval: int = 60, 
+        session_cleanup_callback: Optional[Callable[[str], Awaitable[None]]] = None,
+        *args, 
+        **kwargs
     ):
         super().__init__(*args, **kwargs)
         self._ttl_seconds = ttl_seconds
         self._cleanup_interval = cleanup_interval
+        self._session_cleanup_callback = session_cleanup_callback
 
         self._last_access: Dict[str, Dict[str, float]] = {}
         self._cleanup_task: Optional[asyncio.Task] = None
@@ -98,6 +104,14 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
         for user_id, session_id in expired:
             try:
                 await super().delete_session(user_id, session_id)
+                # Clean up session lock if callback is provided
+                if self._session_cleanup_callback:
+                    try:
+                        await self._session_cleanup_callback(session_id)
+                    except Exception as e:
+                        print(
+                            f"Failed to cleanup session lock for {session_id}: {e}"
+                        )
             except Exception as e:
                 print(
                     f"Failed to delete expired session {session_id} for user {user_id}: {e}"
@@ -134,6 +148,12 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
                 if not self._last_access[user_id]:
                     self._last_access.pop(user_id, None)
         await super().delete_session(user_id, session_id)
+        # Clean up session lock if callback is provided
+        if self._session_cleanup_callback:
+            try:
+                await self._session_cleanup_callback(session_id)
+            except Exception as e:
+                print(f"Failed to cleanup session lock for {session_id}: {e}")
 
 
 class FeedbackData(BaseModel):

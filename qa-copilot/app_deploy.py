@@ -50,6 +50,31 @@ if not ENABLE_SESSION_LOGGING:
 else:
     print("✅ Session logging enabled")
 
+# ========== Session Lock Manager ==========
+# Session-level locks to ensure requests for the same session are processed sequentially
+# This prevents state corruption and message history issues in concurrent scenarios
+_session_locks: dict[str, asyncio.Lock] = {}
+_lock_manager_lock = asyncio.Lock()
+
+async def get_session_lock(session_id: str) -> asyncio.Lock:
+    """Get or create a lock for the given session ID"""
+    async with _lock_manager_lock:
+        if session_id not in _session_locks:
+            _session_locks[session_id] = asyncio.Lock()
+        return _session_locks[session_id]
+
+
+async def cleanup_session_lock(session_id: str) -> None:
+    """
+    Remove the lock for a given session ID.
+    This should be called when a session is deleted to prevent memory leaks.
+    """
+    async with _lock_manager_lock:
+        if session_id in _session_locks:
+            del _session_locks[session_id]
+
+# ========== End Session Lock Manager ==========
+
 app = AgentApp(
     agent_name="Juicer",
 )
@@ -59,7 +84,9 @@ if DISABLE_DATABASE:
     print("⚠️  Database disabled - running in memory-only mode")
     long_memory_service = None
     session_history_service = TTLInMemorySessionHistoryService(
-        ttl_seconds=60 * 60 * 12, cleanup_interval=60 * 60 * 6
+        ttl_seconds=60 * 60 * 12, 
+        cleanup_interval=60 * 60 * 6,
+        session_cleanup_callback=cleanup_session_lock
     )
 else:
     long_memory_service = RedisMemoryService()
@@ -137,21 +164,6 @@ _check_user_input_safety_func: Optional[
 ] = None
 
 # ========== End Safe Check Dynamic Import ==========
-
-# ========== Session Lock Manager ==========
-# Session-level locks to ensure requests for the same session are processed sequentially
-# This prevents state corruption and message history issues in concurrent scenarios
-_session_locks: dict[str, asyncio.Lock] = {}
-_lock_manager_lock = asyncio.Lock()
-
-async def get_session_lock(session_id: str) -> asyncio.Lock:
-    """Get or create a lock for the given session ID"""
-    async with _lock_manager_lock:
-        if session_id not in _session_locks:
-            _session_locks[session_id] = asyncio.Lock()
-        return _session_locks[session_id]
-
-# ========== End Session Lock Manager ==========
 
 
 def _extract_user_text(user_input: Any) -> str:
