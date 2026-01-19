@@ -109,11 +109,11 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
                     try:
                         await self._session_cleanup_callback(session_id)
                     except Exception as e:
-                        print(
+                        logger.warning(
                             f"Failed to cleanup session lock for {session_id}: {e}"
                         )
             except Exception as e:
-                print(
+               logger.warning(
                     f"Failed to delete expired session {session_id} for user {user_id}: {e}"
                 )
 
@@ -153,7 +153,7 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
             try:
                 await self._session_cleanup_callback(session_id)
             except Exception as e:
-                print(f"Failed to cleanup session lock for {session_id}: {e}")
+                logger.warning(f"Failed to cleanup session lock for {session_id}: {e}")
 
 
 class FeedbackData(BaseModel):
