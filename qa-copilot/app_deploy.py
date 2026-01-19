@@ -288,9 +288,12 @@ async def query_func(
                 session_id=session_id,
                 user_id=user_id,
             )
-
-        agent = ReActAgent(**agent_config
-            )
+        try:
+            agent = ReActAgent(**agent_config)
+        except Exception as e:
+            print(f"[{session_id}] ❌ Error creating agent: {str(e)}")
+            raise
+        
         # Attach session logger to agent so hooks can log tool usage
         agent.session_logger = logger
         agent.set_console_output_enabled(enabled=False)
