@@ -5,6 +5,7 @@ from typing import Optional
 import os
 import importlib.util
 import time
+import asyncio
 from typing import Optional, Tuple, Any, Callable, Awaitable
 
 from session_logger import SessionLogger, ENABLE_SESSION_LOGGING
@@ -49,6 +50,31 @@ if not ENABLE_SESSION_LOGGING:
 else:
     print("✅ Session logging enabled")
 
+# ========== Session Lock Manager ==========
+# Session-level locks to ensure requests for the same session are processed sequentially
+# This prevents state corruption and message history issues in concurrent scenarios
+_session_locks: dict[str, asyncio.Lock] = {}
+_lock_manager_lock = asyncio.Lock()
+
+async def get_session_lock(session_id: str) -> asyncio.Lock:
+    """Get or create a lock for the given session ID"""
+    async with _lock_manager_lock:
+        if session_id not in _session_locks:
+            _session_locks[session_id] = asyncio.Lock()
+        return _session_locks[session_id]
+
+
+async def cleanup_session_lock(session_id: str) -> None:
+    """
+    Remove the lock for a given session ID.
+    This should be called when a session is deleted to prevent memory leaks.
+    """
+    async with _lock_manager_lock:
+        if session_id in _session_locks:
+            del _session_locks[session_id]
+
+# ========== End Session Lock Manager ==========
+
 app = AgentApp(
     agent_name="Juicer",
 )
@@ -58,7 +84,9 @@ if DISABLE_DATABASE:
     print("⚠️  Database disabled - running in memory-only mode")
     long_memory_service = None
     session_history_service = TTLInMemorySessionHistoryService(
-        ttl_seconds=60 * 60 * 12, cleanup_interval=60 * 60 * 6
+        ttl_seconds=60 * 60 * 12, 
+        cleanup_interval=60 * 60 * 6,
+        session_cleanup_callback=cleanup_session_lock
     )
 else:
     long_memory_service = RedisMemoryService()
@@ -196,127 +224,169 @@ async def query_func(
     request: AgentRequest = None,
     **kwargs,
 ):
+    """
+    Process query with session-level locking to prevent concurrent state corruption.
+    Ensures requests for the same session are processed sequentially.
+    """
     global _check_user_input_safety_func
     session_id = request.session_id
     user_id = request.user_id or session_id
 
-    # Timing metrics
-    start_time = time.perf_counter()
-    first_token_time: Optional[float] = None
+    # Get session lock to ensure sequential processing for the same session
+    session_lock = await get_session_lock(session_id)
+    
+    # Acquire lock for the entire processing flow
+    async with session_lock:
+        # Timing metrics
+        start_time = time.perf_counter()
+        first_token_time: Optional[float] = None
 
-    # Initialize session logger (per query)
-    logger = SessionLogger(session_id=session_id, user_id=user_id)
+        # Initialize session logger (per query)
+        logger = SessionLogger(session_id=session_id, user_id=user_id)
 
-    # Log metadata and user input
-    user_input = msgs[-1] if msgs else None
-    user_text = _extract_user_text(user_input) if user_input is not None else ""
-    await logger.log_event(
-        {
-            "type": "user_input",
-            "content": user_text,
-        }
-    )
+        # Log metadata and user input
+        user_input = msgs[-1] if msgs else None
+        user_text = _extract_user_text(user_input) if user_input is not None else ""
+        await logger.log_event(
+            {
+                "type": "user_input",
+                "content": user_text,
+            }
+        )
 
-    # ========== Safe Check ==========
-    is_safe, error_msg = await _check_user_input_safety_func(msgs[-1], user_id)
-    if not is_safe:
-        yield error_msg, True
-        return
-    # ========== End Safe Check ==========
+        # ========== Safe Check ==========
+        is_safe, error_msg = await _check_user_input_safety_func(msgs[-1], user_id)
+        if not is_safe:
+            yield error_msg, True
+            return
+        # ========== End Safe Check ==========
 
-    state = await state_service.export_state(
-        session_id=session_id,
-        user_id=user_id,
-    )
-
-    # Build agent configuration
-    agent_config = {
-        "name": "Juicer",
-        "formatter": formatter,
-        "model": model,
-        "sys_prompt": prompts.QA,
-        "toolkit": toolkit,
-        "parallel_tool_calls": True,
-        "memory": AgentScopeSessionHistoryMemory(
-            service=session_history_service,
-            session_id=session_id,
-            user_id=user_id,
-        ),}
-
-    # Add memory services only if database is enabled
-    if not DISABLE_DATABASE:
-        agent_config["long_term_memory"] = AgentScopeLongTermMemory(
-            service=long_memory_service,
+        # Export state - protected by lock to prevent concurrent reads
+        state = await state_service.export_state(
             session_id=session_id,
             user_id=user_id,
         )
 
-    agent = ReActAgent(**agent_config
-        )
-    # Attach session logger to agent so hooks can log tool usage
-    agent.session_logger = logger
-    agent.set_console_output_enabled(enabled=False)
+        # Build agent configuration
+        agent_config = {
+            "name": "Juicer",
+            "formatter": formatter,
+            "model": model,
+            "sys_prompt": prompts.QA,
+            "toolkit": toolkit,
+            "parallel_tool_calls": True,
+            "memory": AgentScopeSessionHistoryMemory(
+                service=session_history_service,
+                session_id=session_id,
+                user_id=user_id,
+            ),}
 
-    if state:
-        agent.load_state_dict(state)
+        # Add memory services only if database is enabled
+        if not DISABLE_DATABASE:
+            agent_config["long_term_memory"] = AgentScopeLongTermMemory(
+                service=long_memory_service,
+                session_id=session_id,
+                user_id=user_id,
+            )
+        try:
+            agent = ReActAgent(**agent_config)
+        except Exception as e:
+            print(f"[{session_id}] ❌ Error creating agent: {str(e)}")
+            raise
+        
+        # Attach session logger to agent so hooks can log tool usage
+        agent.session_logger = logger
+        agent.set_console_output_enabled(enabled=False)
 
-    final_response = ""
+        if state:
+            agent.load_state_dict(state)
 
-    async for msg, last in stream_printing_messages(
-        agents=[agent],
-        coroutine_task=agent(msgs[-1]),
-    ):
-        if (
-            first_token_time is None
-            and hasattr(msg, "content")
-            and isinstance(msg.content, list)
-        ):
-            for item in msg.content:
-                if item.get("type", None) == "text" and item.get("text", "").strip():
-                    first_token_time = time.perf_counter()
-                    break
+        final_response = ""
+        processing_completed = False
 
-        # Log every chunk where last=True for trace
-        if last:
-            if hasattr(msg, "content") and isinstance(msg.content, list):
-                for item in msg.content:
-                    if (
-                        item.get("type", None) == "text"
-                        and item.get("text", "").strip()
-                    ):
-                        final_response = item["text"]
+        try:
+            async for msg, last in stream_printing_messages(
+                agents=[agent],
+                coroutine_task=agent(msgs[-1]),
+            ):
+                if (
+                    first_token_time is None
+                    and hasattr(msg, "content")
+                    and isinstance(msg.content, list)
+                ):
+                    for item in msg.content:
+                        if item.get("type", None) == "text" and item.get("text", "").strip():
+                            first_token_time = time.perf_counter()
+                            break
+
+                # Log every chunk where last=True for trace
+                if last:
+                    if hasattr(msg, "content") and isinstance(msg.content, list):
+                        for item in msg.content:
+                            if (
+                                item.get("type", None) == "text"
+                                and item.get("text", "").strip()
+                            ):
+                                final_response = item["text"]
+                    await logger.log_event(
+                        {
+                            "type": "last_chunk",
+                            "msg": str(msg),
+                        }
+                    )
+
+                yield msg, last
+            
+            # Mark processing as completed if we reached here
+            processing_completed = True
+
+        except GeneratorExit:
+            # Client disconnected during streaming - still save state
+            print(f"[{session_id}] ⚠️  Client disconnected during streaming")
+            processing_completed = False
+            raise  # Re-raise GeneratorExit
+        except Exception as e:
+            # Log error but continue to save state
+            print(f"[{session_id}] ❌ Error during query processing: {str(e)}")
+            processing_completed = False
+            raise
+        finally:
+            # Always save state, even if there was an error or client disconnect
+            # This ensures state consistency and prevents tool_calls without responses
+            try:
+                state = agent.state_dict()
+                await state_service.save_state(
+                    user_id=user_id,
+                    session_id=session_id,
+                    state=state,
+                )
+            except Exception as e:
+                print(f"[{session_id}] ❌ Error saving state: {str(e)}")
+            
+            # Cleanup agent resources if available
+            if hasattr(agent, 'cleanup'):
+                try:
+                    await agent.cleanup()
+                except Exception as e:
+                    print(f"[{session_id}] ❌ Error cleaning up agent: {str(e)}")
+
+        # Only log final response if processing completed successfully
+        if processing_completed:
+            # Compute timing metrics and log final response
+            complete_time = time.perf_counter()
+            first_token_duration = (
+                first_token_time - start_time if first_token_time is not None else None
+            )
+            total_duration = complete_time - start_time
+
             await logger.log_event(
                 {
-                    "type": "last_chunk",
-                    "msg": str(msg),
+                    "type": "final_response",
+                    "content": final_response,
+                    "first_token_duration": first_token_duration,
+                    "total_duration": total_duration,
                 }
             )
-
-        yield msg, last
-
-    # Save final state
-    state = agent.state_dict()
-    await state_service.save_state(
-        user_id=user_id,
-        session_id=session_id,
-        state=state,
-    )
-
-    # Compute timing metrics and log final response
-    complete_time = time.perf_counter()
-    first_token_duration = (
-        first_token_time - start_time if first_token_time is not None else None
-    )
-    total_duration = complete_time - start_time
-
-    await logger.log_event(
-        {
-            "type": "final_response",
-            "content": final_response,
-            "first_token_duration": first_token_duration,
-            "total_duration": total_duration,
-        }
-    )
 
 
 @app.endpoint("/memory")
