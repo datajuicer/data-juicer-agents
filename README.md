@@ -24,7 +24,7 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 ## Overview
 This repo maintains a suite of agents that enable users to interact with Data-Juicer's powerful data processing capabilities through natural language.
 
-- In Data-Juicer ecosystem, Data-Juicer Agents (DJ-Agents) play a key role in the interface layer, bridging users with the powerful Data-Juicer infrastructure and toolkit for building data-centric applications. 
+- In Data-Juicer ecosystem, Data-Juicer Agents (DJ-Agents) play a key role in the interface layer, bridging users with the powerful Data-Juicer infrastructure and toolkit for building data-centric applications.
 - Unlike traditional API- or CLI-based interaction, DJ-Agents leverage agent-based interaction, tool use, and extensibility to enable non-expert users to access Data-Juicer’s data-processing capabilities through intuitive natural-language interactions.
 - The long-term goal of DJ-Agents is to enable a **development-free data processing lifecycle**, allowing developers to focus on **what to do** rather than **how to do it**.
 
@@ -47,7 +47,7 @@ Data-Juicer Agents adopts a **multi-agent routing architecture** for routing req
 
 - [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [doc page](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem.
 
-We are planning to release more online agentic services, check our [Roadmap](#roadmap).
+More online agentic services are being planned and developed—check out our Roadmap and join us!
 
 ### Local Deployment
 
@@ -132,7 +132,7 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
 
 ### Optimization Recommendations
 
-- For large-scale data processing, it is recommended to use DataJuicer's distributed mode
+- For large-scale data processing, it is recommended to use Data-Juicer's distributed mode
 - Set batch size appropriately to balance memory usage and processing speed
 - For more advanced data processing features (synthesis, Data-Model Co-Development), please refer to Data-Juicer [documentation](https://datajuicer.github.io/data-juicer/en/main/index.html)
 
@@ -140,7 +140,7 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
 
 ## Related Resources
 
-- DataJuicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.
+- Data-Juicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.
 
 *Welcome to visit GitHub, Star, Fork, submit Issues, and join the community!*
 

@@ -1,155 +1,151 @@
-# DataJuicer 智能体
+<div align="center">
+<img src="docs/imgs/dj_agents_logo.png" width=70%>
+<br/>
 
-基于 [AgentScope](https://github.com/agentscope-ai/agentscope) 和 [Data-Juicer (DJ)](https://github.com/datajuicer/data-juicer) 构建的数据处理多智能体系统。该项目展示了如何利用大模型的自然语言理解能力，让非专家用户也能轻松使用 Data-Juicer 的强大数据处理能力。
+# Data-Juicer Agents：迈向智能体驱动的数据处理
 
-## 🎯 为什么需要 DataJuicer Agents？
+基于 [Data-Juicer (DJ)](https://github.com/datajuicer/data-juicer) 和 [AgentScope](https://github.com/agentscope-ai/agentscope) 构建的 **智能体数据处理** 套件。
 
-在大模型研发和应用的实际工作中，**数据处理仍然是一个高成本、低效率、难复现的环节**。很多团队花在数据分析、清洗、合成等阶段的时间，往往超过模型训练、需求对齐、应用功能开发。
+[简体中文](./README_ZH.md) | [English](./README.md)
 
-我们希望通过智能体技术，把开发者从繁琐的脚本拼凑中解放出来，让数据研发更接近"所想即所得"的体验。
+[概览](#概览) • [快速开始](#快速开始) • [文档](https://datajuicer.github.io/data-juicer-agents/zh/main/)
+</div>
 
-**数据直接定义了模型能力的上限**。真正决定模型表现的，是数据的**质量、多样性、有害性控制、任务匹配度**等多个维度。优化数据，本质上就是在优化模型本身。而要高效地做这件事，我们需要一套系统化的工具。
+## 最新动态
 
-DataJuicer Agents 正是为支撑**数据与模型协同优化**这一新范式而设计的智能协作系统。
+🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README_ZH.md) ***Juicer*** 已部署在 Data-Juicer 官方[文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html)上！欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题。查看 📃 [一键部署代码](./qa-copilot/) | 🎬 [更多演示](./qa-copilot/DEMO_ZH.md) | 🎯 [开发路线图](#路线图)。
 
-## 📋 目录
+<div align="center">
+<img src="docs/imgs/dj_copilot_demo_ZH.gif" width=90%>
+</div>
 
-- [DataJuicer 智能体](#datajuicer-智能体)
-  - [🎯 为什么需要 DataJuicer Agents？](#-为什么需要-datajuicer-agents)
-  - [📋 目录](#-目录)
-  - [这个智能体做了什么？](#这个智能体做了什么)
-  - [架构](#架构)
-    - [多智能体路由架构](#多智能体路由架构)
-    - [两种集成方式](#两种集成方式)
-  - [Roadmap](#roadmap)
-    - [Data-Juicer 问答智能体 (演示可用)](#data-juicer-问答智能体-演示可用)
-    - [交互式数据分析与可视化智能体 (开发中)](#交互式数据分析与可视化智能体-开发中)
-    - [其它方向](#其它方向)
-    - [常见问题](#常见问题)
-    - [优化建议](#优化建议)
-  - [相关资源](#相关资源)
+## 概览
 
-## 这个智能体做了什么？
+本仓库维护了一套智能体（agents），帮助用户以自然语言的方式使用 Data-Juicer 强大的数据处理能力。
 
-Data-Juicer (DJ) 是一个**覆盖大模型数据全生命周期的开源处理系统**，提供四个核心能力：
+- 在 Data-Juicer 生态中，Data-Juicer Agents（DJ-Agents）位于「接口层」的关键位置，把用户与 Data-Juicer 强大的基础设施和工具链连接起来，助力构建数据中心化应用。
+- 与传统的 API 或命令行交互不同，DJ-Agents 利用智能体交互、工具调用和可扩展性，让非专业用户也能通过直观的自然语言访问 Data-Juicer 的数据处理能力。
+- DJ-Agents 的长期目标是实现一个**零开发的数据处理生命周期**，让开发者更多地关注 **“做什么”**，而不是 **“怎么做”**。
 
-- **全栈算子库（DJ-OP）**：近 200 个高性能、可复用的多模态算子，覆盖文本、图像、音视频
-- **高性能引擎（DJ-Core）**：基于 Ray 构建，支持 TB 级数据、万核分布式计算，具备算子融合与多粒度容错
-- **协同开发平台（DJ-Sandbox）**：引入 A/B Test 与 Scaling Law 思想，用小规模实验驱动大规模优化
-- **自然语言交互层（DJ-Agents）**：通过 Agent 技术，让开发者用对话方式构建数据流水线
+当前 Data-Juicer Agents 家族包含以下成员：
 
-DataJuicer Agents 不是一个简单的问答机器人，而是一个**数据处理的智能协作者**。具体来说，它能：
+- Data-Juicer 问答智能体（DJ Q&A Agent）
+- Data-Juicer 数据处理智能体（DJ Process Agent）【内测版】
+- Data-Juicer 代码开发智能体（DJ Dev Agent）【内测版】
 
-- **智能查询**：根据自然语言描述，自动匹配最合适的算子（从近200个算子中精准定位）
-- **自动化流程**：描述数据处理需求，自动生成 Data-Juicer YAML 配置并执行
-- **自定义扩展**：帮助用户开发自定义算子，无缝集成到本地环境
+Data-Juicer Agents 采用 **多智能体路由架构** 来将用户请求路由到合适的智能体。详见 [智能体介绍](./docs/AgentIntro_ZH.md)。
 
-**我们的目标是：让开发者专注于"做什么"，而不是"怎么做"**。
+<p align="center">
+  <img src="docs/imgs/dj_agents_workflow.png" width=70%>
+</p>
 
-## 架构
+## 快速开始
 
-### 多智能体路由架构
+### 在线服务
 
-DataJuicer Agents 采用**多智能体路由架构**，当用户输入一个自然语言请求，首先由 **Router Agent** 进行任务分诊，判断这是标准的数据处理任务，还是需要开发新能力的定制需求。
+- [Q&A Copilot](./qa-copilot/README_ZH.md) ***Juicer*** 已部署在 Data-Juicer 官方[文档页面](https://datajuicer.github.io/data-juicer/zh/main/index.html)上！你可以在文档站直接向 ***Juicer*** 提问任何与 Data-Juicer 生态相关的问题。
 
-```
-用户查询
-  ↓
-Router Agent (筛选&决策) ← query_dj_operators （算子检索）
-  │
-  ├─ 找到高匹配算子
-  │  ↓
-  │  DJ Agent (标准数据处理任务)
-  |  ├── 预览数据样本（确认字段名和数据格式）
-  │  ├── get_ops_signature（获取完整参数签名）
-  │  ├── 生成 YAML 配置
-  │  └── execute_safe_command (执行 dj-process, dj-analyze)
-  │
-  └─ 未找到高匹配算子
-     ↓
-     Dev Agent (自定义算子开发集成)
-     ├── get_basic_files (获取基类和注册机制)
-     ├── get_operator_example (获取相似算子示例)
-     └── 生成符合规范的算子代码
-     └── 本地集成（注册到用户指定路径）
-```
+更多在线智能体服务计划开发中，关注我们的[路线图](#路线图)，欢迎加入我们！
 
-### 两种集成方式
+### 本地部署
 
-Agent 与 DataJuicer 的集成有两种方式，以适应不同使用场景：
+请参考[文档](https://datajuicer.github.io/data-juicer-agents/zh/main/docs/QuickStart_ZH.html) 在本地启动 DJ-Agents。
 
-- **绑定工具模式**：Agent 调用 DataJuicer 的命令行工具（如 `dj-analyze`、`dj-process`），兼容现有用户习惯，迁移成本低
-- **绑定 MCP 模式**：Agent 直接调用 DataJuicer 的 MCP（Model Context Protocol）接口，无需生成中间 YAML 文件，直接运行算子或数据菜谱，性能更优
+如果在使用过程中遇到任何问题，可以先查看[常见问题](#常见问题)，或前往文档页面向我们的问答 Copilot ***Juicer*** 提问。
 
-这两种方式由 Agent 根据任务复杂度和性能需求自动选择，确保灵活性与效率兼得。
+## 路线图
 
-## Roadmap
+**DJ-Agents** 的长期愿景是实现一个**零开发的数据处理生命周期**，让开发者能够把精力集中在 **“做什么”** 而不是 **“怎么做”** 上。
 
-Data-Juicer 智能体生态系统正在快速扩展，以下是当前正在开发或计划中的新智能体：
+为实现这一愿景，我们正在解决两个核心问题：
 
-### Data-Juicer 问答智能体 (演示可用)
+- **智能体层面**：如何设计并构建在数据处理方面足够强大的智能体  
+- **服务层面**：如何把这些智能体打包成即开即用、开箱即用的产品  
 
-为用户提供关于 Data-Juicer 算子、概念和最佳实践的详细解答。
+我们会在这两个方向上持续迭代，路线图也会随着理解的加深与能力的提升而不断演进。
 
-<video controls width="100%" height="auto" playsinline>
-    <source src="https://github.com/user-attachments/assets/a8392691-81cf-4a25-94da-967dcf92c685" type="video/mp4">
-    您的浏览器不支持视频标签。
-</video>
+以下是当前的开发清单。
 
-问答智能体目前可在[此处](https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot)查看并试用。
+---
 
-### 交互式数据分析与可视化智能体 (开发中)
+### 智能体
 
-我们正在构建更高级的**人机协同数据优化工作流**，引入人类反馈：
-- 用户可查看统计、归因分析以及可视化结果
-- 动态编辑菜谱，批准或拒绝建议
-- 底层由 `dj.analyzer`（数据分析）、`dj.attributor`（效果归因）、`dj.sandbox`（实验管理）共同支撑
-- 支持基于验证任务的闭环优化
+- **Data-Juicer 问答智能体（DJ Q&A Agent）**  
+  回答来自现有或潜在用户的 Data-Juicer 相关问题。  
+  - [x] 已实现  
+  - *[2026-01-15]*：当前版本的 [DJ Q&A Agent](./qa-copilot/) 在我们内部评估中表现良好，可视为生产可用。
 
-该交互式菜谱目前可在[此处](https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/README_ZH.md)查看并试用。
+- **Data-Juicer 数据处理智能体（DJ Process Agent）**  
+  自动调用 Data-Juicer 工具来完成数据处理请求。  
+  - [ ] 开发中  
+  - *[2026-01-15]*：当前版本的 [DJ Process Agent](./data_juicer_agents/) 处于内测阶段，我们正在积极进行基准评测和能力优化。
 
-### 其它方向
+- **Data-Juicer 代码开发智能体（DJ Dev Agent）**  
+  根据用户需求自动开发新的数据处理算子（operators）。  
+  - [ ] 开发中  
+  - *[2026-01-15]*：当前版本的 [DJ Dev Agent](./data_juicer_agents/) 处于内测阶段，能力评估和优化工作仍在进行中。
 
-- **数据处理智能体 Benchmarking**：量化不同 Agent 在准确性、效率、鲁棒性上的表现
-- **数据"体检报告" & 数据智能推荐**：自动诊断数据问题并推荐优化方案
-- **Router Agent 增强**：更无感丝滑，譬如当缺乏算子时→代码开发Agent→数据处理agent
-- **MCP 进一步优化**：内嵌 LLM，用户可直接使用 MCP 链接自己本地环境如IDE，获得目前数据处理 agent 类似的体验
-- **面向知识库、RAG 的数据智能体**
-- **更好的处理方案自动生成**：更少 token 用量，更高效，更优质处理结果
-- **数据工作流模版复用及自动调优**：基于 DataJuicer 社区数据菜谱
-- ......
+---
 
-### 常见问题
+### 服务
 
-**Q: 如何获取 DashScope API 密钥？**
-A: 访问 [DashScope 官网](https://dashscope.aliyun.com/) 注册账号并申请 API 密钥。
+- **Q&A Copilot — *Juicer***  
+  - [ ] 整体服务  
+  - *[2026-01-15]*：***Juicer*** 目前已在[文档网站](https://datajuicer.github.io/data-juicer-agents/zh/main/)上线，我们正在推进在社区平台上的部署。
+    - [x] 文档网站  
+    - [ ] 钉钉群  
+    - [ ] Discord 服务器  
 
-**Q: 为什么算子检索失败？**
-A: 请检查网络连接和 API 密钥配置，或尝试切换到向量检索模式。
+- **交互式数据分析工作室（Interactive Data Analysis Studio）** *（开发中）*  
+  - *[2026-01-15]*：已有一个[演示](./interactive_recipe/)，当前版本主要依赖预定义工作流。我们正在将智能体能力融入其中。
 
-**Q: 如何调试自定义算子？**
-A: 确保 Data-Juicer 路径配置正确，并查看代码开发智能体提供的示例代码。
+- **MCP 服务**  
+  - [ ] 规划中
 
-**Q: MCP 服务连接失败怎么办？**
-A: 检查 MCP 服务器是否正在运行，确认配置文件中的 URL 地址正确。
+---
 
-**Q: 报错requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: http://localhost:3000/trpc/pushMessage**
-A: 请检查是否在agentscope studio中上传了非文本信息（例如数据文件），agent通过文件路径等进行数据处理，暂不接受直接上传文件。
+### 未来方向
+
+- **将工作流作为技能（Workflows as Skills）**  
+  [Data-Juicer Hub](https://github.com/datajuicer/data-juicer-hub) 承载着越来越多由 Data-Juicer 社区贡献的数据处理 recipes 和工作流。
+
+  随着数据处理需求扩展到新的场景——例如 **RAG**、**具身智能（Embodied Intelligence）**、以及 **数据湖仓（Data Lakehouse）架构**——我们计划将现有与新开发的工作流作为可复用的 *技能* 集成进 DJ-Agents，从而支持更广泛、更灵活的数据处理应用。
+
+## 常见问题
+
+**问：如何获取 DashScope 的 API key？**  
+答：请访问 [DashScope 官网](https://dashscope.aliyun.com/) 注册账户并申请 API key。
+
+**问：为什么算子检索会失败？**  
+答：请检查网络连接和 API key 配置，或尝试切换为向量检索模式。
+
+**问：如何调试自定义算子？**  
+答：请确认已正确配置 Data-Juicer 的路径，并参考代码开发智能体提供的示例代码。
+
+**问：MCP 服务连接失败怎么办？**  
+答：请检查 MCP 服务器是否已启动，并确认配置文件中的 URL 地址是否正确。
+
+**问：报错 `requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: http://localhost:3000/trpc/pushMessage` 怎么办？**  
+答：智能体是通过文件引用（路径）而不是直接上传数据来处理数据的，请确认是否提交了非文本文件。
 
 ### 优化建议
 
-- 对于大规模数据处理，建议使用DataJuicer提供的分布式模式
-- 合理设置批处理大小以平衡内存使用和处理速度
-- 更多进阶数据处理（合成、Data-Model Co-Development）等特性能力请参考DataJuicer[文档页](https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH)
+- 对于大规模数据处理，推荐使用 Data-Juicer 的分布式模式  
+- 合理设置 batch size，以平衡内存占用与处理速度  
+- 如需更高级的数据处理能力（如数据合成、Data-Model 联合开发等），请参考 Data-Juicer [文档](https://datajuicer.github.io/data-juicer/zh/main/index.html)
 
 ---
 
 ## 相关资源
-- DataJuicer 已经被用于大量通义和阿里云内外部用户，背后也衍生了多项研究。所有代码持续维护增强中。
 
-*欢迎访问 GitHub，Star、Fork、提 Issue，以及加入社区共建！*
-- **项目地址**：
+- Data-Juicer 已在大量通义及阿里云内外部用户场景中落地实践，并支撑了多项研究工作；所有代码都在持续维护与增强中。
+
+*欢迎访问 GitHub，Star、Fork、提交 Issue，并加入社区交流！*
+
+- **项目仓库**：
+  - [Data-Juicer](https://github.com/datajuicer/data-juicer)
   - [AgentScope](https://github.com/agentscope-ai/agentscope)
-  - [DataJuicer](https://github.com/datajuicer/data-juicer)
 
-**贡献指南**：欢迎提交 Issue 和 Pull Request 来改进 agentscope、DataJuicer Agents 及 DataJuicer。如果您在使用过程中遇到问题或有功能建议，请随时联系我们。
+**贡献方式**：欢迎通过 Issue 和 Pull Request 来改进 Data-Juicer Agents、Data-Juicer 以及 AgentScope。如果你在使用中遇到问题或有新功能建议，欢迎随时与我们联系。
+
+
