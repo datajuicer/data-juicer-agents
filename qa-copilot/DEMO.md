@@ -1,7 +1,6 @@
 ## Data-Juicer Q&A Copilot Demo
 
-This document shows end-to-end examples of the QA Copilot.  
-Each case lists the **user query (input)** and the **assistant answer (output)**.
+This document shows end-to-end examples of the QA Copilot. Each case lists the **user query (input)** and the **assistant answer (output)**.
 
 You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem.
 

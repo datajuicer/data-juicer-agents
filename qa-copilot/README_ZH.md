@@ -1,10 +1,16 @@
-# Q&A Copilot
+# Data-Juicer Q&A Copilot
 
-Q&A Copilot 是 InteRecipe 系统中的智能问答组件，基于 AgentScope 框架构建，是一款面向 Data-Juicer 的专业 AI 助手。
+Q&A Copilot 是 Data-Juicer Agents 系统中的智能问答组件，基于 AgentScope 框架构建，是一款面向 Data-Juicer 的专业 AI 助手。
+
+你可以在官方[文档页](https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html)和我们的 [问答 Copilot](./README.md) ***Juicer*** 聊天! 欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题。
+
+<div align="center">
+<img src="../docs/imgs/dj_copilot_demo_ZH.gif" width=90%>
+</div>
 
 ### 核心组件
 
-- **Juicy Agent**：基于 ReActAgent 构建的智能问答代理
+- **Agent**：基于 ReActAgent 构建的智能问答代理
 - **FAQ RAG 系统**：基于 Qdrant 向量数据库和 DashScope 文本嵌入模型，提供快速准确的 FAQ 检索能力
 - **MCP 集成**：通过 GitHub MCP Server 提供在线 GitHub 搜索能力
 - **Redis 存储**：支持会话历史记录和用户反馈数据的持久化存储
@@ -51,7 +57,7 @@ Q&A Copilot 是 InteRecipe 系统中的智能问答组件，基于 AgentScope �
    brew services start redis
    ```
 
-   **注意**：如果设置了 `DISABLE_DATABASE=1`，系统将以纯内存模式运行，无需 Redis。会话历史将仅保存在内存中，并在用户 20 秒无操作后自动清理。
+   **注意**：如果设置了 `DISABLE_DATABASE=1`，系统将以纯内存模式运行，无需 Redis。会话历史将仅保存在内存中，并在用户 6 小时无操作后自动清理。
 
 ### 配置说明
 

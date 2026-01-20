@@ -1,14 +1,20 @@
-# Q&A Copilot
+# Data-Juicer Q&A Copilot
 
-Q&A Copilot is the intelligent question-answering component of the InteRecipe system, a professional Data-Juicer AI assistant built on the AgentScope framework.
+Q&A Copilot is the intelligent question-answering component of the Data-Juicer Agents system, a professional Data-Juicer AI assistant built on the AgentScope framework.
+
+You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem.
+
+<div align="center">
+<img src="../docs/imgs/dj_copilot_demo.gif" width=90%>
+</div>
 
 ### Core Components
 
-- Juicy Agent: Intelligent Q&A agent based on ReActAgent
-- FAQ RAG System: Fast and accurate FAQ retrieval powered by Qdrant vector database and DashScope text embedding model
-- MCP Integration: Online GitHub search capabilities through GitHub MCP Server
-- Redis Storage: Supports session history and feedback data persistence
-- Web API: Provides RESTful interfaces for frontend integration
+- **Agent**: Intelligent Q&A agent based on ReActAgent
+- **FAQ RAG System**: Fast and accurate FAQ retrieval powered by Qdrant vector database and DashScope text embedding model
+- **MCP Integration**: Online GitHub search capabilities through GitHub MCP Server
+- **Redis Storage**: Supports session history and feedback data persistence
+- **Web API**: Provides RESTful interfaces for frontend integration
 
 ## Quick Start
 
@@ -51,7 +57,7 @@ Q&A Copilot is the intelligent question-answering component of the InteRecipe sy
    brew services start redis
    ```
 
-   **Note**: If you set `DISABLE_DATABASE=1`, the system will run in memory-only mode without requiring Redis. Session history will be stored in memory with automatic cleanup after 20 seconds of inactivity.
+   **Note**: If you set `DISABLE_DATABASE=1`, the system will run in memory-only mode without requiring Redis. Session history will be stored in memory with automatic cleanup after 6 hours of inactivity.
 
 ### Configuration
 
