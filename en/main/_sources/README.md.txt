@@ -1,125 +1,119 @@
-# DataJuicer Agents
+<div align="center">
+<img src="docs/imgs/dj_agents_logo.png" width=70%>
+<br/>
 
-A multi-agent data processing system built on [AgentScope](https://github.com/agentscope-ai/agentscope) and [Data-Juicer (DJ)](https://github.com/datajuicer/data-juicer). This project demonstrates how to leverage the natural language understanding capabilities of large language models, enabling non-expert users to easily harness the powerful data processing capabilities of Data-Juicer.
+# Data-Juicer Agents: Towards Agentic Data Processing
 
-## 🎯 Why DataJuicer Agents?
+A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](https://github.com/datajuicer/data-juicer) and [AgentScope](https://github.com/agentscope-ai/agentscope).
 
-In the actual work of large model R&D and applications, **data processing remains a high-cost, low-efficiency, and hard-to-reproduce process**. Many teams spend more time on data analysis, cleaning and synthesis than on model training, requirement alignment and app development.
+[简体中文](./README_ZH.md) | [English](./README.md)
 
-We hope to liberate developers from tedious script assembly through agent technology, making data R&D closer to a "think and get" experience.
+[Overview](#overview) • [Quick Start](#quick-start) • [Documentation](https://datajuicer.github.io/data-juicer-agents/en/main/)
+</div>
 
-**Data directly defines the upper limit of model capabilities**. What truly determines model performance are multiple dimensions such as **quality, diversity, harmfulness control, and task matching** of data. Optimizing data is essentially optimizing the model itself. To do this efficiently, we need a systematic toolset.
+## News
 
-DataJuicer Agents is designed to support the new paradigm of **data-model co-optimization** as an intelligent collaboration system.
+🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem. Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
 
-## 📋 Table of Contents
 
-- [DataJuicer Agents](#datajuicer-agents)
-  - [🎯 Why DataJuicer Agents?](#-why-datajuicer-agents)
-  - [📋 Table of Contents](#-table-of-contents)
-  - [What Does This Agent Do?](#what-does-this-agent-do)
-  - [Architecture](#architecture)
-    - [Multi-Agent Routing Architecture](#multi-agent-routing-architecture)
-    - [Two Integration Modes](#two-integration-modes)
-  - [Roadmap](#roadmap)
-    - [Data-Juicer Q\&A Agent (Demo Available)](#data-juicer-qa-agent-demo-available)
-    - [Interactive Data Analysis and Visualization Agent (In Development)](#interactive-data-analysis-and-visualization-agent-in-development)
-    - [Other Directions](#other-directions)
-    - [Common Issues](#common-issues)
-    - [Optimization Recommendations](#optimization-recommendations)
-  - [Related Resources](#related-resources)
+<div align="center">
+<img src="docs/imgs/dj_copilot_demo.gif" width=90%>
+</div>
 
-## What Does This Agent Do?
 
-Data-Juicer (DJ) is an **open-source processing system covering the full lifecycle of large model data**, providing four core capabilities:
+## Overview
+This repo maintains a suite of agents that enable users to interact with Data-Juicer's powerful data processing capabilities through natural language.
 
-- **Full-Stack Operator Library (DJ-OP)**: Nearly 200 high-performance, reusable multimodal operators covering text, images, and audio/video
-- **High-Performance Engine (DJ-Core)**: Built on Ray, supporting TB-level data, 10K-core distributed computing, with operator fusion and multi-granularity fault tolerance
-- **Collaborative Development Platform (DJ-Sandbox)**: Introduces A/B Test and Scaling Law concepts, using small-scale experiments to drive large-scale optimization
-- **Natural Language Interaction Layer (DJ-Agents)**: Enables developers to build data pipelines through conversational interfaces using Agent technology
+- In Data-Juicer ecosystem, Data-Juicer Agents (DJ-Agents) play a key role in the interface layer, bridging users with the powerful Data-Juicer infrastructure and toolkit for building data-centric applications.
+- Unlike traditional API- or CLI-based interaction, DJ-Agents leverage agent-based interaction, tool use, and extensibility to enable non-expert users to access Data-Juicer’s data-processing capabilities through intuitive natural-language interactions.
+- The long-term goal of DJ-Agents is to enable a **development-free data processing lifecycle**, allowing developers to focus on **what to do** rather than **how to do it**.
 
-DataJuicer Agents is not a simple Q&A bot, but an **intelligent collaborator for data processing**. Specifically, it can:
+The Data-Juicer Agents family currently contains the following members:
 
-- **Intelligent Query**: Automatically match the most suitable operators based on natural language descriptions (precisely locating from nearly 200 operators)
-- **Automated Pipeline**: Describe data processing needs, automatically generate Data-Juicer YAML configurations and execute them
-- **Custom Extension**: Help users develop custom operators and seamlessly integrate them into local environments
+- Data-Juicer Q&A Agent (DJ Q&A Agent)
+- Data-Juicer Data Processing Agent (DJ Process Agent) [Beta version]
+- Data-Juicer Code Development Agent (DJ Dev Agent) [Beta version]
 
-**Our goal: Let developers focus on "what to do" rather than "how to do it"**.
+Data-Juicer Agents adopts a **multi-agent routing architecture** for routing requests to the corresponding agent. Check [agent info](./docs/AgentIntro.md) for more details.
 
-## Architecture
+<p align="center">
+  <img src="docs/imgs/dj_agents_workflow.png" width=70%>
+</p>
 
-### Multi-Agent Routing Architecture
 
-DataJuicer Agents adopts a **multi-agent routing architecture**, which is key to system scalability. When a user inputs a natural language request, the **Router Agent** first performs task triage to determine whether it's a standard data processing task or a custom requirement that needs new capabilities.
+## Quick Start
 
-```
-User Query  
-  ↓  
-Router Agent (Filtering & Decision) ← query_dj_operators (operator retrieval)  
-  │  
-  ├─ High-match operator found  
-  │  ↓  
-  │  DJ Agent (Standard Data Processing Task)  
-  |  ├── Preview data samples (confirm field names and data formats)  
-  │  ├── get_ops_signature (retrieve full parameter signatures)  
-  │  ├── Generate YAML configuration  
-  │  └── execute_safe_command (run dj-process, dj-analyze)  
-  │  
-  └─ No high-match operator found  
-     ↓  
-     Dev Agent (Custom Operator Development & Integration)  
-     ├── get_basic_files (retrieve base classes and registration mechanism)  
-     ├── get_operator_example (retrieve similar operator examples)  
-     └── Generate compliant operator code  
-     └── Local integration (register to user-specified path)
-```
+### Online Services
 
-### Two Integration Modes
+- [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [doc page](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem.
 
-Agent integration with DataJuicer has two modes to adapt to different usage scenarios:
+More online agentic services are being planned and developed—check out our Roadmap and join us!
 
-- **Tool Binding Mode**: Agent calls DataJuicer command-line tools (such as `dj-analyze`, `dj-process`), compatible with existing user habits, low migration cost
-- **MCP Binding Mode**: Agent directly calls DataJuicer's MCP (Model Context Protocol) interface, no need to generate intermediate YAML files, directly run operators or data recipes, better performance
+### Local Deployment
 
-These two modes are automatically selected by the Agent based on task complexity and performance requirements, ensuring both flexibility and efficiency.
+Follow the [document](https://datajuicer.github.io/data-juicer-agents/en/main/docs/QuickStart.html) to locally launch DJ-Agents. 
+
+If you encounter any issues, check [common issues](#common-issues) or ask our Q&A copilot ***Juicer*** at the doc page.
 
 ## Roadmap
 
-The Data-Juicer agent ecosystem is rapidly expanding. Here are the new agents currently in development or planned:
+The long-term vision of **DJ-Agents** is to enable a **development-free data processing lifecycle**, allowing developers to focus on **what to do** rather than **how to do it**.
 
-### Data-Juicer Q&A Agent (Demo Available)
+To achieve this vision, we are tackling two fundamental challenges:
 
-Provides users with detailed answers about Data-Juicer operators, concepts, and best practices.
+- **Agent Level**: How to design and build powerful agents specialized in data processing  
+- **Service Level**: How to package these agents into ready-to-use, out-of-the-box products  
 
-<video controls width="100%" height="auto" playsinline>
-    <source src="https://github.com/user-attachments/assets/a8392691-81cf-4a25-94da-967dcf92c685" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+We continuously iterate on both directions, and the roadmap may evolve accordingly as our understanding and capabilities improve.
 
-The Q&A agent can currently be viewed and tried out [here](https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot).
+Below is the current development checklist.
 
-### Interactive Data Analysis and Visualization Agent (In Development)
+---
 
-We are building a more advanced **human-machine collaborative data optimization workflow** that introduces human feedback:
-- Users can view statistics, attribution analysis, and visualization results
-- Dynamically edit recipes, approve or reject suggestions
-- Underpinned by `dj.analyzer` (data analysis), `dj.attributor` (effect attribution), and `dj.sandbox` (experiment management)
-- Supports closed-loop optimization based on validation tasks
+### Agents
 
-This interactive recipe can currently be viewed and tried out [here](https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/README.md).
+- **Data-Juicer Q&A Agent (DJ Q&A Agent)**  
+  Answers Data-Juicer–related questions from both existing and potential users.  
+  - [x] Implemented  
+  - *[2026-01-15]*: The current [DJ Q&A Agent](./qa-copilot/) demonstrates strong performance in our internal evaluations and is considered production-ready.
 
-### Other Directions
+- **Data-Juicer Data Processing Agent (DJ Process Agent)**  
+  Automatically invokes Data-Juicer tools to fulfill data processing requests.  
+  - [ ] In progress  
+  - *[2026-01-15]*: The current [DJ Process Agent](./data_juicer_agents/) is in beta. We are actively benchmarking and optimizing its capabilities.
 
-- **Data Processing Agent Benchmarking**: Quantify the performance of different Agents in terms of accuracy, efficiency, and robustness
-- **Data "Health Check Report" & Data Intelligent Recommendation**: Automatically diagnose data problems and recommend optimization solutions
-- **Router Agent Enhancement**: More seamless, e.g., when operators are lacking → Code Development Agent → Data Processing Agent
-- **MCP Further Optimization**: Embedded LLM, users can directly use MCP connected to their local environment (e.g., IDE) to get an experience similar to current data processing agents
-- **Knowledge Base and RAG-oriented Data Agents**
-- **Better Automatic Processing Solution Generation**: Less token usage, more efficient, higher quality processing results
-- **Data Workflow Template Reuse and Automatic Tuning**: Based on DataJuicer community data recipes
-- ......
+- **Data-Juicer Code Development Agent (DJ Dev Agent)**  
+  Automatically develops new data processing operators based on user requirements.  
+  - [ ] In progress  
+  - *[2026-01-15]*: The current [DJ Dev Agent](./data_juicer_agents/) is in beta. Capability evaluation and optimization are ongoing.
 
-### Common Issues
+---
+
+### Services
+
+- **Q&A Copilot — *Juicer***  
+  - [ ] Overall service  
+  - *[2026-01-15]*: ***Juicer*** is currently available on the [documentation site](https://datajuicer.github.io/data-juicer-agents/en/main/). We are working on deployments for community platforms.
+    - [x] Documentation Website  
+    - [ ] DingTalk Group  
+    - [ ] Discord Server  
+
+- **Interactive Data Analysis Studio** *(In Development)*  
+  - *[2026-01-15]*: A [demo](./interactive_recipe/) is available. The current version primarily relies on predefined workflows. We are working on integrating agent-based intelligence.
+
+- **MCP Service**  
+  - [ ] Planned
+
+---
+
+### Future Directions
+
+- **Workflows as Skills**  
+  [Data-Juicer Hub](https://github.com/datajuicer/data-juicer-hub) hosts a growing collection of data processing recipes and workflows contributed by the Data-Juicer community.
+
+  As data processing demands expand into new scenarios—such as **RAG**, **Embodied Intelligence**, and **Data Lakehouse architectures**—we plan to incorporate existing and newly developed workflows into DJ-Agents as reusable *skills*, enabling broader and more flexible data processing applications.
+
+## Common Issues
 
 **Q: How to get DashScope API key?**
 A: Visit [DashScope official website](https://dashscope.aliyun.com/) to register an account and apply for an API key.
@@ -138,20 +132,20 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
 
 ### Optimization Recommendations
 
-- For large-scale data processing, it is recommended to use DataJuicer's distributed mode
+- For large-scale data processing, it is recommended to use Data-Juicer's distributed mode
 - Set batch size appropriately to balance memory usage and processing speed
-- For more advanced data processing features (synthesis, Data-Model Co-Development), please refer to DataJuicer [documentation](https://datajuicer.github.io/data-juicer/en/main/index.html)
+- For more advanced data processing features (synthesis, Data-Model Co-Development), please refer to Data-Juicer [documentation](https://datajuicer.github.io/data-juicer/en/main/index.html)
 
 ---
 
 ## Related Resources
 
-- DataJuicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.
+- Data-Juicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.
 
 *Welcome to visit GitHub, Star, Fork, submit Issues, and join the community!*
 
 - **Project Repositories**:
+  - [Data-Juicer](https://github.com/datajuicer/data-juicer)
   - [AgentScope](https://github.com/agentscope-ai/agentscope)
-  - [DataJuicer](https://github.com/datajuicer/data-juicer)
 
-**Contributing**: Welcome to submit Issues and Pull Requests to improve AgentScope, DataJuicer Agents, and DataJuicer. If you encounter problems during use or have feature suggestions, please feel free to contact us.
+**Contributing**: Welcome to submit Issues and Pull Requests to improve Data-Juicer Agents, Data-Juicer, and AgentScope. If you encounter problems during use or have feature suggestions, please feel free to contact us.

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DataJuicer Agents &#8212; Data Juicer Agents</title>
+    <title>Data-Juicer Agents: Towards Agentic Data Processing &#8212; Data Juicer Agents</title>
   
   
   
@@ -493,136 +493,134 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="datajuicer-agents">
-<h1>DataJuicer Agents<a class="headerlink" href="#datajuicer-agents" title="Link to this heading">#</a></h1>
-<p>A multi-agent data processing system built on <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a> and <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer (DJ)</a>. This project demonstrates how to leverage the natural language understanding capabilities of large language models, enabling non-expert users to easily harness the powerful data processing capabilities of Data-Juicer.</p>
-<section id="why-datajuicer-agents">
-<h2>🎯 Why DataJuicer Agents?<a class="headerlink" href="#why-datajuicer-agents" title="Link to this heading">#</a></h2>
-<p>In the actual work of large model R&amp;D and applications, <strong>data processing remains a high-cost, low-efficiency, and hard-to-reproduce process</strong>. Many teams spend more time on data analysis, cleaning and synthesis than on model training, requirement alignment and app development.</p>
-<p>We hope to liberate developers from tedious script assembly through agent technology, making data R&amp;D closer to a “think and get” experience.</p>
-<p><strong>Data directly defines the upper limit of model capabilities</strong>. What truly determines model performance are multiple dimensions such as <strong>quality, diversity, harmfulness control, and task matching</strong> of data. Optimizing data is essentially optimizing the model itself. To do this efficiently, we need a systematic toolset.</p>
-<p>DataJuicer Agents is designed to support the new paradigm of <strong>data-model co-optimization</strong> as an intelligent collaboration system.</p>
-</section>
-<section id="table-of-contents">
-<h2>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="#datajuicer-agents">DataJuicer Agents</a></p>
-<ul>
-<li><p><a class="reference internal" href="#why-datajuicer-agents">🎯 Why DataJuicer Agents?</a></p></li>
-<li><p><a class="reference internal" href="#table-of-contents">📋 Table of Contents</a></p></li>
-<li><p><a class="reference internal" href="#what-does-this-agent-do">What Does This Agent Do?</a></p></li>
-<li><p><a class="reference internal" href="#architecture">Architecture</a></p>
-<ul>
-<li><p><a class="reference internal" href="#multi-agent-routing-architecture">Multi-Agent Routing Architecture</a></p></li>
-<li><p><a class="reference internal" href="#two-integration-modes">Two Integration Modes</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#roadmap">Roadmap</a></p>
-<ul>
-<li><p><a class="reference internal" href="#data-juicer-q-a-agent-demo-available">Data-Juicer Q&amp;A Agent (Demo Available)</a></p></li>
-<li><p><a class="reference internal" href="#interactive-data-analysis-and-visualization-agent-in-development">Interactive Data Analysis and Visualization Agent (In Development)</a></p></li>
-<li><p><a class="reference internal" href="#other-directions">Other Directions</a></p></li>
-<li><p><a class="reference internal" href="#common-issues">Common Issues</a></p></li>
-<li><p><a class="reference internal" href="#optimization-recommendations">Optimization Recommendations</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#related-resources">Related Resources</a></p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="what-does-this-agent-do">
-<h2>What Does This Agent Do?<a class="headerlink" href="#what-does-this-agent-do" title="Link to this heading">#</a></h2>
-<p>Data-Juicer (DJ) is an <strong>open-source processing system covering the full lifecycle of large model data</strong>, providing four core capabilities:</p>
-<ul class="simple">
-<li><p><strong>Full-Stack Operator Library (DJ-OP)</strong>: Nearly 200 high-performance, reusable multimodal operators covering text, images, and audio/video</p></li>
-<li><p><strong>High-Performance Engine (DJ-Core)</strong>: Built on Ray, supporting TB-level data, 10K-core distributed computing, with operator fusion and multi-granularity fault tolerance</p></li>
-<li><p><strong>Collaborative Development Platform (DJ-Sandbox)</strong>: Introduces A/B Test and Scaling Law concepts, using small-scale experiments to drive large-scale optimization</p></li>
-<li><p><strong>Natural Language Interaction Layer (DJ-Agents)</strong>: Enables developers to build data pipelines through conversational interfaces using Agent technology</p></li>
-</ul>
-<p>DataJuicer Agents is not a simple Q&amp;A bot, but an <strong>intelligent collaborator for data processing</strong>. Specifically, it can:</p>
-<ul class="simple">
-<li><p><strong>Intelligent Query</strong>: Automatically match the most suitable operators based on natural language descriptions (precisely locating from nearly 200 operators)</p></li>
-<li><p><strong>Automated Pipeline</strong>: Describe data processing needs, automatically generate Data-Juicer YAML configurations and execute them</p></li>
-<li><p><strong>Custom Extension</strong>: Help users develop custom operators and seamlessly integrate them into local environments</p></li>
-</ul>
-<p><strong>Our goal: Let developers focus on “what to do” rather than “how to do it”</strong>.</p>
-</section>
-<section id="architecture">
-<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
-<section id="multi-agent-routing-architecture">
-<h3>Multi-Agent Routing Architecture<a class="headerlink" href="#multi-agent-routing-architecture" title="Link to this heading">#</a></h3>
-<p>DataJuicer Agents adopts a <strong>multi-agent routing architecture</strong>, which is key to system scalability. When a user inputs a natural language request, the <strong>Router Agent</strong> first performs task triage to determine whether it’s a standard data processing task or a custom requirement that needs new capabilities.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>User Query  
-  ↓  
-Router Agent (Filtering &amp; Decision) ← query_dj_operators (operator retrieval)  
-  │  
-  ├─ High-match operator found  
-  │  ↓  
-  │  DJ Agent (Standard Data Processing Task)  
-  |  ├── Preview data samples (confirm field names and data formats)  
-  │  ├── get_ops_signature (retrieve full parameter signatures)  
-  │  ├── Generate YAML configuration  
-  │  └── execute_safe_command (run dj-process, dj-analyze)  
-  │  
-  └─ No high-match operator found  
-     ↓  
-     Dev Agent (Custom Operator Development &amp; Integration)  
-     ├── get_basic_files (retrieve base classes and registration mechanism)  
-     ├── get_operator_example (retrieve similar operator examples)  
-     └── Generate compliant operator code  
-     └── Local integration (register to user-specified path)
-</pre></div>
+  <div align="center">
+<img src="docs/imgs/dj_agents_logo.png" width=70%>
+<br/>
+<section id="data-juicer-agents-towards-agentic-data-processing">
+<h1>Data-Juicer Agents: Towards Agentic Data Processing<a class="headerlink" href="#data-juicer-agents-towards-agentic-data-processing" title="Link to this heading">#</a></h1>
+<p>A Suite of Agents for <strong>Agentic Data Processing</strong>. Built on <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer (DJ)</a> and <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a>.</p>
+<p><span class="xref myst">简体中文</span> | <a class="reference internal" href="README.html"><span class="std std-doc">English</span></a></p>
+<p><a class="reference internal" href="#overview">Overview</a> • <a class="reference internal" href="#quick-start">Quick Start</a> • <a class="reference external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">Documentation</a></p>
+</div>
+<section id="news">
+<h2>News<a class="headerlink" href="#news" title="Link to this heading">#</a></h2>
+<p>🚀[2026-01-15] <a class="reference internal" href="qa-copilot/README.html"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> has been deployed on the official <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation site</a> of Data-Juicer! Feel free to ask <em><strong>Juicer</strong></em> anything related to Data-Juicer ecosystem. Check 📃 <a class="reference internal" href="#./qa-copilot/"><span class="xref myst">Deploy-ready codes</span></a> | 🎬<a class="reference internal" href="qa-copilot/DEMO.html"><span class="std std-doc"> More demos</span></a> | 🎯 <a class="reference internal" href="#roadmap">Dev Roadmap</a>.</p>
+<div align="center">
+<img src="docs/imgs/dj_copilot_demo.gif" width=90%>
 </div>
 </section>
-<section id="two-integration-modes">
-<h3>Two Integration Modes<a class="headerlink" href="#two-integration-modes" title="Link to this heading">#</a></h3>
-<p>Agent integration with DataJuicer has two modes to adapt to different usage scenarios:</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>This repo maintains a suite of agents that enable users to interact with Data-Juicer’s powerful data processing capabilities through natural language.</p>
 <ul class="simple">
-<li><p><strong>Tool Binding Mode</strong>: Agent calls DataJuicer command-line tools (such as <code class="docutils literal notranslate"><span class="pre">dj-analyze</span></code>, <code class="docutils literal notranslate"><span class="pre">dj-process</span></code>), compatible with existing user habits, low migration cost</p></li>
-<li><p><strong>MCP Binding Mode</strong>: Agent directly calls DataJuicer’s MCP (Model Context Protocol) interface, no need to generate intermediate YAML files, directly run operators or data recipes, better performance</p></li>
+<li><p>In Data-Juicer ecosystem, Data-Juicer Agents (DJ-Agents) play a key role in the interface layer, bridging users with the powerful Data-Juicer infrastructure and toolkit for building data-centric applications.</p></li>
+<li><p>Unlike traditional API- or CLI-based interaction, DJ-Agents leverage agent-based interaction, tool use, and extensibility to enable non-expert users to access Data-Juicer’s data-processing capabilities through intuitive natural-language interactions.</p></li>
+<li><p>The long-term goal of DJ-Agents is to enable a <strong>development-free data processing lifecycle</strong>, allowing developers to focus on <strong>what to do</strong> rather than <strong>how to do it</strong>.</p></li>
 </ul>
-<p>These two modes are automatically selected by the Agent based on task complexity and performance requirements, ensuring both flexibility and efficiency.</p>
+<p>The Data-Juicer Agents family currently contains the following members:</p>
+<ul class="simple">
+<li><p>Data-Juicer Q&amp;A Agent (DJ Q&amp;A Agent)</p></li>
+<li><p>Data-Juicer Data Processing Agent (DJ Process Agent) [Beta version]</p></li>
+<li><p>Data-Juicer Code Development Agent (DJ Dev Agent) [Beta version]</p></li>
+</ul>
+<p>Data-Juicer Agents adopts a <strong>multi-agent routing architecture</strong> for routing requests to the corresponding agent. Check <a class="reference internal" href="docs/AgentIntro.html"><span class="std std-doc">agent info</span></a> for more details.</p>
+<p align="center">
+  <img src="docs/imgs/dj_agents_workflow.png" width=70%>
+</p>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<section id="online-services">
+<h3>Online Services<a class="headerlink" href="#online-services" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="qa-copilot/README.html"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> has been deployed on the official <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">doc page</a> of Data-Juicer! Feel free to ask <em><strong>Juicer</strong></em> anything related to Data-Juicer ecosystem.</p></li>
+</ul>
+<p>More online agentic services are being planned and developed—check out our Roadmap and join us!</p>
+</section>
+<section id="local-deployment">
+<h3>Local Deployment<a class="headerlink" href="#local-deployment" title="Link to this heading">#</a></h3>
+<p>Follow the <a class="reference external" href="https://datajuicer.github.io/data-juicer-agents/en/main/docs/QuickStart.html">document</a> to locally launch DJ-Agents.</p>
+<p>If you encounter any issues, check <a class="reference internal" href="#common-issues">common issues</a> or ask our Q&amp;A copilot <em><strong>Juicer</strong></em> at the doc page.</p>
 </section>
 </section>
 <section id="roadmap">
 <h2>Roadmap<a class="headerlink" href="#roadmap" title="Link to this heading">#</a></h2>
-<p>The Data-Juicer agent ecosystem is rapidly expanding. Here are the new agents currently in development or planned:</p>
-<section id="data-juicer-q-a-agent-demo-available">
-<h3>Data-Juicer Q&amp;A Agent (Demo Available)<a class="headerlink" href="#data-juicer-q-a-agent-demo-available" title="Link to this heading">#</a></h3>
-<p>Provides users with detailed answers about Data-Juicer operators, concepts, and best practices.</p>
-<video controls width="100%" height="auto" playsinline>
-    <source src="https://github.com/user-attachments/assets/a8392691-81cf-4a25-94da-967dcf92c685" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
-<p>The Q&amp;A agent can currently be viewed and tried out <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot">here</a>.</p>
-</section>
-<section id="interactive-data-analysis-and-visualization-agent-in-development">
-<h3>Interactive Data Analysis and Visualization Agent (In Development)<a class="headerlink" href="#interactive-data-analysis-and-visualization-agent-in-development" title="Link to this heading">#</a></h3>
-<p>We are building a more advanced <strong>human-machine collaborative data optimization workflow</strong> that introduces human feedback:</p>
+<p>The long-term vision of <strong>DJ-Agents</strong> is to enable a <strong>development-free data processing lifecycle</strong>, allowing developers to focus on <strong>what to do</strong> rather than <strong>how to do it</strong>.</p>
+<p>To achieve this vision, we are tackling two fundamental challenges:</p>
 <ul class="simple">
-<li><p>Users can view statistics, attribution analysis, and visualization results</p></li>
-<li><p>Dynamically edit recipes, approve or reject suggestions</p></li>
-<li><p>Underpinned by <code class="docutils literal notranslate"><span class="pre">dj.analyzer</span></code> (data analysis), <code class="docutils literal notranslate"><span class="pre">dj.attributor</span></code> (effect attribution), and <code class="docutils literal notranslate"><span class="pre">dj.sandbox</span></code> (experiment management)</p></li>
-<li><p>Supports closed-loop optimization based on validation tasks</p></li>
+<li><p><strong>Agent Level</strong>: How to design and build powerful agents specialized in data processing</p></li>
+<li><p><strong>Service Level</strong>: How to package these agents into ready-to-use, out-of-the-box products</p></li>
 </ul>
-<p>This interactive recipe can currently be viewed and tried out <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/interactive_recipe/README.md">here</a>.</p>
-</section>
-<section id="other-directions">
-<h3>Other Directions<a class="headerlink" href="#other-directions" title="Link to this heading">#</a></h3>
+<p>We continuously iterate on both directions, and the roadmap may evolve accordingly as our understanding and capabilities improve.</p>
+<p>Below is the current development checklist.</p>
+<hr class="docutils" />
+<section id="agents">
+<h3>Agents<a class="headerlink" href="#agents" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Data Processing Agent Benchmarking</strong>: Quantify the performance of different Agents in terms of accuracy, efficiency, and robustness</p></li>
-<li><p><strong>Data “Health Check Report” &amp; Data Intelligent Recommendation</strong>: Automatically diagnose data problems and recommend optimization solutions</p></li>
-<li><p><strong>Router Agent Enhancement</strong>: More seamless, e.g., when operators are lacking → Code Development Agent → Data Processing Agent</p></li>
-<li><p><strong>MCP Further Optimization</strong>: Embedded LLM, users can directly use MCP connected to their local environment (e.g., IDE) to get an experience similar to current data processing agents</p></li>
-<li><p><strong>Knowledge Base and RAG-oriented Data Agents</strong></p></li>
-<li><p><strong>Better Automatic Processing Solution Generation</strong>: Less token usage, more efficient, higher quality processing results</p></li>
-<li><p><strong>Data Workflow Template Reuse and Automatic Tuning</strong>: Based on DataJuicer community data recipes</p></li>
-<li><p>……</p></li>
+<li><p><strong>Data-Juicer Q&amp;A Agent (DJ Q&amp;A Agent)</strong><br />
+Answers Data-Juicer–related questions from both existing and potential users.</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Implemented</p></li>
+<li><p><em>[2026-01-15]</em>: The current <a class="reference internal" href="#./qa-copilot/"><span class="xref myst">DJ Q&amp;A Agent</span></a> demonstrates strong performance in our internal evaluations and is considered production-ready.</p></li>
 </ul>
+</li>
+<li><p><strong>Data-Juicer Data Processing Agent (DJ Process Agent)</strong><br />
+Automatically invokes Data-Juicer tools to fulfill data processing requests.</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> In progress</p></li>
+<li><p><em>[2026-01-15]</em>: The current <a class="reference internal" href="#./data_juicer_agents/"><span class="xref myst">DJ Process Agent</span></a> is in beta. We are actively benchmarking and optimizing its capabilities.</p></li>
+</ul>
+</li>
+<li><p><strong>Data-Juicer Code Development Agent (DJ Dev Agent)</strong><br />
+Automatically develops new data processing operators based on user requirements.</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> In progress</p></li>
+<li><p><em>[2026-01-15]</em>: The current <a class="reference internal" href="#./data_juicer_agents/"><span class="xref myst">DJ Dev Agent</span></a> is in beta. Capability evaluation and optimization are ongoing.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="services">
+<h3>Services<a class="headerlink" href="#services" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Q&amp;A Copilot — <em>Juicer</em></strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Overall service</p></li>
+<li><p><em>[2026-01-15]</em>: <em><strong>Juicer</strong></em> is currently available on the <a class="reference external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">documentation site</a>. We are working on deployments for community platforms.</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Documentation Website</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> DingTalk Group</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Discord Server</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Interactive Data Analysis Studio</strong> <em>(In Development)</em></p>
+<ul>
+<li><p><em>[2026-01-15]</em>: A <a class="reference internal" href="#./interactive_recipe/"><span class="xref myst">demo</span></a> is available. The current version primarily relies on predefined workflows. We are working on integrating agent-based intelligence.</p></li>
+</ul>
+</li>
+<li><p><strong>MCP Service</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Planned</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="future-directions">
+<h3>Future Directions<a class="headerlink" href="#future-directions" title="Link to this heading">#</a></h3>
+<ul>
+<li><p><strong>Workflows as Skills</strong><br />
+<a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">Data-Juicer Hub</a> hosts a growing collection of data processing recipes and workflows contributed by the Data-Juicer community.</p>
+<p>As data processing demands expand into new scenarios—such as <strong>RAG</strong>, <strong>Embodied Intelligence</strong>, and <strong>Data Lakehouse architectures</strong>—we plan to incorporate existing and newly developed workflows into DJ-Agents as reusable <em>skills</em>, enabling broader and more flexible data processing applications.</p>
+</li>
+</ul>
+</section>
 </section>
 <section id="common-issues">
-<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">#</a></h3>
+<h2>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">#</a></h2>
 <p><strong>Q: How to get DashScope API key?</strong>
 A: Visit <a class="reference external" href="https://dashscope.aliyun.com/">DashScope official website</a> to register an account and apply for an API key.</p>
 <p><strong>Q: Why does operator retrieval fail?</strong>
@@ -633,13 +631,12 @@ A: Ensure Data-Juicer path is configured correctly and check the example code pr
 A: Check if the MCP server is running and confirm the URL address in the configuration file is correct.</p>
 <p><strong>Q: Error: requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: <a class="reference external" href="http://localhost:3000/trpc/pushMessage">http://localhost:3000/trpc/pushMessage</a></strong>
 A: Agents handle data via file references (paths) rather than direct uploads. Please confirm whether any non-text files were submitted.</p>
-</section>
 <section id="optimization-recommendations">
 <h3>Optimization Recommendations<a class="headerlink" href="#optimization-recommendations" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>For large-scale data processing, it is recommended to use DataJuicer’s distributed mode</p></li>
+<li><p>For large-scale data processing, it is recommended to use Data-Juicer’s distributed mode</p></li>
 <li><p>Set batch size appropriately to balance memory usage and processing speed</p></li>
-<li><p>For more advanced data processing features (synthesis, Data-Model Co-Development), please refer to DataJuicer <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation</a></p></li>
+<li><p>For more advanced data processing features (synthesis, Data-Model Co-Development), please refer to Data-Juicer <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation</a></p></li>
 </ul>
 </section>
 </section>
@@ -647,18 +644,18 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
 <section id="related-resources">
 <h2>Related Resources<a class="headerlink" href="#related-resources" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>DataJuicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.</p></li>
+<li><p>Data-Juicer has been used by a large number of Tongyi and Alibaba Cloud internal and external users, and has facilitated many research works. All code is continuously maintained and enhanced.</p></li>
 </ul>
 <p><em>Welcome to visit GitHub, Star, Fork, submit Issues, and join the community!</em></p>
 <ul class="simple">
 <li><p><strong>Project Repositories</strong>:</p>
 <ul>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer</a></p></li>
 <li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a></p></li>
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">DataJuicer</a></p></li>
 </ul>
 </li>
 </ul>
-<p><strong>Contributing</strong>: Welcome to submit Issues and Pull Requests to improve AgentScope, DataJuicer Agents, and DataJuicer. If you encounter problems during use or have feature suggestions, please feel free to contact us.</p>
+<p><strong>Contributing</strong>: Welcome to submit Issues and Pull Requests to improve Data-Juicer Agents, Data-Juicer, and AgentScope. If you encounter problems during use or have feature suggestions, please feel free to contact us.</p>
 </section>
 </section>
 <div class="toctree-wrapper compound">
@@ -668,7 +665,26 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
 <li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro.html">Agent Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docs/Advanced.html">Advanced Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docs/Extension.html">Customization and Extension</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qa-copilot/README.html">Q&amp;A Copilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html">Data-Juicer Q&amp;A Copilot Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#prerequisites">🧩 <strong>Prerequisites</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#basic-installation">🚀 <strong>Basic Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#scenario-based-installation">🎯 <strong>Scenario-Based Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#common-installation-patterns">📦 <strong>Common Installation Patterns</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#install-from-source">🛠️ <strong>Install from Source</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#op-based-recipe-based-installation">⚙️ <strong>OP-Based / Recipe-Based Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#docker-installation">🐳 <strong>Docker Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#notes-troubleshooting">📌 <strong>Notes &amp; Troubleshooting</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#start-with-minimal-examples">✅ 1. <strong>Start with Minimal Examples</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#leverage-pre-built-recipes-from-dj-hub">✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#install-only-what-you-need">✅ 3. <strong>Install Only What You Need</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#choose-the-right-operators">✅ 4. <strong>Choose the Right Operators</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#use-3-rule-for-hyperparameter-tuning">✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#validate-with-benchmarks">✅ 6. <strong>Validate with Benchmarks</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#automate-dependency-installation">✅ 7. <strong>Automate Dependency Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#use-docker-for-reproducibility">✅ 8. <strong>Use Docker for Reproducibility</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#contribute-back-to-the-community">✅ 9. <strong>Contribute Back to the Community</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO.html#monitor-retention-rates-quality-metrics">✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/README.html">Data-Juicer Q&amp;A Copilot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
 </ul>
 </li>
@@ -724,19 +740,20 @@ A: Agents handle data via file references (paths) rather than direct uploads. Pl
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-datajuicer-agents">🎯 Why DataJuicer Agents?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-does-this-agent-do">What Does This Agent Do?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-agent-routing-architecture">Multi-Agent Routing Architecture</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-integration-modes">Two Integration Modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#news">News</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-services">Online Services</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local-deployment">Local Deployment</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roadmap">Roadmap</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-juicer-q-a-agent-demo-available">Data-Juicer Q&amp;A Agent (Demo Available)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-data-analysis-and-visualization-agent-in-development">Interactive Data Analysis and Visualization Agent (In Development)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-directions">Other Directions</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#agents">Agents</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#services">Services</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#future-directions">Future Directions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-recommendations">Optimization Recommendations</a></li>
 </ul>
 </li>

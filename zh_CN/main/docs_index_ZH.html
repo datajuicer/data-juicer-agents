@@ -57,7 +57,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="快速开始" href="docs/QuickStart_ZH.html" />
-    <link rel="prev" title="DataJuicer 智能体" href="index_ZH.html" />
+    <link rel="prev" title="Data-Juicer Agents：迈向智能体驱动的数据处理" href="index_ZH.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="zh-CN"/>
   <meta name="docsearch:version" content="" />
@@ -478,7 +478,29 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="qa-copilot/README_ZH.html">Q&amp;A Copilot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html">Data-Juicer 问答 Copilot 示例（中文）</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/README_ZH.html">Data-Juicer Q&amp;A Copilot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interactive_recipe/README_ZH.html">🔧 InteRecipe：交互式数据处理配方生成流程</a></li>
 </ul>
 </div>
@@ -569,7 +591,75 @@
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="qa-copilot/README_ZH.html">Q&amp;A Copilot</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html">Data-Juicer 问答 Copilot 示例（中文）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#alphanumeric-filter-zh">案例 1 · 算子介绍（alphanumeric_filter，ZH）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id1">📌 核心功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id2">⚙️ 参数说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#yaml">🧩 使用示例（YAML 配置）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id3">📚 参考资料</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#dj-agents-zh">案例 2 · 模块介绍（DJ-Agents，ZH）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id4">✅ 核心功能</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id5">🚀 快速开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id10">💡 使用示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id11">🔗 参考资料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#zh">案例 3 · 概念问题（基类算子，ZH）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id12">🧱 基类结构概览</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#op">1. <strong>顶层基类 <code class="docutils literal notranslate"><span class="pre">OP</span></code></strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id14">2. <strong>五大核心子类算子</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id15">⚙️ 关键设计特性</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id16">🔁 自动批处理与单样本兼容</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id17">🛡️ 错误容忍机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#tracer">📊 数据追踪支持（Tracer）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id18">🧩 注册机制</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#mapper">🧩 示例：自定义一个简单 Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id19">📚 参考资料</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#dj-zh">案例 4 · 快速开始（如何安装 DJ，ZH）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id20">🐍 基础安装（推荐）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id21">前提条件：</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id22">🧩 场景化安装（按需组合）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id23">常用组合示例：</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id24">🛠️ 从源码安装（获取最新特性）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#docker">🐳 Docker 安装</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id25">拉取官方镜像：</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id26">或自行构建镜像：</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id27">⚙️ 特定算子依赖安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id28">📌 注意事项</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id29">案例 5 · 处理指导（过滤脏话文本，ZH）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id30">✅ 使用方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id31">📌 说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id32">🧪 示例输入/输出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id33">📚 参考资料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id34">案例 6 · 最佳实践（使用 DJ 的建议，ZH）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id35">✅ 1. <strong>模块化安装，按需加载</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id36">✅ 2. <strong>从官方菜谱库学习与复用</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#operators">✅ 3. <strong>合理组合算子（Operators）</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id37">✅ 4. <strong>利用批处理与分布式加速</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id38">✅ 5. <strong>评估与迭代</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id39">✅ 6. <strong>贡献与协作</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id40">✅ 7. <strong>调试与日志</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id41">🔗 参考资料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id42">案例 7 · 越界问题（与 DJ 无关提问，ZH）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qa-copilot/README_ZH.html">Data-Juicer Q&amp;A Copilot</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="qa-copilot/README_ZH.html#id1">核心组件</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qa-copilot/README_ZH.html#id2">快速开始</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qa-copilot/README_ZH.html#id6">使用方式</a></li>
@@ -608,7 +698,7 @@
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">上一页</p>
-        <p class="prev-next-title">DataJuicer 智能体</p>
+        <p class="prev-next-title">Data-Juicer Agents：迈向智能体驱动的数据处理</p>
       </div>
     </a>
     <a class="right-next"

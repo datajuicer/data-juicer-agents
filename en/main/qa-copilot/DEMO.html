@@ -1,0 +1,1305 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer Q&amp;A Copilot Demo &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../_static/ask-ai-widget.css?v=a8aa5a20" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'qa-copilot/DEMO';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../_static/ask-ai-widget.js?v=dc122734"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data-Juicer Q&amp;A Copilot" href="README.html" />
+    <link rel="prev" title="Customization and Extension" href="../docs/Extension.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/qa-copilot/DEMO.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/qa-copilot/DEMO_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/qa-copilot/DEMO.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/qa-copilot/DEMO.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/qa-copilot/DEMO_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/qa-copilot/DEMO.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../docs/QuickStart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/AgentIntro.html">Agent Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/Advanced.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/Extension.html">Customization and Extension</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Data-Juicer Q&amp;A Copilot Demo</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="README.html">Data-Juicer Q&amp;A Copilot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Q&amp;A Copilot Demo</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-q-a-copilot-demo">
+<h1>Data-Juicer Q&amp;A Copilot Demo<a class="headerlink" href="#data-juicer-q-a-copilot-demo" title="Link to this heading">#</a></h1>
+<p>This document shows end-to-end examples of the QA Copilot. Each case lists the <strong>user query (input)</strong> and the <strong>assistant answer (output)</strong>.</p>
+<p>You can chat with our <a class="reference internal" href="README.html"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> on the official <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation site</a> of Data-Juicer! Feel free to ask <em><strong>Juicer</strong></em> anything related to Data-Juicer ecosystem.</p>
+<div align="center">
+<img src="../docs/imgs/dj_copilot_demo.gif" width=90%>
+</div>
+<hr class="docutils" />
+<section id="case-1-operator-introduction-alphanumeric-filter-en">
+<h2>Case 1 · Operator Introduction (alphanumeric_filter, EN)<a class="headerlink" href="#case-1-operator-introduction-alphanumeric-filter-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">operator_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>Introduce alphanumeric_filter</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>The <code class="docutils literal notranslate"><span class="pre">alphanumeric_filter</span></code> is a Data-Juicer operator designed to filter text samples based on the ratio of alphanumeric characters (or tokens) to the total number of characters (or tokens). It helps ensure data quality by retaining only those samples that fall within a specified alphanumeric ratio range.</p>
+</section>
+<section id="key-features">
+<h2>Key Features:<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Character-based or Token-based</strong>: Depending on the <code class="docutils literal notranslate"><span class="pre">tokenization</span></code> parameter, it can calculate the ratio either by counting characters or by using a Hugging Face tokenizer to count tokens.</p></li>
+<li><p><strong>Caching Metrics</strong>: The computed metric — <code class="docutils literal notranslate"><span class="pre">'alpha_token_ratio'</span></code> (if tokenized) or <code class="docutils literal notranslate"><span class="pre">'alnum_ratio'</span></code> (if character-based) — is cached in the sample’s stats field for potential reuse.</p></li>
+<li><p><strong>Flexible Range Control</strong>: You define <code class="docutils literal notranslate"><span class="pre">min_ratio</span></code> and <code class="docutils literal notranslate"><span class="pre">max_ratio</span></code> to specify the acceptable range of alphanumeric content.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>):<br />
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, uses tokenization via Hugging Face tokenizer; if <code class="docutils literal notranslate"><span class="pre">False</span></code>, counts characters directly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_ratio</span></code> (<code class="docutils literal notranslate"><span class="pre">float</span></code>):<br />
+Minimum acceptable alphanumeric ratio.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_ratio</span></code> (<code class="docutils literal notranslate"><span class="pre">float</span></code>):<br />
+Maximum acceptable alphanumeric ratio.</p></li>
+</ul>
+</section>
+<section id="example-usage-in-config">
+<h2>Example Usage in Config:<a class="headerlink" href="#example-usage-in-config" title="Link to this heading">#</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alphanumeric_filter</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">tokenization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">      </span><span class="nt">min_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<span class="w">      </span><span class="nt">max_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
+</pre></div>
+</div>
+<p>This configuration keeps samples where 30% to 90% of characters are alphanumeric.</p>
+</details>
+</section>
+<hr class="docutils" />
+<section id="case-2-module-introduction-dj-agents-en">
+<h2>Case 2 · Module Introduction (DJ-Agents, EN)<a class="headerlink" href="#case-2-module-introduction-dj-agents-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">submodule_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>Introduce DJ-Agents</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>Data-Juicer Agents (DJ-Agents) is an intelligent, agent-based framework designed to assist users in interactively creating and optimizing Data-Juicer recipes through natural language conversations. It leverages large language models (LLMs) via DashScope API to interpret user intent, recommend suitable operators, generate configuration code, and even support custom operator development.</p>
+</section>
+<section id="id1">
+<h2>Key Features:<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<ol class="arabic">
+<li><p><strong>Interactive Recipe Generation</strong><br />
+Users can describe their data processing goals in plain language (e.g., “I want to filter out non-English text”), and DJ-Agents will automatically suggest appropriate operators and generate a working recipe.</p></li>
+<li><p><strong>Custom Operator Development Support</strong><br />
+If existing operators don’t meet your needs, DJ-Agents can guide you through creating new ones — including scaffolding code templates and updating configurations — especially when paired with a local Data-Juicer source installation.</p></li>
+<li><p><strong>Flexible Running Modes</strong></p>
+<ul class="simple">
+<li><p><strong>Command Line Mode</strong>: Default mode for quick interactions.</p></li>
+<li><p><strong>AgentScope Studio Mode</strong>: A visual, interactive web interface for richer debugging and step-by-step guidance (requires installing <code class="docutils literal notranslate"><span class="pre">&#64;agentscope/studio</span></code> via npm).</p></li>
+</ul>
+</li>
+<li><p><strong>Environment Setup</strong></p>
+<ul class="simple">
+<li><p>Requires Python 3.10+.</p></li>
+<li><p>Needs a valid DashScope API key (export as <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code>).</p></li>
+<li><p>Optional: Set <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code> environment variable if developing custom operators.</p></li>
+</ul>
+</li>
+<li><p><strong>Installation</strong><br />
+Uses <code class="docutils literal notranslate"><span class="pre">uv</span></code> (a fast Python package installer) for streamlined setup:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</li>
+</ol>
+<p>For custom operator development, clone and install Data-Juicer in editable mode:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>/path/to/data-juicer
+</pre></div>
+</div>
+<hr class="docutils" />
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/docs/QuickStart.md">DJ-Agents Quick Start Guide</a></p></li>
+</ul>
+</details>
+</section>
+<hr class="docutils" />
+<section id="case-3-concept-question-base-operator-en">
+<h2>Case 3 · Concept Question (Base Operator, EN)<a class="headerlink" href="#case-3-concept-question-base-operator-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">concept_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>Tell me about the base class of operators</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>The base class for operators in Data-Juicer is defined in the file <code class="docutils literal notranslate"><span class="pre">base_op.py</span></code>, located at <code class="docutils literal notranslate"><span class="pre">data_juicer/ops/base_op.py</span></code>. This class serves as the foundational structure from which all specific operators (such as filters, mappers, etc.) inherit. It provides common functionalities and interfaces required for consistent operator behavior across the Data-Juicer ecosystem.</p>
+<p>Typical responsibilities of the base operator class include:</p>
+<ul class="simple">
+<li><p>Defining standard method signatures (e.g., <code class="docutils literal notranslate"><span class="pre">process</span></code>).</p></li>
+<li><p>Handling configuration and initialization parameters.</p></li>
+<li><p>Providing utilities for logging, statistics, or error handling.</p></li>
+</ul>
+<p>For implementation details, you can explore the source code directly.</p>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/6fcef06620d210cb182cc076012612b725feeeaa/data_juicer/ops/base_op.py">Base Operator Source Code</a></p></li>
+</ul>
+</details>
+</section>
+<hr class="docutils" />
+<section id="case-4-quick-start-install-dj-en">
+<h2>Case 4 · Quick Start (Install DJ, EN)<a class="headerlink" href="#case-4-quick-start-install-dj-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">quick_start_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>How to install DJ?</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>To install Data-Juicer (DJ), follow these steps based on your needs:</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="prerequisites">
+<h1>🧩 <strong>Prerequisites</strong><a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h1>
+<ul>
+<li><p>Python version: <code class="docutils literal notranslate"><span class="pre">&gt;=</span> <span class="pre">3.10</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;=</span> <span class="pre">3.12</span></code></p></li>
+<li><p>Git (if installing from source)</p></li>
+<li><p><strong>uv</strong> (recommended package installer). Install it via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using curl</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Or using pip</span>
+pip<span class="w"> </span>install<span class="w"> </span>uv
+</pre></div>
+</div>
+</li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="basic-installation">
+<h1>🚀 <strong>Basic Installation</strong><a class="headerlink" href="#basic-installation" title="Link to this heading">#</a></h1>
+<p>Install the minimal version from PyPI (core data processing only):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>py-data-juicer
+</pre></div>
+</div>
+<p>This includes:</p>
+<ul class="simple">
+<li><p>Data loading &amp; manipulation</p></li>
+<li><p>File system operations</p></li>
+<li><p>Parallel processing</p></li>
+<li><p>Basic I/O utilities</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="scenario-based-installation">
+<h1>🎯 <strong>Scenario-Based Installation</strong><a class="headerlink" href="#scenario-based-installation" title="Link to this heading">#</a></h1>
+<p>Install extra components based on your use case:</p>
+<section id="core-ml-dl">
+<h2>Core ML/DL<a class="headerlink" href="#core-ml-dl" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="domain-specific">
+<h2>Domain-Specific<a class="headerlink" href="#domain-specific" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Computer Vision</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[vision]&quot;</span>
+
+<span class="c1"># Natural Language Processing</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[nlp]&quot;</span>
+
+<span class="c1"># Audio Processing</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[audio]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-features">
+<h2>Additional Features<a class="headerlink" href="#additional-features" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Distributed Computing</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[distributed]&quot;</span>
+
+<span class="c1"># AI Services &amp; APIs</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[ai_services]&quot;</span>
+
+<span class="c1"># Development Tools</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[dev]&quot;</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="common-installation-patterns">
+<h1>📦 <strong>Common Installation Patterns</strong><a class="headerlink" href="#common-installation-patterns" title="Link to this heading">#</a></h1>
+<section id="text-processing">
+<h2>1. Text Processing<a class="headerlink" href="#text-processing" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="vision-processing">
+<h2>2. Vision Processing<a class="headerlink" href="#vision-processing" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,vision]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="full-pipeline">
+<h2>3. Full Pipeline<a class="headerlink" href="#full-pipeline" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp,vision,distributed]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-installation">
+<h2>4. Complete Installation<a class="headerlink" href="#complete-installation" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[all]&quot;</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="install-from-source">
+<h1>🛠️ <strong>Install from Source</strong><a class="headerlink" href="#install-from-source" title="Link to this heading">#</a></h1>
+<p>For latest features or development:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
+<span class="nb">cd</span><span class="w"> </span>data-juicer
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<span class="c1"># Optional: install specific extras</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[vision]&quot;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>💡 Use <code class="docutils literal notranslate"><span class="pre">-e</span></code> for editable mode.</p>
+</div></blockquote>
+<hr class="docutils" />
+</section>
+<section id="op-based-recipe-based-installation">
+<h1>⚙️ <strong>OP-Based / Recipe-Based Installation</strong><a class="headerlink" href="#op-based-recipe-based-installation" title="Link to this heading">#</a></h1>
+<p>For lightweight setups targeting specific operators or recipes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dependencies for a specific config file</span>
+python<span class="w"> </span>tools/dj_install.py<span class="w"> </span>--config<span class="w"> </span>path_to_your_config_file
+<span class="c1"># OR</span>
+dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_config_file
+</pre></div>
+</div>
+<blockquote>
+<div><p>✅ Only available when installing from source.</p>
+</div></blockquote>
+<hr class="docutils" />
+</section>
+<section id="docker-installation">
+<h1>🐳 <strong>Docker Installation</strong><a class="headerlink" href="#docker-installation" title="Link to this heading">#</a></h1>
+<p>Pull pre-built image:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;
+<span class="c1"># e.g., docker pull datajuicer/data-juicer:v0.2.0</span>
+</pre></div>
+</div>
+<p>Or build from source:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;<span class="w"> </span>.
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+<section id="notes-troubleshooting">
+<h1>📌 <strong>Notes &amp; Troubleshooting</strong><a class="headerlink" href="#notes-troubleshooting" title="Link to this heading">#</a></h1>
+<p>✅ <strong>Verify Installation</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dj</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>🎬 <strong>For Video Operators</strong>:<br />
+Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p>
+<ul class="simple">
+<li><p>Debian/Ubuntu: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code></p></li>
+<li><p>macOS: <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code></p></li>
+<li><p><a class="reference external" href="https://ffmpeg.org/download.html">Official FFmpeg Download</a></p></li>
+</ul>
+<p>🆘 <strong>Need Help?</strong></p>
+<ul class="simple">
+<li><p>Check <a class="reference external" href="https://github.com/datajuicer/data-juicer/tree/main/docs">documentation</a></p></li>
+<li><p>Open a <a class="reference external" href="https://github.com/datajuicer/data-juicer/issues">GitHub Issue</a></p></li>
+<li><p>Join community discussions</p></li>
+</ul>
+<hr class="docutils" />
+<section id="references">
+<h2>🔗 References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Installation Guide</a></p></li>
+</ul>
+</details>
+</section>
+<hr class="docutils" />
+<section id="case-5-processing-guidance-dirty-words-filter-en">
+<h2>Case 5 · Processing Guidance (Dirty Words Filter, EN)<a class="headerlink" href="#case-5-processing-guidance-dirty-words-filter-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">processing_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>I want to filter text data with dirty word, tell me how to do it</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>To filter text data containing dirty or flagged words, you should use the <strong><code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code></strong> operator. This operator is specifically designed to calculate the ratio of flagged (e.g., offensive, dirty, or sensitive) words in a text sample and filters out samples that exceed a specified threshold.</p>
+</section>
+<hr class="docutils" />
+<section id="how-to-use-flagged-words-filter">
+<h2>✅ How to Use <code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code><a class="headerlink" href="#how-to-use-flagged-words-filter" title="Link to this heading">#</a></h2>
+<p>This operator:</p>
+<ul class="simple">
+<li><p>Computes the ratio of flagged words in each text sample.</p></li>
+<li><p>Keeps only those samples where the flagged-word ratio falls within your defined range (e.g., <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0.1]</span></code> to allow up to 10% flagged words).</p></li>
+</ul>
+<section id="example-configuration-in-a-recipe-yaml">
+<h3>Example Configuration in a Recipe (YAML):<a class="headerlink" href="#example-configuration-in-a-recipe-yaml" title="Link to this heading">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
+<span class="nt">process</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">flagged_words_filter</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">lang</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;en&quot;</span>
+<span class="w">      </span><span class="nt">tokenization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">lowercase</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">flagged_ratio_min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">flagged_ratio_max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.05</span><span class="w">  </span><span class="c1"># Keep samples with &lt;= 5% flagged words</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>Parameters:<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lang</span></code>: Language of the text (default: <code class="docutils literal notranslate"><span class="pre">&quot;en&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code>: Whether to tokenize text before matching (default: <code class="docutils literal notranslate"><span class="pre">false</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lowercase</span></code>: Convert text to lowercase for case-insensitive matching (default: <code class="docutils literal notranslate"><span class="pre">true</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flagged_ratio_min/max</span></code>: Range of acceptable flagged word ratios.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="notes">
+<h2>📌 Notes:<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>You can customize the list of flagged words by providing your own dictionary file via the <code class="docutils literal notranslate"><span class="pre">words_file</span></code> parameter.</p></li>
+<li><p>The default flagged word list covers common profanity and sensitive terms in multiple languages.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="next-step">
+<h2>🔍 Next Step:<a class="headerlink" href="#next-step" title="Link to this heading">#</a></h2>
+<p>If you need details on how to provide a custom flagged word list or see code examples, I can retrieve the full operator documentation for you.</p>
+<hr class="docutils" />
+<p><strong>References</strong>:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Data-Juicer Operators Documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/operators/filter/flagged_words_filter.py">FlaggedWordsFilter Source Code</a>
+<strong>References</strong>:</p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Data-Juicer Operators Documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/operators/filter/flagged_words_filter.py">FlaggedWordsFilter Source Code</a></p></li>
+</ul>
+</details>
+</section>
+<hr class="docutils" />
+<section id="case-6-best-practices-using-dj-en">
+<h2>Case 6 · Best Practices (Using DJ, EN)<a class="headerlink" href="#case-6-best-practices-using-dj-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">best_practice_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>Could you give me some best practices for using DJ?</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>Here are some best practices for using Data-Juicer (DJ) effectively:</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="start-with-minimal-examples">
+<h1>✅ 1. <strong>Start with Minimal Examples</strong><a class="headerlink" href="#start-with-minimal-examples" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Use the <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/tree/main/demo">Minimal Example Recipes</a> to get familiar with DJ’s basic functionality.</p></li>
+<li><p>These recipes demonstrate core workflows and help you understand configuration structure.</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="leverage-pre-built-recipes-from-dj-hub">
+<h1>✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong><a class="headerlink" href="#leverage-pre-built-recipes-from-dj-hub" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Explore the <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Recipe Gallery</a> for real-world use cases:</p>
+<ul>
+<li><p>Reproduce datasets like RedPajama or BLOOM.</p></li>
+<li><p>Improve existing datasets (e.g., LLaVA, Alpaca-CoT).</p></li>
+<li><p>Synthesize multimodal data (e.g., Img-Diff, HumanVBench).</p></li>
+</ul>
+</li>
+<li><p>Each recipe includes:</p>
+<ul>
+<li><p>Configuration files</p></li>
+<li><p>Sample retention rates</p></li>
+<li><p>Performance benchmarks</p></li>
+<li><p>Download links (Aliyun, HuggingFace, ModelScope)</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p>💡 Tip: Reuse and adapt these recipes instead of building from scratch.</p>
+</div></blockquote>
+<hr class="docutils" />
+</section>
+<section id="install-only-what-you-need">
+<h1>✅ 3. <strong>Install Only What You Need</strong><a class="headerlink" href="#install-only-what-you-need" title="Link to this heading">#</a></h1>
+<ul>
+<li><p>Use modular installation to avoid bloat:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For text processing</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
+
+<span class="c1"># For vision tasks</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,vision]&quot;</span>
+
+<span class="c1"># For full pipeline</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp,vision,distributed]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>For video operators, ensure <strong>FFmpeg</strong> is installed and in your <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p></li>
+</ul>
+<blockquote>
+<div><p>📌 Reference: <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Installation Guide</a></p>
+</div></blockquote>
+<hr class="docutils" />
+</section>
+<section id="choose-the-right-operators">
+<h1>✅ 4. <strong>Choose the Right Operators</strong><a class="headerlink" href="#choose-the-right-operators" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>DJ provides over 180 operators categorized into 8 types:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">mapper</span></code>: Transform samples (e.g., clean text, augment images)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filter</span></code>: Remove low-quality samples (e.g., by perplexity, image aesthetics)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>: Remove duplicates (text, image, video)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aggregator</span></code>, <code class="docutils literal notranslate"><span class="pre">grouper</span></code>, <code class="docutils literal notranslate"><span class="pre">selector</span></code>, etc.</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p>🔍 Use <code class="docutils literal notranslate"><span class="pre">search_operators()</span></code> or browse <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Operators.md</a> to find the right operator for your task.</p>
+</div></blockquote>
+<hr class="docutils" />
+</section>
+<section id="use-3-rule-for-hyperparameter-tuning">
+<h1>✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong><a class="headerlink" href="#use-3-rule-for-hyperparameter-tuning" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>In many refined recipes (e.g., RedPajama), thresholds for filters are set using a <strong>3-sigma statistical rule</strong> — keep values within 3 standard deviations from the mean.</p></li>
+<li><p>This ensures you retain high-quality samples while removing outliers.</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="validate-with-benchmarks">
+<h1>✅ 6. <strong>Validate with Benchmarks</strong><a class="headerlink" href="#validate-with-benchmarks" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>After processing, validate performance improvements:</p>
+<ul>
+<li><p>For LLMs: Use downstream task accuracy (e.g., MM-Bench, VQAv2).</p></li>
+<li><p>For video models: Use VBench scores.</p></li>
+</ul>
+</li>
+<li><p>Example: Refined LLaVA pretraining data improved 10 out of 12 evaluation metrics.</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="automate-dependency-installation">
+<h1>✅ 7. <strong>Automate Dependency Installation</strong><a class="headerlink" href="#automate-dependency-installation" title="Link to this heading">#</a></h1>
+<ul>
+<li><p>If installing from source, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/dj_install.py<span class="w"> </span>--config<span class="w"> </span>your_config.yaml
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-install<span class="w"> </span>--config<span class="w"> </span>your_config.yaml
+</pre></div>
+</div>
+<p>→ Automatically installs only dependencies needed for your config.</p>
+</li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="use-docker-for-reproducibility">
+<h1>✅ 8. <strong>Use Docker for Reproducibility</strong><a class="headerlink" href="#use-docker-for-reproducibility" title="Link to this heading">#</a></h1>
+<ul>
+<li><p>Pull official images:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;
+</pre></div>
+</div>
+</li>
+<li><p>Ensures consistent environments across machines.</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="contribute-back-to-the-community">
+<h1>✅ 9. <strong>Contribute Back to the Community</strong><a class="headerlink" href="#contribute-back-to-the-community" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Submit your own recipes to <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">data-juicer-hub</a>.</p></li>
+<li><p>Add new operators following the <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md">Developer Guide</a>.</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="monitor-retention-rates-quality-metrics">
+<h1>✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong><a class="headerlink" href="#monitor-retention-rates-quality-metrics" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Track how many samples survive each filtering stage.</p></li>
+<li><p>Compare before/after model performance to quantify impact.</p></li>
+<li><p>Use selectors (<code class="docutils literal notranslate"><span class="pre">topk_specified_field_selector</span></code>, etc.) to curate final high-quality subsets.</p></li>
+</ul>
+<hr class="docutils" />
+<p>By following these practices, you’ll maximize efficiency, reproducibility, and effectiveness when using Data-Juicer for your data processing pipelines.</p>
+<hr class="docutils" />
+<section id="id3">
+<h2>📚 References:<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/tree/main/demo">Data-Juicer Minimal Example Recipes</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Recipe Gallery</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Installation Guide</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Operators Documentation</a></p></li>
+</ul>
+</details>
+</section>
+<hr class="docutils" />
+<section id="case-7-off-topic-question-weather-en">
+<h2>Case 7 · Off-topic Question (Weather, EN)<a class="headerlink" href="#case-7-off-topic-question-weather-en" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">off_topic_qa</span></code></p></li>
+<li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+<p><strong>Input (user query)</strong></p>
+<blockquote>
+<div><p>How’s the weather today?</p>
+</div></blockquote>
+<details>
+<summary><strong>Output (assistant answer)</strong></summary>
+<p>Sorry, this question is unrelated to Data-Juicer.</p>
+</details>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../docs/Extension.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Customization and Extension</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="README.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data-Juicer Q&amp;A Copilot</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Data-Juicer Q&amp;A Copilot Demo</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-1-operator-introduction-alphanumeric-filter-en">Case 1 · Operator Introduction (alphanumeric_filter, EN)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage-in-config">Example Usage in Config:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-2-module-introduction-dj-agents-en">Case 2 · Module Introduction (DJ-Agents, EN)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Key Features:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-3-concept-question-base-operator-en">Case 3 · Concept Question (Base Operator, EN)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-4-quick-start-install-dj-en">Case 4 · Quick Start (Install DJ, EN)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">🧩 <strong>Prerequisites</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-installation">🚀 <strong>Basic Installation</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-based-installation">🎯 <strong>Scenario-Based Installation</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-ml-dl">Core ML/DL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#domain-specific">Domain-Specific</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#common-installation-patterns">📦 <strong>Common Installation Patterns</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#text-processing">1. Text Processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vision-processing">2. Vision Processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-pipeline">3. Full Pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-installation">4. Complete Installation</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#install-from-source">🛠️ <strong>Install from Source</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#op-based-recipe-based-installation">⚙️ <strong>OP-Based / Recipe-Based Installation</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-installation">🐳 <strong>Docker Installation</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-troubleshooting">📌 <strong>Notes &amp; Troubleshooting</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">🔗 References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-5-processing-guidance-dirty-words-filter-en">Case 5 · Processing Guidance (Dirty Words Filter, EN)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-use-flagged-words-filter">✅ How to Use <code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-configuration-in-a-recipe-yaml">Example Configuration in a Recipe (YAML):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Parameters:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">📌 Notes:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-step">🔍 Next Step:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-6-best-practices-using-dj-en">Case 6 · Best Practices (Using DJ, EN)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#start-with-minimal-examples">✅ 1. <strong>Start with Minimal Examples</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#leverage-pre-built-recipes-from-dj-hub">✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#install-only-what-you-need">✅ 3. <strong>Install Only What You Need</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-the-right-operators">✅ 4. <strong>Choose the Right Operators</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#use-3-rule-for-hyperparameter-tuning">✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-with-benchmarks">✅ 6. <strong>Validate with Benchmarks</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#automate-dependency-installation">✅ 7. <strong>Automate Dependency Installation</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#use-docker-for-reproducibility">✅ 8. <strong>Use Docker for Reproducibility</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contribute-back-to-the-community">✅ 9. <strong>Contribute Back to the Community</strong></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#monitor-retention-rates-quality-metrics">✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">📚 References:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-7-off-topic-question-weather-en">Case 7 · Off-topic Question (Weather, EN)</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/qa-copilot/DEMO.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
