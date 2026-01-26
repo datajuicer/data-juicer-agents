@@ -16,7 +16,7 @@
 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README_ZH.md) ***Juicer*** 已部署在 Data-Juicer 官方[文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html)上！欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题。查看 📃 [一键部署代码](./qa-copilot/) | 🎬 [更多演示](./qa-copilot/DEMO_ZH.md) | 🎯 [开发路线图](#路线图)。
 
 <div align="center">
-<img src="docs/imgs/dj_copilot_demo_ZH.gif" width=90%>
+<img src="https://github.com/user-attachments/assets/a0099ce2-4ed3-4fab-8cfa-b0bbd3beeac9" width=90%>
 </div>
 
 ## 概览

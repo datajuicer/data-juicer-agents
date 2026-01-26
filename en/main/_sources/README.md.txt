@@ -17,7 +17,7 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 
 
 <div align="center">
-<img src="docs/imgs/dj_copilot_demo.gif" width=90%>
+<img src="https://github.com/user-attachments/assets/d10a95a8-fb7a-494f-b858-f21e5996790b" width=90%>
 </div>
 
 
