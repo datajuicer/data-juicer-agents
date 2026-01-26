@@ -5,7 +5,7 @@ Q&A Copilot is the intelligent question-answering component of the Data-Juicer A
 You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem.
 
 <div align="center">
-<img src="../docs/imgs/dj_copilot_demo.gif" width=90%>
+<img src="https://github.com/user-attachments/assets/d10a95a8-fb7a-494f-b858-f21e5996790b" width=90%>
 </div>
 
 ### Core Components

@@ -5,7 +5,7 @@ Q&A Copilot 是 Data-Juicer Agents 系统中的智能问答组件，基于 Agent
 你可以在官方[文档页](https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html)和我们的 [问答 Copilot](./README.md) ***Juicer*** 聊天! 欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题。
 
 <div align="center">
-<img src="../docs/imgs/dj_copilot_demo_ZH.gif" width=90%>
+<img src="https://github.com/user-attachments/assets/a0099ce2-4ed3-4fab-8cfa-b0bbd3beeac9" width=90%>
 </div>
 
 ### 核心组件
