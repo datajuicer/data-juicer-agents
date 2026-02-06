@@ -20,9 +20,9 @@ Q&A Copilot 是 Data-Juicer Agents 系统中的智能问答组件，基于 Agent
 
 ### 前置要求
 
-- Python >= 3.10
+- 3.10 <= Python <= 3.12
 - Docker（用于运行 Qdrant 向量数据库）
-- Redis 服务器（可选 —— 可通过设置 `DISABLE_DATABASE=1` 禁用）
+- Redis 服务器（可选，通过 `SESSION_STORE_TYPE=redis` 启用）
 - DashScope API Key（用于调用大语言模型和文本嵌入）
 
 ### 安装步骤
@@ -46,7 +46,7 @@ Q&A Copilot 是 Data-Juicer Agents 系统中的智能问答组件，基于 Agent
 
    **注意**：系统启动时会自动检查并启动 Qdrant Docker 容器。如果 FAQ 数据未初始化，系统会自动从 `qa-copilot/rag_utils/faq.txt` 文件读取并初始化 RAG 数据。
 
-3. 安装并启动 Redis（可选 —— 若使用 `DISABLE_DATABASE=1` 则可跳过）
+3. 安装并启动 Redis（可选 —— 使用默认 `SESSION_STORE_TYPE=json` 时可跳过）
    ```bash
    # Ubuntu/Debian
    sudo apt-get install redis-server
@@ -57,17 +57,61 @@ Q&A Copilot 是 Data-Juicer Agents 系统中的智能问答组件，基于 Agent
    brew services start redis
    ```
 
-   **注意**：如果设置了 `DISABLE_DATABASE=1`，系统将以纯内存模式运行，无需 Redis。会话历史将仅保存在内存中，并在用户 6 小时无操作后自动清理。
+   **注意**：
+   - 如果设置 `SESSION_STORE_TYPE=json`（默认），会话历史将作为 JSON 文件存储在 `SESSION_STORE_DIR` 目录中，并自动进行基于 TTL 的清理。
+   - 如果设置 `SESSION_STORE_TYPE=redis`，需要运行 Redis 服务器。会话状态由 RedisMemory 自动管理，TTL 由 Redis 服务器配置处理。
 
 ### 配置说明
 
-1. 设置环境变量
+1. 设置必需环境变量
    ```bash
    export DASHSCOPE_API_KEY="your_dashscope_api_key"
-   export GITHUB_TOKEN="your_github_token"
+   export GITHUB_TOKEN="your_github_token"  # 必需：用于 GitHub MCP 集成
+   ```
+
+2. 设置可选环境变量
+
+   **会话存储配置：**
+   ```bash
+   # 会话存储类型："json"（默认）或 "redis"
+   export SESSION_STORE_TYPE="json"  # 或 "redis"
    
-   # 可选：禁用数据库（Redis）—— 启用纯内存模式
-   # export DISABLE_DATABASE=1
+   # JSON 模式（默认）：
+   export SESSION_STORE_DIR="./sessions"  # 会话文件存储目录（默认："./sessions"）
+   export SESSION_TTL_SECONDS="21600"  # 会话 TTL（秒）（默认：21600 = 6 小时）
+   export SESSION_CLEANUP_INTERVAL="1800"  # 清理间隔（秒）（默认：1800 = 30 分钟）
+   
+   # Redis 模式：
+   export REDIS_HOST="localhost"  # Redis 服务器主机（默认："localhost"）
+   export REDIS_PORT="6379"  # Redis 服务器端口（默认：6379）
+   export REDIS_DB="0"  # Redis 数据库编号（默认：0）
+   export REDIS_PASSWORD=""  # Redis 密码（默认：None，可选）
+   export REDIS_MAX_CONNECTIONS="10"  # Redis 最大连接数（默认：10）
+   # 注意：Redis TTL 由 Redis 服务器配置处理，而非应用程序
+   ```
+
+   **模型配置：**
+   ```bash
+   export MAX_TOKENS="600000"  # 上下文窗口最大 token 数（默认：600000）
+   ```
+
+   **Qdrant 向量数据库：**
+   ```bash
+   export QDRANT_HOST="127.0.0.1"  # Qdrant 服务器主机（默认："127.0.0.1"）
+   export QDRANT_PORT="6333"  # Qdrant 服务器端口（默认：6333）
+   ```
+
+   **服务配置：**
+   ```bash
+   export DJ_COPILOT_SERVICE_HOST="127.0.0.1"  # 服务主机地址（默认："127.0.0.1"）
+   export DJ_COPILOT_ENABLE_LOGGING="true"  # 启用会话日志（默认："true"）
+   export DJ_COPILOT_LOG_DIR="./logs"  # 日志目录（默认："./logs"）
+   ```
+
+   **高级配置：**
+   ```bash
+   export FASTAPI_CONFIG_PATH=""  # FastAPI 配置 JSON 文件路径（可选）
+   export SAFE_CHECK_HANDLER_PATH=""  # 自定义安全检查处理器模块路径（可选）
    ```
 
 2. 配置 FAQ 文件（可选）
@@ -133,16 +177,7 @@ Content-Type: application/json
 }
 ```
 
-#### 4. 获取会话列表
-```http
-POST /sessions
-Content-Type: application/json
-{
-  "user_id": "user_id"
-}
-```
-
-#### 5. 提交用户反馈
+#### 4. 提交用户反馈
 ```http
 POST /feedback
 Content-Type: application/json
@@ -183,17 +218,57 @@ npx @agentscope-ai/chat agentscope-runtime-webui --url http://localhost:8080/pro
 
 ## 配置详解
 
+### 环境变量汇总
+
+| 变量名 | 必需 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `DASHSCOPE_API_KEY` | ✅ 是 | - | DashScope API 密钥，用于 LLM 和嵌入模型 |
+| `GITHUB_TOKEN` | ✅ 是 | - | GitHub token，用于 MCP 集成 |
+| `SESSION_STORE_TYPE` | ❌ 否 | `"json"` | 会话存储类型：`"json"` 或 `"redis"` |
+| `SESSION_STORE_DIR` | ❌ 否 | `"./sessions"` | 会话文件目录（仅 JSON 模式） |
+| `SESSION_TTL_SECONDS` | ❌ 否 | `21600` | 会话 TTL（秒）（仅 JSON 模式，6 小时） |
+| `SESSION_CLEANUP_INTERVAL` | ❌ 否 | `1800` | 清理间隔（秒）（仅 JSON 模式，30 分钟） |
+| `REDIS_HOST` | ❌ 否 | `"localhost"` | Redis 服务器主机（仅 Redis 模式） |
+| `REDIS_PORT` | ❌ 否 | `6379` | Redis 服务器端口（仅 Redis 模式） |
+| `REDIS_DB` | ❌ 否 | `0` | Redis 数据库编号（仅 Redis 模式） |
+| `REDIS_PASSWORD` | ❌ 否 | `None` | Redis 密码（仅 Redis 模式，可选） |
+| `REDIS_MAX_CONNECTIONS` | ❌ 否 | `10` | Redis 最大连接数（仅 Redis 模式） |
+| `QDRANT_HOST` | ❌ 否 | `"127.0.0.1"` | Qdrant 服务器主机 |
+| `QDRANT_PORT` | ❌ 否 | `6333` | Qdrant 服务器端口 |
+| `MAX_TOKENS` | ❌ 否 | `600000` | 上下文窗口最大 token 数 |
+| `DJ_COPILOT_SERVICE_HOST` | ❌ 否 | `"127.0.0.1"` | 服务主机地址 |
+| `DJ_COPILOT_ENABLE_LOGGING` | ❌ 否 | `"true"` | 启用会话日志 |
+| `DJ_COPILOT_LOG_DIR` | ❌ 否 | `"./logs"` | 日志目录 |
+| `FASTAPI_CONFIG_PATH` | ❌ 否 | `""` | FastAPI 配置 JSON 文件路径 |
+| `SAFE_CHECK_HANDLER_PATH` | ❌ 否 | `""` | 自定义安全检查处理器路径 |
+
 ### 模型配置
 
 在 `app_deploy.py` 文件中，您可以配置所使用的语言模型：
 
 ```python
 model=DashScopeChatModel(
-    "qwen-max",  # 模型名称
+    "qwen3-max-2026-01-23",  # 模型名称
     api_key=os.getenv("DASHSCOPE_API_KEY"),
     stream=True,  # 启用流式响应
+    enable_thinking=True,  # 启用思考模式
 )
 ```
+
+格式化器使用 `MAX_TOKENS` 环境变量（默认：600000）来限制上下文窗口大小。
+
+### 会话存储配置
+
+**JSON 模式（默认）：**
+- 会话历史作为 JSON 文件存储在 `SESSION_STORE_DIR` 目录中
+- 自动 TTL 清理每 `SESSION_CLEANUP_INTERVAL` 秒运行一次
+- 会话在 `SESSION_TTL_SECONDS` 秒无活动后过期
+- 无需外部依赖
+
+**Redis 模式：**
+- 会话历史存储在 Redis 中
+- 会话状态由 `RedisMemory` 自动管理
+- TTL 由 Redis 服务器配置处理（非应用层）
 
 ### FAQ RAG 配置
 
@@ -204,6 +279,8 @@ FAQ RAG 系统使用以下配置：
 - **向量维度**：1024
 - **数据源**：`qa-copilot/rag_utils/faq.txt`
 - **存储位置**：`qa-copilot/rag_utils/qdrant_storage`
+- **Qdrant 主机**：可通过 `QDRANT_HOST` 配置（默认：`127.0.0.1`）
+- **Qdrant 端口**：可通过 `QDRANT_PORT` 配置（默认：`6333`）
 
 系统会在启动时自动检查 RAG 数据是否已初始化。如果未初始化，会自动读取 FAQ 文件并创建向量索引。
 
@@ -218,12 +295,15 @@ FAQ RAG 系统使用以下配置：
    - 检查 Qdrant 端口是否被占用：`netstat -tlnp | grep 6333`
    - 如果需要重新初始化 RAG 数据，删除 `qa-copilot/rag_utils/qdrant_storage` 目录后重启服务
 
-2. **Redis 连接失败**
+2. **Redis 连接失败**（使用 `SESSION_STORE_TYPE=redis` 时）
    - 确保 Redis 服务正在运行：`redis-cli ping`
-   - 检查 Redis 端口是否被占用：`netstat -tlnp | grep 6379`
+   - 检查 Redis 端口是否被占用：`netstat -tlnp | grep 6379`（或您配置的 `REDIS_PORT`）
+   - 验证 Redis 配置：检查 `REDIS_HOST`、`REDIS_PORT`、`REDIS_DB` 和 `REDIS_PASSWORD` 环境变量
+   - 注意：Redis TTL 由 Redis 服务器管理，而非应用程序
 
 3. **MCP 服务启动失败**
-   - 确认 `GITHUB_TOKEN` 已正确设置且有效
+   - 确保 `GITHUB_TOKEN` 已设置且正确（必需环境变量）
+   - 验证 GitHub token 是否具有 MCP 集成所需的权限
 
 4. **API Key 错误**
    - 检查 `DASHSCOPE_API_KEY` 环境变量是否已正确配置
