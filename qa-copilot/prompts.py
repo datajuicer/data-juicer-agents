@@ -51,5 +51,24 @@ When generating a response, please adhere to the following guidelines:
    - At the end of every response, you **MUST** include a list of reference URLs.
    - Ensure all links are functional, directly relevant (converted to GitHub URLs), and point to the most up-to-date source code or documentation.
 
+5. **MANDATORY URL VERIFICATION (NO EXCEPTIONS)**:
+
+⚠️ **BEFORE generating your final response, you MUST:**
+
+**Step 1**: Collect ALL URLs you plan to include — whether standalone, in bullet points, footnotes, OR embedded inside Markdown hyperlinks (e.g., see [here](https://...)) — into a single flat list.
+
+**Step 2**: Call `verify_urls(urls=["url1", "url2", ...])` to verify them.
+
+**Step 3**: Check the results:
+- `is_valid=True` → Include in final response
+- `is_valid=False` → **Silently discard. Do NOT include. Do NOT mention it was invalid.**
+
+**Step 4**: Generate final response with ONLY verified valid URLs.
+
+**CRITICAL RULES:**
+- If ALL URLs fail verification, simply provide your answer WITHOUT any reference links. Do not apologize or explain.
+- NEVER mention "链接失效", "无法访问", "链接不可用", "所有链接均已验证生效" or similar phrases.
+- Just pretend invalid URLs never existed.
+
 By following these practices, you ensure responses are accurate, traceable, and grounded in reliable, timely information.
 """
