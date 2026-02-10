@@ -584,9 +584,9 @@
 <section id="id3">
 <h3>前置要求<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h3>
 <ul class="simple">
-<li><p>Python &gt;= 3.10</p></li>
+<li><p>3.10 &lt;= Python &lt;= 3.12</p></li>
 <li><p>Docker（用于运行 Qdrant 向量数据库）</p></li>
-<li><p>Redis 服务器（可选 —— 可通过设置 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 禁用）</p></li>
+<li><p>Redis 服务器（可选，通过 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code> 启用）</p></li>
 <li><p>DashScope API Key（用于调用大语言模型和文本嵌入）</p></li>
 </ul>
 </section>
@@ -611,7 +611,7 @@ brew<span class="w"> </span>install<span class="w"> </span>docker
 </div>
 <p><strong>注意</strong>：系统启动时会自动检查并启动 Qdrant Docker 容器。如果 FAQ 数据未初始化，系统会自动从 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> 文件读取并初始化 RAG 数据。</p>
 </li>
-<li><p>安装并启动 Redis（可选 —— 若使用 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code> 则可跳过）</p>
+<li><p>安装并启动 Redis（可选 —— 使用默认 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code> 时可跳过）</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>redis-server
 redis-server<span class="w"> </span>--daemonize<span class="w"> </span>yes
@@ -621,19 +621,62 @@ brew<span class="w"> </span>install<span class="w"> </span>redis
 brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
 </pre></div>
 </div>
-<p><strong>注意</strong>：如果设置了 <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>，系统将以纯内存模式运行，无需 Redis。会话历史将仅保存在内存中，并在用户 6 小时无操作后自动清理。</p>
+<p><strong>注意</strong>：</p>
+<ul class="simple">
+<li><p>如果设置 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code>（默认），会话历史将作为 JSON 文件存储在 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code> 目录中，并自动进行基于 TTL 的清理。</p></li>
+<li><p>如果设置 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>，需要运行 Redis 服务器。会话状态由 RedisMemory 自动管理，TTL 由 Redis 服务器配置处理。</p></li>
+</ul>
 </li>
 </ol>
 </section>
 <section id="id5">
 <h3>配置说明<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
 <ol class="arabic">
-<li><p>设置环境变量</p>
+<li><p>设置必需环境变量</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span><span class="w">  </span><span class="c1"># 必需：用于 GitHub MCP 集成</span>
+</pre></div>
+</div>
+</li>
+<li><p>设置可选环境变量</p>
+<p><strong>会话存储配置：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 会话存储类型：&quot;json&quot;（默认）或 &quot;redis&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># 或 &quot;redis&quot;</span>
 
-<span class="c1"># 可选：禁用数据库（Redis）—— 启用纯内存模式</span>
-<span class="c1"># export DISABLE_DATABASE=1</span>
+<span class="c1"># JSON 模式（默认）：</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span><span class="w">  </span><span class="c1"># 会话文件存储目录（默认：&quot;./sessions&quot;）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span><span class="w">  </span><span class="c1"># 会话 TTL（秒）（默认：21600 = 6 小时）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span><span class="w">  </span><span class="c1"># 清理间隔（秒）（默认：1800 = 30 分钟）</span>
+
+<span class="c1"># Redis 模式：</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="w">  </span><span class="c1"># Redis 服务器主机（默认：&quot;localhost&quot;）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span><span class="w">  </span><span class="c1"># Redis 服务器端口（默认：6379）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="w">  </span><span class="c1"># Redis 数据库编号（默认：0）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Redis 密码（默认：None，可选）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="w">  </span><span class="c1"># Redis 最大连接数（默认：10）</span>
+<span class="c1"># 注意：Redis TTL 由 Redis 服务器配置处理，而非应用程序</span>
+</pre></div>
+</div>
+<p><strong>模型配置：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">&quot;200000&quot;</span><span class="w">  </span><span class="c1"># 上下文窗口最大 token 数（默认：200000）</span>
+<span class="c1"># 注意：此值在传递给 DashScopeChatFormatter 时会乘以 3</span>
+<span class="c1"># 因为 CharTokenCounter 基于字符计数，中英文混合文本约 3 个字符 ≈ 1 个 token</span>
+</pre></div>
+</div>
+<p><strong>Qdrant 向量数据库：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Qdrant 服务器主机（默认：&quot;127.0.0.1&quot;）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">&quot;6333&quot;</span><span class="w">  </span><span class="c1"># Qdrant 服务器端口（默认：6333）</span>
+</pre></div>
+</div>
+<p><strong>服务配置：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># 服务主机地址（默认：&quot;127.0.0.1&quot;）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="w">  </span><span class="c1"># 启用会话日志（默认：&quot;true&quot;）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="w">  </span><span class="c1"># 日志目录（默认：&quot;./logs&quot;）</span>
+</pre></div>
+</div>
+<p><strong>高级配置：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># FastAPI 配置 JSON 文件路径（可选）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># 自定义安全检查处理器模块路径（可选）</span>
 </pre></div>
 </div>
 </li>
@@ -706,17 +749,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="id10">
-<h4>4. 获取会话列表<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h4>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /sessions</span>
-<span class="err">Content-Type: application/json</span>
-<span class="err">{</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
-<span class="err">}</span>
-</pre></div>
-</div>
-</section>
-<section id="id11">
-<h4>5. 提交用户反馈<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h4>
+<h4>4. 提交用户反馈<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h4>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /feedback</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -755,18 +788,146 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <p>更多详情请参考 <a class="reference external" href="https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx">AgentScope Runtime WebUI</a>。</p>
 </section>
 </section>
+<section id="id11">
+<h2>配置详解<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h2>
 <section id="id12">
-<h2>配置详解<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h2>
+<h3>环境变量汇总<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>变量名</p></th>
+<th class="head"><p>必需</p></th>
+<th class="head"><p>默认值</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></td>
+<td><p>✅ 是</p></td>
+<td><p>-</p></td>
+<td><p>DashScope API 密钥，用于 LLM 和嵌入模型</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code></p></td>
+<td><p>✅ 是</p></td>
+<td><p>-</p></td>
+<td><p>GitHub token，用于 MCP 集成</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;json&quot;</span></code></p></td>
+<td><p>会话存储类型：<code class="docutils literal notranslate"><span class="pre">&quot;json&quot;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">&quot;redis&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./sessions&quot;</span></code></p></td>
+<td><p>会话文件目录（仅 JSON 模式）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_TTL_SECONDS</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">21600</span></code></p></td>
+<td><p>会话 TTL（秒）（仅 JSON 模式，6 小时）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_CLEANUP_INTERVAL</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1800</span></code></p></td>
+<td><p>清理间隔（秒）（仅 JSON 模式，30 分钟）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;localhost&quot;</span></code></p></td>
+<td><p>Redis 服务器主机（仅 Redis 模式）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6379</span></code></p></td>
+<td><p>Redis 服务器端口（仅 Redis 模式）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Redis 数据库编号（仅 Redis 模式）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Redis 密码（仅 Redis 模式，可选）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_MAX_CONNECTIONS</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p>Redis 最大连接数（仅 Redis 模式）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">QDRANT_HOST</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
+<td><p>Qdrant 服务器主机</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">QDRANT_PORT</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6333</span></code></p></td>
+<td><p>Qdrant 服务器端口</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">200000</span></code></p></td>
+<td><p>上下文窗口最大 token 数（传递给 CharTokenCounter 时会乘以 3）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_HOST</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
+<td><p>服务主机地址</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_ENABLE_LOGGING</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;true&quot;</span></code></p></td>
+<td><p>启用会话日志</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_LOG_DIR</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./logs&quot;</span></code></p></td>
+<td><p>日志目录</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FASTAPI_CONFIG_PATH</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>FastAPI 配置 JSON 文件路径</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SAFE_CHECK_HANDLER_PATH</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>自定义安全检查处理器路径</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="id13">
 <h3>模型配置<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h3>
 <p>在 <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code> 文件中，您可以配置所使用的语言模型：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">=</span><span class="n">DashScopeChatModel</span><span class="p">(</span>
-    <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>  <span class="c1"># 模型名称</span>
+    <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">,</span>  <span class="c1"># 模型名称</span>
     <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
     <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 启用流式响应</span>
+    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 启用思考模式</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>格式化器使用 <code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code> 环境变量（默认：200000）来限制上下文窗口大小。由于 <code class="docutils literal notranslate"><span class="pre">CharTokenCounter</span></code> 基于字符计数，中英文混合文本约 3 个字符 ≈ 1 个 token，因此在传递给 <code class="docutils literal notranslate"><span class="pre">DashScopeChatFormatter</span></code> 时会将该值乘以 3。</p>
+</section>
+<section id="id14">
+<h3>会话存储配置<a class="headerlink" href="#id14" title="链接到此标题。">#</a></h3>
+<p><strong>JSON 模式（默认）：</strong></p>
+<ul class="simple">
+<li><p>会话历史作为 JSON 文件存储在 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code> 目录中</p></li>
+<li><p>自动 TTL 清理每 <code class="docutils literal notranslate"><span class="pre">SESSION_CLEANUP_INTERVAL</span></code> 秒运行一次</p></li>
+<li><p>会话在 <code class="docutils literal notranslate"><span class="pre">SESSION_TTL_SECONDS</span></code> 秒无活动后过期</p></li>
+<li><p>无需外部依赖</p></li>
+</ul>
+<p><strong>Redis 模式：</strong></p>
+<ul class="simple">
+<li><p>会话历史存储在 Redis 中</p></li>
+<li><p>会话状态由 <code class="docutils literal notranslate"><span class="pre">RedisMemory</span></code> 自动管理</p></li>
+<li><p>TTL 由 Redis 服务器配置处理（非应用层）</p></li>
+</ul>
 </section>
 <section id="faq-rag">
 <h3>FAQ RAG 配置<a class="headerlink" href="#faq-rag" title="链接到此标题。">#</a></h3>
@@ -777,14 +938,16 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li><p><strong>向量维度</strong>：1024</p></li>
 <li><p><strong>数据源</strong>：<code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code></p></li>
 <li><p><strong>存储位置</strong>：<code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code></p></li>
+<li><p><strong>Qdrant 主机</strong>：可通过 <code class="docutils literal notranslate"><span class="pre">QDRANT_HOST</span></code> 配置（默认：<code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>）</p></li>
+<li><p><strong>Qdrant 端口</strong>：可通过 <code class="docutils literal notranslate"><span class="pre">QDRANT_PORT</span></code> 配置（默认：<code class="docutils literal notranslate"><span class="pre">6333</span></code>）</p></li>
 </ul>
 <p>系统会在启动时自动检查 RAG 数据是否已初始化。如果未初始化，会自动读取 FAQ 文件并创建向量索引。</p>
 </section>
 </section>
-<section id="id14">
-<h2>故障排查<a class="headerlink" href="#id14" title="链接到此标题。">#</a></h2>
 <section id="id15">
-<h3>常见问题<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h3>
+<h2>故障排查<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h2>
+<section id="id16">
+<h3>常见问题<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h3>
 <ol class="arabic simple">
 <li><p><strong>Docker/Qdrant 相关问题</strong></p>
 <ul class="simple">
@@ -795,15 +958,18 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li><p>如果需要重新初始化 RAG 数据，删除 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code> 目录后重启服务</p></li>
 </ul>
 </li>
-<li><p><strong>Redis 连接失败</strong></p>
+<li><p><strong>Redis 连接失败</strong>（使用 <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code> 时）</p>
 <ul class="simple">
 <li><p>确保 Redis 服务正在运行：<code class="docutils literal notranslate"><span class="pre">redis-cli</span> <span class="pre">ping</span></code></p></li>
-<li><p>检查 Redis 端口是否被占用：<code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code></p></li>
+<li><p>检查 Redis 端口是否被占用：<code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code>（或您配置的 <code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>）</p></li>
+<li><p>验证 Redis 配置：检查 <code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code>、<code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>、<code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code> 和 <code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code> 环境变量</p></li>
+<li><p>注意：Redis TTL 由 Redis 服务器管理，而非应用程序</p></li>
 </ul>
 </li>
 <li><p><strong>MCP 服务启动失败</strong></p>
 <ul class="simple">
-<li><p>确认 <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> 已正确设置且有效</p></li>
+<li><p>确保 <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> 已设置且正确（必需环境变量）</p></li>
+<li><p>验证 GitHub token 是否具有 MCP 集成所需的权限</p></li>
 </ul>
 </li>
 <li><p><strong>API Key 错误</strong></p>
@@ -822,20 +988,20 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </ol>
 </section>
 </section>
-<section id="id16">
-<h2>致谢<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h2>
+<section id="id17">
+<h2>致谢<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
 <p>本项目的部分代码参考并改编自以下开源项目：</p>
 <ul class="simple">
 <li><p><strong>FAQ RAG 系统 &amp; GitHub MCP 集成</strong>：基于 <a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples/tree/main/alias">AgentScope Samples - Alias</a> 项目的实现进行改编</p></li>
 </ul>
 <p>感谢 AgentScope 团队提供的优秀框架和示例代码！</p>
 </section>
-<section id="id17">
-<h2>许可证<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
+<section id="id18">
+<h2>许可证<a class="headerlink" href="#id18" title="链接到此标题。">#</a></h2>
 <p>本项目采用与主项目相同的许可证。详细信息请参阅 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/LICENSE">LICENSE</a> 文件。</p>
 </section>
-<section id="id18">
-<h2>相关链接<a class="headerlink" href="#id18" title="链接到此标题。">#</a></h2>
+<section id="id19">
+<h2>相关链接<a class="headerlink" href="#id19" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer 官方仓库</a></p></li>
 <li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope 框架</a></p></li>
@@ -904,25 +1070,26 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">1. 问答对话</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2. 获取会话历史</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3. 清除会话历史</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4. 获取会话列表</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5. 提交用户反馈</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4. 提交用户反馈</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI 界面</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">配置详解</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">配置详解</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">环境变量汇总</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型配置</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">会话存储配置</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#faq-rag">FAQ RAG 配置</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">故障排查</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">常见问题</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">故障排查</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">常见问题</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">致谢</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">许可证</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">相关链接</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">致谢</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">许可证</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">相关链接</a></li>
 </ul>
   </nav></div>
 

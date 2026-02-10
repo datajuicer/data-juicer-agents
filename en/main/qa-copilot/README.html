@@ -580,9 +580,9 @@
 <section id="prerequisites">
 <h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Python &gt;= 3.10</p></li>
+<li><p>3.10 &lt;= Python &lt;= 3.12</p></li>
 <li><p>Docker (for running Qdrant vector database)</p></li>
-<li><p>Redis server (optional - can be disabled with <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>)</p></li>
+<li><p>Redis server (optional, activated by <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>)</p></li>
 <li><p>DashScope API Key (for large language model calls and text embedding)</p></li>
 </ul>
 </section>
@@ -607,7 +607,7 @@ brew<span class="w"> </span>install<span class="w"> </span>docker
 </div>
 <p><strong>Note</strong>: The system will automatically check and start the Qdrant Docker container on startup. If FAQ data is not initialized, the system will automatically read from <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> and initialize the RAG data.</p>
 </li>
-<li><p>Install and start Redis (optional - skip if using <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>)</p>
+<li><p>Install and start Redis (optional - skip if using the default <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code>)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>redis-server
 redis-server<span class="w"> </span>--daemonize<span class="w"> </span>yes
@@ -617,19 +617,62 @@ brew<span class="w"> </span>install<span class="w"> </span>redis
 brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
 </pre></div>
 </div>
-<p><strong>Note</strong>: If you set <code class="docutils literal notranslate"><span class="pre">DISABLE_DATABASE=1</span></code>, the system will run in memory-only mode without requiring Redis. Session history will be stored in memory with automatic cleanup after 6 hours of inactivity.</p>
+<p><strong>Note</strong>:</p>
+<ul class="simple">
+<li><p>If you set <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code> (default), session history will be stored as JSON files in the <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code> directory with automatic TTL-based cleanup.</p></li>
+<li><p>If you set <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>, you need to have Redis server running. Session state is automatically managed by RedisMemory, and TTL is handled by Redis server configuration.</p></li>
+</ul>
 </li>
 </ol>
 </section>
 <section id="configuration">
 <h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h3>
 <ol class="arabic">
-<li><p>Set environment variables</p>
+<li><p>Set required environment variables</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span><span class="w">  </span><span class="c1"># Required: for GitHub MCP integration</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set optional environment variables</p>
+<p><strong>Session Storage Configuration:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Session store type: &quot;json&quot; (default) or &quot;redis&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># or &quot;redis&quot;</span>
 
-<span class="c1"># Optional: Disable database (Redis) - run in memory-only mode</span>
-<span class="c1"># export DISABLE_DATABASE=1</span>
+<span class="c1"># For JSON mode (default):</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span><span class="w">  </span><span class="c1"># Session file storage directory (default: &quot;./sessions&quot;)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span><span class="w">  </span><span class="c1"># Session TTL in seconds (default: 21600 = 6 hours)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span><span class="w">  </span><span class="c1"># Cleanup interval in seconds (default: 1800 = 30 minutes)</span>
+
+<span class="c1"># For Redis mode:</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="w">  </span><span class="c1"># Redis server host (default: &quot;localhost&quot;)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span><span class="w">  </span><span class="c1"># Redis server port (default: 6379)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="w">  </span><span class="c1"># Redis database number (default: 0)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Redis password (default: None, optional)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="w">  </span><span class="c1"># Redis max connections (default: 10)</span>
+<span class="c1"># Note: Redis TTL is handled by Redis server configuration, not by application</span>
+</pre></div>
+</div>
+<p><strong>Model Configuration:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">&quot;200000&quot;</span><span class="w">  </span><span class="c1"># Maximum tokens for context window (default: 200000)</span>
+<span class="c1"># Note: This value is multiplied by 3 when passed to DashScopeChatFormatter</span>
+<span class="c1"># because CharTokenCounter counts characters, and ~3 chars ≈ 1 token for mixed CHN &amp; ENG text</span>
+</pre></div>
+</div>
+<p><strong>Qdrant Vector Database:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Qdrant server host (default: &quot;127.0.0.1&quot;)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">&quot;6333&quot;</span><span class="w">  </span><span class="c1"># Qdrant server port (default: 6333)</span>
+</pre></div>
+</div>
+<p><strong>Service Configuration:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Service host address (default: &quot;127.0.0.1&quot;)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="w">  </span><span class="c1"># Enable session logging (default: &quot;true&quot;)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="w">  </span><span class="c1"># Log directory (default: &quot;./logs&quot;)</span>
+</pre></div>
+</div>
+<p><strong>Advanced Configuration:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Path to FastAPI config JSON file (optional)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Path to custom safe check handler module (optional)</span>
 </pre></div>
 </div>
 </li>
@@ -701,18 +744,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </pre></div>
 </div>
 </section>
-<section id="get-session-list">
-<h4>4. Get Session List<a class="headerlink" href="#get-session-list" title="Link to this heading">#</a></h4>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /sessions</span>
-<span class="err">Content-Type: application/json</span>
-<span class="err">{</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
-<span class="err">}</span>
-</pre></div>
-</div>
-</section>
 <section id="submit-user-feedback">
-<h4>5. Submit User Feedback<a class="headerlink" href="#submit-user-feedback" title="Link to this heading">#</a></h4>
+<h4>4. Submit User Feedback<a class="headerlink" href="#submit-user-feedback" title="Link to this heading">#</a></h4>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /feedback</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -753,16 +786,145 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </section>
 <section id="configuration-details">
 <h2>Configuration Details<a class="headerlink" href="#configuration-details" title="Link to this heading">#</a></h2>
+<section id="environment-variables-summary">
+<h3>Environment Variables Summary<a class="headerlink" href="#environment-variables-summary" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></td>
+<td><p>✅ Yes</p></td>
+<td><p>-</p></td>
+<td><p>DashScope API key for LLM and embedding</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code></p></td>
+<td><p>✅ Yes</p></td>
+<td><p>-</p></td>
+<td><p>GitHub token for MCP integration</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;json&quot;</span></code></p></td>
+<td><p>Session storage type: <code class="docutils literal notranslate"><span class="pre">&quot;json&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;redis&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./sessions&quot;</span></code></p></td>
+<td><p>Session file directory (JSON mode only)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_TTL_SECONDS</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">21600</span></code></p></td>
+<td><p>Session TTL in seconds (JSON mode only, 6 hours)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_CLEANUP_INTERVAL</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1800</span></code></p></td>
+<td><p>Cleanup interval in seconds (JSON mode only, 30 minutes)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;localhost&quot;</span></code></p></td>
+<td><p>Redis server host (Redis mode only)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6379</span></code></p></td>
+<td><p>Redis server port (Redis mode only)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Redis database number (Redis mode only)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Redis password (Redis mode only, optional)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_MAX_CONNECTIONS</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p>Redis max connections (Redis mode only)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">QDRANT_HOST</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
+<td><p>Qdrant server host</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">QDRANT_PORT</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6333</span></code></p></td>
+<td><p>Qdrant server port</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">200000</span></code></p></td>
+<td><p>Maximum tokens for context window (multiplied by 3 for CharTokenCounter)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_HOST</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
+<td><p>Service host address</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_ENABLE_LOGGING</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;true&quot;</span></code></p></td>
+<td><p>Enable session logging</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_LOG_DIR</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./logs&quot;</span></code></p></td>
+<td><p>Log directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FASTAPI_CONFIG_PATH</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>Path to FastAPI config JSON file</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SAFE_CHECK_HANDLER_PATH</span></code></p></td>
+<td><p>❌ No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>Path to custom safe check handler</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="model-configuration">
 <h3>Model Configuration<a class="headerlink" href="#model-configuration" title="Link to this heading">#</a></h3>
 <p>In <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code>, you can configure the language model to use:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">=</span><span class="n">DashScopeChatModel</span><span class="p">(</span>
-    <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>  <span class="c1"># Model name</span>
+    <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">,</span>  <span class="c1"># Model name</span>
     <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
     <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable streaming response</span>
+    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable thinking mode</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>The formatter uses <code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code> environment variable (default: 200000) to limit the context window size. Since <code class="docutils literal notranslate"><span class="pre">CharTokenCounter</span></code> counts characters and approximately 3 characters ≈ 1 token for mixed Chinese and English text, the value is multiplied by 3 when passed to <code class="docutils literal notranslate"><span class="pre">DashScopeChatFormatter</span></code>.</p>
+</section>
+<section id="session-storage-configuration">
+<h3>Session Storage Configuration<a class="headerlink" href="#session-storage-configuration" title="Link to this heading">#</a></h3>
+<p><strong>JSON Mode (Default):</strong></p>
+<ul class="simple">
+<li><p>Session history is stored as JSON files in <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code> directory</p></li>
+<li><p>Automatic TTL-based cleanup runs every <code class="docutils literal notranslate"><span class="pre">SESSION_CLEANUP_INTERVAL</span></code> seconds</p></li>
+<li><p>Sessions expire after <code class="docutils literal notranslate"><span class="pre">SESSION_TTL_SECONDS</span></code> seconds of inactivity</p></li>
+<li><p>No external dependencies required</p></li>
+</ul>
+<p><strong>Redis Mode:</strong></p>
+<ul class="simple">
+<li><p>Session history is stored in Redis</p></li>
+<li><p>Session state is automatically managed by <code class="docutils literal notranslate"><span class="pre">RedisMemory</span></code></p></li>
+<li><p>TTL is handled by Redis server configuration (not application-level)</p></li>
+<li><p>Requires Redis server to be running</p></li>
+</ul>
 </section>
 <section id="faq-rag-configuration">
 <h3>FAQ RAG Configuration<a class="headerlink" href="#faq-rag-configuration" title="Link to this heading">#</a></h3>
@@ -773,6 +935,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li><p><strong>Vector Dimension</strong>: 1024</p></li>
 <li><p><strong>Data Source</strong>: <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code></p></li>
 <li><p><strong>Storage Location</strong>: <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code></p></li>
+<li><p><strong>Qdrant Host</strong>: Configurable via <code class="docutils literal notranslate"><span class="pre">QDRANT_HOST</span></code> (default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>)</p></li>
+<li><p><strong>Qdrant Port</strong>: Configurable via <code class="docutils literal notranslate"><span class="pre">QDRANT_PORT</span></code> (default: <code class="docutils literal notranslate"><span class="pre">6333</span></code>)</p></li>
 </ul>
 <p>The system automatically checks if RAG data is initialized on startup. If not initialized, it will automatically read the FAQ file and create vector indexes.</p>
 </section>
@@ -791,15 +955,18 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li><p>To reinitialize RAG data, delete the <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code> directory and restart the service</p></li>
 </ul>
 </li>
-<li><p><strong>Redis connection failure</strong></p>
+<li><p><strong>Redis connection failure</strong> (when using <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>)</p>
 <ul class="simple">
 <li><p>Ensure Redis service is running: <code class="docutils literal notranslate"><span class="pre">redis-cli</span> <span class="pre">ping</span></code></p></li>
-<li><p>Check if Redis port is occupied: <code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code></p></li>
+<li><p>Check if Redis port is occupied: <code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code> (or your configured <code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>)</p></li>
+<li><p>Verify Redis configuration: Check <code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code>, <code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>, <code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code>, and <code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code> environment variables</p></li>
+<li><p>Note: Redis TTL is managed by Redis server, not by the application</p></li>
 </ul>
 </li>
 <li><p><strong>MCP service startup failure</strong></p>
 <ul class="simple">
-<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> is correct and exists</p></li>
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> is set and correct (required environment variable)</p></li>
+<li><p>Verify GitHub token has necessary permissions for MCP integration</p></li>
 </ul>
 </li>
 <li><p><strong>API Key error</strong></p>
@@ -900,15 +1067,16 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#q-a-conversation">1. Q&amp;A Conversation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-session-history">2. Get Session History</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-session-history">3. Clear Session History</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-session-list">4. Get Session List</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#submit-user-feedback">5. Submit User Feedback</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#submit-user-feedback">4. Submit User Feedback</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-details">Configuration Details</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables-summary">Environment Variables Summary</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-configuration">Model Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-storage-configuration">Session Storage Configuration</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#faq-rag-configuration">FAQ RAG Configuration</a></li>
 </ul>
 </li>

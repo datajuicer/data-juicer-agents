@@ -13,7 +13,8 @@
 
 ## 最新动态
 
-🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README_ZH.md) ***Juicer*** 已部署在 Data-Juicer 官方[文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html)上！欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题。查看 📃 [一键部署代码](./qa-copilot/) | 🎬 [更多演示](./qa-copilot/DEMO_ZH.md) | 🎯 [开发路线图](#路线图)。
+- 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README_ZH.md) ***Juicer*** 已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK) 上。欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问！
+  - 查看 📃 [一键部署代码](./qa-copilot/) | 🎬 [更多演示](./qa-copilot/DEMO_ZH.md) | 🎯 [开发路线图](#路线图)。
 
 <div align="center">
 <img src="https://github.com/user-attachments/assets/a0099ce2-4ed3-4fab-8cfa-b0bbd3beeac9" width=90%>
@@ -70,13 +71,9 @@ Data-Juicer Agents 采用 **多智能体路由架构** 来将用户请求路由�
 
 ### 智能体
 
-- **Data-Juicer 问答智能体（DJ Q&A Agent）**  
-  回答来自现有或潜在用户的 Data-Juicer 相关问题。  
-  - [x] 已实现  
-  - *[2026-01-15]*：当前版本的 [DJ Q&A Agent](./qa-copilot/) 在我们内部评估中表现良好，可视为生产可用。
+- [x] **Data-Juicer 问答智能体（DJ Q&A Agent**  - 回答来自现有或潜在用户的 Data-Juicer 相关问题。
 
-- **Data-Juicer 数据处理智能体（DJ Process Agent）**  
-  自动调用 Data-Juicer 工具来完成数据处理请求。  
+- **Data-Juicer 数据处理智能体（DJ Process Agent**  - 自动调用 Data-Juicer 工具来完成数据处理请求。  
   - [ ] 开发中  
   - *[2026-01-15]*：当前版本的 [DJ Process Agent](./data_juicer_agents/) 处于内测阶段，我们正在积极进行基准评测和能力优化。
 
@@ -89,12 +86,8 @@ Data-Juicer Agents 采用 **多智能体路由架构** 来将用户请求路由�
 
 ### 服务
 
-- **Q&A Copilot — *Juicer***  
-  - [ ] 整体服务  
-  - *[2026-01-15]*：***Juicer*** 目前已在[文档网站](https://datajuicer.github.io/data-juicer-agents/zh/main/)上线，我们正在推进在社区平台上的部署。
-    - [x] 文档网站  
-    - [ ] 钉钉群  
-    - [ ] Discord 服务器  
+- [x] **Q&A Copilot — *Juicer***   
+  - *[2026-01-15]*：已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK)。
 
 - **交互式数据分析工作室（Interactive Data Analysis Studio）** *（开发中）*  
   - *[2026-01-15]*：已有一个[演示](./interactive_recipe/)，当前版本主要依赖预定义工作流。我们正在将智能体能力融入其中。

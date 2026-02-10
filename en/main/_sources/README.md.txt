@@ -13,7 +13,8 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 
 ## News
 
-🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem. Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
+- 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [Doc Site](https://datajuicer.github.io/data-juicer/en/main/index.html) | [DingTalk](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord](https://discord.gg/ngQbB9hEVK) of [Data-Juicer](https://github.com/datajuicer/data-juicer). Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem! 
+  - Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
 
 
 <div align="center">
@@ -72,18 +73,15 @@ Below is the current development checklist.
 
 ### Agents
 
-- **Data-Juicer Q&A Agent (DJ Q&A Agent)**  
-  Answers Data-Juicer–related questions from both existing and potential users.  
+- [x] **Data-Juicer Q&A Agent (DJ Q&A Agent)** - Answers Data-Juicer–related questions from both existing and potential users.  
   - [x] Implemented  
   - *[2026-01-15]*: The current [DJ Q&A Agent](./qa-copilot/) demonstrates strong performance in our internal evaluations and is considered production-ready.
 
-- **Data-Juicer Data Processing Agent (DJ Process Agent)**  
-  Automatically invokes Data-Juicer tools to fulfill data processing requests.  
+- **Data-Juicer Data Processing Agent (DJ Process Agent)** - Automatically invokes Data-Juicer tools to fulfill data processing requests.  
   - [ ] In progress  
   - *[2026-01-15]*: The current [DJ Process Agent](./data_juicer_agents/) is in beta. We are actively benchmarking and optimizing its capabilities.
 
-- **Data-Juicer Code Development Agent (DJ Dev Agent)**  
-  Automatically develops new data processing operators based on user requirements.  
+- **Data-Juicer Code Development Agent (DJ Dev Agent)** - Automatically develops new data processing operators based on user requirements.  
   - [ ] In progress  
   - *[2026-01-15]*: The current [DJ Dev Agent](./data_juicer_agents/) is in beta. Capability evaluation and optimization are ongoing.
 
@@ -91,12 +89,8 @@ Below is the current development checklist.
 
 ### Services
 
-- **Q&A Copilot — *Juicer***  
-  - [ ] Overall service  
-  - *[2026-01-15]*: ***Juicer*** is currently available on the [documentation site](https://datajuicer.github.io/data-juicer-agents/en/main/). We are working on deployments for community platforms.
-    - [x] Documentation Website  
-    - [ ] DingTalk Group  
-    - [ ] Discord Server  
+- **Q&A Copilot — *Juicer***
+  - *[2026-01-15]*: ***Juicer*** is currently available on the official [Doc Site](https://datajuicer.github.io/data-juicer/en/main/index.html) | [DingTalk](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord](https://discord.gg/ngQbB9hEVK) of [Data-Juicer](https://github.com/datajuicer/data-juicer).
 
 - **Interactive Data Analysis Studio** *(In Development)*  
   - *[2026-01-15]*: A [demo](./interactive_recipe/) is available. The current version primarily relies on predefined workflows. We are working on integrating agent-based intelligence.
