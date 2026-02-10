@@ -6,6 +6,9 @@ import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+# Beijing timezone (UTC+8)
+BEIJING_TZ = datetime.timezone(datetime.timedelta(hours=8))
+
 
 BASE_LOG_DIR = Path(
     os.getenv("DJ_COPILOT_LOG_DIR") or (Path(__file__).parent / "logs")
@@ -34,7 +37,7 @@ class SessionLogger:
             
         self.base_dir = base_dir or BASE_LOG_DIR
 
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now(BEIJING_TZ)
         date_str = now.strftime("%Y%m%d")  # directory by date
         time_str = now.strftime("%H%M%S_%f")  # file name by time
 
@@ -52,7 +55,7 @@ class SessionLogger:
         # Ensure common fields
         record.setdefault(
             "timestamp",
-            datetime.datetime.utcnow().isoformat(timespec="milliseconds") + "Z",
+            datetime.datetime.now(BEIJING_TZ).isoformat(timespec="milliseconds"),
         )
         record.setdefault("session_id", self.session_id)
         record.setdefault("user_id", self.user_id)

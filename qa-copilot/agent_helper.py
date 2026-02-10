@@ -20,53 +20,253 @@
 # Modifications made by data-juicer, 2026
 # ==============================================================================
 import os
+import json
 import asyncio
 import time
 import traceback
 from loguru import logger
-from typing import Optional, Dict, Any, List, Union, Literal, Callable, Awaitable
+from typing import Optional, Any, List, Literal, Callable, Awaitable
 from pydantic import BaseModel, Field
 
 from agentscope.mcp import HttpStatelessClient
 from agentscope.embedding import DashScopeTextEmbedding
 from agentscope.rag import SimpleKnowledge, QdrantStore
-from agentscope.tool import execute_shell_command, Toolkit
-
-from agentscope_runtime.engine.services.session_history import (
-    InMemorySessionHistoryService,
-)
-from agentscope_runtime.engine.schemas.session import Session
-from agentscope_runtime.engine.schemas.agent_schemas import Message
+from agentscope.tool import Toolkit
+from agentscope.session import JSONSession
+from agentscope.memory import InMemoryMemory, RedisMemory
+from agentscope.agent import AgentBase
+from agentscope.message import Msg
+from redis.asyncio import ConnectionPool
 
 from op_manager.dj_op_retriever import DJOperatorRetriever
+from url_verifier.verify_urls import verify_urls
 
 
-class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
+class SessionLockManager(object):
+    def __init__(self):
+        self._session_locks = {}
+        self._lock_manager_lock = asyncio.Lock()
+
+    async def get_session_lock(self, session_id: str) -> asyncio.Lock:
+        async with self._lock_manager_lock:
+            if session_id not in self._session_locks:
+                self._session_locks[session_id] = asyncio.Lock()
+            return self._session_locks[session_id]
+
+    async def cleanup_session_lock(self, session_id: str) -> None:
+        async with self._lock_manager_lock:
+            if session_id in self._session_locks:
+                del self._session_locks[session_id]
+
+
+class JSONSessionHistoryService(object):
+    def __init__(self, session_store_type: str = "json"):
+        self.session_store_type = session_store_type
+        self.session = JSONSession(save_dir=os.getenv("SESSION_STORE_DIR", "./sessions"))
+
+    async def start(self) -> None:
+        pass
+
+    async def stop(self) -> None:
+        pass
+
+    async def get_memory(self, session_id: str, user_id: Optional[str] = None) -> List[Msg]:
+        session_save_path = self.session._get_save_path(session_id, user_id)
+        if not os.path.exists(session_save_path):
+            logger.warning(f"session_save_path={session_save_path} not exists")
+            return []
+        try:
+            with open(
+                session_save_path,
+                "r",
+                encoding="utf-8",
+                errors="surrogatepass",
+            ) as file:
+                memory_states = json.load(file)["agent"]["memory"]
+                temp_memory = InMemoryMemory()
+                temp_memory.load_state_dict(memory_states)
+                memory = await temp_memory.get_memory()
+                return memory
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            logger.warning(f"Failed to load or parse memory from {session_save_path}: {e}")
+            return []
+    
+    async def delete_session(self, session_id: str, user_id: Optional[str] = None) -> None:
+        session_save_path = self.session._get_save_path(session_id, user_id)
+        if os.path.exists(session_save_path):
+            os.remove(session_save_path)
+
+    async def load_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None, ) -> None:
+        await self.session.load_session_state(session_id=session_id, agent=agent, user_id=user_id)
+
+    async def save_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None) -> None:
+        await self.session.save_session_state(session_id=session_id, agent=agent, user_id=user_id)
+
+    def create_memory(self, user_id: str, session_id: str):
+        """Create an InMemoryMemory instance for the agent."""
+        # For JSON mode, create an empty InMemoryMemory instance
+        # Load/save session state should be handled manually
+        return InMemoryMemory()
+    
+    async def cleanup_memory(self, memory: Any) -> None:
+        """Cleanup memory resources if needed."""
+        # InMemoryMemory doesn't need cleanup
+        pass
+
+
+class RedisSessionHistoryService(object):
+    """Redis-based session history service."""
     def __init__(
-        self, 
-        ttl_seconds: int = 3600, 
-        cleanup_interval: int = 60, 
+        self,
+        session_store_type: str = "redis",
+        redis_host: str = "localhost",
+        redis_port: int = 6379,
+        redis_db: int = 0,
+        redis_password: Optional[str] = None,
+        redis_max_connections: int = 10
+    ):
+        self.session_store_type = session_store_type
+        self._redis_host = redis_host
+        self._redis_port = redis_port
+        self._redis_db = redis_db
+        self._redis_password = redis_password
+        self._redis_max_connections = redis_max_connections
+        self.connection_pool: Optional[ConnectionPool] = None
+
+    async def start(self) -> None:
+        """Initialize Redis connection pool."""
+        self.connection_pool = ConnectionPool(
+            host=self._redis_host,
+            port=self._redis_port,
+            db=self._redis_db,
+            password=self._redis_password,
+            decode_responses=True,
+            max_connections=self._redis_max_connections,
+            encoding="utf-8",
+        )
+        logger.info(f"✅ Initialized RedisConnectionPool with host: {self._redis_host}, port: {self._redis_port}, db: {self._redis_db}")
+
+    async def stop(self) -> None:
+        """Close Redis connection pool."""
+        if self.connection_pool:
+            await self.connection_pool.disconnect()
+            self.connection_pool = None
+
+    def get_connection_pool(self) -> ConnectionPool:
+        """Get the Redis connection pool."""
+        if self.connection_pool is None:
+            raise RuntimeError("RedisSessionHistoryService not started. Call start() first.")
+        return self.connection_pool
+
+    def create_memory(self, user_id: str, session_id: str):
+        """Create a RedisMemory instance for the agent."""
+        return RedisMemory(
+            connection_pool=self.get_connection_pool(),
+            user_id=user_id,
+            session_id=session_id,
+        )
+    
+    async def cleanup_memory(self, memory: Any) -> None:
+        """Cleanup memory resources if needed."""
+        try:
+            client = memory.get_client()
+            await client.aclose()
+        except Exception as e:
+            logger.warning(f"Failed to cleanup memory: {e}")
+
+    async def get_memory(self, session_id: str, user_id: Optional[str] = None) -> List[Msg]:
+        """Get memory content for a session."""
+        memory = None
+        try:
+            memory = RedisMemory(
+                connection_pool=self.get_connection_pool(),
+                user_id=user_id or session_id,
+                session_id=session_id,
+            )
+            memory_content = await memory.get_memory()
+            return memory_content
+        except Exception as e:
+            logger.warning(f"Failed to get memory for session {session_id}: {e}")
+            return []
+        finally:
+            if memory:
+                try:
+                    client = memory.get_client()
+                    await client.aclose()
+                except Exception as e:
+                    logger.warning(f"Error closing Redis client for session {session_id}: {e}")
+
+    async def delete_session(self, session_id: str, user_id: Optional[str] = None) -> None:
+        """Delete a session."""
+        memory = None
+        try:
+            memory = RedisMemory(
+                connection_pool=self.get_connection_pool(),
+                user_id=user_id or session_id,
+                session_id=session_id,
+            )
+            await memory.clear()
+        except Exception as e:
+            logger.warning(f"Failed to delete session {session_id}: {e}")
+        finally:
+            if memory:
+                try:
+                    client = memory.get_client()
+                    await client.aclose()
+                except Exception as e:
+                    logger.warning(f"Error closing Redis client for session {session_id}: {e}")
+
+    async def load_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None) -> None:
+        """Load session state into agent.
+        
+        For Redis, session state is automatically managed by RedisMemory,
+        so this is a no-op.
+        """
+        # Redis session state is automatically managed by RedisMemory
+        # No manual loading needed
+        pass
+
+    async def save_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None) -> None:
+        """Save agent state to session.
+        
+        For Redis, session state is automatically managed by RedisMemory,
+        so this is a no-op.
+        """
+        # Redis session state is automatically managed by RedisMemory
+        # No manual saving needed
+        pass
+
+
+class TTLJSONSessionHistoryService(JSONSessionHistoryService):
+    """
+    JSONSessionHistoryService with TTL-based automatic cleanup.
+    Uses file modification time to determine session expiration.
+    """
+    def __init__(
+        self,
+        ttl_seconds: int = 3600,
+        cleanup_interval: int = 60,
         session_cleanup_callback: Optional[Callable[[str], Awaitable[None]]] = None,
-        *args, 
+        *args,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         self._ttl_seconds = ttl_seconds
         self._cleanup_interval = cleanup_interval
         self._session_cleanup_callback = session_cleanup_callback
-
-        self._last_access: Dict[str, Dict[str, float]] = {}
         self._cleanup_task: Optional[asyncio.Task] = None
-        self._ttl_lock = asyncio.Lock()
-
-    def _touch(self, user_id: str, session_id: str) -> None:
-        self._last_access.setdefault(user_id, {})[session_id] = time.time()
+        self._running = False
+        self._cleanup_lock = asyncio.Lock()
 
     async def start(self) -> None:
+        """Start the cleanup task."""
         await super().start()
+        self._running = True
         self._cleanup_task = asyncio.create_task(self._cleanup_loop())
 
     async def stop(self) -> None:
+        """Stop the cleanup task."""
+        self._running = False
         if self._cleanup_task:
             self._cleanup_task.cancel()
             try:
@@ -74,86 +274,97 @@ class TTLInMemorySessionHistoryService(InMemorySessionHistoryService):
             except asyncio.CancelledError:
                 pass
             self._cleanup_task = None
-
-        async with self._ttl_lock:
-            self._last_access.clear()
-
         await super().stop()
 
+    async def health(self) -> bool:
+        """Check if the service is running."""
+        return self._running
+
     async def _cleanup_loop(self) -> None:
+        """Main cleanup loop that runs periodically."""
         try:
             while await self.health():
                 await asyncio.sleep(self._cleanup_interval)
                 await self._cleanup_once()
         except asyncio.CancelledError:
             return
+        except Exception as e:
+            logger.error(f"Error in cleanup loop: {e}")
 
     async def _cleanup_once(self) -> None:
-        now = time.time()
-        expired: List[tuple[str, str]] = []
-
-        async with self._ttl_lock:
-            for user_id, m in list(self._last_access.items()):
-                for session_id, ts in list(m.items()):
-                    if now - ts > self._ttl_seconds:
-                        expired.append((user_id, session_id))
-                        del m[session_id]
-                if not m:
-                    del self._last_access[user_id]
-
-        for user_id, session_id in expired:
+        """Perform one cleanup cycle: scan files and delete expired sessions."""
+        async with self._cleanup_lock:
             try:
-                await super().delete_session(user_id, session_id)
-                # Clean up session lock if callback is provided
-                if self._session_cleanup_callback:
+                session_files = self._get_session_files()
+                now = time.time()
+                expired_sessions: List[str] = []
+
+                for file_path in session_files:
                     try:
-                        await self._session_cleanup_callback(session_id)
+                        # Get file modification time
+                        mtime = os.path.getmtime(file_path)
+                        # Check if expired
+                        if now - mtime > self._ttl_seconds:
+                            session_id = self._get_session_id_from_path(file_path)
+                            if session_id:
+                                expired_sessions.append(session_id)
+                    except (OSError, ValueError) as e:
+                        logger.warning(
+                            f"Failed to check file {file_path} for expiration: {e}"
+                        )
+                        continue
+
+                # Delete expired sessions
+                for session_id in expired_sessions:
+                    try:
+                        await self.delete_session(session_id)
+                        logger.info(f"Deleted expired session: {session_id}")
+                        
+                        # Call cleanup callback if provided
+                        if self._session_cleanup_callback:
+                            try:
+                                await self._session_cleanup_callback(session_id)
+                            except Exception as e:
+                                logger.warning(
+                                    f"Failed to cleanup session lock for {session_id}: {e}"
+                                )
                     except Exception as e:
                         logger.warning(
-                            f"Failed to cleanup session lock for {session_id}: {e}"
+                            f"Failed to delete expired session {session_id}: {e}"
                         )
+
             except Exception as e:
-               logger.warning(
-                    f"Failed to delete expired session {session_id} for user {user_id}: {e}"
-                )
+                logger.error(f"Error during cleanup: {e}")
 
-    async def create_session(
-        self, user_id: str, session_id: Optional[str] = None
-    ) -> Session:
-        s = await super().create_session(user_id, session_id=session_id)
-        async with self._ttl_lock:
-            self._touch(user_id, s.id)
-        return s
+    def _get_session_files(self) -> List[str]:
+        """Get all session JSON files from the save directory."""
+        session_files = []
+        save_dir = self.session.save_dir
+        
+        if not os.path.exists(save_dir):
+            return session_files
 
-    async def get_session(self, user_id: str, session_id: str) -> Optional[Session]:
-        s = await super().get_session(user_id, session_id)
-        if s is not None:
-            async with self._ttl_lock:
-                self._touch(user_id, session_id)
-        return s
+        try:
+            for filename in os.listdir(save_dir):
+                if filename.endswith('.json'):
+                    file_path = os.path.join(save_dir, filename)
+                    if os.path.isfile(file_path):
+                        session_files.append(file_path)
+        except OSError as e:
+            logger.warning(f"Failed to list session files in {save_dir}: {e}")
 
-    async def append_message(
-        self,
-        session: Session,
-        message: Union[Message, List[Message], Dict[str, Any], List[Dict[str, Any]]],
-    ) -> None:
-        await super().append_message(session, message)
-        async with self._ttl_lock:
-            self._touch(session.user_id, session.id)
+        return session_files
 
-    async def delete_session(self, user_id: str, session_id: str) -> None:
-        async with self._ttl_lock:
-            if user_id in self._last_access:
-                self._last_access[user_id].pop(session_id, None)
-                if not self._last_access[user_id]:
-                    self._last_access.pop(user_id, None)
-        await super().delete_session(user_id, session_id)
-        # Clean up session lock if callback is provided
-        if self._session_cleanup_callback:
-            try:
-                await self._session_cleanup_callback(session_id)
-            except Exception as e:
-                logger.warning(f"Failed to cleanup session lock for {session_id}: {e}")
+    def _get_session_id_from_path(self, file_path: str) -> Optional[str]:
+        """Extract session ID from file path."""
+        try:
+            filename = os.path.basename(file_path)
+            if filename.endswith('.json'):
+                return filename[:-5]  # Remove .json extension
+            return None
+        except Exception as e:
+            logger.warning(f"Failed to extract session ID from {file_path}: {e}")
+            return None
 
 
 class FeedbackData(BaseModel):
@@ -276,3 +487,4 @@ async def add_qa_tools(
     dj_retriever = DJOperatorRetriever()
     toolkit.register_tool_function(dj_retriever.search_operators)
     toolkit.register_tool_function(dj_retriever.get_operator_details)
+    toolkit.register_tool_function(verify_urls)

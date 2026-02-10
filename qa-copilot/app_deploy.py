@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import prompts
-from typing import Optional
 
 import os
 import json
@@ -16,67 +15,33 @@ from agentscope.formatter import DashScopeChatFormatter
 from agentscope.agent import ReActAgent
 from agentscope.message import Msg
 from agentscope.tool import Toolkit
+from agentscope.pipeline import stream_printing_messages
+from agentscope.token import CharTokenCounter
 
-from agent_helper import (
-    TTLInMemorySessionHistoryService,
-    add_qa_tools,
-    FeedbackRequest
-)
 from agentscope_runtime.engine.app import AgentApp
 from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
-from agentscope_runtime.adapters.agentscope.long_term_memory import (
-    AgentScopeLongTermMemory,
-)
-from agentscope.pipeline import stream_printing_messages
-from agentscope_runtime.adapters.agentscope.memory import (
-    AgentScopeSessionHistoryMemory,
-)
-from agentscope_runtime.engine.services.agent_state import (
-    InMemoryStateService,
-)
-from agentscope_runtime.engine.services.session_history import (
+
+from agent_helper import (
+    TTLJSONSessionHistoryService,
     RedisSessionHistoryService,
+    add_qa_tools,
+    FeedbackRequest,
+    SessionLockManager,
 )
 
-from agentscope_runtime.engine.services.memory.redis_memory_service import (
-    RedisMemoryService,
-)
-
-# Database configuration - set DISABLE_DATABASE=1 to disable all backend databases
-DISABLE_DATABASE = os.getenv("DISABLE_DATABASE", "false") == "1"
 
 # Session logging configuration - set DJ_COPILOT_ENABLE_LOGGING=false to disable
 if not ENABLE_SESSION_LOGGING:
-    print("ℹ️  Session logging disabled (DJ_COPILOT_ENABLE_LOGGING=false)")
+    print("ℹ️ Session logging disabled (DJ_COPILOT_ENABLE_LOGGING=false)")
 else:
     print("✅ Session logging enabled")
 
-# ========== Session Lock Manager ==========
 # Session-level locks to ensure requests for the same session are processed sequentially
 # This prevents state corruption and message history issues in concurrent scenarios
-_session_locks: dict[str, asyncio.Lock] = {}
-_lock_manager_lock = asyncio.Lock()
+session_lock_manager = SessionLockManager()
 
-async def get_session_lock(session_id: str) -> asyncio.Lock:
-    """Get or create a lock for the given session ID"""
-    async with _lock_manager_lock:
-        if session_id not in _session_locks:
-            _session_locks[session_id] = asyncio.Lock()
-        return _session_locks[session_id]
+session_history_service = None
 
-
-async def cleanup_session_lock(session_id: str) -> None:
-    """
-    Remove the lock for a given session ID.
-    This should be called when a session is deleted to prevent memory leaks.
-    """
-    async with _lock_manager_lock:
-        if session_id in _session_locks:
-            del _session_locks[session_id]
-
-# ========== End Session Lock Manager ==========
-
-# ========= FastAPI Config via JSON =========
 # Allow configuring FastAPI config file.
 FASTAPI_CONFIG_PATH = os.getenv("FASTAPI_CONFIG_PATH", "")
 
@@ -95,38 +60,40 @@ except (json.JSONDecodeError, IOError) as e:
     fastapi_kwargs = {}
 
 
-
 app = AgentApp(
     agent_name="Juicer",
     **fastapi_kwargs,
 )
 
-# Initialize services conditionally based on database configuration
-if DISABLE_DATABASE:
-    print("⚠️  Database disabled - running in memory-only mode")
-    long_memory_service = None
-    session_history_service = TTLInMemorySessionHistoryService(
-        ttl_seconds=60 * 60 * 12, 
-        cleanup_interval=60 * 60 * 6,
-        session_cleanup_callback=cleanup_session_lock
-    )
-else:
-    long_memory_service = RedisMemoryService()
-    session_history_service = RedisSessionHistoryService()
+# Initialize services conditionally based on session store type
+SESSION_STORE_TYPE = os.getenv("SESSION_STORE_TYPE", "json")
+print(f"✅ SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 
-state_service = InMemoryStateService()
+if SESSION_STORE_TYPE not in ["json", "redis"]:
+    raise ValueError(f"❌ Invalid SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
+
+# Model Configuration
 model = DashScopeChatModel(
     # "qwen-max",
-    "qwen3-max-preview",
+    # "qwen3-max-preview",
+    "qwen3-max-2026-01-23",
     api_key=os.getenv("DASHSCOPE_API_KEY"),
     stream=True,
-    enable_thinking=False,
+    enable_thinking=True,
 )
-formatter = DashScopeChatFormatter()
+# formatter is used to format the messages for the model
+# MAX_TOKENS specifies the maximum token count (default: 200000)
+# CharTokenCounter counts characters, and for mixed CHN & ENG text, 
+# approximately 3 characters ≈ 1 token, so we multiply by 3 when passing to formatter
+max_tokens_config = int(os.getenv("MAX_TOKENS", "200000"))
+formatter = DashScopeChatFormatter(
+    token_counter=CharTokenCounter(), 
+    max_tokens=max_tokens_config * 3  # Convert token count to character count (×3)
+)
 toolkit = Toolkit()
 
 
-# ========== Safe Check Dynamic Import ==========
+# Safe Check Dynamic Import
 async def _dummy_check_user_input_safety(
     user_input: Any, user_id: str
 ) -> Tuple[bool, Optional[Msg]]:
@@ -185,8 +152,6 @@ _check_user_input_safety_func: Optional[
     Callable[[Any, str], Awaitable[Tuple[bool, Optional[Msg]]]]
 ] = None
 
-# ========== End Safe Check Dynamic Import ==========
-
 
 def _extract_user_text(user_input: Any) -> str:
     """Extract plain text from user message for logging."""
@@ -212,32 +177,51 @@ def _extract_user_text(user_input: Any) -> str:
 
 @app.init
 async def init_resources(self):
-    global _check_user_input_safety_func
+    global _check_user_input_safety_func, session_history_service
     print("🚀 Starting resources...")
 
     # Initialize safe check handler
+    print("🚀 Initializing safe check handler...")
     _check_user_input_safety_func = await _load_safe_check_handler()
 
-    await state_service.start()
-    await session_history_service.start()
-    if not DISABLE_DATABASE:
-        print("🚀 Connecting to Redis...")
-        await long_memory_service.start()
+    # Initialize session
+    print(f"🚀 Initializing SessionHistoryService type={SESSION_STORE_TYPE}...")
+    if SESSION_STORE_TYPE == "json":
+        session_history_service = TTLJSONSessionHistoryService(
+            session_store_type=SESSION_STORE_TYPE,
+            ttl_seconds=int(os.getenv("SESSION_TTL_SECONDS", "21600")),
+            cleanup_interval=int(os.getenv("SESSION_CLEANUP_INTERVAL", "1800")),
+            session_cleanup_callback=session_lock_manager.cleanup_session_lock,
+        )
+        await session_history_service.start()
+        print(
+            f"✅ Initialized JSONSessionHistoryService with TTL: {int(os.getenv('SESSION_TTL_SECONDS', '21600'))} seconds"
+        )
+    elif SESSION_STORE_TYPE == "redis":
+        session_history_service = RedisSessionHistoryService(
+            session_store_type=SESSION_STORE_TYPE,
+            redis_host=os.getenv("REDIS_HOST", "localhost"),
+            redis_port=int(os.getenv("REDIS_PORT", "6379")),
+            redis_db=int(os.getenv("REDIS_DB", "0")),
+            redis_password=os.getenv("REDIS_PASSWORD", None),
+            redis_max_connections=int(os.getenv("REDIS_MAX_CONNECTIONS", "10")),
+        )
+        await session_history_service.start()
+        print(
+            f"✅ Initialized RedisSessionHistoryService (TTL handled by Redis server)"
+        )
     else:
-        print("ℹ️  Skipping database connections (DISABLE_DATABASE=1)")
-    
-    await add_qa_tools(toolkit)
+        raise ValueError(f"❌ Invalid SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 
+    await add_qa_tools(toolkit)
 
 
 @app.shutdown
 async def cleanup_resources(self):
-    await state_service.stop()
-    await session_history_service.stop()
+    global session_history_service
+    if session_history_service:
+        await session_history_service.stop()
 
-    if not DISABLE_DATABASE:
-        print("🛑 Shutting down Redis...")
-        await long_memory_service.stop()
 
 @app.query(framework="agentscope")
 async def query_func(
@@ -250,13 +234,13 @@ async def query_func(
     Process query with session-level locking to prevent concurrent state corruption.
     Ensures requests for the same session are processed sequentially.
     """
-    global _check_user_input_safety_func
+    global _check_user_input_safety_func, session_history_service
     session_id = request.session_id
     user_id = request.user_id or session_id
 
     # Get session lock to ensure sequential processing for the same session
-    session_lock = await get_session_lock(session_id)
-    
+    session_lock = await session_lock_manager.get_session_lock(session_id)
+
     # Acquire lock for the entire processing flow
     async with session_lock:
         # Timing metrics
@@ -276,17 +260,16 @@ async def query_func(
             }
         )
 
-        # ========== Safe Check ==========
+        # Safe Check
         is_safe, error_msg = await _check_user_input_safety_func(msgs[-1], user_id)
         if not is_safe:
             yield error_msg, True
             return
-        # ========== End Safe Check ==========
 
-        # Export state - protected by lock to prevent concurrent reads
-        state = await state_service.export_state(
-            session_id=session_id,
-            user_id=user_id,
+        # Set memory using unified interface
+        # For JSON mode, create an InMemoryMemory instance
+        memory = session_history_service.create_memory(
+            user_id=user_id, session_id=session_id
         )
 
         # Build agent configuration
@@ -297,31 +280,27 @@ async def query_func(
             "sys_prompt": prompts.QA,
             "toolkit": toolkit,
             "parallel_tool_calls": True,
-            "memory": AgentScopeSessionHistoryMemory(
-                service=session_history_service,
-                session_id=session_id,
-                user_id=user_id,
-            ),}
+            "memory": memory,
+        }
 
-        # Add memory services only if database is enabled
-        if not DISABLE_DATABASE:
-            agent_config["long_term_memory"] = AgentScopeLongTermMemory(
-                service=long_memory_service,
-                session_id=session_id,
-                user_id=user_id,
-            )
         try:
             agent = ReActAgent(**agent_config)
         except Exception as e:
             print(f"[{session_id}] ❌ Error creating agent: {str(e)}")
             raise
-        
+
         # Attach session logger to agent so hooks can log tool usage
         agent.session_logger = logger
         agent.set_console_output_enabled(enabled=False)
 
-        if state:
-            agent.load_state_dict(state)
+        # Load session state (for JSON mode only; Redis mode doesn't need this check as load_session_state is a no-op)
+        try:
+            await session_history_service.load_session_state(
+                session_id=session_id, agent=agent, user_id=user_id
+            )
+        except Exception as e:
+            print(f"[{session_id}] ❌ Error loading session state: {str(e)}")
+            raise
 
         final_response = ""
         processing_completed = False
@@ -337,7 +316,10 @@ async def query_func(
                     and isinstance(msg.content, list)
                 ):
                     for item in msg.content:
-                        if item.get("type", None) == "text" and item.get("text", "").strip():
+                        if (
+                            item.get("type", None) == "text"
+                            and item.get("text", "").strip()
+                        ):
                             first_token_time = time.perf_counter()
                             break
 
@@ -358,7 +340,7 @@ async def query_func(
                     )
 
                 yield msg, last
-            
+
             # Mark processing as completed if we reached here
             processing_completed = True
 
@@ -373,24 +355,21 @@ async def query_func(
             processing_completed = False
             raise
         finally:
+            # Save session state
             # Always save state, even if there was an error or client disconnect
             # This ensures state consistency and prevents tool_calls without responses
             try:
-                state = agent.state_dict()
-                await state_service.save_state(
-                    user_id=user_id,
-                    session_id=session_id,
-                    state=state,
+                await session_history_service.save_session_state(
+                    session_id=session_id, agent=agent, user_id=user_id
                 )
             except Exception as e:
                 print(f"[{session_id}] ❌ Error saving state: {str(e)}")
-            
-            # Cleanup agent resources if available
-            if hasattr(agent, 'cleanup'):
-                try:
-                    await agent.cleanup()
-                except Exception as e:
-                    print(f"[{session_id}] ❌ Error cleaning up agent: {str(e)}")
+
+            # Cleanup memory resources (e.g., close Redis connections)
+            try:
+                await session_history_service.cleanup_memory(memory)
+            except Exception as e:
+                print(f"[{session_id}] ❌ Error cleaning up memory: {str(e)}")
 
         # Only log final response if processing completed successfully
         if processing_completed:
@@ -414,90 +393,62 @@ async def query_func(
 @app.endpoint("/memory")
 async def get_memory(request: AgentRequest):
     """Retrieve conversation history for a session."""
+    global session_history_service
     session_id = request.session_id
     user_id = request.user_id or session_id
     print(f"[{user_id}] 📥 Fetching memory for session: {session_id}")
 
-    memories = await session_history_service.get_session(user_id, session_id)
-    messages = []
+    try:
+        memory_content = await session_history_service.get_memory(session_id, user_id)
 
-    for msg in memories.messages:
-        content_text = ""
-        if hasattr(msg, "content"):
-            if isinstance(msg.content, list):
-                for item in msg.content:
-                    if getattr(item, "type", None) == "text":
-                        content_text += getattr(item, "text", "")
-            elif isinstance(msg.content, str):
-                content_text = msg.content
+        messages = []
+        for msg in memory_content:
+            content_text = ""
+            if hasattr(msg, "content"):
+                if isinstance(msg.content, list):
+                    for item in msg.content:
+                        if item.get("type", None) == "text":
+                            content_text += item.get("text", "")
+                elif isinstance(msg.content, str):
+                    content_text = msg.content
 
-        if content_text.strip() and hasattr(msg, "role"):
-            messages.append(
-                {
-                    "role": msg.role,
-                    "content": content_text.strip(),
-                    "id": msg.metadata.get("original_id", msg.id),
-                    "metadata": msg,
-                }
-            )
+            if content_text.strip() and hasattr(msg, "role"):
+                messages.append(
+                    {
+                        "role": msg.role,
+                        "content": content_text.strip(),
+                        "id": msg.id,
+                        "metadata": msg,
+                    }
+                )
 
-    response = {"messages": messages}
-    print(f"[{user_id}] 📤 Returning {len(messages)} messages")
-    return response
+        response = {"messages": messages}
+        print(f"[{user_id}] 📤 Returning {len(messages)} messages")
+        return response
+    except Exception as e:
+        print(f"[{user_id}] ❌ Error fetching memory: {str(e)}")
+        return {"messages": []}
 
 
 @app.endpoint("/clear")
 async def clear_memory(request: AgentRequest):
     """Clear conversation history for a session."""
+    global session_history_service
     session_id = request.session_id
     user_id = request.user_id or session_id
     print(f"[{user_id}] 🧹 Clearing memory for session: {session_id}")
-    await session_history_service.delete_session(user_id, session_id)
-    return {"status": "ok"}
-
-
-@app.endpoint("/sessions")
-async def get_sessions(request: AgentRequest):
-    """Get all sessions for a user."""
-    user_id = request.user_id
-    print(f"[{user_id}] 📋 Fetching all sessions")
 
     try:
-        sessions = await session_history_service.list_sessions(user_id)
+        await session_history_service.delete_session(
+            session_id=session_id, user_id=user_id
+        )
 
-        session_list = []
-        for session in sessions:
-            preview = "New Chat"
-            if session and session.messages:
-                first_msg = session.messages[0]
-                if hasattr(first_msg, "content"):
-                    if isinstance(first_msg.content, list):
-                        for item in first_msg.content:
-                            if getattr(item, "type", None) == "text":
-                                preview = getattr(item, "text", "")[:50]
-                                break
-                    elif isinstance(first_msg.content, str):
-                        preview = first_msg.content[:50]
-
-            session_list.append(
-                {
-                    "session_id": session.id,
-                    "preview": preview,
-                    "created_at": (
-                        session.created_at if hasattr(session, "created_at") else None
-                    ),
-                    "updated_at": (
-                        session.updated_at if hasattr(session, "updated_at") else None
-                    ),
-                }
-            )
-
-        print(f"[{user_id}] 📤 Returning {len(session_list)} sessions")
-        return {"sessions": session_list}
-
+        # Clean up session lock regardless of store type
+        await session_lock_manager.cleanup_session_lock(session_id=session_id)
+        return {"status": "ok"}
     except Exception as e:
-        print(f"[{user_id}] ❌ Error fetching sessions: {str(e)}")
-        return {"sessions": []}
+        print(f"[{user_id}] ❌ Error clearing memory: {str(e)}")
+        return {"status": "error", "message": str(e)}
 
 
 @app.endpoint("/feedback")
