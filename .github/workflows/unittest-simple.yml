@@ -1,0 +1,121 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: unittest-simple
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unittest-standalone:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        uv pip install --system -e .[all]
+        uv pip install --system coverage
+
+    - name: Print Pip Dependency Tree
+      run: |
+        uv pip install --system pipdeptree
+        pipdeptree
+
+    - name: Clean dataset cache
+      run: |
+        rm -rf ~/.cache/huggingface/datasets
+
+    - name: Run unittest
+      env:
+        OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        coverage run -m unittest discover -s tests -p "test_*.py" -v
+        coverage xml
+        coverage report -m
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage_report_standalone_py${{ matrix.python-version }}
+        include-hidden-files: true
+        path: |
+          .coverage
+          coverage.xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  combine-coverage:
+    needs: [unittest-standalone]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install coverage
+      run: |
+        pip install coverage
+
+    - name: Download all coverage reports
+      uses: actions/download-artifact@v4
+      with:
+        pattern: coverage_report_*
+        path: coverage_reports
+        merge-multiple: true
+
+    - name: Combine coverage reports
+      run: |
+        cd coverage_reports
+        coverage combine
+        coverage report -m
+        coverage xml
+
+    - name: Upload combined coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage_report_combined
+        include-hidden-files: true
+        path: coverage_reports/.coverage
+
+    - name: Upload combined coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage_reports/coverage.xml
+        flags: combined
+        name: codecov-combined
+        fail_ci_if_error: false
