@@ -421,12 +421,6 @@ class FeedbackRequest(BaseModel):
     id: Optional[str] = None
 
 
-class JuicerAgentRequest(AgentRequest):
-    """Extra model parameters (e.g., {"enable_thinking": True})"""
-
-    model_params: Optional[Dict[str, Any]] = None
-
-
 async def add_qa_tools(
     toolkit: Toolkit,
 ):
