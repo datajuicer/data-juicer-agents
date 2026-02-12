@@ -26,7 +26,6 @@ from agent_helper import (
     RedisSessionHistoryService,
     add_qa_tools,
     FeedbackRequest,
-    JuicerAgentRequest,
     SessionLockManager,
 )
 
@@ -225,7 +224,7 @@ async def cleanup_resources(self):
 async def query_func(
     self,
     msgs,
-    request: JuicerAgentRequest = None,
+    request: AgentRequest = None,
     **kwargs,
 ):
     """
@@ -234,7 +233,7 @@ async def query_func(
     """
     global _check_user_input_safety_func, session_history_service
     session_id = request.session_id
-    request_model_params = request.model_params or {}
+    request_model_params = getattr(request, "model_params", {})
     user_id = request.user_id or session_id
 
     # Get session lock to ensure sequential processing for the same session
