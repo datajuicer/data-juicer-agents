@@ -233,7 +233,7 @@ async def query_func(
     """
     global _check_user_input_safety_func, session_history_service
     session_id = request.session_id
-    request_model_params = getattr(request, "model_params", {})
+    request_model_params = getattr(request, "model_params", None) or {}
     user_id = request.user_id or session_id
 
     # Get session lock to ensure sequential processing for the same session
