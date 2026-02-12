@@ -64,7 +64,9 @@ class SessionLockManager(object):
 class JSONSessionHistoryService(object):
     def __init__(self, session_store_type: str = "json"):
         self.session_store_type = session_store_type
-        self.session = JSONSession(save_dir=os.getenv("SESSION_STORE_DIR", "./sessions"))
+        self.session = JSONSession(
+            save_dir=os.getenv("SESSION_STORE_DIR", "./sessions")
+        )
 
     async def start(self) -> None:
         pass
@@ -72,7 +74,9 @@ class JSONSessionHistoryService(object):
     async def stop(self) -> None:
         pass
 
-    async def get_memory(self, session_id: str, user_id: Optional[str] = None) -> List[Msg]:
+    async def get_memory(
+        self, session_id: str, user_id: Optional[str] = None
+    ) -> List[Msg]:
         session_save_path = self.session._get_save_path(session_id, user_id)
         if not os.path.exists(session_save_path):
             logger.warning(f"session_save_path={session_save_path} not exists")
@@ -90,26 +94,41 @@ class JSONSessionHistoryService(object):
                 memory = await temp_memory.get_memory()
                 return memory
         except (json.JSONDecodeError, KeyError, TypeError) as e:
-            logger.warning(f"Failed to load or parse memory from {session_save_path}: {e}")
+            logger.warning(
+                f"Failed to load or parse memory from {session_save_path}: {e}"
+            )
             return []
-    
-    async def delete_session(self, session_id: str, user_id: Optional[str] = None) -> None:
+
+    async def delete_session(
+        self, session_id: str, user_id: Optional[str] = None
+    ) -> None:
         session_save_path = self.session._get_save_path(session_id, user_id)
         if os.path.exists(session_save_path):
             os.remove(session_save_path)
 
-    async def load_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None, ) -> None:
-        await self.session.load_session_state(session_id=session_id, agent=agent, user_id=user_id)
+    async def load_session_state(
+        self,
+        session_id: str,
+        agent: AgentBase,
+        user_id: Optional[str] = None,
+    ) -> None:
+        await self.session.load_session_state(
+            session_id=session_id, agent=agent, user_id=user_id
+        )
 
-    async def save_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None) -> None:
-        await self.session.save_session_state(session_id=session_id, agent=agent, user_id=user_id)
+    async def save_session_state(
+        self, session_id: str, agent: AgentBase, user_id: Optional[str] = None
+    ) -> None:
+        await self.session.save_session_state(
+            session_id=session_id, agent=agent, user_id=user_id
+        )
 
     def create_memory(self, user_id: str, session_id: str):
         """Create an InMemoryMemory instance for the agent."""
         # For JSON mode, create an empty InMemoryMemory instance
         # Load/save session state should be handled manually
         return InMemoryMemory()
-    
+
     async def cleanup_memory(self, memory: Any) -> None:
         """Cleanup memory resources if needed."""
         # InMemoryMemory doesn't need cleanup
@@ -118,6 +137,7 @@ class JSONSessionHistoryService(object):
 
 class RedisSessionHistoryService(object):
     """Redis-based session history service."""
+
     def __init__(
         self,
         session_store_type: str = "redis",
@@ -125,7 +145,7 @@ class RedisSessionHistoryService(object):
         redis_port: int = 6379,
         redis_db: int = 0,
         redis_password: Optional[str] = None,
-        redis_max_connections: int = 10
+        redis_max_connections: int = 10,
     ):
         self.session_store_type = session_store_type
         self._redis_host = redis_host
@@ -146,7 +166,9 @@ class RedisSessionHistoryService(object):
             max_connections=self._redis_max_connections,
             encoding="utf-8",
         )
-        logger.info(f"✅ Initialized RedisConnectionPool with host: {self._redis_host}, port: {self._redis_port}, db: {self._redis_db}")
+        logger.info(
+            f"✅ Initialized RedisConnectionPool with host: {self._redis_host}, port: {self._redis_port}, db: {self._redis_db}"
+        )
 
     async def stop(self) -> None:
         """Close Redis connection pool."""
@@ -157,7 +179,9 @@ class RedisSessionHistoryService(object):
     def get_connection_pool(self) -> ConnectionPool:
         """Get the Redis connection pool."""
         if self.connection_pool is None:
-            raise RuntimeError("RedisSessionHistoryService not started. Call start() first.")
+            raise RuntimeError(
+                "RedisSessionHistoryService not started. Call start() first."
+            )
         return self.connection_pool
 
     def create_memory(self, user_id: str, session_id: str):
@@ -167,7 +191,7 @@ class RedisSessionHistoryService(object):
             user_id=user_id,
             session_id=session_id,
         )
-    
+
     async def cleanup_memory(self, memory: Any) -> None:
         """Cleanup memory resources if needed."""
         try:
@@ -176,7 +200,9 @@ class RedisSessionHistoryService(object):
         except Exception as e:
             logger.warning(f"Failed to cleanup memory: {e}")
 
-    async def get_memory(self, session_id: str, user_id: Optional[str] = None) -> List[Msg]:
+    async def get_memory(
+        self, session_id: str, user_id: Optional[str] = None
+    ) -> List[Msg]:
         """Get memory content for a session."""
         memory = None
         try:
@@ -196,9 +222,13 @@ class RedisSessionHistoryService(object):
                     client = memory.get_client()
                     await client.aclose()
                 except Exception as e:
-                    logger.warning(f"Error closing Redis client for session {session_id}: {e}")
+                    logger.warning(
+                        f"Error closing Redis client for session {session_id}: {e}"
+                    )
 
-    async def delete_session(self, session_id: str, user_id: Optional[str] = None) -> None:
+    async def delete_session(
+        self, session_id: str, user_id: Optional[str] = None
+    ) -> None:
         """Delete a session."""
         memory = None
         try:
@@ -216,11 +246,15 @@ class RedisSessionHistoryService(object):
                     client = memory.get_client()
                     await client.aclose()
                 except Exception as e:
-                    logger.warning(f"Error closing Redis client for session {session_id}: {e}")
+                    logger.warning(
+                        f"Error closing Redis client for session {session_id}: {e}"
+                    )
 
-    async def load_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None) -> None:
+    async def load_session_state(
+        self, session_id: str, agent: AgentBase, user_id: Optional[str] = None
+    ) -> None:
         """Load session state into agent.
-        
+
         For Redis, session state is automatically managed by RedisMemory,
         so this is a no-op.
         """
@@ -228,9 +262,11 @@ class RedisSessionHistoryService(object):
         # No manual loading needed
         pass
 
-    async def save_session_state(self, session_id: str, agent: AgentBase, user_id: Optional[str] = None) -> None:
+    async def save_session_state(
+        self, session_id: str, agent: AgentBase, user_id: Optional[str] = None
+    ) -> None:
         """Save agent state to session.
-        
+
         For Redis, session state is automatically managed by RedisMemory,
         so this is a no-op.
         """
@@ -244,13 +280,14 @@ class TTLJSONSessionHistoryService(JSONSessionHistoryService):
     JSONSessionHistoryService with TTL-based automatic cleanup.
     Uses file modification time to determine session expiration.
     """
+
     def __init__(
         self,
         ttl_seconds: int = 3600,
         cleanup_interval: int = 60,
         session_cleanup_callback: Optional[Callable[[str], Awaitable[None]]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self._ttl_seconds = ttl_seconds
@@ -321,7 +358,7 @@ class TTLJSONSessionHistoryService(JSONSessionHistoryService):
                     try:
                         await self.delete_session(session_id)
                         logger.info(f"Deleted expired session: {session_id}")
-                        
+
                         # Call cleanup callback if provided
                         if self._session_cleanup_callback:
                             try:
@@ -342,13 +379,13 @@ class TTLJSONSessionHistoryService(JSONSessionHistoryService):
         """Get all session JSON files from the save directory."""
         session_files = []
         save_dir = self.session.save_dir
-        
+
         if not os.path.exists(save_dir):
             return session_files
 
         try:
             for filename in os.listdir(save_dir):
-                if filename.endswith('.json'):
+                if filename.endswith(".json"):
                     file_path = os.path.join(save_dir, filename)
                     if os.path.isfile(file_path):
                         session_files.append(file_path)
@@ -361,7 +398,7 @@ class TTLJSONSessionHistoryService(JSONSessionHistoryService):
         """Extract session ID from file path."""
         try:
             filename = os.path.basename(file_path)
-            if filename.endswith('.json'):
+            if filename.endswith(".json"):
                 return filename[:-5]  # Remove .json extension
             return None
         except Exception as e:
@@ -383,9 +420,12 @@ class FeedbackRequest(BaseModel):
     user_id: Optional[str] = None
     id: Optional[str] = None
 
+
 class JuicerAgentRequest(AgentRequest):
+    """Extra model parameters (e.g., {"enable_thinking": True})"""
+
     model_params: Optional[Dict[str, Any]] = None
-"""Extra model parameters (e.g., {"enable_thinking": True})"""
+
 
 async def add_qa_tools(
     toolkit: Toolkit,
@@ -431,7 +471,9 @@ async def add_qa_tools(
                 # location=":memory:",
                 location=None,
                 client_kwargs={
-                    "host": os.getenv("QDRANT_HOST", "127.0.0.1"),  # Qdrant server address
+                    "host": os.getenv(
+                        "QDRANT_HOST", "127.0.0.1"
+                    ),  # Qdrant server address
                     "port": int(os.getenv("QDRANT_PORT", "6333")),  # Qdrant server port
                 },
                 collection_name="dj_faq",

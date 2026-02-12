@@ -5,6 +5,7 @@ import os
 import json
 import importlib.util
 import time
+import copy
 from typing import Optional, Tuple, Any, Callable, Awaitable
 
 from session_logger import SessionLogger, ENABLE_SESSION_LOGGING
@@ -233,7 +234,7 @@ async def query_func(
     """
     global _check_user_input_safety_func, session_history_service
     session_id = request.session_id
-    _model_params = request.model_params or {}
+    request_model_params = request.model_params or {}
     user_id = request.user_id or session_id
 
     # Get session lock to ensure sequential processing for the same session
@@ -270,10 +271,11 @@ async def query_func(
             user_id=user_id, session_id=session_id
         )
 
-        model_params.update(_model_params)
+        _model_params = copy.deepcopy(model_params)
+        _model_params.update(request_model_params)
 
         # Model Configuration
-        model = DashScopeChatModel(**model_params)
+        model = DashScopeChatModel(**_model_params)
 
         # Build agent configuration
         agent_config = {
