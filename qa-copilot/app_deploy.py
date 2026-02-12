@@ -5,7 +5,6 @@ import os
 import json
 import importlib.util
 import time
-import asyncio
 from typing import Optional, Tuple, Any, Callable, Awaitable
 
 from session_logger import SessionLogger, ENABLE_SESSION_LOGGING
@@ -26,6 +25,7 @@ from agent_helper import (
     RedisSessionHistoryService,
     add_qa_tools,
     FeedbackRequest,
+    JuicerAgentRequest,
     SessionLockManager,
 )
 
@@ -72,23 +72,20 @@ print(f"✅ SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 if SESSION_STORE_TYPE not in ["json", "redis"]:
     raise ValueError(f"❌ Invalid SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 
-# Model Configuration
-model = DashScopeChatModel(
-    # "qwen-max",
-    # "qwen3-max-preview",
-    "qwen3-max-2026-01-23",
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    stream=True,
-    enable_thinking=True,
-)
+model_params = {
+    "model_name": "qwen3-max-2026-01-23",
+    "api_key": os.getenv("DASHSCOPE_API_KEY"),
+    "stream": True,
+    "enable_thinking": False,
+}
 # formatter is used to format the messages for the model
 # MAX_TOKENS specifies the maximum token count (default: 200000)
-# CharTokenCounter counts characters, and for mixed CHN & ENG text, 
+# CharTokenCounter counts characters, and for mixed CHN & ENG text,
 # approximately 3 characters ≈ 1 token, so we multiply by 3 when passing to formatter
 max_tokens_config = int(os.getenv("MAX_TOKENS", "200000"))
 formatter = DashScopeChatFormatter(
-    token_counter=CharTokenCounter(), 
-    max_tokens=max_tokens_config * 3  # Convert token count to character count (×3)
+    token_counter=CharTokenCounter(),
+    max_tokens=max_tokens_config * 3,  # Convert token count to character count (×3)
 )
 toolkit = Toolkit()
 
@@ -227,7 +224,7 @@ async def cleanup_resources(self):
 async def query_func(
     self,
     msgs,
-    request: AgentRequest = None,
+    request: JuicerAgentRequest = None,
     **kwargs,
 ):
     """
@@ -236,6 +233,7 @@ async def query_func(
     """
     global _check_user_input_safety_func, session_history_service
     session_id = request.session_id
+    _model_params = request.model_params or {}
     user_id = request.user_id or session_id
 
     # Get session lock to ensure sequential processing for the same session
@@ -271,6 +269,11 @@ async def query_func(
         memory = session_history_service.create_memory(
             user_id=user_id, session_id=session_id
         )
+
+        model_params.update(_model_params)
+
+        # Model Configuration
+        model = DashScopeChatModel(**model_params)
 
         # Build agent configuration
         agent_config = {

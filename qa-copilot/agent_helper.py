@@ -25,7 +25,7 @@ import asyncio
 import time
 import traceback
 from loguru import logger
-from typing import Optional, Any, List, Literal, Callable, Awaitable
+from typing import Optional, Any, List, Literal, Callable, Awaitable, Dict
 from pydantic import BaseModel, Field
 
 from agentscope.mcp import HttpStatelessClient
@@ -37,6 +37,8 @@ from agentscope.memory import InMemoryMemory, RedisMemory
 from agentscope.agent import AgentBase
 from agentscope.message import Msg
 from redis.asyncio import ConnectionPool
+
+from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
 
 from op_manager.dj_op_retriever import DJOperatorRetriever
 from url_verifier.verify_urls import verify_urls
@@ -381,6 +383,9 @@ class FeedbackRequest(BaseModel):
     user_id: Optional[str] = None
     id: Optional[str] = None
 
+class JuicerAgentRequest(AgentRequest):
+    model_params: Optional[Dict[str, Any]] = None
+"""Extra model parameters (e.g., {"enable_thinking": True})"""
 
 async def add_qa_tools(
     toolkit: Toolkit,
