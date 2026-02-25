@@ -32,6 +32,9 @@ dependencies = [
     "hf-transfer>=0.1.9",
     "transformers>=4.57.3",
     "oyaml",
+    "rank-bm25>=0.2.2",
+    "langchain>=1.2.10",
+    "xxhash>=3.6.0",
 ]
 
 [project.scripts]
