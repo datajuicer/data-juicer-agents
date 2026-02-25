@@ -46,7 +46,7 @@ REGEX_MAX_PATTERN_LENGTH = 200  # maximum allowed regex pattern length
 # Global Caches
 # ============================================================================
 
-_cached_bm25: Optional[object] = None
+_cached_bm25: Optional[BM25Okapi] = None
 _cached_bm25_tools_info: Optional[list] = None
 
 _cached_vector_store: Optional[FAISS] = None
