@@ -491,4 +491,4 @@ async def submit_feedback(request: FeedbackRequest):
 
 if __name__ == "__main__":
     host = os.getenv("DJ_COPILOT_SERVICE_HOST", "127.0.0.1")
-    app.run(host=host, port=8080, web_ui=True)
+    app.run(host=host, port=8080)
