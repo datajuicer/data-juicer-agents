@@ -28,19 +28,14 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
 
-    - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
     - name: Install dependencies
       run: |
-        uv pip install --system -e .[all]
-        uv pip install --system coverage
+        pip install -e .[all]
+        pip install coverage
 
     - name: Print Pip Dependency Tree
       run: |
-        uv pip install --system pipdeptree
+        pip install pipdeptree
         pipdeptree
 
     - name: Clean dataset cache
