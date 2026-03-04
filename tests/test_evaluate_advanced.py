@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from data_juicer_agents.cli import main
-from data_juicer_agents.core.schemas import RunTraceModel
+from data_juicer_agents.capabilities.trace.schema import RunTraceModel
 
 
 def _write_case(tmp_path: Path) -> Path:
@@ -24,8 +24,23 @@ def _write_case(tmp_path: Path) -> Path:
     return cases
 
 
+def _mock_planner_calls(monkeypatch):
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+
+    monkeypatch.setattr(
+        planner_mod,
+        "retrieve_operator_candidates",
+        lambda **_kwargs: {"candidates": []},
+    )
+    monkeypatch.setattr(
+        planner_mod,
+        "call_model_json",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("mock llm unavailable")),
+    )
+
+
 def test_evaluate_retries_and_history(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import executor_agent as executor_mod
+    from data_juicer_agents.capabilities.apply import service as executor_mod
 
     calls = {"n": 0}
 
@@ -72,12 +87,13 @@ def test_evaluate_retries_and_history(tmp_path: Path, monkeypatch):
         )
         return trace, 0, "ok", ""
 
-    monkeypatch.setattr(executor_mod.ExecutorAgent, "execute", fake_execute)
+    monkeypatch.setattr(executor_mod.ApplyUseCase, "execute", fake_execute)
 
     cases = _write_case(tmp_path)
     report = tmp_path / "report.json"
     history = tmp_path / "history.jsonl"
 
+    _mock_planner_calls(monkeypatch)
     monkeypatch.chdir(tmp_path)
     code = main(
         [
@@ -92,7 +108,6 @@ def test_evaluate_retries_and_history(tmp_path: Path, monkeypatch):
             "1",
             "--jobs",
             "1",
-            "--no-llm",
             "--history-file",
             str(history),
         ],
@@ -137,6 +152,7 @@ def test_evaluate_failure_buckets_for_misroute(tmp_path: Path, monkeypatch):
     cases.write_text(json.dumps(row, ensure_ascii=False) + "\n", encoding="utf-8")
 
     report = tmp_path / "report_misroute.json"
+    _mock_planner_calls(monkeypatch)
     monkeypatch.chdir(tmp_path)
     code = main(
         [
@@ -147,7 +163,6 @@ def test_evaluate_failure_buckets_for_misroute(tmp_path: Path, monkeypatch):
             str(report),
             "--execute",
             "none",
-            "--no-llm",
             "--failure-top-k",
             "3",
             "--no-history",

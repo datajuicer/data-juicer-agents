@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from data_juicer_agents.utils import llm_utils
+from data_juicer_agents.tools import llm_gateway as llm_utils
 
 
 def test_call_model_json_fallback_succeeds(monkeypatch):
-    def fake_call(model_name: str, _prompt: str):
+    def fake_call(model_name: str, _prompt: str, **_kwargs):
         if model_name == "qwen-max":
             return {"ok": True}
         raise RuntimeError("Model not exist")
@@ -17,7 +17,7 @@ def test_call_model_json_fallback_succeeds(monkeypatch):
 
 
 def test_call_model_json_fallback_all_fail(monkeypatch):
-    def fake_call(_model_name: str, _prompt: str):
+    def fake_call(_model_name: str, _prompt: str, **_kwargs):
         raise RuntimeError("boom")
 
     monkeypatch.setenv("DJA_MODEL_FALLBACKS", "qwen-max")

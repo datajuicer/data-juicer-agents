@@ -1,157 +1,107 @@
-# Project Overview (DJX v0.1)
+# DJX Overview
 
-This document provides a concise architecture overview of the current
-`data-juicer-agents` project after the DJX-oriented refactor.
+`data-juicer-agents` exposes DJX as atomic, composable capabilities for data engineering workflows.
 
-## 1. What This Project Is
+Primary entries:
+- `djx`: deterministic CLI command set for planning/execution/dev/trace/evaluate.
+- `dj-agents`: natural-language ReAct session orchestrator.
+- `djx-ui-api` + `studio/frontend`: local Studio API and web UI.
 
-`data-juicer-agents` currently positions `djx` as a **packaged atomic
-capability layer** over Data-Juicer.
+## Positioning
 
-Important positioning update:
+DJX is a capability layer, not a monolithic all-in-one agent.
 
-- The CLI is not the final conversation surface.
-- The CLI provides composable tools (planning, execution, trace, evaluation)
-  for higher-level orchestration agents.
-- A unified session-level agent entry is planned for future iterations.
-- `dev` is planned as another **atomic CLI capability** (same layer as
-  `plan/apply/trace/evaluate`), used when current Data-Juicer operators cannot
-  satisfy the requirement and new operators need to be developed.
+Design goals:
+- stable command/tool boundaries
+- structured I/O and error contracts
+- traceable execution and artifacts
+- reusable primitives for upper-layer agents/skills
 
-Current production command surface:
-
-- `djx plan`
-- `djx apply`
-- `djx trace`
-- `djx templates`
-- `djx evaluate`
-
-The design focus is:
-
-- workflow-first planning
-- explicit schema validation
-- deterministic execution
-- traceable runs and evaluation metrics
-
-## 2. Project Architecture Diagram
+## Architecture
 
 ```mermaid
-flowchart TB
-  U["User / External System"] --> SA["Session Agent Entry (Planned)"];
-  U --> DJX["djx Atomic CLI Layer"];
+flowchart LR
+  U["User or External Agent"] --> CLI["djx CLI"]
+  U --> SESS["dj-agents Session"]
+  U --> FE["Studio Frontend"]
 
-  SA --> DJX;
+  FE --> API["djx-ui-api (FastAPI)"]
+  API --> SESS
 
-  DJX --> CMD["commands/*"];
-  CMD --> AGT["agents/*"];
-  CMD --> CORE["core/schemas"];
-  CMD --> TOOLS["tools/*"];
-  CMD --> UTILS["utils/*"];
-  CMD --> RT["runtime/*"];
+  CLI --> CMD["data_juicer_agents/commands"]
+  SESS --> STOOL["Session Tool Wrappers"]
 
-  classDef wire fill:#ffffff,stroke:#111111,stroke-width:1px,color:#111111;
-  class U,SA,DJX,CMD,DEV,AGT,CORE,TOOLS,UTILS,RT,WF,DJ,STORE,OPDEV wire;
+  CMD --> CAP["data_juicer_agents/capabilities"]
+  STOOL --> CAP
 
+  CAP --> TOOLS["data_juicer_agents/tools"]
+  CAP --> TRACE["capabilities/trace repository"]
+  CAP --> DJ["Data-Juicer runtime (dj-process)"]
+
+  DJ --> ART["Artifacts: .djx/* and data/*"]
 ```
 
-## 3. High-Level Runtime Layers
+## Module Responsibilities
 
-```
-CLI (djx)
-  -> atomic capability packaging
-  -> commands/*
-      -> agents/*        (planning/validation/execution behavior)
-      -> core/schemas    (stable data contracts)
-      -> tools/*         (routing, probing, registry integrations)
-      -> utils/*         (pure reusable helpers)
-      -> runtime/*       (trace persistence and aggregation)
-```
+- `data_juicer_agents/cli.py`
+  - Defines `djx` command parser and subcommands.
+- `data_juicer_agents/session_cli.py`
+  - Defines `dj-agents` session entry (`--ui plain|tui`).
+- `data_juicer_agents/commands/`
+  - Command adapters for `plan/apply/trace/retrieve/dev/evaluate/templates`.
+- `data_juicer_agents/capabilities/`
+  - Scenario composition layer:
+  - `plan`: plan generation/revision and validation integration.
+  - `apply`: `dj-process` execution orchestration.
+  - `dev`: custom operator scaffold generation workflow.
+  - `session`: ReAct session orchestration and tool exposure.
+  - `trace`: run trace persistence/query.
+- `data_juicer_agents/tools/`
+  - Reusable primitives (dataset probing, operator retrieval/registry, llm gateway, dev scaffold, workflow routing helpers).
+- `studio/api/`
+  - API-first backend:
+  - `routes/` endpoint layer.
+  - `services/` orchestration layer.
+  - `repositories/` persistence adapters (settings).
+  - `managers/` session lifecycle/runtime management.
+  - `models/` request/response contracts.
+- `studio/frontend/`
+  - React UI with tabbed panels: Chat / Recipe / Data / Settings.
 
-Future target:
+## Core Flows
 
-- add `dev` as a first-class atomic DJX capability for unmet requirements and
-  operator development
-- add a unified session agent entry for multi-turn orchestration
-- keep `djx` as low-level tool interface callable by those upper layers
+### 1) CLI plan and execution
 
-## 4. Main Code Layout
+1. `djx plan` builds a plan (template+LLM patch or full-LLM fallback).
+2. `PlanValidator` performs structural/runtime checks (optional LLM review).
+3. Plan YAML is written to disk.
+4. `djx apply` executes through `dj-process`.
+5. `djx trace` inspects run records or aggregated stats.
 
-### 4.1 `data_juicer_agents/cli.py`
+### 2) Session orchestration
 
-CLI entrypoint and argument parsing.  
-Routes each subcommand to a handler in `commands/`.
+`dj-agents` runs one ReAct agent over atomic tools.
+Typical planning chain:
 
-### 4.2 `data_juicer_agents/commands/`
+`inspect_dataset -> retrieve_operators -> plan_retrieve_candidates(optional) -> plan_generate -> plan_validate -> plan_save`
 
-Command handlers (thin orchestration layer):
+`apply_recipe` requires explicit confirmation.
 
-- `plan_cmd.py`: plan generation and revision mode (`--base-plan`, `--from-run-id`)
-- `apply_cmd.py`: execute plan and persist run trace
-- `trace_cmd.py`: replay single run / aggregate stats (global or by `plan_id`)
-- `templates_cmd.py`: inspect built-in workflow templates
-- `evaluate_cmd.py`: offline batch evaluation with retries and reporting
+### 3) Studio workflow
 
-### 4.3 `data_juicer_agents/agents/`
+- Frontend calls `djx-ui-api`.
+- API manages session lifecycle/events, interrupt requests, plan load/save, and data preview/compare.
+- Chat view renders assistant messages, reasoning blocks, and tool blocks (args/result).
 
-Behavioral/role modules:
+## Runtime Artifacts
 
-- `planner_agent.py`: template-first planning, full-LLM planning, revision planning
-- `react_planner_agent.py`: minimal ReAct planner for `--llm-full-plan`
-- `validator_agent.py`: schema + path + modality + operator availability checks
-- `executor_agent.py`: deterministic recipe rendering + command execution + error classification
+- `.djx/runs.jsonl`: run-level trace records.
+- `.djx/recipes/`: generated recipes for execution.
+- `.djx/session_plans/`: session-saved plan files.
+- `.djx/config.json`: Studio settings profiles.
+- `data/`: datasets, plans, and example outputs.
 
-### 4.4 `data_juicer_agents/core/`
+## Scope Notes
 
-Stable domain core:
-
-- `schemas.py`: `PlanModel`, `RunTraceModel`, and `validate_plan`
-- `_version.py`: package version
-
-### 4.5 `data_juicer_agents/tools/`
-
-Operational integrations:
-
-- `router_helpers.py`: intent-to-workflow routing helpers
-- `dataset_probe.py`: sample-based modality/key inference
-- `operator_registry.py`: installed operator discovery + name normalization
-- `op_manager/`: operator metadata retrieval backend
-
-### 4.6 `data_juicer_agents/utils/`
-
-Shared pure utilities:
-
-- `llm_utils.py`: OpenAI-compatible JSON call wrapper with model fallback
-- `plan_diff.py`: structured diff and summary for iterative plan revisions
-
-### 4.7 `data_juicer_agents/runtime/`
-
-Runtime persistence:
-
-- `trace_store.py`: append-only JSONL trace storage and stats
-
-### 4.8 `data_juicer_agents/workflows/`
-
-Built-in workflow templates:
-
-- `rag_cleaning.yaml`
-- `multimodal_dedup.yaml`
-
-## 5. Data & Evaluation Assets
-
-- `data/`: demo datasets used by examples/tests
-- `eval_cases/`: offline evaluation case sets
-- `.djx/`: runtime artifacts (recipes, run traces, eval outputs)
-
-## 6. Documentation & Tests
-
-- `docs/`: user and developer docs (QuickStart, schema, CLI reference, audit notes, notebook demo)
-- `tests/`: end-to-end and unit tests for planning, execution, trace, and evaluation
-
-## 7. Notes on Scope
-
-The repository still contains independent modules such as:
-
-- `interactive_recipe/`
-- `qa-copilot/`
-
-They are not part of the current DJX main execution path.
+- `interactive_recipe/` and `qa-copilot/` are independent subsystems.
+- This doc focuses on current DJX surfaces: `djx`, `dj-agents`, `djx-ui-api`, and Studio frontend.

@@ -146,10 +146,19 @@ interactive_recipe/qa-copilot/asset/text_material/
 qdrant_storage/
 .djx/
 sessions/
+frontend/node_modules/
+frontend/dist/
+frontend/.djx/
+test-results/
+tmp_playwright/
+custom_operators/.djx_dev_smoke/
+custom_operators/__pycache__/
 
 # Runtime artifacts under data/
 data/log/
 data/monitor/
 data/plan_*.yaml
+data/demo-dataset-*-plan.*
+data/demo-dataset-processed*.jsonl
 data/*-out-*.jsonl
 data/*-out-*_stats.jsonl

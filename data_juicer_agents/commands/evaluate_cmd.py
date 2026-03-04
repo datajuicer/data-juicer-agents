@@ -9,10 +9,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-from data_juicer_agents.agents.executor_agent import ExecutorAgent
-from data_juicer_agents.agents.planner_agent import PlannerAgent, default_workflows_dir
-from data_juicer_agents.agents.validator_agent import ValidatorAgent
-from data_juicer_agents.runtime.trace_store import TraceStore
+from data_juicer_agents.capabilities.apply.service import ApplyUseCase
+from data_juicer_agents.capabilities.plan.service import (
+    PlanUseCase,
+    PlanningMode,
+    default_workflows_dir,
+    normalize_planning_mode,
+)
+from data_juicer_agents.capabilities.plan.validation import PlanValidator
+from data_juicer_agents.capabilities.trace.repository import TraceStore
 
 
 def _load_cases(cases_path: Path) -> List[Dict[str, Any]]:
@@ -27,7 +32,7 @@ def _load_cases(cases_path: Path) -> List[Dict[str, Any]]:
 
 
 def _execute_with_retries(
-    executor: ExecutorAgent,
+    executor: ApplyUseCase,
     plan,
     execute_mode: str,
     timeout: int,
@@ -89,16 +94,16 @@ def _workflow_match_score(
     expected_workflow: str | None,
     plan_workflow: str | None,
     plan_modality: str | None,
-    llm_full_plan: bool,
+    planning_mode: PlanningMode,
 ) -> bool:
     if not expected_workflow:
         return True
     if plan_workflow == expected_workflow:
         return True
 
-    # In llm_full_plan mode, workflow is intentionally "custom".
+    # In full_llm mode, workflow is intentionally "custom".
     # Evaluate alignment through inferred modality instead.
-    if llm_full_plan and plan_workflow == "custom":
+    if planning_mode == PlanningMode.FULL_LLM and plan_workflow == "custom":
         if expected_workflow == "rag_cleaning":
             return plan_modality == "text"
         if expected_workflow == "multimodal_dedup":
@@ -109,19 +114,17 @@ def _workflow_match_score(
 def _evaluate_one_case(
     idx: int,
     case: Dict[str, Any],
-    use_llm: bool,
-    llm_full_plan: bool,
+    planning_mode: PlanningMode,
     execute_mode: str,
     include_logs: bool,
     timeout: int,
     retries: int,
 ) -> Tuple[int, Dict[str, Any], List[Dict[str, Any]]]:
-    planner = PlannerAgent(
+    planner = PlanUseCase(
         default_workflows_dir(),
-        use_llm=use_llm,
-        llm_full_plan=llm_full_plan,
+        planning_mode=planning_mode,
     )
-    executor = ExecutorAgent()
+    executor = ApplyUseCase()
 
     intent = case["intent"]
     dataset_path = case["dataset_path"]
@@ -145,7 +148,7 @@ def _evaluate_one_case(
             text_keys=case.get("text_keys"),
             image_key=case.get("image_key"),
         )
-        errors = ValidatorAgent.validate(plan)
+        errors = PlanValidator.validate(plan)
         if errors:
             item["status"] = "plan_invalid"
             item["errors"] = errors
@@ -179,7 +182,7 @@ def _evaluate_one_case(
             expected_workflow=expected_workflow,
             plan_workflow=plan.workflow,
             plan_modality=getattr(plan, "modality", "unknown"),
-            llm_full_plan=llm_full_plan,
+            planning_mode=planning_mode,
         )
 
         return idx, item, trace_records
@@ -221,6 +224,19 @@ def _build_failure_buckets(results: List[Dict[str, Any]], top_k: int) -> List[Di
     return [{"bucket": key, "count": count} for key, count in ranked]
 
 
+def _resolve_planning_mode(args) -> PlanningMode:
+    raw_mode = getattr(args, "planning_mode", None)
+    mode = normalize_planning_mode(raw_mode or "template-llm")
+    alias = bool(getattr(args, "llm_full_plan", False))
+    if alias and raw_mode is not None and mode != PlanningMode.FULL_LLM:
+        raise ValueError(
+            "Conflict: --llm-full-plan implies --planning-mode full-llm."
+        )
+    if alias:
+        return PlanningMode.FULL_LLM
+    return mode
+
+
 def run_evaluate(args) -> int:
     if args.timeout <= 0:
         print("timeout must be > 0")
@@ -234,8 +250,10 @@ def run_evaluate(args) -> int:
     if args.failure_top_k <= 0:
         print("failure-top-k must be > 0")
         return 2
-    if args.no_llm and args.llm_full_plan:
-        print("Conflict: --llm-full-plan requires LLM. Remove --no-llm.")
+    try:
+        planning_mode = _resolve_planning_mode(args)
+    except ValueError as exc:
+        print(str(exc))
         return 2
 
     cases_path = Path(args.cases)
@@ -255,8 +273,7 @@ def run_evaluate(args) -> int:
                 _evaluate_one_case,
                 idx,
                 case,
-                (not args.no_llm),
-                args.llm_full_plan,
+                planning_mode,
                 args.execute,
                 args.include_logs,
                 args.timeout,
@@ -286,6 +303,7 @@ def run_evaluate(args) -> int:
     summary = {
         "total": total,
         "execution_mode": args.execute,
+        "planning_mode": planning_mode.value,
         "jobs": args.jobs,
         "retries": args.retries,
         "plan_valid": plan_valid,
@@ -349,9 +367,9 @@ def run_evaluate(args) -> int:
                 "timeout": args.timeout,
                 "retries": args.retries,
                 "jobs": args.jobs,
-                "no_llm": bool(args.no_llm),
                 "failure_top_k": args.failure_top_k,
-                "llm_full_plan": bool(args.llm_full_plan),
+                "planning_mode": planning_mode.value,
+                "llm_full_plan_alias": bool(args.llm_full_plan),
             },
         }
         _append_history(history_path, history_payload)

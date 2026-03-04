@@ -34,13 +34,20 @@ def test_evaluate_failure_top_k_must_be_positive(tmp_path: Path, monkeypatch):
     assert code == 2
 
 
-def test_evaluate_llm_full_conflict_with_no_llm(tmp_path: Path, monkeypatch):
+def test_evaluate_planning_mode_conflicts_with_llm_full_alias(tmp_path: Path, monkeypatch):
     cases = tmp_path / "cases.jsonl"
     cases.write_text("{}\n", encoding="utf-8")
     monkeypatch.chdir(tmp_path)
 
     code = main(
-        ["evaluate", "--cases", str(cases), "--no-llm", "--llm-full-plan"],
+        [
+            "evaluate",
+            "--cases",
+            str(cases),
+            "--planning-mode",
+            "template-llm",
+            "--llm-full-plan",
+        ]
     )
     assert code == 2
 
@@ -71,11 +78,11 @@ def test_plan_text_keys_and_image_key_args_removed(tmp_path: Path, monkeypatch):
 
 def test_plan_requires_dataset_export_without_base(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    code = main(["plan", "intent", "--no-llm"])
+    code = main(["plan", "intent"])
     assert code == 2
 
 
 def test_plan_from_run_id_requires_base_plan(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    code = main(["plan", "intent", "--from-run-id", "run_x", "--no-llm"])
+    code = main(["plan", "intent", "--from-run-id", "run_x"])
     assert code == 2

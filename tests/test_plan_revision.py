@@ -6,10 +6,13 @@ from pathlib import Path
 import yaml
 
 from data_juicer_agents.cli import main
-from data_juicer_agents.core.schemas import OperatorStep, PlanModel
+from data_juicer_agents.capabilities.plan.schema import OperatorStep, PlanModel
 
 
-def test_plan_revision_no_llm_uses_base_plan(tmp_path: Path, monkeypatch):
+def test_plan_revision_uses_base_plan_defaults(tmp_path: Path, monkeypatch):
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+    from data_juicer_agents.capabilities.plan import validation as validator_mod
+
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
     export_file = tmp_path / "out.jsonl"
@@ -27,6 +30,17 @@ def test_plan_revision_no_llm_uses_base_plan(tmp_path: Path, monkeypatch):
     base_file = tmp_path / "base_plan.yaml"
     base_file.write_text(yaml.safe_dump(base_plan.to_dict(), sort_keys=False), encoding="utf-8")
 
+    monkeypatch.setattr(
+        planner_mod,
+        "call_model_json",
+        lambda _model, _prompt, **_kwargs: {},
+    )
+    monkeypatch.setattr(
+        validator_mod.PlanValidator,
+        "llm_review",
+        staticmethod(lambda _plan: {"errors": [], "warnings": []}),
+    )
+
     revised_file = tmp_path / "revised_plan.yaml"
     monkeypatch.chdir(tmp_path)
     code = main(
@@ -37,14 +51,14 @@ def test_plan_revision_no_llm_uses_base_plan(tmp_path: Path, monkeypatch):
             str(base_file),
             "--output",
             str(revised_file),
-            "--no-llm",
         ]
     )
 
     assert code == 0
     data = yaml.safe_load(revised_file.read_text(encoding="utf-8"))
-    assert data["parent_plan_id"] == "plan_base_001"
-    assert data["revision"] == 2
+    assert data["parent_plan_id"] is None
+    assert data["revision"] == 1
+    assert data["template_source_plan_id"] == "plan_base_001"
     assert data["dataset_path"] == str(dataset)
     assert data["export_path"] == str(export_file)
     assert data["user_intent"] == "tighten cleaning constraints"
@@ -52,8 +66,8 @@ def test_plan_revision_no_llm_uses_base_plan(tmp_path: Path, monkeypatch):
 
 
 def test_plan_revision_with_from_run_id_context(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import planner_agent as planner_mod
-    from data_juicer_agents.agents import validator_agent as validator_mod
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+    from data_juicer_agents.capabilities.plan import validation as validator_mod
 
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
@@ -88,7 +102,7 @@ def test_plan_revision_with_from_run_id_context(tmp_path: Path, monkeypatch):
         encoding="utf-8",
     )
 
-    def fake_call_model_json(_model: str, prompt: str):
+    def fake_call_model_json(_model: str, prompt: str, **_kwargs):
         assert "run_fail_ctx" in prompt
         return {
             "operators": [
@@ -99,7 +113,7 @@ def test_plan_revision_with_from_run_id_context(tmp_path: Path, monkeypatch):
 
     monkeypatch.setattr(planner_mod, "call_model_json", fake_call_model_json)
     monkeypatch.setattr(
-        validator_mod.ValidatorAgent,
+        validator_mod.PlanValidator,
         "llm_review",
         staticmethod(lambda _plan: {"errors": [], "warnings": []}),
     )
@@ -121,8 +135,9 @@ def test_plan_revision_with_from_run_id_context(tmp_path: Path, monkeypatch):
     assert code == 0
 
     data = yaml.safe_load(revised_file.read_text(encoding="utf-8"))
-    assert data["parent_plan_id"] == "plan_base_ctx"
-    assert data["revision"] == 2
+    assert data["parent_plan_id"] is None
+    assert data["revision"] == 1
+    assert data["template_source_plan_id"] == "plan_base_ctx"
     assert data["operators"][0]["name"] == "document_minhash_deduplicator"
     assert data["change_summary"] == [
         "switch dedup strategy after unsupported operator failure"

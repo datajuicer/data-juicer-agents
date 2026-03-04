@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 RAG_STRONG_HINTS: List[str] = [
@@ -44,13 +44,12 @@ MULTIMODAL_WEAK_HINTS: List[str] = [
 ]
 
 
-def select_workflow(user_intent: str) -> str:
-    """Select workflow template with weighted intent signals.
+def retrieve_workflow(user_intent: str) -> Optional[str]:
+    """Try matching a workflow template from intent.
 
-    Routing principle:
-    - Strong multimodal signals should dominate because image workflows are
-      materially different from text-only RAG cleaning.
-    - Pure dedup wording is ambiguous; without multimodal cues, default to RAG.
+    Returns:
+    - workflow name when intent has enough routing signals
+    - None when no reliable template signal is found
     """
 
     text = user_intent.lower()
@@ -58,6 +57,9 @@ def select_workflow(user_intent: str) -> str:
     mm_strong = sum(1 for hint in MULTIMODAL_STRONG_HINTS if hint in text)
     rag_weak = sum(1 for hint in RAG_WEAK_HINTS if hint in text)
     mm_weak = sum(1 for hint in MULTIMODAL_WEAK_HINTS if hint in text)
+
+    if rag_strong == 0 and mm_strong == 0 and rag_weak == 0 and mm_weak == 0:
+        return None
 
     # Strong signals first.
     if mm_strong > rag_strong:
@@ -74,7 +76,22 @@ def select_workflow(user_intent: str) -> str:
     if rag_score > mm_score:
         return "rag_cleaning"
 
-    # Default-safe choice for data engineers: text-centric cleaning.
+    # Ambiguous default for retrieval mode: no confident match.
+    return None
+
+
+def select_workflow(user_intent: str) -> str:
+    """Select workflow template with weighted intent signals.
+
+    Routing principle:
+    - Strong multimodal signals should dominate because image workflows are
+      materially different from text-only RAG cleaning.
+    - Pure dedup wording is ambiguous; without multimodal cues, default to RAG.
+    """
+
+    matched = retrieve_workflow(user_intent)
+    if matched:
+        return matched
     return "rag_cleaning"
 
 

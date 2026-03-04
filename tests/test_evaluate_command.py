@@ -24,11 +24,27 @@ def _write_case(tmp_path: Path) -> Path:
     return cases
 
 
+def _mock_planner_calls(monkeypatch):
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+
+    monkeypatch.setattr(
+        planner_mod,
+        "retrieve_operator_candidates",
+        lambda **_kwargs: {"candidates": []},
+    )
+    monkeypatch.setattr(
+        planner_mod,
+        "call_model_json",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("mock llm unavailable")),
+    )
+
+
 def test_evaluate_command_generates_report(tmp_path: Path, monkeypatch):
     cases = _write_case(tmp_path)
     report = tmp_path / "report.json"
     errors = tmp_path / "errors.json"
 
+    _mock_planner_calls(monkeypatch)
     monkeypatch.chdir(tmp_path)
     code = main(
         [
@@ -39,7 +55,6 @@ def test_evaluate_command_generates_report(tmp_path: Path, monkeypatch):
             str(report),
             "--errors-output",
             str(errors),
-            "--no-llm",
         ],
     )
 
@@ -58,6 +73,7 @@ def test_evaluate_command_dry_run_execution(tmp_path: Path, monkeypatch):
     cases = _write_case(tmp_path)
     report = tmp_path / "report_dry.json"
 
+    _mock_planner_calls(monkeypatch)
     monkeypatch.chdir(tmp_path)
     code = main(
         [
@@ -66,7 +82,6 @@ def test_evaluate_command_dry_run_execution(tmp_path: Path, monkeypatch):
             str(cases),
             "--output",
             str(report),
-            "--no-llm",
             "--execute",
             "dry-run",
         ],

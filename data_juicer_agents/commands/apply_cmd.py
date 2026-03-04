@@ -7,10 +7,11 @@ from pathlib import Path
 
 import yaml
 
-from data_juicer_agents.agents.executor_agent import ExecutorAgent
-from data_juicer_agents.core.schemas import PlanModel
-from data_juicer_agents.agents.validator_agent import ValidatorAgent
-from data_juicer_agents.runtime.trace_store import TraceStore
+from data_juicer_agents.capabilities.apply.service import ApplyUseCase
+from data_juicer_agents.capabilities.plan.schema import PlanModel
+from data_juicer_agents.capabilities.plan.validation import PlanValidator
+from data_juicer_agents.capabilities.trace.repository import TraceStore
+from data_juicer_agents.commands.output_control import emit, emit_json, enabled
 
 
 def _confirm(plan: PlanModel) -> bool:
@@ -37,7 +38,7 @@ def run_apply(args) -> int:
 
     plan = PlanModel.from_dict(plan_data)
 
-    errors = ValidatorAgent.validate(plan)
+    errors = PlanValidator.validate(plan)
     if errors:
         print("Plan validation failed:")
         for item in errors:
@@ -49,26 +50,37 @@ def run_apply(args) -> int:
         return 1
 
     runtime_dir = Path(".djx") / "recipes"
-    executor = ExecutorAgent()
+    executor = ApplyUseCase()
     trace, returncode, stdout, stderr = executor.execute(
         plan=plan,
         runtime_dir=runtime_dir,
         dry_run=args.dry_run,
         timeout_seconds=args.timeout,
+        cancel_check=getattr(args, "cancel_check", None),
     )
 
-    store = TraceStore()
-    store.save(trace)
+    interrupted = str(getattr(trace, "error_type", "")).strip() == "interrupted"
+    if not interrupted:
+        store = TraceStore()
+        store.save(trace)
+    else:
+        print("Execution interrupted by user.")
 
-    if stdout:
+    if stdout and enabled(args, "verbose"):
         print("STDOUT:")
         print(stdout)
-    if stderr:
+    if stderr and enabled(args, "verbose"):
         print("STDERR:")
         print(stderr)
+    if enabled(args, "debug"):
+        emit(args, "Debug trace payload:")
+        emit_json(args, trace.to_dict(), level="debug")
     print("Run Summary:")
     print(f"Run ID: {trace.run_id}")
     print(f"Status: {trace.status}")
-    print(f"Trace command: djx trace {trace.run_id}")
+    if interrupted:
+        print("Trace command: (not persisted for interrupted run)")
+    else:
+        print(f"Trace command: djx trace {trace.run_id}")
 
     return returncode

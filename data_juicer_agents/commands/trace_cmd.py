@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 
-from data_juicer_agents.runtime.trace_store import TraceStore
+from data_juicer_agents.capabilities.trace.repository import TraceStore
 
 
 def run_trace(args) -> int:

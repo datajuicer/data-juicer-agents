@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from data_juicer_agents.tools.operator_registry import resolve_operator_name
+from data_juicer_agents.tools.op_manager.operator_registry import resolve_operator_name
 
 
 def test_resolve_operator_name_exact_match():

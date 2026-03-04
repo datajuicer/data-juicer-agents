@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from data_juicer_agents.core.schemas import RunTraceModel
-from data_juicer_agents.runtime.trace_store import TraceStore
+from data_juicer_agents.capabilities.trace.schema import RunTraceModel
+from data_juicer_agents.capabilities.trace.repository import TraceStore
 
 
 def test_trace_store_save_and_get(tmp_path: Path):

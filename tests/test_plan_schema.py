@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from data_juicer_agents.core.schemas import OperatorStep, PlanModel, validate_plan
+from data_juicer_agents.capabilities.plan.schema import OperatorStep, PlanModel, validate_plan
 
 
 def test_plan_schema_validates_required_fields():
@@ -42,3 +42,20 @@ def test_plan_schema_rejects_invalid_revision():
     )
     errors = validate_plan(plan)
     assert "revision must be >= 1" in errors
+
+
+def test_plan_schema_round_trip_custom_operator_paths():
+    plan = PlanModel(
+        plan_id="p3",
+        user_intent="x",
+        workflow="custom",
+        dataset_path="/tmp/data.jsonl",
+        export_path="/tmp/out.jsonl",
+        custom_operator_paths=["/tmp/custom_ops_pkg"],
+        template_source_plan_id="plan_template_v0",
+        operators=[OperatorStep(name="my_custom_mapper", params={})],
+    )
+    data = plan.to_dict()
+    restored = PlanModel.from_dict(data)
+    assert restored.custom_operator_paths == ["/tmp/custom_ops_pkg"]
+    assert restored.template_source_plan_id == "plan_template_v0"

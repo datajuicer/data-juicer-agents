@@ -8,10 +8,14 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 
 [简体中文](./README_ZH.md) | [English](./README.md)
 
-[Overview](#overview) • [Quick Start](#quick-start) • [Documentation](https://datajuicer.github.io/data-juicer-agents/en/main/)
+[Overview Doc](./docs/overview.md) • [Quick Start Doc](./docs/quick_start.md) • [CLI Doc](./docs/cli.md) • [Tools Doc](./docs/tools.md)
 </div>
 
 ## News
+
+- 🚀 [2026-03-04] **Major refactor and upgrade of `data_juicer_agents` completed.**
+  - The project architecture, CLI/session capabilities, Studio API/frontend layering, and docs structure were comprehensively redesigned for better maintainability and extensibility.
+  - Start here: [Overview](./docs/overview.md) | [Quick Start](./docs/quick_start.md)
 
 - 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [Doc Site](https://datajuicer.github.io/data-juicer/en/main/index.html) | [DingTalk](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord](https://discord.gg/ngQbB9hEVK) of [Data-Juicer](https://github.com/datajuicer/data-juicer). Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem! 
   - Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
@@ -35,7 +39,7 @@ The Data-Juicer Agents family currently contains the following members:
 - Data-Juicer Data Processing Agent (DJ Process Agent) [Beta version]
 - Data-Juicer Code Development Agent (DJ Dev Agent) [Beta version]
 
-Data-Juicer Agents adopts a **multi-agent routing architecture** for routing requests to the corresponding agent. Check [agent info](./docs/AgentIntro.md) for more details.
+Data-Juicer Agents adopts a **multi-agent routing architecture** for routing requests to the corresponding agent. See [overview](./docs/overview.md) for current architecture details.
 
 <p align="center">
   <img src="docs/imgs/dj_agents_workflow.png" width=70%>
@@ -52,7 +56,7 @@ More online agentic services are being planned and developed—check out our Roa
 
 ### Local Deployment
 
-Follow the [document](https://datajuicer.github.io/data-juicer-agents/en/main/docs/QuickStart.html) to locally launch DJ-Agents. 
+Follow [quick start](./docs/quick_start.md) to locally launch DJX.
 
 If you encounter any issues, check [common issues](#common-issues) or ask our Q&A copilot ***Juicer*** at the doc page.
 

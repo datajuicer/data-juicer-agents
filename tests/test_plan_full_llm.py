@@ -8,8 +8,8 @@ from data_juicer_agents.cli import main
 
 
 def test_plan_command_llm_full_plan(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import planner_agent as planner_mod
-    from data_juicer_agents.agents import validator_agent as validator_mod
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+    from data_juicer_agents.capabilities.plan import validation as validator_mod
 
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
@@ -20,9 +20,9 @@ def test_plan_command_llm_full_plan(tmp_path: Path, monkeypatch):
     plan_file = tmp_path / "plan_full_llm.yaml"
 
     monkeypatch.setattr(
-        planner_mod,
-        "run_react_full_plan",
-        lambda **_kwargs: {
+        planner_mod.PlanUseCase,
+        "_request_full_plan",
+        lambda self, **_kwargs: {
             "workflow": "custom",
             "text_keys": ["text"],
             "operators": [
@@ -33,7 +33,7 @@ def test_plan_command_llm_full_plan(tmp_path: Path, monkeypatch):
         },
     )
     monkeypatch.setattr(
-        validator_mod.ValidatorAgent,
+        validator_mod.PlanValidator,
         "llm_review",
         staticmethod(lambda _plan: {"errors": [], "warnings": []}),
     )
@@ -49,7 +49,6 @@ def test_plan_command_llm_full_plan(tmp_path: Path, monkeypatch):
             str(export_file),
             "--output",
             str(plan_file),
-            "--llm-full-plan",
         ],
     )
 
@@ -62,7 +61,7 @@ def test_plan_command_llm_full_plan(tmp_path: Path, monkeypatch):
 
 
 def test_plan_command_llm_full_forces_custom_workflow(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import planner_agent as planner_mod
+    from data_juicer_agents.capabilities.plan import service as planner_mod
 
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
@@ -72,9 +71,9 @@ def test_plan_command_llm_full_forces_custom_workflow(tmp_path: Path, monkeypatc
     plan_file = tmp_path / "plan_full_llm_forced_custom.yaml"
 
     monkeypatch.setattr(
-        planner_mod,
-        "run_react_full_plan",
-        lambda **_kwargs: {
+        planner_mod.PlanUseCase,
+        "_request_full_plan",
+        lambda self, **_kwargs: {
             "workflow": "rag_cleaning",
             "text_keys": ["text"],
             "operators": [
@@ -96,7 +95,6 @@ def test_plan_command_llm_full_forces_custom_workflow(tmp_path: Path, monkeypatc
             str(export_file),
             "--output",
             str(plan_file),
-            "--llm-full-plan",
         ],
     )
     assert code == 0
@@ -105,32 +103,33 @@ def test_plan_command_llm_full_forces_custom_workflow(tmp_path: Path, monkeypatc
     assert plan_data["modality"] == "text"
 
 
-def test_plan_command_llm_full_conflict_with_no_llm(tmp_path: Path, monkeypatch):
+def test_plan_command_removed_llm_flags_rejected(tmp_path: Path, monkeypatch):
+    import pytest
+
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
-
     out_dir = tmp_path / "out"
     out_dir.mkdir()
     export_file = out_dir / "result.jsonl"
 
     monkeypatch.chdir(tmp_path)
-    code = main(
-        [
-            "plan",
-            "conflict check",
-            "--dataset",
-            str(dataset),
-            "--export",
-            str(export_file),
-            "--no-llm",
-            "--llm-full-plan",
-        ],
-    )
-    assert code == 2
+    with pytest.raises(SystemExit) as exc:
+        main(
+            [
+                "plan",
+                "flag removed check",
+                "--dataset",
+                str(dataset),
+                "--export",
+                str(export_file),
+                "--llm-full-plan",
+            ],
+        )
+    assert exc.value.code == 2
 
 
 def test_plan_command_llm_full_plan_invalid_output(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import planner_agent as planner_mod
+    from data_juicer_agents.capabilities.plan import service as planner_mod
 
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
@@ -142,9 +141,9 @@ def test_plan_command_llm_full_plan_invalid_output(tmp_path: Path, monkeypatch):
 
     # Missing operators -> should fail in llm-full-plan mode.
     monkeypatch.setattr(
-        planner_mod,
-        "run_react_full_plan",
-        lambda **_kwargs: {
+        planner_mod.PlanUseCase,
+        "_request_full_plan",
+        lambda self, **_kwargs: {
             "workflow": "custom",
             "text_keys": ["text"],
             "risk_notes": [],
@@ -163,7 +162,6 @@ def test_plan_command_llm_full_plan_invalid_output(tmp_path: Path, monkeypatch):
             str(export_file),
             "--output",
             str(plan_file),
-            "--llm-full-plan",
         ],
     )
     assert code == 2
@@ -171,8 +169,8 @@ def test_plan_command_llm_full_plan_invalid_output(tmp_path: Path, monkeypatch):
 
 
 def test_plan_command_llm_full_plan_rejects_unknown_operator(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import planner_agent as planner_mod
-    from data_juicer_agents.agents import validator_agent as validator_mod
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+    from data_juicer_agents.capabilities.plan import validation as validator_mod
 
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
@@ -183,9 +181,9 @@ def test_plan_command_llm_full_plan_rejects_unknown_operator(tmp_path: Path, mon
     plan_file = tmp_path / "plan_full_llm_dedup.yaml"
 
     monkeypatch.setattr(
-        planner_mod,
-        "run_react_full_plan",
-        lambda **_kwargs: {
+        planner_mod.PlanUseCase,
+        "_request_full_plan",
+        lambda self, **_kwargs: {
             "workflow": "custom",
             "text_keys": ["text"],
             "operators": [
@@ -212,7 +210,6 @@ def test_plan_command_llm_full_plan_rejects_unknown_operator(tmp_path: Path, mon
             str(export_file),
             "--output",
             str(plan_file),
-            "--llm-full-plan",
         ],
     )
 
@@ -221,8 +218,8 @@ def test_plan_command_llm_full_plan_rejects_unknown_operator(tmp_path: Path, mon
 
 
 def test_plan_command_llm_full_normalizes_operator_name(tmp_path: Path, monkeypatch):
-    from data_juicer_agents.agents import planner_agent as planner_mod
-    from data_juicer_agents.agents import validator_agent as validator_mod
+    from data_juicer_agents.capabilities.plan import service as planner_mod
+    from data_juicer_agents.capabilities.plan import validation as validator_mod
 
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text('{"text":"hello world"}\n', encoding="utf-8")
@@ -233,9 +230,9 @@ def test_plan_command_llm_full_normalizes_operator_name(tmp_path: Path, monkeypa
     plan_file = tmp_path / "plan_full_llm_normalized.yaml"
 
     monkeypatch.setattr(
-        planner_mod,
-        "run_react_full_plan",
-        lambda **_kwargs: {
+        planner_mod.PlanUseCase,
+        "_request_full_plan",
+        lambda self, **_kwargs: {
             "workflow": "custom",
             "text_keys": ["text"],
             "operators": [
@@ -267,7 +264,6 @@ def test_plan_command_llm_full_normalizes_operator_name(tmp_path: Path, monkeypa
             str(export_file),
             "--output",
             str(plan_file),
-            "--llm-full-plan",
         ],
     )
 

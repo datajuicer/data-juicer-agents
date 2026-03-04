@@ -407,9 +407,10 @@ async def retrieve_ops(
         try:
             return await retrieve_ops_lm(user_query, limit=limit)
         except Exception as e:
-            import traceback
-
-            print(traceback.format_exc())
+            logging.warning(
+                "LLM retrieval failed in auto mode (%s), falling back to vector retrieval.",
+                str(e),
+            )
             try:
                 return retrieve_ops_vector(user_query, limit=limit)
             except Exception as fallback_e:

@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from data_juicer_agents.agents.executor_agent import ExecutorAgent
-from data_juicer_agents.core.schemas import OperatorStep, PlanModel
+from data_juicer_agents.capabilities.apply.service import ApplyUseCase
+from data_juicer_agents.capabilities.plan.schema import OperatorStep, PlanModel
 
 
 def test_executor_timeout_classification(tmp_path: Path):
@@ -21,7 +21,7 @@ def test_executor_timeout_classification(tmp_path: Path):
         operators=[OperatorStep(name="text_length_filter", params={"min_len": 1})],
     )
 
-    executor = ExecutorAgent()
+    executor = ApplyUseCase()
     trace, returncode, _stdout, stderr = executor.execute(
         plan=plan,
         runtime_dir=tmp_path / ".djx" / "recipes",
