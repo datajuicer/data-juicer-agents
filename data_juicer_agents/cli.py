@@ -1,261 +1,302 @@
 # -*- coding: utf-8 -*-
-"""Command-line interface for Data Juicer Agent."""
-import os
-import sys
+"""CLI entrypoint for Data-Juicer-Agents v0.1."""
+
+from __future__ import annotations
+
 import argparse
-import asyncio
-from typing import List
+import sys
 
-from agentscope.model import DashScopeChatModel
-from agentscope.formatter import DashScopeChatFormatter
-from agentscope.memory import InMemoryMemory
-from agentscope.agent import UserAgent
-
-from data_juicer_agents.core import (
-    create_agent,
-    DJ_SYS_PROMPT,
-    DJ_DEV_SYS_PROMPT,
-    ROUTER_SYS_PROMPT,
-    MCP_SYS_PROMPT,
-    register_dj_agent_hooks,
-)
-from data_juicer_agents.tools import (
-    dj_toolkit,
-    dj_dev_toolkit,
-    mcp_tools,
-    get_mcp_toolkit,
-    agents2toolkit,
-)
+from data_juicer_agents.commands.apply_cmd import run_apply
+from data_juicer_agents.commands.dev_cmd import run_dev
+from data_juicer_agents.commands.evaluate_cmd import run_evaluate
+from data_juicer_agents.commands.plan_cmd import run_plan
+from data_juicer_agents.commands.retrieve_cmd import run_retrieve
+from data_juicer_agents.commands.templates_cmd import run_templates
+from data_juicer_agents.commands.trace_cmd import run_trace
 
 
-def parse_args():
-    """Parse command-line arguments."""
+def _add_output_level_args(
+    parser: argparse.ArgumentParser,
+    *,
+    set_default: bool,
+) -> None:
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--quiet",
+        dest="output_level",
+        action="store_const",
+        const="quiet",
+        default=argparse.SUPPRESS,
+        help="Summary output (default)",
+    )
+    group.add_argument(
+        "--verbose",
+        dest="output_level",
+        action="store_const",
+        const="verbose",
+        default=argparse.SUPPRESS,
+        help="Expand tool execution output",
+    )
+    group.add_argument(
+        "--debug",
+        dest="output_level",
+        action="store_const",
+        const="debug",
+        default=argparse.SUPPRESS,
+        help="Include raw call details for debugging",
+    )
+    if set_default:
+        parser.set_defaults(output_level="quiet")
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Data Juicer Agent - A multi-agent data processing system",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Run with default agents (dj and dj_dev)
-  dj-agents
-  
-  # Run with specific agents
-  dj-agents --agents dj dj_dev dj_mcp
-  
-  # Use AgentScope Studio
-  dj-agents --use-studio
-  
-  # Set retrieval mode
-  dj-agents --retrieval-mode vector
-        """
+        prog="djx",
+        description="Agentic CLI for Data-Juicer workflows (v0.1)",
     )
-    
-    parser.add_argument(
-        "--use-studio",
-        "-u",
-        action="store_true",
-        help="Enable AgentScope Studio for visualization"
+    _add_output_level_args(parser, set_default=True)
+    output_parent = argparse.ArgumentParser(add_help=False)
+    _add_output_level_args(output_parent, set_default=False)
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    plan = sub.add_parser(
+        "plan",
+        help="Generate a structured execution plan",
+        parents=[output_parent],
     )
-    
-    parser.add_argument(
-        "--agents",
-        "-a",
+    plan.add_argument("intent", type=str, help="Natural language task intent")
+    plan.add_argument("--dataset", default=None, help="Input dataset path")
+    plan.add_argument("--export", default=None, help="Output jsonl path")
+    plan.add_argument("--output", default=None, help="Output plan yaml path")
+    plan.add_argument(
+        "--base-plan",
+        default=None,
+        help="Base plan yaml path for revision mode",
+    )
+    plan.add_argument(
+        "--from-run-id",
+        default=None,
+        help="Optional run_id context to guide revision",
+    )
+    plan.add_argument(
+        "--custom-operator-paths",
         nargs="+",
-        default=["dj", "dj_dev"],
-        choices=["dj", "dj_dev", "dj_mcp"],
-        help="List of agents to enable (default: dj dj_dev)"
+        default=None,
+        help="Optional custom operator directories/files for validation/execution",
     )
-    
-    parser.add_argument(
-        "--retrieval-mode",
-        "-r",
-        choices=["auto", "vector", "llm"],
+    plan.add_argument(
+        "--from-template",
+        default=None,
+        help="Explicit workflow template name (e.g., rag_cleaning/multimodal_dedup)",
+    )
+    plan.add_argument(
+        "--template-retrieve",
+        action="store_true",
+        help="Try intent-based template matching before full-LLM generation",
+    )
+    llm_review_group = plan.add_mutually_exclusive_group()
+    llm_review_group.add_argument(
+        "--llm-review",
+        dest="llm_review",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="Enable optional LLM semantic review after plan generation",
+    )
+    llm_review_group.add_argument(
+        "--no-llm-review",
+        dest="llm_review",
+        action="store_false",
+        default=argparse.SUPPRESS,
+        help="Disable optional LLM semantic review (default)",
+    )
+    plan.set_defaults(handler=run_plan)
+
+    apply_cmd = sub.add_parser(
+        "apply",
+        help="Apply a generated plan",
+        parents=[output_parent],
+    )
+    apply_cmd.add_argument("--plan", required=True, help="Plan yaml path")
+    apply_cmd.add_argument("--yes", action="store_true", help="Skip confirmation")
+    apply_cmd.add_argument("--dry-run", action="store_true", help="Do not execute dj-process")
+    apply_cmd.add_argument(
+        "--timeout",
+        type=int,
+        default=300,
+        help="Execution timeout in seconds",
+    )
+    apply_cmd.set_defaults(handler=run_apply)
+
+    trace = sub.add_parser(
+        "trace",
+        help="Replay one run trace",
+        parents=[output_parent],
+    )
+    trace.add_argument("run_id", nargs="?", default=None, help="Run id from apply output")
+    trace.add_argument(
+        "--plan-id",
+        default=None,
+        help="Filter trace records by plan_id",
+    )
+    trace.add_argument(
+        "--limit",
+        type=int,
+        default=20,
+        help="Limit records for --plan-id listing",
+    )
+    trace.add_argument("--stats", action="store_true", help="Show aggregated trace statistics")
+    trace.set_defaults(handler=run_trace)
+
+    templates = sub.add_parser(
+        "templates",
+        help="List or show workflow templates",
+        parents=[output_parent],
+    )
+    templates.add_argument("name", nargs="?", default=None, help="Optional template name")
+    templates.set_defaults(handler=run_templates)
+
+    evaluate = sub.add_parser(
+        "evaluate",
+        help="Run offline evaluation cases and report success rates",
+        parents=[output_parent],
+    )
+    evaluate.add_argument("--cases", required=True, help="Path to JSONL evaluation cases")
+    evaluate.add_argument("--output", default=None, help="Output report path")
+    evaluate.add_argument(
+        "--errors-output",
+        default=None,
+        help="Output path for error/misroute analysis JSON",
+    )
+    evaluate.add_argument(
+        "--execute",
+        choices=["none", "dry-run", "run"],
+        default="none",
+        help="Execution mode for valid plans: none, dry-run, or run",
+    )
+    evaluate.add_argument(
+        "--timeout",
+        type=int,
+        default=300,
+        help="Execution timeout in seconds for each case",
+    )
+    evaluate.add_argument(
+        "--include-logs",
+        action="store_true",
+        help="Include stdout/stderr in evaluation report",
+    )
+    evaluate.add_argument(
+        "--retries",
+        type=int,
+        default=0,
+        help="Retry count for failed executions in dry-run/run mode",
+    )
+    evaluate.add_argument(
+        "--jobs",
+        type=int,
+        default=1,
+        help="Parallel workers for evaluation cases",
+    )
+    evaluate.add_argument(
+        "--failure-top-k",
+        type=int,
+        default=5,
+        help="Top-K failure buckets in evaluation summary",
+    )
+    evaluate.add_argument(
+        "--history-file",
+        default=None,
+        help="Path to evaluation history jsonl",
+    )
+    evaluate.add_argument(
+        "--no-history",
+        action="store_true",
+        help="Disable appending evaluation history",
+    )
+    evaluate.add_argument(
+        "--planning-mode",
+        choices=["template-llm", "full-llm"],
+        default=None,
+        help="Planning strategy for evaluation: template-llm or full-llm",
+    )
+    evaluate.add_argument(
+        "--llm-full-plan",
+        action="store_true",
+        help="Deprecated alias for --planning-mode full-llm",
+    )
+    evaluate.set_defaults(handler=run_evaluate)
+
+    retrieve = sub.add_parser(
+        "retrieve",
+        help="Retrieve relevant Data-Juicer operators from natural language intent",
+        parents=[output_parent],
+    )
+    retrieve.add_argument("intent", type=str, help="Natural language operator need")
+    retrieve.add_argument(
+        "--top-k",
+        type=int,
+        default=10,
+        help="Maximum candidate operators to return",
+    )
+    retrieve.add_argument(
+        "--mode",
+        choices=["auto", "llm", "vector"],
         default="auto",
-        help="Retrieval mode for operators (default: auto)"
+        help="Retrieval backend mode",
     )
-    
-    parser.add_argument(
-        "--version",
-        "-v",
-        action="version",
-        version="%(prog)s 0.1.0"
+    retrieve.add_argument(
+        "--dataset",
+        default=None,
+        help="Optional dataset path for schema/modality probing",
     )
-    
-    return parser.parse_args()
-
-
-async def run_agent(
-    use_studio: bool = False,
-    available_agents: List[str] = None,
-    retrieval_mode: str = "auto",
-):
-    """
-    Main function for running the agent.
-
-    :param use_studio: Whether to use agentscope studio.
-    :param available_agents: List of available agents. Options: dj (dj_process_agent), dj_dev (dj_dev_agent), dj_mcp (mcp_datajuicer_agent)
-    :param retrieval_mode: Retrieval mode for operators. Options: auto, vector, llm
-    """
-    if available_agents is None:
-        available_agents = ["dj", "dj_dev"]
-
-    # Create shared configuration
-    model = DashScopeChatModel(
-        model_name="qwen-max",
-        api_key=os.environ.get("DASHSCOPE_API_KEY"),
-        stream=True,
-        enable_thinking=False,
+    retrieve.add_argument(
+        "--json",
+        action="store_true",
+        help="Print machine-readable JSON payload",
     )
+    retrieve.set_defaults(handler=run_retrieve)
 
-    dev_model = DashScopeChatModel(
-        model_name="qwen3-coder-480b-a35b-instruct",
-        api_key=os.environ.get("DASHSCOPE_API_KEY"),
-        stream=True,
-        enable_thinking=False,
+    dev = sub.add_parser(
+        "dev",
+        help="Generate a non-invasive custom Data-Juicer operator scaffold",
+        parents=[output_parent],
     )
-
-    formatter = DashScopeChatFormatter()
-    memory = InMemoryMemory()
-
-    user = UserAgent("User")
-
-    # Initialize dj_func_info at agent startup for lifecycle management
-    if "dj" in available_agents or "dj_dev" in available_agents:
-        print("Initializing DataJuicer operators information...")
-        from data_juicer_agents.tools.op_manager.op_retrieval import init_dj_func_info
-        if init_dj_func_info():
-            print("✓ DataJuicer operators information initialized successfully")
-        else:
-            print("⚠ Warning: Failed to initialize DataJuicer operators information")
-
-    if "dj" in available_agents:
-        # Set global retrieval mode for tools to use
-        os.environ["RETRIEVAL_MODE"] = retrieval_mode
-        print(f"Using retrieval mode: {retrieval_mode}")
-
-    agents = []
-    for agent_name in available_agents:
-        if agent_name == "dj":
-            # Create agents using unified create_agent function
-            dj_agent = create_agent(
-                "dj_process_agent",
-                DJ_SYS_PROMPT,
-                dj_toolkit,
-                (
-                    "A professional data preprocessing AI assistant with the following core capabilities: \n"
-                    "Tool Matching \n"
-                    "- Query and validate suitable DataJuicer operators; \n"
-                    "Configuration Generation \n"
-                    "- Create YAML configuration files and preview data; \n"
-                    "Task Execution - Run data processing pipelines and output results"
-                ),
-                model,
-                formatter,
-                memory,
-            )
-            # Register cleaning hooks for shell command outputs
-            register_dj_agent_hooks(dj_agent)
-            agents.append(dj_agent)
-
-        if agent_name == "dj_dev":
-            # DJ Development Agent for operator development
-            dj_dev_agent = create_agent(
-                "dj_dev_agent",
-                DJ_DEV_SYS_PROMPT,
-                dj_dev_toolkit,
-                (
-                    "An expert DataJuicer development assistant specializing in creating new DataJuicer operators. \n"
-                    "Core capabilities: \n"
-                    "Reference Retrieval - fetch base classes and examples; \n"
-                    "Environment Configuration - handle DATA_JUICER_PATH setup. if user provides a DataJuicer path requiring setup/update, please call this agent;\n; "
-                    "Code Generation - write complete, convention-compliant operator code"
-                ),
-                dev_model,
-                formatter,
-                memory,
-            )
-            agents.append(dj_dev_agent)
-
-        if agent_name == "dj_mcp":
-            mcp_toolkit, _ = await get_mcp_toolkit()
-            for tool in mcp_tools:
-                mcp_toolkit.register_tool_function(tool)
-
-            mcp_agent = create_agent(
-                "dj_process_mcp_agent",
-                MCP_SYS_PROMPT,
-                mcp_toolkit,
-                (
-                    "DataJuicer MCP Agent powered by Recipe Flow MCP server. \n"
-                    "Core capabilities: \n"
-                    "- Filter operators by tags/categories using MCP protocol; \n"
-                    "- Real-time data processing pipeline execution. \n"
-                ),
-                model,
-                formatter,
-                memory,
-            )
-            agents.append(mcp_agent)
-
-    from data_juicer_agents.tools.router_helpers import refresh_operators_info, query_dj_operators
-    from data_juicer_agents.tools.dj_dev_helpers import configure_data_juicer_path
-    
-    # Create router toolkit with smart routing function
-    router_toolkit = agents2toolkit(agents)
-    router_toolkit.register_tool_function(query_dj_operators)
-    router_toolkit.register_tool_function(refresh_operators_info)
-    router_toolkit.register_tool_function(configure_data_juicer_path)
-    
-    # Router agent - uses agents2tools to dynamically generate tools from all agents
-    router_agent = create_agent(
-        "Router",
-        ROUTER_SYS_PROMPT,
-        router_toolkit,
-        "A router agent that intelligently routes tasks to specialized DataJuicer agents",
-        model,
-        formatter,
-        InMemoryMemory(),  # Router uses its own memory instance
+    dev.add_argument("intent", type=str, help="Natural language operator requirement")
+    dev.add_argument(
+        "--operator-name",
+        required=True,
+        help="Target operator name (snake_case; suffix inferred if omitted)",
     )
+    dev.add_argument(
+        "--output-dir",
+        required=True,
+        help="Directory to write generated operator scaffold files",
+    )
+    dev.add_argument(
+        "--type",
+        choices=["mapper", "filter"],
+        default=None,
+        help="Optional operator type (mapper/filter)",
+    )
+    dev.add_argument(
+        "--from-retrieve",
+        default=None,
+        help="Optional path to djx retrieve JSON output for design context",
+    )
+    dev.add_argument(
+        "--smoke-check",
+        action="store_true",
+        help="Run an optional local dj-process smoke check using custom_operator_paths",
+    )
+    dev.set_defaults(handler=run_dev)
 
-    if use_studio:
-        import agentscope
-
-        agentscope.init(
-            studio_url="http://localhost:3000",
-            project="data_agents",
-        )
-
-    msg = None
-    while True:
-        msg = await user(msg)
-        if msg.get_text_content() == "exit":
-            break
-        # Router agent handles the entire task with automatic multi-step routing
-        msg = await router_agent(msg)
+    return parser
 
 
-def main():
-    """Main entry point for the CLI."""
-    args = parse_args()
-    
-    # Check for required environment variable
-    if not os.environ.get("DASHSCOPE_API_KEY"):
-        print("Error: DASHSCOPE_API_KEY environment variable is not set", file=sys.stderr)
-        print("Please set it with: export DASHSCOPE_API_KEY=your_api_key", file=sys.stderr)
-        sys.exit(1)
-    
-    try:
-        asyncio.run(run_agent(
-            use_studio=args.use_studio,
-            available_agents=args.agents,
-            retrieval_mode=args.retrieval_mode,
-        ))
-    except KeyboardInterrupt:
-        print("\nExiting...")
-        sys.exit(0)
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    return int(args.handler(args))
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

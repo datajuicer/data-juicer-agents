@@ -1,24 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-DataJuicer Agent - A multi-agent data processing system
-"""
+"""Data-Juicer-Agents package (v0.2)."""
 
-from .core import (
-    __version__,
-    create_agent,
-    DJ_SYS_PROMPT,
-    DJ_DEV_SYS_PROMPT,
-    ROUTER_SYS_PROMPT,
-    MCP_SYS_PROMPT,
-    register_dj_agent_hooks,
-)
+from data_juicer_agents.capabilities import ApplyUseCase, PlanUseCase, PlanValidator
+from data_juicer_agents.capabilities.plan.schema import PlanModel, validate_plan
+from data_juicer_agents.capabilities.trace.schema import RunTraceModel
 
 __all__ = [
-    "__version__",
-    "create_agent",
-    "DJ_SYS_PROMPT",
-    "DJ_DEV_SYS_PROMPT",
-    "ROUTER_SYS_PROMPT",
-    "MCP_SYS_PROMPT",
-    "register_dj_agent_hooks",
+    "PlanUseCase",
+    "PlanValidator",
+    "ApplyUseCase",
+    "PlanModel",
+    "RunTraceModel",
+    "validate_plan",
 ]

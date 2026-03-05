@@ -1,0 +1,2 @@
+{"intent":"clean rag corpus for retrieval","dataset_path":"data/demo-dataset.jsonl","export_path":"data/run-smoke-out-01.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"multimodal dedup for image-text pairs","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/run-smoke-out-02.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}

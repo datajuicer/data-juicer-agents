@@ -1,0 +1,20 @@
+{"intent":"清洗RAG语料，过滤过短文本并规范化文本字段","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-01.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"for retrieval corpus cleaning, remove noisy and very short text chunks","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-02.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"构建向量库前做文本清洗，处理特殊字符和重复","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-03.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"prepare rag documents: normalize, length filter, deduplicate","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-04.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"清理问答知识库文本，适配检索增强生成","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-05.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"RAG cleaning for mixed text corpus before chunk embedding","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-06.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"过滤低质量段落并去重，作为RAG训练语料","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-07.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"clean retrieval corpus and keep valid textual records","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-08.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"对检索语料进行文本标准化、长度过滤和重复清理","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-09.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"RAG corpus preprocessing with quality filtering","dataset_path":"data/demo-dataset.jsonl","export_path":"data/eval-out-10.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"多模态图文数据去重，优先处理图片重复样本","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-11.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"remove duplicate images and duplicate captions in multimodal dataset","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-12.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"图文数据近重复清理，降低训练数据冗余","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-13.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"multimodal dedup for image-text pairs","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-14.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"清理图像重复和文本重复，保留唯一多模态样本","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-15.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"deduplicate multimodal training set by image hash and text hash","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-16.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"图文去重，减少重复图片和重复描述","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-17.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"image duplicate removal for multimodal corpus","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-18.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"对多模态数据集做重复样本过滤","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-19.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"multimodal dedup and keep unique image-text pairs","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/eval-out-20.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}

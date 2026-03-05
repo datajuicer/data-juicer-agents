@@ -3,19 +3,17 @@
 
 .. toctree::
    :maxdepth: 2
-   :glob:
 
-   docs/QuickStart_ZH
-   docs/AgentIntro_ZH
-   docs/Advanced_ZH
-   docs/Extension_ZH
-   docs/*
+   docs/overview_ZH
+   docs/quick_start_ZH
+   docs/cli_ZH
+   docs/tools_ZH
 
 .. toctree::
    :maxdepth: 2
    :glob:
    :caption: 其他
-   
+
    qa-copilot/*
    interactive_recipe/*
    interactive_recipe/**/*

@@ -1,100 +1,28 @@
 # -*- coding: utf-8 -*-
-"""
-Tools package for data-agent.
+"""Public exports for DJX tool services."""
 
-This module provides a unified entry point for all agent tools,
-organized by agent type for easy access and management.
-"""
-from typing import List
-from agentscope.agent import AgentBase
-from agentscope.tool import (
-    view_text_file,
-    write_text_file,
+from .dataset_probe import inspect_dataset_schema
+from .llm_gateway import call_model_json
+from .router_helpers import explain_routing, retrieve_workflow, select_workflow
+from .op_manager import (
+    extract_candidate_names,
+    get_available_operator_names,
+    resolve_operator_name,
+    retrieve_operator_candidates,
 )
-from agentscope.tool import Toolkit
+from .op_manager import operator_registry, retrieval_service
 
-from .dj_helpers import execute_safe_command, get_ops_signature, get_advanced_config_info
-from .router_helpers import agent_to_tool, query_dj_operators
-from .dj_dev_helpers import (
-    get_basic_files,
-    get_operator_example,
-    configure_data_juicer_path,
-)
-from .mcp_helpers import get_mcp_toolkit
-from .op_manager import op_retrieval
-
-
-def create_toolkit(tools: List[str]):
-    # Create toolkit and register tools
-    toolkit = Toolkit()
-    for tool in tools:
-        toolkit.register_tool_function(tool)
-
-    return toolkit
-
-
-# DJ Agent tools
-dj_tools = [
-    execute_safe_command,
-    view_text_file,
-    write_text_file,
-    get_ops_signature,
-    get_advanced_config_info,
-]
-
-# DJ Development Agent tools - for developing DataJuicer operators
-dj_dev_tools = [
-    view_text_file,
-    write_text_file,
-    get_basic_files,
-    get_operator_example,
-    configure_data_juicer_path,
-]
-
-# MCP Agent tools - for advanced data processing with Recipe Flow MCP
-mcp_tools = [
-    view_text_file,
-    write_text_file,
-]
-
-
-def agents2toolkit(agents: List[AgentBase]):
-    tools = [agent_to_tool(agent) for agent in agents]
-    return create_toolkit(tools)
-
-
-dj_toolkit = create_toolkit(dj_tools)
-dj_dev_toolkit = create_toolkit(dj_dev_tools)
-
-
-# All available tools
-all_toolkit = {
-    "dj": dj_toolkit,
-    "dj_dev": dj_dev_toolkit,
-    "dj_mcp": get_mcp_toolkit,
-    "router": agents2toolkit,
-}
-
-# Public API
 __all__ = [
-    "op_retrieval",
-    "dj_tools",
-    "dj_dev_tools",
-    "mcp_tools",
-    "all_tools",
-    "agents2toolkit",
-    "dj_toolkit",
-    "dj_dev_toolkit",
-    "get_mcp_toolkit",
-    # Individual tools for direct import
-    "execute_safe_command",
-    "view_text_file",
-    "write_text_file",
-    "agent_to_tool",
-    "query_dj_operators",
-    "get_ops_signature",
-    "get_basic_files",
-    "get_operator_example",
-    "configure_data_juicer_path",
-    "get_advanced_config_info",
+    "inspect_dataset_schema",
+    "call_model_json",
+    "select_workflow",
+    "retrieve_workflow",
+    "explain_routing",
+    "get_available_operator_names",
+    "resolve_operator_name",
+    "retrieve_operator_candidates",
+    "extract_candidate_names",
+    # Backward-compatible module aliases.
+    "operator_registry",
+    "retrieval_service",
 ]

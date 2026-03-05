@@ -1,0 +1,10 @@
+{"intent":"我有一批RAG语料，顺便把图像重复也处理一下，但主要目标是检索清洗","dataset_path":"data/demo-dataset.jsonl","export_path":"data/hard-out-01.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"for multimodal training, remove near-duplicate images and also normalize text","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/hard-out-02.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"先做向量检索语料的质量治理，重点是文本质量不是图片","dataset_path":"data/demo-dataset.jsonl","export_path":"data/hard-out-03.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"图文混合数据里很多重复图，去重优先，其次再看文本","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/hard-out-04.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"clean corpus for retrieval and dedup image if needed","dataset_path":"data/demo-dataset.jsonl","export_path":"data/hard-out-05.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"多模态数据要做去重和质量控制，重复图片先处理","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/hard-out-06.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"RAG pipeline preprocessing with chunk quality filtering and dedup","dataset_path":"data/demo-dataset.jsonl","export_path":"data/hard-out-07.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"dedup images in my multimodal corpus before training VLM","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/hard-out-08.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}
+{"intent":"检索增强问答前做文本清洗、长度过滤、去重复","dataset_path":"data/demo-dataset.jsonl","export_path":"data/hard-out-09.jsonl","expected_workflow":"rag_cleaning","text_keys":["text"]}
+{"intent":"image-text pair cleanup, mostly duplicate image removal","dataset_path":"data/demo-dataset-images.jsonl","export_path":"data/hard-out-10.jsonl","expected_workflow":"multimodal_dedup","text_keys":["text"],"image_key":"image"}

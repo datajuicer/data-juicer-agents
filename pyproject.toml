@@ -22,6 +22,8 @@ classifiers = [
 dependencies = [
     "agentscope==1.0.14",
     "agentscope-runtime==1.0.5",
+    "fastapi>=0.121.0",
+    "httpx>=0.28.1",
     "jinja2>=3.1.6",
     "langchain-community",
     "psutil>=7.1.3",
@@ -31,11 +33,14 @@ dependencies = [
     "faiss-cpu>=1.13.1",
     "hf-transfer>=0.1.9",
     "transformers>=4.57.3",
+    "uvicorn[standard]>=0.38.0",
     "oyaml",
+    "rich>=13.7.0",
 ]
 
 [project.scripts]
-dj-agents = "data_juicer_agents.cli:main"
+djx = "data_juicer_agents.cli:main"
+dj-agents = "data_juicer_agents.session_cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=6.0", "black", "flake8", "mypy"]
@@ -49,7 +54,14 @@ Documentation = "https://github.com/datajuicer/data-juicer-agents#readme"
 [tool.setuptools]
 packages = [
     "data_juicer_agents",
-    "data_juicer_agents.core",
+    "data_juicer_agents.capabilities",
+    "data_juicer_agents.capabilities.plan",
+    "data_juicer_agents.capabilities.apply",
+    "data_juicer_agents.capabilities.dev",
+    "data_juicer_agents.capabilities.session",
+    "data_juicer_agents.capabilities.trace",
+    "data_juicer_agents.commands",
+    "data_juicer_agents.tui",
     "data_juicer_agents.tools",
     "data_juicer_agents.tools.op_manager",
     "qa-copilot",
@@ -79,4 +91,3 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-

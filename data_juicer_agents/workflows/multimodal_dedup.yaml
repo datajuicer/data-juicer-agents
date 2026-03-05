@@ -1,0 +1,22 @@
+name: multimodal_dedup
+description: Baseline multimodal dedup workflow for text-image data.
+default_modality: multimodal
+default_text_keys:
+  - text
+default_image_key: image
+default_export_path: ./output/multimodal_dedup.jsonl
+risk_notes:
+  - Check image path validity before dedup.
+  - Validate dedup aggressiveness against sample outputs.
+estimation:
+  complexity: high
+  expected_minutes: 20
+operators:
+  - name: image_deduplicator
+    params:
+      method: phash
+      consider_text: false
+  - name: document_deduplicator
+    params:
+      lowercase: false
+      ignore_non_character: false

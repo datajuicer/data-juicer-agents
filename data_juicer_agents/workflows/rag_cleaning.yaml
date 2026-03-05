@@ -1,0 +1,29 @@
+name: rag_cleaning
+description: Baseline RAG corpus cleaning workflow.
+default_modality: text
+default_text_keys:
+  - text
+default_export_path: ./output/rag_cleaned.jsonl
+risk_notes:
+  - Verify text language consistency before running heavy filters.
+  - Review filtered-out ratio to avoid over-cleaning.
+estimation:
+  complexity: medium
+  expected_minutes: 10
+operators:
+  - name: whitespace_normalization_mapper
+    params: {}
+  - name: punctuation_normalization_mapper
+    params: {}
+  - name: text_length_filter
+    params:
+      min_len: 20
+      max_len: 5000
+  - name: special_characters_filter
+    params:
+      min_ratio: 0.0
+      max_ratio: 0.3
+  - name: document_deduplicator
+    params:
+      lowercase: false
+      ignore_non_character: false

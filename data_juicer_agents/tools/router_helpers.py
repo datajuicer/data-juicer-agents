@@ -1,185 +1,104 @@
 # -*- coding: utf-8 -*-
-"""Router agent using implicit routing"""
-import os
-from typing import Callable, Dict, Optional
-from agentscope.agent import AgentBase
-from agentscope.message import Msg, TextBlock
-from agentscope.tool import ToolResponse
-from .op_manager.op_retrieval import retrieve_ops, get_dj_func_info
+"""Workflow-first routing helpers for v0.1."""
 
-def _format_tool_names_to_class_entries(tool_names):
-    """Convert tool names list to formatted class entries string"""
-    if not tool_names:
-        return ""
+from __future__ import annotations
 
-    tools_info = get_dj_func_info()
-
-    # Create a mapping from class_name to tool info for quick lookup
-    tools_map = {tool["class_name"]: tool for tool in tools_info}
-
-    formatted_entries = []
-    for i, tool_name in enumerate(tool_names):
-        if tool_name in tools_map:
-            tool_info = tools_map[tool_name]
-            class_entry = (
-                f"{i+1}. {tool_info['class_name']}: {tool_info['class_desc']}"
-            )
-            class_entry += "\n" + tool_info["arguments"]
-            formatted_entries.append(class_entry)
-
-    return "\n".join(formatted_entries)
+from typing import Dict, List, Optional
 
 
-async def query_dj_operators(query: str, limit: int = 20) -> ToolResponse:
-    """Query DataJuicer operators by natural language description.
+RAG_STRONG_HINTS: List[str] = [
+    "rag",
+    "retrieval",
+    "embedding",
+    "chunk",
+    "语料",
+    "检索",
+]
 
-    Retrieves relevant operators from DataJuicer library based on user query.
-    Supports matching by functionality, data type, and processing scenarios.
+MULTIMODAL_STRONG_HINTS: List[str] = [
+    "multimodal",
+    "多模态",
+    "image",
+    "img",
+    "图像",
+    "图片",
+    "图文",
+    "视觉",
+    "vlm",
+    "vision",
+    "near-duplicate",
+]
 
-    Args:
-        query (str): Natural language operator query
-        limit (int): Maximum number of operators to return (default: 20)
+RAG_WEAK_HINTS: List[str] = [
+    "clean",
+    "normalize",
+    "文本",
+    "清洗",
+    "知识库",
+]
 
-    Returns:
-        ToolResponse: Tool response containing matched operators with names, descriptions, and parameters
-    """
+MULTIMODAL_WEAK_HINTS: List[str] = [
+    "dedup",
+    "duplicate",
+    "去重",
+]
 
-    try:
-        # Retrieve operator names using existing functionality with limit
-        # Use retrieval mode from environment variable if set
-        retrieval_mode = os.environ.get("RETRIEVAL_MODE", "auto")
-        tool_names = await retrieve_ops(
-            query,
-            limit=limit,
-            mode=retrieval_mode,
-        )
 
-        if not tool_names:
-            return ToolResponse(
-                content=[
-                    TextBlock(
-                        type="text",
-                        text=f"No matching DataJuicer operators found for query: {query}\n"
-                        f"Suggestions:\n"
-                        f"1. Use more specific keywords like 'text filter', 'image processing'\n"
-                        f"2. Check spelling and try alternative terms\n"
-                        f"3. Try English keywords for better matching",
-                    ),
-                ],
-            )
-
-        # Format tool names to class entries
-        retrieved_operators = _format_tool_names_to_class_entries(tool_names)
-
-        # Format response
-        result_text = f"🔍 DataJuicer Operator Query Results\n"
-        result_text += f"Query: {query}\n"
-        result_text += f"Limit: {limit} operators\n"
-        result_text += f"{'='*50}\n\n"
-        result_text += retrieved_operators
-
-        return ToolResponse(
-            content=[
-                TextBlock(
-                    type="text",
-                    text=result_text,
-                ),
-            ],
-        )
-
-    except Exception as e:
-        return ToolResponse(
-            content=[
-                TextBlock(
-                    type="text",
-                    text=f"Error querying DataJuicer operators: {str(e)}\n"
-                    f"Please verify query parameters and retry.",
-                ),
-            ],
-        )
-
-def agent_to_tool(
-    agent: AgentBase,
-    tool_name: str = None,
-    description: str = None,
-) -> Callable:
-    """
-    Convert any agent to a tool function that can be registered in toolkit.
-
-    Args:
-        agent: The agent instance to convert
-        tool_name: Optional custom tool name (defaults to agent.name)
-        description: Optional tool description (defaults to agent's docstring or sys_prompt)
+def retrieve_workflow(user_intent: str) -> Optional[str]:
+    """Try matching a workflow template from intent.
 
     Returns:
-        A tool function that can be registered with toolkit.register_tool_function()
+    - workflow name when intent has enough routing signals
+    - None when no reliable template signal is found
     """
-    # Get tool name and description
-    if tool_name is None:
-        tool_name = getattr(agent, "name", "agent_tool")
 
-    if description is None:
-        # Try to get description from agent's docstring or sys_prompt
-        if hasattr(agent, "__doc__") and agent.__doc__:
-            description = agent.__doc__.strip()
-        elif hasattr(agent, "sys_prompt"):
-            description = f"Agent: {agent.sys_prompt[:100]}..."
-        elif hasattr(agent, "_sys_prompt"):
-            description = f"Agent: {agent._sys_prompt[:100]}..."
-        else:
-            description = f"Tool function for {tool_name}"
+    text = user_intent.lower()
+    rag_strong = sum(1 for hint in RAG_STRONG_HINTS if hint in text)
+    mm_strong = sum(1 for hint in MULTIMODAL_STRONG_HINTS if hint in text)
+    rag_weak = sum(1 for hint in RAG_WEAK_HINTS if hint in text)
+    mm_weak = sum(1 for hint in MULTIMODAL_WEAK_HINTS if hint in text)
 
-    async def tool_function(task: str) -> ToolResponse:
-        # Create message and call the agent
-        msg = Msg("router", task, "user")
-        result = await agent(msg)
+    if rag_strong == 0 and mm_strong == 0 and rag_weak == 0 and mm_weak == 0:
+        return None
 
-        # Extract content from the result
-        if hasattr(result, "get_content_blocks"):
-            content = result.get_content_blocks("text")
-            return ToolResponse(
-                content=content,
-                metadata={
-                    "agent_name": getattr(agent, "name", "unknown"),
-                    "task": task,
-                },
-            )
-        else:
-            raise ValueError(f"Not a valid Msg object: {result}")
+    # Strong signals first.
+    if mm_strong > rag_strong:
+        return "multimodal_dedup"
+    if rag_strong > mm_strong:
+        return "rag_cleaning"
 
-    # Set function name and docstring
-    tool_function.__name__ = f"call_{tool_name.lower().replace(' ', '_')}"
-    tool_function.__doc__ = f"{description}\n\nArgs:\n    task (str): The task for {tool_name} to handle"
+    # Tie on strong signals; compare weak hints.
+    rag_score = rag_weak + rag_strong * 2
+    mm_score = mm_weak + mm_strong * 2
 
-    return tool_function
+    if mm_score > rag_score and mm_strong > 0:
+        return "multimodal_dedup"
+    if rag_score > mm_score:
+        return "rag_cleaning"
 
-def refresh_operators_info() -> str:
+    # Ambiguous default for retrieval mode: no confident match.
+    return None
+
+
+def select_workflow(user_intent: str) -> str:
+    """Select workflow template with weighted intent signals.
+
+    Routing principle:
+    - Strong multimodal signals should dominate because image workflows are
+      materially different from text-only RAG cleaning.
+    - Pure dedup wording is ambiguous; without multimodal cues, default to RAG.
     """
-    Refresh DataJuicer operators information during runtime.
-    
-    This function should be called when new operators are developed or when 
-    the operator library needs to be updated during the agent's lifecycle.
-    
-    Returns:
-        str: Status message indicating success or failure
-    """
-    try:
-        from data_juicer_agents.tools.op_manager.op_retrieval import refresh_dj_func_info
-        
-        if refresh_dj_func_info():
-            content = "✓ Successfully refreshed DataJuicer operators information. New operators are now available for use."
-        else:
-            content = "✗ Failed to refresh DataJuicer operators information. Please check the logs for details."
-            
-    except Exception as e:
-        content = f"✗ Error refreshing operators information: {str(e)}"
 
-    finally:
-        return ToolResponse(
-            content=[
-                TextBlock(
-                    type="text",
-                    text=content,
-                ),
-            ],
-        )
+    matched = retrieve_workflow(user_intent)
+    if matched:
+        return matched
+    return "rag_cleaning"
+
+
+def explain_routing(user_intent: str) -> Dict[str, str]:
+    workflow = select_workflow(user_intent)
+    return {
+        "strategy": "workflow-first",
+        "selected_workflow": workflow,
+        "reason": "weighted strong/weak intent hints",
+    }
