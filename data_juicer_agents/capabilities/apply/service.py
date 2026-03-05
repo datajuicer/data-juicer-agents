@@ -7,6 +7,7 @@ import contextlib
 import os
 import signal
 import subprocess
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -123,12 +124,14 @@ class ApplyUseCase:
                 stdout = "dry-run: command not executed"
                 stderr = ""
         else:
+            stdout_f = tempfile.TemporaryFile(mode="w+")
+            stderr_f = tempfile.TemporaryFile(mode="w+")
             try:
                 proc = subprocess.Popen(
                     command,
                     shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    stdout=stdout_f,
+                    stderr=stderr_f,
                     text=True,
                     start_new_session=True,
                 )
@@ -160,10 +163,11 @@ class ApplyUseCase:
                             os.killpg(proc.pid, signal.SIGKILL)
                         with contextlib.suppress(Exception):
                             proc.kill()
-                    out, err = proc.communicate(timeout=2)
                     returncode = 130
-                    stdout = out or ""
-                    stderr = (err or "").rstrip("\n")
+                    stdout_f.seek(0)
+                    stderr_f.seek(0)
+                    stdout = stdout_f.read()
+                    stderr = stderr_f.read().rstrip("\n")
                     stderr = (stderr + "\nInterrupted by user.").strip()
                 elif timed_out:
                     try:
@@ -178,19 +182,25 @@ class ApplyUseCase:
                             os.killpg(proc.pid, signal.SIGKILL)
                         with contextlib.suppress(Exception):
                             proc.kill()
-                    out, err = proc.communicate(timeout=2)
                     returncode = 124
-                    stdout = out or ""
-                    stderr = ((err or "").rstrip("\n") + f"\nTimeout after {timeout_seconds}s").strip()
+                    stdout_f.seek(0)
+                    stderr_f.seek(0)
+                    stdout = stdout_f.read()
+                    stderr = (stderr_f.read().rstrip("\n") + f"\nTimeout after {timeout_seconds}s").strip()
                 else:
-                    out, err = proc.communicate()
+                    proc.wait()  # Ensure process is dead
                     returncode = int(proc.returncode or 0)
-                    stdout = out or ""
-                    stderr = err or ""
+                    stdout_f.seek(0)
+                    stderr_f.seek(0)
+                    stdout = stdout_f.read()
+                    stderr = stderr_f.read()
             except subprocess.TimeoutExpired as exc:
                 returncode = 124
-                stdout = exc.stdout or ""
-                stderr = (exc.stderr or "") + f"\nTimeout after {timeout_seconds}s"
+                stdout = str(exc.stdout or "")
+                stderr = str(exc.stderr or "") + f"\nTimeout after {timeout_seconds}s"
+            finally:
+                stdout_f.close()
+                stderr_f.close()
 
         end_dt = datetime.now(timezone.utc)
         duration = (end_dt - start_dt).total_seconds()
