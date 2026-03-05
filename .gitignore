@@ -108,11 +108,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
+# Spyder IDE
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope IDE
 .ropeproject
 
 # mkdocs documentation
@@ -126,39 +126,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# IDEs
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-*.rdb
-
-# DataJuicer Agent specific
-outputs/
-log/
-logs/
-cache_retrieve/
-vector_index_cache/
-interactive_recipe/qa-copilot/asset/text_material/
-*.bak
-qdrant_storage/
+# Data-Juicer Agents artifacts
 .djx/
-sessions/
-frontend/node_modules/
-frontend/dist/
-frontend/.djx/
-test-results/
-tmp_playwright/
-custom_operators/.djx_dev_smoke/
-custom_operators/__pycache__/
-
-# Runtime artifacts under data/
-data/log/
-data/monitor/
-data/plan_*.yaml
-data/demo-dataset-*-plan.*
-data/demo-dataset-processed*.jsonl
-data/*-out-*.jsonl
-data/*-out-*_stats.jsonl
+data/processed*.jsonl
+data/processed*.txt
+data/demo-dataset-filtered*.jsonl
+data/demo-dataset-filtered*.txt
+data/*_stats.jsonl
+data/*.yaml
+data/202*/
