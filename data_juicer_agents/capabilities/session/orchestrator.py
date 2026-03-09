@@ -93,6 +93,11 @@ class SessionState:
     last_inspected_dataset: Optional[str] = None
     last_dataset_profile: Dict[str, Any] = field(default_factory=dict)
     history: List[Dict[str, str]] = field(default_factory=list)
+    # Multi-turn recipe management fields
+    draft_recipe_path: Optional[str] = None  # Path to auto-saved draft YAML
+    recipe_status: str = "empty"  # empty | draft | confirmed | invalid
+    validation_errors: List[str] = field(default_factory=list)
+    validation_warnings: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -470,6 +475,11 @@ class DJSessionAgent:
             "last_retrieval_candidate_count": len(retrieval_candidates),
             "last_inspected_dataset": self.state.last_inspected_dataset,
             "has_dataset_profile": bool(self.state.last_dataset_profile),
+            # Multi-turn recipe management
+            "draft_recipe_path": self.state.draft_recipe_path,
+            "recipe_status": self.state.recipe_status,
+            "validation_errors": list(self.state.validation_errors),
+            "validation_warnings": list(self.state.validation_warnings),
         }
 
     def _run_command(self, fn, args: Any) -> Tuple[int, str, str]:
@@ -487,6 +497,29 @@ class DJSessionAgent:
         session_dir.mkdir(parents=True, exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d%H%M%S")
         return str(session_dir / f"session_plan_{ts}.yaml")
+
+    def _auto_save_draft_recipe(self) -> Optional[str]:
+        """Auto-save draft plan to .djx/recipes/draft_recipe.yaml.
+        
+        Returns the path to the saved draft, or None if no draft exists.
+        """
+        if not self.state.draft_plan:
+            return None
+        
+        draft_dir = Path(".djx") / "recipes"
+        draft_dir.mkdir(parents=True, exist_ok=True)
+        draft_path = draft_dir / "draft_recipe.yaml"
+        
+        try:
+            plan_model = self._current_draft_plan_model()
+            if plan_model is None:
+                return None
+            with open(draft_path, "w", encoding="utf-8") as f:
+                yaml.safe_dump(plan_model.to_dict(), f, allow_unicode=False, sort_keys=False)
+            self.state.draft_recipe_path = str(draft_path)
+            return str(draft_path)
+        except Exception:
+            return None
 
     def _load_plan_dict(self, plan_path: str) -> Optional[Dict[str, Any]]:
         try:
@@ -784,11 +817,66 @@ class DJSessionAgent:
                 )
             )
 
+        def edit_recipe(
+            dataset_path: str = "",
+            export_path: str = "",
+            operators: Any = None,
+            text_keys: Any = None,
+            image_key: str = "",
+            custom_operator_paths: Any = None,
+            workflow: str = "",
+            modality: str = "",
+            natural_language_edit: str = "",
+        ) -> Any:
+            return _to_text_response(
+                self._invoke_tool_with_event(
+                    "edit_recipe",
+                    {
+                        "dataset_path": dataset_path,
+                        "export_path": export_path,
+                        "operators": operators,
+                        "text_keys": text_keys,
+                        "image_key": image_key,
+                        "custom_operator_paths": custom_operator_paths,
+                        "workflow": workflow,
+                        "modality": modality,
+                        "natural_language_edit": natural_language_edit,
+                    },
+                    lambda: self.tool_edit_recipe(
+                        dataset_path=dataset_path,
+                        export_path=export_path,
+                        operators=operators,
+                        text_keys=text_keys,
+                        image_key=image_key,
+                        custom_operator_paths=custom_operator_paths,
+                        workflow=workflow,
+                        modality=modality,
+                        natural_language_edit=natural_language_edit,
+                    ),
+                )
+            )
+
+        def confirm_recipe(
+            save_path: str = "",
+        ) -> Any:
+            return _to_text_response(
+                self._invoke_tool_with_event(
+                    "confirm_recipe",
+                    {
+                        "save_path": save_path,
+                    },
+                    lambda: self.tool_confirm_recipe(
+                        save_path=save_path,
+                    ),
+                )
+            )
+
         def apply_recipe(
             plan_path: str = "",
             dry_run: bool = False,
             timeout: int = 300,
             confirm: bool = False,
+            use_draft: bool = False,
         ) -> Any:
             return _to_text_response(
                 self._invoke_tool_with_event(
@@ -798,12 +886,14 @@ class DJSessionAgent:
                         "dry_run": dry_run,
                         "timeout": timeout,
                         "confirm": confirm,
+                        "use_draft": use_draft,
                     },
                     lambda: self.tool_apply(
                         plan_path=plan_path,
                         dry_run=dry_run,
                         timeout=timeout,
                         confirm=confirm,
+                        use_draft=use_draft,
                     ),
                 )
             )
@@ -966,6 +1056,8 @@ class DJSessionAgent:
         toolkit.register_tool_function(plan_generate)
         toolkit.register_tool_function(plan_validate)
         toolkit.register_tool_function(plan_save)
+        toolkit.register_tool_function(edit_recipe)
+        toolkit.register_tool_function(confirm_recipe)
         toolkit.register_tool_function(apply_recipe)
         toolkit.register_tool_function(trace_run)
         toolkit.register_tool_function(develop_operator)
@@ -1018,6 +1110,16 @@ class DJSessionAgent:
                 "You are a Data-Juicer session orchestrator for data engineers.\n"
                 "Default interaction is natural language, not command syntax.\n"
                 "Available tools are djx atomic capabilities. Use tools for actionable requests.\n"
+                "\n"
+                "## Multi-turn Recipe Workflow\n"
+                "For iterative plan refinement, use this workflow:\n"
+                "1. plan_generate -> creates draft plan (recipe_status='draft')\n"
+                "2. edit_recipe -> modify plan fields directly or via natural_language_edit\n"
+                "3. confirm_recipe -> validate and save final plan (recipe_status='confirmed')\n"
+                "4. apply_recipe -> execute the confirmed plan\n"
+                "The draft is auto-saved to .djx/recipes/draft_recipe.yaml after each edit.\n"
+                "\n"
+                "## Planning Flow\n"
                 "For planning requests, prefer this chain: "
                 "inspect_dataset -> retrieve_operators -> plan_retrieve_candidates (optional) -> plan_generate -> plan_validate (draft) -> plan_save.\n"
                 "Before calling plan_generate, synthesize a grounded_intent that merges: "
@@ -1026,16 +1128,23 @@ class DJSessionAgent:
                 "Pass grounded_intent as plan_generate.intent instead of the raw user utterance.\n"
                 "In grounded_intent, explicitly state target field(s), threshold/unit constraints, and preferred canonical operators.\n"
                 "Never ignore inspect/retrieve results when forming plan_generate intent.\n"
+                "\n"
+                "## Execution Guidelines\n"
                 "For concrete dataset transformation requests (for example filtering/cleaning/dedup), "
                 "you must execute tools instead of only providing reasoning.\n"
                 "Do not end the turn with only planned tool calls; execute the planned tools and then summarize results.\n"
                 "If plan_generate fails, inspect the returned errors/warnings and retry plan_generate with corrected constraints "
                 "(for example canonical operator names, workflow intent, or field hints) before asking user follow-up questions.\n"
                 "You should usually retry plan_generate at least once when failure is recoverable.\n"
+                "\n"
+                "## File and Shell Operations\n"
                 "Use view_text_file/write_text_file/insert_text_file for file operations when needed.\n"
                 "Use execute_shell_command/execute_python_code for diagnostic or programmatic tasks when needed.\n"
+                "\n"
+                "## User Interaction\n"
                 "When required fields are missing, ask concise follow-up questions.\n"
                 "Before running apply_recipe, ask user for explicit confirmation.\n"
+                "If recipe_status is 'invalid', show validation errors and suggest fixes via edit_recipe.\n"
                 "Call trace_run only when user explicitly asks for trace/log/run history, "
                 "or when a run_id already exists and trace is needed to answer the user.\n"
                 "If user says help, summarize capabilities and examples.\n"
@@ -1850,6 +1959,277 @@ class DJSessionAgent:
             "context": self._context_payload(),
         }
 
+    def tool_edit_recipe(
+        self,
+        # Direct field edits
+        dataset_path: str = "",
+        export_path: str = "",
+        operators: Any = None,
+        text_keys: Any = None,
+        image_key: str = "",
+        custom_operator_paths: Any = None,
+        workflow: str = "",
+        modality: str = "",
+        # Natural language edit
+        natural_language_edit: str = "",
+    ) -> Dict[str, Any]:
+        """Edit the draft recipe with direct field changes or natural language description.
+        
+        Supports:
+        - Direct field edits: specify field values directly
+        - Natural language edits: describe changes in natural language, LLM interprets
+        
+        After modification:
+        - Auto-saves draft to .djx/recipes/draft_recipe.yaml
+        - Runs validation and updates recipe_status
+        """
+        self._debug(
+            f"tool:edit_recipe dataset_path={dataset_path!r} export_path={export_path!r} "
+            f"operators={operators!r} natural_language_edit={natural_language_edit!r}"
+        )
+        
+        # Ensure we have a draft plan to edit
+        if not self.state.draft_plan:
+            return {
+                "ok": False,
+                "error_type": "missing_required",
+                "requires": ["draft_plan"],
+                "message": "No draft plan to edit. Run plan_generate first.",
+            }
+        
+        plan_data = dict(self.state.draft_plan)
+        changes_made: List[str] = []
+        
+        # Process direct field edits
+        if str(dataset_path).strip():
+            new_path = str(dataset_path).strip()
+            if plan_data.get("dataset_path") != new_path:
+                plan_data["dataset_path"] = new_path
+                changes_made.append(f"dataset_path: {new_path}")
+        
+        if str(export_path).strip():
+            new_path = str(export_path).strip()
+            if plan_data.get("export_path") != new_path:
+                plan_data["export_path"] = new_path
+                changes_made.append(f"export_path: {new_path}")
+        
+        if str(workflow).strip():
+            new_workflow = str(workflow).strip()
+            if plan_data.get("workflow") != new_workflow:
+                plan_data["workflow"] = new_workflow
+                changes_made.append(f"workflow: {new_workflow}")
+        
+        if str(modality).strip():
+            new_modality = str(modality).strip()
+            if plan_data.get("modality") != new_modality:
+                plan_data["modality"] = new_modality
+                changes_made.append(f"modality: {new_modality}")
+        
+        if str(image_key).strip():
+            new_key = str(image_key).strip()
+            if plan_data.get("image_key") != new_key:
+                plan_data["image_key"] = new_key
+                changes_made.append(f"image_key: {new_key}")
+        
+        # Process text_keys
+        if text_keys is not None:
+            new_keys = _to_string_list(text_keys)
+            if plan_data.get("text_keys") != new_keys:
+                plan_data["text_keys"] = new_keys
+                changes_made.append(f"text_keys: {new_keys}")
+        
+        # Process custom_operator_paths
+        if custom_operator_paths is not None:
+            new_paths = _to_string_list(custom_operator_paths)
+            if plan_data.get("custom_operator_paths") != new_paths:
+                plan_data["custom_operator_paths"] = new_paths
+                changes_made.append(f"custom_operator_paths: {new_paths}")
+        
+        # Process operators
+        if operators is not None:
+            if isinstance(operators, list):
+                new_ops = []
+                for item in operators:
+                    if isinstance(item, dict) and "name" in item:
+                        new_ops.append({
+                            "name": str(item.get("name", "")).strip(),
+                            "params": dict(item.get("params", {})) if isinstance(item.get("params"), dict) else {},
+                        })
+                if plan_data.get("operators") != new_ops:
+                    plan_data["operators"] = new_ops
+                    changes_made.append(f"operators: {[op['name'] for op in new_ops]}")
+        
+        # Process natural language edit
+        if str(natural_language_edit).strip():
+            try:
+                llm_changes = self._apply_natural_language_edit(plan_data, str(natural_language_edit).strip())
+                if llm_changes:
+                    for key, value in llm_changes.items():
+                        if plan_data.get(key) != value:
+                            plan_data[key] = value
+                            changes_made.append(f"{key}: {value}")
+            except Exception as exc:
+                self._debug(f"tool:edit_recipe natural_language_edit failed: {exc}")
+                # Continue with direct edits only
+        
+        if not changes_made:
+            return {
+                "ok": True,
+                "action": "edit_recipe",
+                "message": "No changes made",
+                "changes": [],
+                "recipe_status": self.state.recipe_status,
+                "context": self._context_payload(),
+            }
+        
+        # Update draft plan
+        self.state.draft_plan = plan_data
+        
+        # Auto-save draft
+        draft_path = self._auto_save_draft_recipe()
+        
+        # Run validation
+        from data_juicer_agents.capabilities.plan.validation import validate_with_suggestions
+        plan_model = self._current_draft_plan_model()
+        validation_errors = []
+        validation_warnings = []
+        
+        if plan_model:
+            errors = validate_with_suggestions(plan_model)
+            validation_errors = [e.message for e in errors]
+            self.state.validation_errors = validation_errors
+            self.state.validation_warnings = validation_warnings
+            
+            if validation_errors:
+                self.state.recipe_status = "invalid"
+            else:
+                self.state.recipe_status = "draft"
+        
+        return {
+            "ok": True,
+            "action": "edit_recipe",
+            "message": f"Recipe updated: {len(changes_made)} change(s)",
+            "changes": changes_made,
+            "draft_recipe_path": draft_path,
+            "recipe_status": self.state.recipe_status,
+            "validation_errors": validation_errors,
+            "validation_warnings": validation_warnings,
+            "context": self._context_payload(),
+        }
+
+    def _apply_natural_language_edit(self, plan_data: Dict[str, Any], description: str) -> Dict[str, Any]:
+        """Use LLM to interpret natural language edit and return field changes."""
+        from data_juicer_agents.tools.llm_gateway import call_model_json
+        
+        prompt = f"""You are a Data-Juicer plan editor. Given the current plan and a natural language edit request, 
+return a JSON object with the fields to change.
+
+Current plan:
+{json.dumps(plan_data, ensure_ascii=False, indent=2)}
+
+Edit request: {description}
+
+Return JSON only with the fields that need to be changed. For example:
+- To change dataset: {"dataset_path": "new/path.jsonl"}
+- To change operators: {"operators": [{{"name": "op_name", "params": {{}}}}]}
+- To add an operator: include the new operator in the operators array
+- To remove an operator: exclude it from the operators array
+
+Only return fields that should be changed. Return empty object {{}} if no valid changes.
+"""
+        
+        try:
+            result = call_model_json(
+                os.environ.get("DJA_SESSION_MODEL", "qwen3-max-2026-01-23"),
+                prompt,
+                thinking=False,
+            )
+            if isinstance(result, dict):
+                return result
+        except Exception:
+            pass
+        return {}
+
+    def tool_confirm_recipe(
+        self,
+        save_path: str = "",
+    ) -> Dict[str, Any]:
+        """Confirm the draft recipe after validation.
+        
+        - Runs full validation
+        - If invalid: returns errors with suggestions
+        - If valid: saves to final path and sets recipe_status to 'confirmed'
+        """
+        self._debug(f"tool:confirm_recipe save_path={save_path!r}")
+        
+        if not self.state.draft_plan:
+            return {
+                "ok": False,
+                "error_type": "missing_required",
+                "requires": ["draft_plan"],
+                "message": "No draft plan to confirm. Run plan_generate first.",
+            }
+        
+        plan_model = self._current_draft_plan_model()
+        if not plan_model:
+            return {
+                "ok": False,
+                "error_type": "invalid_plan",
+                "message": "Failed to parse draft plan.",
+            }
+        
+        
+        # Run validation with suggestions
+        from data_juicer_agents.capabilities.plan.validation import validate_with_suggestions
+        errors = validate_with_suggestions(plan_model)
+        
+        if errors:
+            self.state.recipe_status = "invalid"
+            self.state.validation_errors = [e.message for e in errors]
+            return {
+                "ok": False,
+                "error_type": "validation_failed",
+                "message": "Recipe validation failed. Please fix the errors before confirming.",
+                "validation_errors": [e.to_dict() for e in errors],
+                "recipe_status": "invalid",
+                "context": self._context_payload(),
+            }
+        
+        
+        # Determine save path
+        resolved_save_path = (
+            str(save_path).strip()
+            or self.state.draft_plan_path_hint
+            or self._next_session_plan_path()
+        )
+        
+        # Save the plan
+        out_path = Path(resolved_save_path).expanduser()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(out_path, "w", encoding="utf-8") as f:
+            yaml.safe_dump(plan_model.to_dict(), f, allow_unicode=False, sort_keys=False)
+        
+        # Update state
+        self.state.plan_path = str(out_path)
+        self.state.recipe_status = "confirmed"
+        self.state.validation_errors = []
+        self.state.validation_warnings = []
+        self.state.dataset_path = plan_model.dataset_path
+        self.state.export_path = plan_model.export_path
+        
+        return {
+            "ok": True,
+            "action": "confirm_recipe",
+            "message": f"Recipe confirmed and saved: {out_path}",
+            "plan_path": str(out_path),
+            "plan_id": plan_model.plan_id,
+            "workflow": plan_model.workflow,
+            "operator_names": [op.name for op in plan_model.operators],
+            "recipe_status": "confirmed",
+            "context": self._context_payload(),
+        }
+
     def tool_plan(
         self,
         intent: str,
@@ -1994,30 +2374,94 @@ class DJSessionAgent:
         dry_run: bool = False,
         timeout: int = 300,
         confirm: bool = False,
+        use_draft: bool = False,
     ) -> Dict[str, Any]:
+        """Execute the recipe plan.
+        
+        Enhanced with recipe status checks:
+        - If recipe_status is 'invalid': shows validation errors with suggestions
+        - If recipe_status is 'draft': prompts user to confirm_recipe first
+        - If use_draft=True: uses draft_plan directly (requires confirm=True)
+        """
         self._debug(
             "tool:apply_recipe "
-            f"plan_path={plan_path or self.state.plan_path} dry_run={dry_run} timeout={timeout} confirm={confirm}"
+            f"plan_path={plan_path or self.state.plan_path} dry_run={dry_run} timeout={timeout} confirm={confirm} use_draft={use_draft}"
         )
-        if not _to_bool(confirm, False):
-            return {
-                "ok": False,
-                "error_type": "confirmation_required",
-                "requires": ["confirm"],
-                "message": (
-                    "apply may execute dj-process and write export output. "
-                    "Ask user to confirm, then call apply_recipe with confirm=true."
-                ),
-            }
+        
+        # Check if using draft plan
+        if _to_bool(use_draft, False):
+            if not self.state.draft_plan:
+                return {
+                    "ok": False,
+                    "error_type": "missing_required",
+                    "requires": ["draft_plan"],
+                    "message": "No draft plan available. Run plan_generate first.",
+                }
+            
+            # Check validation status
+            if self.state.recipe_status == "invalid":
+                from data_juicer_agents.capabilities.plan.validation import validate_with_suggestions
+                plan_model = self._current_draft_plan_model()
+                errors = validate_with_suggestions(plan_model) if plan_model else []
+                return {
+                    "ok": False,
+                    "error_type": "validation_failed",
+                    "message": "Recipe has validation errors. Use edit_recipe to fix or confirm_recipe to see details.",
+                    "validation_errors": [e.to_dict() for e in errors],
+                    "recipe_status": "invalid",
+                    "suggestion": "Call edit_recipe to fix errors, or confirm_recipe to see detailed validation results.",
+                }
+            
+            if not _to_bool(confirm, False):
+                return {
+                    "ok": False,
+                    "error_type": "confirmation_required",
+                    "requires": ["confirm"],
+                    "message": (
+                        "apply may execute dj-process and write export output. "
+                        "Ask user to confirm, then call apply_recipe with confirm=true."
+                    ),
+                }
+            
+            # Save draft to temp file and use it
+            draft_path = self._auto_save_draft_recipe()
+            if not draft_path:
+                return {
+                    "ok": False,
+                    "error_type": "save_failed",
+                    "message": "Failed to save draft plan for execution.",
+                }
+            resolved_plan = draft_path
+        else:
+            # Standard flow with plan_path
+            if not _to_bool(confirm, False):
+                return {
+                    "ok": False,
+                    "error_type": "confirmation_required",
+                    "requires": ["confirm"],
+                    "message": (
+                        "apply may execute dj-process and write export output. "
+                        "Ask user to confirm, then call apply_recipe with confirm=true."
+                    ),
+                }
 
-        resolved_plan = str(plan_path).strip() or (self.state.plan_path or "")
-        if not resolved_plan:
-            return {
-                "ok": False,
-                "error_type": "missing_required",
-                "requires": ["plan_path"],
-                "message": "plan_path is required for apply_recipe",
-            }
+            resolved_plan = str(plan_path).strip() or (self.state.plan_path or "")
+            if not resolved_plan:
+                # Check if we have a draft that could be used
+                if self.state.draft_plan:
+                    return {
+                        "ok": False,
+                        "error_type": "missing_required",
+                        "requires": ["plan_path"],
+                        "message": "No confirmed plan_path. Use confirm_recipe first, or set use_draft=true to execute draft directly.",
+                        "recipe_status": self.state.recipe_status,
+                    }
+                return {
+                    "ok": False,
+                    "error_type": "missing_required",
+                    "requires": ["plan_path"],
+                    "message": "plan_path is required for apply_recipe",
+                }
 
         args = SimpleNamespace(
             plan=resolved_plan,
