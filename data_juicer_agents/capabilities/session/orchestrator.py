@@ -70,13 +70,13 @@ _REFLECTIVE_LINE_MARKERS = (
 )
 
 _HELP_TEXT = (
-    "我可以帮你完成 Data-Juicer 工作流的会话式编排。\n"
-    "你可以直接自然语言描述需求，例如：\n"
-    "- 我想做一套RAG清洗流程，输入是 data/demo-dataset.jsonl\n"
-    "- 帮我看最近一次执行的 trace\n"
-    "- 这个需求现有算子不满足，帮我生成一个新算子\n"
-    "可用原子能力：retrieve / plan(chain) / apply / trace / dev。\n"
-    "控制命令：help / exit / cancel。"
+    "I can help you orchestrate Data-Juicer workflows conversationally.\n"
+    "Describe your request in natural language, for example:\n"
+    "- I want a RAG cleaning workflow with input data/demo-dataset.jsonl\n"
+    "- Show me the trace from the most recent run\n"
+    "- Existing operators do not satisfy this requirement. Help me generate a new operator\n"
+    "Available atomic capabilities: retrieve / plan(chain) / apply / trace / dev.\n"
+    "Control commands: help / exit / cancel."
 )
 
 
@@ -2632,20 +2632,20 @@ class DJSessionAgent:
             if interrupted:
                 self._debug("react_reply_interrupted")
                 reply = SessionReply(
-                    text="当前任务已中断。你可以继续提出下一步需求。",
+                    text="The current task was interrupted. You can continue with your next request.",
                     stop=False,
                     interrupted=True,
                     thinking=self._last_reply_thinking,
                 )
             else:
                 if not text:
-                    text = "已处理该请求，但未得到可展示文本。"
+                    text = "The request was processed, but no displayable text was returned."
                 self._debug("react_reply_received")
                 reply = SessionReply(text=text, thinking=self._last_reply_thinking)
         except asyncio.CancelledError:
             self._debug("react_reply_interrupted")
             reply = SessionReply(
-                text="当前任务已中断。你可以继续提出下一步需求。",
+                text="The current task was interrupted. You can continue with your next request.",
                 stop=False,
                 interrupted=True,
             )

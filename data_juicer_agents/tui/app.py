@@ -415,8 +415,8 @@ def run_tui_session(args: argparse.Namespace) -> int:
                 kind="system",
                 title="tool_hint",
                 text=(
-                    "本轮出现工具计划但未看到实际工具执行结果。"
-                    "可重试或使用 --verbose 查看更详细的内部日志。"
+                    "A tool was planned in this turn, but no actual execution result was observed. "
+                    "Retry or use --verbose to inspect more detailed internal logs."
                 ),
             )
         cursor = _flush_timeline(console, state, cursor)
