@@ -21,8 +21,16 @@ def test_template_llm_patch_receives_retrieve_candidates(monkeypatch, tmp_path: 
         "retrieve_operator_candidates",
         lambda **_kwargs: {
             "candidates": [
-                {"operator_name": "document_deduplicator"},
-                {"operator_name": "text_length_filter"},
+                {
+                    "operator_name": "document_deduplicator",
+                    "description": "Mark near-duplicate documents for removal.",
+                    "arguments_preview": ["text_key: text", "threshold: 0.9"],
+                },
+                {
+                    "operator_name": "text_length_filter",
+                    "description": "Filter records by text length.",
+                    "arguments_preview": ["text_key: text", "max_len: 1000"],
+                },
             ]
         },
     )
@@ -30,6 +38,8 @@ def test_template_llm_patch_receives_retrieve_candidates(monkeypatch, tmp_path: 
     def fake_llm(_model: str, prompt: str, **_kwargs):
         assert "retrieved_candidates" in prompt
         assert "document_deduplicator" in prompt
+        assert "Mark near-duplicate documents for removal." in prompt
+        assert "threshold: 0.9" in prompt
         return {
             "operators": [
                 {"name": "document_deduplicator", "params": {"lowercase": False}},
@@ -66,8 +76,16 @@ def test_llm_full_plan_passes_retrieve_candidates(monkeypatch, tmp_path: Path):
         "retrieve_operator_candidates",
         lambda **_kwargs: {
             "candidates": [
-                {"operator_name": "document_deduplicator"},
-                {"operator_name": "text_length_filter"},
+                {
+                    "operator_name": "document_deduplicator",
+                    "description": "Mark near-duplicate documents for removal.",
+                    "arguments_preview": ["text_key: text", "threshold: 0.9"],
+                },
+                {
+                    "operator_name": "text_length_filter",
+                    "description": "Filter records by text length.",
+                    "arguments_preview": ["text_key: text", "max_len: 1000"],
+                },
             ]
         },
     )
@@ -108,8 +126,18 @@ def test_llm_full_plan_passes_retrieve_candidates(monkeypatch, tmp_path: Path):
     )
     assert plan.workflow == "custom"
     assert captured.get("retrieved_candidates") == [
-        "document_deduplicator",
-        "text_length_filter",
+        {
+            "operator_name": "document_deduplicator",
+            "description": "Mark near-duplicate documents for removal.",
+            "arguments_preview": ["text_key: text", "threshold: 0.9"],
+            "operator_type": "",
+        },
+        {
+            "operator_name": "text_length_filter",
+            "description": "Filter records by text length.",
+            "arguments_preview": ["text_key: text", "max_len: 1000"],
+            "operator_type": "",
+        },
     ]
     assert captured.get("api_key") == "sk-test"
     assert captured.get("base_url") == "https://dashscope.aliyuncs.com/compatible-mode/v1"
@@ -156,6 +184,7 @@ def test_build_plan_uses_provided_candidates_without_internal_retrieve(monkeypat
         retrieved_candidates=["text_length_filter", "document_deduplicator"],
     )
 
+    assert "\"operator_name\": \"text_length_filter\"" in seen_prompt["prompt"]
     assert "text_length_filter" in seen_prompt["prompt"]
     assert planner.last_plan_meta.get("retrieve_source") == "provided"
 

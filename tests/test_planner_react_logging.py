@@ -48,12 +48,22 @@ def test_plan_usecase_full_llm_is_single_shot(monkeypatch, tmp_path):
     monkeypatch.setattr(
         planner_mod,
         "retrieve_operator_candidates",
-        lambda **_kwargs: {"candidates": [{"operator_name": "text_length_filter"}]},
+        lambda **_kwargs: {
+            "candidates": [
+                {
+                    "operator_name": "text_length_filter",
+                    "description": "Filter records by text length.",
+                    "arguments_preview": ["text_key: text", "min_len: 1"],
+                }
+            ]
+        },
     )
 
     def fake_llm(_model: str, prompt: str, **_kwargs):
         call_count["n"] += 1
         assert "retrieved_candidates" in prompt
+        assert "Filter records by text length." in prompt
+        assert "min_len: 1" in prompt
         return {
             "workflow": "custom",
             "modality": "text",

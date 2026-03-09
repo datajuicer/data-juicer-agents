@@ -612,18 +612,23 @@ class DJSessionAgent:
             llm_thinking=self._thinking,
         )
 
-    def _cached_candidate_names(self, intent: str, dataset_path: str) -> Optional[List[str]]:
+    def _cached_retrieval_candidates(self, intent: str, dataset_path: str) -> Optional[List[Any]]:
         retrieval = self.state.last_retrieval
         if not isinstance(retrieval, dict):
             return None
         cached_intent = str(retrieval.get("intent", "")).strip()
         cached_dataset = str(retrieval.get("dataset_path", "")).strip()
-        names = retrieval.get("candidate_names")
-        if not isinstance(names, list):
-            return None
         if cached_intent != str(intent).strip():
             return None
         if cached_dataset != str(dataset_path).strip():
+            return None
+        payload = retrieval.get("payload")
+        if isinstance(payload, dict):
+            candidates = payload.get("candidates")
+            if isinstance(candidates, list):
+                return list(candidates)
+        names = retrieval.get("candidate_names")
+        if not isinstance(names, list):
             return None
         return [str(item).strip() for item in names if str(item).strip()]
 
@@ -1559,7 +1564,7 @@ class DJSessionAgent:
 
         provided_candidates = None
         if _to_bool(use_cached_retrieval, True):
-            provided_candidates = self._cached_candidate_names(
+            provided_candidates = self._cached_retrieval_candidates(
                 intent=str(intent).strip(),
                 dataset_path=resolved_dataset,
             )

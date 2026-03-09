@@ -24,13 +24,13 @@ from data_juicer_agents.tools.router_helpers import (
     select_workflow,
 )
 from data_juicer_agents.tools.op_manager.retrieval_service import (
-    extract_candidate_names,
     retrieve_operator_candidates,
 )
 
 
 PLANNER_MODEL_NAME = os.environ.get("DJA_PLANNER_MODEL", "qwen3-max-2026-01-23")
 _ALLOWED_WORKFLOWS = {"rag_cleaning", "multimodal_dedup", "custom"}
+RetrievedCandidate = Dict[str, Any]
 
 
 def _env_flag(name: str, default: bool) -> bool:
@@ -144,25 +144,77 @@ class PlanUseCase:
         return parsed
 
     @staticmethod
-    def _normalize_retrieved_candidates(raw_candidates: Any) -> List[str]:
+    def _normalize_retrieved_candidates(raw_candidates: Any) -> List[RetrievedCandidate]:
         if not isinstance(raw_candidates, list):
             return []
-        normalized: List[str] = []
+        normalized: List[RetrievedCandidate] = []
         seen = set()
         for item in raw_candidates:
-            name = str(item).strip()
+            if isinstance(item, dict):
+                name = str(
+                    item.get("operator_name", "")
+                    or item.get("name", "")
+                ).strip()
+                description = str(item.get("description", "")).strip()
+                operator_type = str(item.get("operator_type", "")).strip()
+                raw_args = item.get("arguments_preview", item.get("arguments", []))
+                if isinstance(raw_args, list):
+                    arguments_preview = [
+                        str(arg).strip()
+                        for arg in raw_args
+                        if str(arg).strip()
+                    ][:4]
+                elif isinstance(raw_args, str):
+                    arguments_preview = [
+                        line.strip()
+                        for line in raw_args.splitlines()
+                        if line.strip()
+                    ][:4]
+                else:
+                    arguments_preview = []
+            else:
+                name = str(item).strip()
+                description = ""
+                operator_type = ""
+                arguments_preview = []
             if not name or name in seen:
                 continue
             seen.add(name)
-            normalized.append(name)
+            normalized.append(
+                {
+                    "operator_name": name,
+                    "description": description,
+                    "arguments_preview": arguments_preview,
+                    "operator_type": operator_type,
+                }
+            )
         return normalized
+
+    @staticmethod
+    def _retrieved_candidates_prompt_payload(
+        retrieved_candidates: List[RetrievedCandidate] | None,
+    ) -> List[RetrievedCandidate]:
+        return [
+            {
+                "operator_name": str(item.get("operator_name", "")).strip(),
+                "description": str(item.get("description", "")).strip(),
+                "arguments_preview": [
+                    str(arg).strip()
+                    for arg in item.get("arguments_preview", [])
+                    if str(arg).strip()
+                ][:4],
+                "operator_type": str(item.get("operator_type", "")).strip(),
+            }
+            for item in (retrieved_candidates or [])
+            if str(item.get("operator_name", "")).strip()
+        ]
 
     def _resolve_retrieved_candidates(
         self,
         user_intent: str,
         dataset_path: str,
-        retrieved_candidates: List[str] | None = None,
-    ) -> tuple[List[str], str]:
+        retrieved_candidates: List[RetrievedCandidate] | List[str] | None = None,
+    ) -> tuple[List[RetrievedCandidate], str]:
         # `None` means planner should self-retrieve.
         # Any explicit list (even empty) means caller-provided candidates.
         if retrieved_candidates is not None:
@@ -175,10 +227,10 @@ class PlanUseCase:
                 mode=os.environ.get("DJA_PLAN_RETRIEVE_MODE", "auto"),
                 dataset_path=dataset_path,
             )
-            names = self._normalize_retrieved_candidates(
-                extract_candidate_names(retrieval_payload)
+            candidates = self._normalize_retrieved_candidates(
+                retrieval_payload.get("candidates", [])
             )
-            return names, "internal"
+            return candidates, "internal"
         except Exception:
             return [], "internal_error"
 
@@ -267,18 +319,21 @@ class PlanUseCase:
     def _build_patch_prompt(
         self,
         base_plan: PlanModel,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> str:
+        retrieved_blob = self._retrieved_candidates_prompt_payload(retrieved_candidates)
         return (
             "You are a planning assistant for Data-Juicer.\n"
             "Refine the given plan but keep it executable and concise.\n"
             "Return JSON only with optional fields: text_keys, image_key, operators, risk_notes, estimation.\n"
             "optional modality field: text/image/multimodal/unknown.\n"
             "operators must be an array of objects: {name: string, params: object}.\n"
+            "retrieved_candidates contains operator_name, description, operator_type, and arguments_preview.\n"
             "Prefer operators from retrieved_candidates when relevant.\n"
+            "When retrieved_candidates provides arguments_preview, keep params aligned with that operator metadata and avoid inventing unsupported parameter names.\n"
             "Do not include markdown or explanations.\n\n"
             f"Base plan:\n{json.dumps(base_plan.to_dict(), ensure_ascii=False)}\n"
-            f"retrieved_candidates:\n{json.dumps(retrieved_candidates or [], ensure_ascii=False)}\n"
+            f"retrieved_candidates:\n{json.dumps(retrieved_blob, ensure_ascii=False, indent=2)}\n"
         )
 
     def _build_revision_patch_prompt(
@@ -286,20 +341,23 @@ class PlanUseCase:
         base_plan: PlanModel,
         user_intent: str,
         run_context: Dict[str, Any] | None,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> str:
+        retrieved_blob = self._retrieved_candidates_prompt_payload(retrieved_candidates)
         return (
             "You are editing an existing Data-Juicer execution plan for the next iteration.\n"
             "Return JSON only with optional keys: workflow, modality, text_keys, image_key, operators, risk_notes, estimation, change_summary.\n"
             "operators must be an array of {name: string, params: object}.\n"
             "change_summary should be a concise list of what changed and why.\n"
             "Keep dataset_path/export_path unchanged unless absolutely necessary.\n"
+            "retrieved_candidates contains operator_name, description, operator_type, and arguments_preview.\n"
             "Prefer operators from retrieved_candidates when relevant.\n"
+            "When retrieved_candidates provides arguments_preview, keep params aligned with that operator metadata and avoid inventing unsupported parameter names.\n"
             "Do not include markdown or explanations.\n\n"
             f"user_intent: {user_intent}\n"
             f"base_plan:\n{json.dumps(base_plan.to_dict(), ensure_ascii=False)}\n"
             f"last_run_context:\n{json.dumps(run_context or {}, ensure_ascii=False)}\n"
-            f"retrieved_candidates:\n{json.dumps(retrieved_candidates or [], ensure_ascii=False)}\n"
+            f"retrieved_candidates:\n{json.dumps(retrieved_blob, ensure_ascii=False, indent=2)}\n"
         )
 
     def _build_full_plan_prompt(
@@ -309,8 +367,9 @@ class PlanUseCase:
         export_path: str,
         text_keys: List[str] | None,
         image_key: str | None,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> str:
+        retrieved_blob = self._retrieved_candidates_prompt_payload(retrieved_candidates)
         return (
             "You are a Data-Juicer planning assistant.\n"
             "Generate a complete execution plan from scratch, without template references.\n"
@@ -320,18 +379,21 @@ class PlanUseCase:
             "operators must be a non-empty array: [{\"name\": str, \"params\": object}].\n"
             "Do not include markdown or explanation text.\n"
             "Use the provided dataset_path/export_path context when deciding fields and operators.\n\n"
+            "retrieved_candidates contains operator_name, description, operator_type, and arguments_preview.\n"
+            "Prefer these operators when they fit the intent.\n"
+            "When retrieved_candidates provides arguments_preview, keep params aligned with that operator metadata and avoid inventing unsupported parameter names.\n\n"
             f"intent: {user_intent}\n"
             f"dataset_path: {dataset_path}\n"
             f"export_path: {export_path}\n"
             f"text_keys_hint: {json.dumps(text_keys or [], ensure_ascii=False)}\n"
             f"image_key_hint: {image_key or ''}\n"
-            f"retrieved_candidates: {json.dumps(retrieved_candidates or [], ensure_ascii=False)}\n"
+            f"retrieved_candidates: {json.dumps(retrieved_blob, ensure_ascii=False, indent=2)}\n"
         )
 
     def _request_template_patch(
         self,
         base_plan: PlanModel,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> Dict[str, Any]:
         patch_prompt = self._build_patch_prompt(
             base_plan=base_plan,
@@ -350,7 +412,7 @@ class PlanUseCase:
         base_plan: PlanModel,
         user_intent: str,
         run_context: Dict[str, Any] | None,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> Dict[str, Any]:
         patch_prompt = self._build_revision_patch_prompt(
             base_plan=base_plan,
@@ -373,7 +435,7 @@ class PlanUseCase:
         export_path: str,
         text_keys: List[str] | None,
         image_key: str | None,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> Dict[str, Any]:
         prompt = self._build_full_plan_prompt(
             user_intent=user_intent,
@@ -399,7 +461,7 @@ class PlanUseCase:
         text_keys: List[str] | None,
         image_key: str | None,
         custom_operator_paths: List[str] | None = None,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | None = None,
     ) -> PlanModel:
         if not dataset_path:
             raise ValueError("dataset_path is required")
@@ -527,7 +589,7 @@ class PlanUseCase:
         from_template: str | None = None,
         template_retrieve: bool = False,
         track_lineage: bool = False,
-        retrieved_candidates: List[str] | None = None,
+        retrieved_candidates: List[RetrievedCandidate] | List[str] | None = None,
     ) -> PlanModel:
         custom_operator_paths = list(custom_operator_paths or [])
         retrieved_candidates, retrieve_source = self._resolve_retrieved_candidates(

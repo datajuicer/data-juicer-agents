@@ -775,8 +775,16 @@ def test_session_agent_plan_chain_reuses_cached_retrieval(monkeypatch, tmp_path:
             "ok": True,
             "candidate_count": 2,
             "candidates": [
-                {"operator_name": "text_length_filter"},
-                {"operator_name": "document_deduplicator"},
+                {
+                    "operator_name": "text_length_filter",
+                    "description": "Filter records by text length.",
+                    "arguments_preview": ["text_key: text", "max_len: 1000"],
+                },
+                {
+                    "operator_name": "document_deduplicator",
+                    "description": "Mark near-duplicate documents for removal.",
+                    "arguments_preview": ["text_key: text", "threshold: 0.9"],
+                },
             ],
         },
     )
@@ -822,7 +830,18 @@ def test_session_agent_plan_chain_reuses_cached_retrieval(monkeypatch, tmp_path:
         output_path=str(output),
     )
     assert generated["ok"] is True
-    assert captured["retrieved_candidates"] == ["text_length_filter", "document_deduplicator"]
+    assert captured["retrieved_candidates"] == [
+        {
+            "operator_name": "text_length_filter",
+            "description": "Filter records by text length.",
+            "arguments_preview": ["text_key: text", "max_len: 1000"],
+        },
+        {
+            "operator_name": "document_deduplicator",
+            "description": "Mark near-duplicate documents for removal.",
+            "arguments_preview": ["text_key: text", "threshold: 0.9"],
+        },
+    ]
 
     validated = agent.tool_plan_validate()
     assert validated["ok"] is True

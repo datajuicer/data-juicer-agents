@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
+import json
+import hashlib
+import logging
 import os
 import os.path as osp
-import json
-import logging
-import hashlib
 import time
 from typing import Optional
 
 from langchain_community.vectorstores import FAISS
 
-CACHE_RETRIEVED_TOOLS_PATH = osp.join(osp.dirname(__file__), "cache_retrieve")
 VECTOR_INDEX_CACHE_PATH = osp.join(osp.dirname(__file__), "vector_index_cache")
 
 # Global variable to cache the vector store
@@ -63,17 +62,6 @@ RETRIEVAL_PROMPT = """You are a professional tool retrieval assistant responsibl
     ]
     Output strictly in JSON array format, and only output the JSON array format tool list.
 """
-
-
-def fast_text_encoder(text: str) -> str:
-    """Fast encoding using xxHash algorithm"""
-    import xxhash
-
-    hasher = xxhash.xxh64(seed=0)
-    hasher.update(text.encode("utf-8"))
-
-    # Return 16-bit hexadecimal string
-    return hasher.hexdigest()
 
 def _get_content_hash(dj_func_info: list) -> str:
     """Get content hash of dj_func_info using SHA256"""
@@ -228,16 +216,16 @@ def get_dj_func_info():
 
 async def retrieve_ops_lm(user_query, limit=20):
     """Tool retrieval using language model - returns list of tool names"""
-    hash_id = fast_text_encoder(user_query + str(limit))
+    items = await retrieve_ops_lm_items(user_query, limit=limit)
+    return [
+        str(item.get("tool_name", "")).strip()
+        for item in items
+        if str(item.get("tool_name", "")).strip()
+    ]
 
-    # Ensure cache directory exists
-    os.makedirs(CACHE_RETRIEVED_TOOLS_PATH, exist_ok=True)
 
-    cache_tools_path = osp.join(CACHE_RETRIEVED_TOOLS_PATH, f"{hash_id}.json")
-    if osp.exists(cache_tools_path):
-        with open(cache_tools_path, "r", encoding="utf-8") as f:
-            return json.loads(f.read())
-
+async def retrieve_ops_lm_items(user_query, limit=20):
+    """Tool retrieval using language model - returns validated tool metadata."""
     dj_func_info = get_dj_func_info()
 
     tool_descriptions = [
@@ -287,13 +275,15 @@ Available tools:
     retrieved_tools = json.loads(retrieved_tools_text)
 
     # Extract tool names and validate they exist
-    tool_names = []
+    valid_tools = []
     for tool_info in retrieved_tools:
         if not isinstance(tool_info, dict) or "tool_name" not in tool_info:
             logging.warning(f"Invalid tool info format: {tool_info}")
             continue
 
-        tool_name = tool_info["tool_name"]
+        tool_name = str(tool_info["tool_name"]).strip()
+        if not tool_name:
+            continue
 
         # Verify tool exists in dj_func_info
         tool_exists = any(t["class_name"] == tool_name for t in dj_func_info)
@@ -301,13 +291,24 @@ Available tools:
             logging.error(f"Tool not found: `{tool_name}`, skipping!")
             continue
 
-        tool_names.append(tool_name)
+        valid_tools.append(
+            {
+                "tool_name": tool_name,
+                "description": str(tool_info.get("description", "")).strip(),
+                "relevance_score": tool_info.get("relevance_score"),
+                "key_match": (
+                    [
+                        str(item).strip()
+                        for item in tool_info.get("key_match", [])
+                        if str(item).strip()
+                    ]
+                    if isinstance(tool_info.get("key_match"), list)
+                    else []
+                ),
+            }
+        )
 
-    # Cache the result
-    with open(cache_tools_path, "w", encoding="utf-8") as f:
-        json.dump(tool_names, f)
-
-    return tool_names
+    return valid_tools
 
 
 def _build_vector_index():
@@ -370,6 +371,117 @@ def retrieve_ops_vector(user_query, limit=20):
     return tool_names
 
 
+def _trace_step(backend: str, status: str, error: str = "") -> dict:
+    payload = {
+        "backend": backend,
+        "status": status,
+    }
+    error_text = str(error or "").strip()
+    if error_text:
+        payload["error"] = error_text
+    return payload
+
+
+async def retrieve_ops_with_meta(
+    user_query: str,
+    limit: int = 20,
+    mode: str = "auto",
+) -> dict:
+    """Tool retrieval with source/trace metadata."""
+    if mode == "llm":
+        try:
+            items = await retrieve_ops_lm_items(user_query, limit=limit)
+            names = [
+                str(item.get("tool_name", "")).strip()
+                for item in items
+                if str(item.get("tool_name", "")).strip()
+            ]
+            return {
+                "names": names,
+                "source": "llm" if names else "",
+                "trace": [_trace_step("llm", "success" if names else "empty")],
+                "items": items,
+            }
+        except Exception as exc:
+            logging.error(f"LLM retrieval failed: {str(exc)}")
+            return {
+                "names": [],
+                "source": "",
+                "trace": [_trace_step("llm", "failed", str(exc))],
+                "items": [],
+            }
+
+    if mode == "vector":
+        try:
+            names = retrieve_ops_vector(user_query, limit=limit)
+            return {
+                "names": names,
+                "source": "vector" if names else "",
+                "trace": [_trace_step("vector", "success" if names else "empty")],
+                "items": [],
+            }
+        except Exception as exc:
+            logging.error(f"Vector retrieval failed: {str(exc)}")
+            return {
+                "names": [],
+                "source": "",
+                "trace": [_trace_step("vector", "failed", str(exc))],
+                "items": [],
+            }
+
+    if mode == "auto":
+        trace = []
+        try:
+            items = await retrieve_ops_lm_items(user_query, limit=limit)
+            names = [
+                str(item.get("tool_name", "")).strip()
+                for item in items
+                if str(item.get("tool_name", "")).strip()
+            ]
+            trace.append(_trace_step("llm", "success" if names else "empty"))
+            if names:
+                return {
+                    "names": names,
+                    "source": "llm",
+                    "trace": trace,
+                    "items": items,
+                }
+        except Exception as exc:
+            logging.warning(
+                "LLM retrieval failed in auto mode (%s), falling back to vector retrieval.",
+                str(exc),
+            )
+            trace.append(_trace_step("llm", "failed", str(exc)))
+
+        try:
+            names = retrieve_ops_vector(user_query, limit=limit)
+            trace.append(_trace_step("vector", "success" if names else "empty"))
+            if names:
+                return {
+                    "names": names,
+                    "source": "vector",
+                    "trace": trace,
+                    "items": [],
+                }
+        except Exception as fallback_exc:
+            logging.error(
+                "Tool retrieval failed in auto mode, vector fallback also failed: %s",
+                str(fallback_exc),
+            )
+            trace.append(_trace_step("vector", "failed", str(fallback_exc)))
+
+        return {
+            "names": [],
+            "source": "",
+            "trace": trace,
+            "items": [],
+        }
+
+    raise ValueError(
+        f"Invalid mode: {mode}. Must be 'llm', 'vector', or 'auto'",
+    )
+
+
 async def retrieve_ops(
     user_query: str,
     limit: int = 20,
@@ -389,40 +501,12 @@ async def retrieve_ops(
     Returns:
         List of tool names
     """
-    if mode == "llm":
-        try:
-            return await retrieve_ops_lm(user_query, limit=limit)
-        except Exception as e:
-            logging.error(f"LLM retrieval failed: {str(e)}")
-            return []
-
-    elif mode == "vector":
-        try:
-            return retrieve_ops_vector(user_query, limit=limit)
-        except Exception as e:
-            logging.error(f"Vector retrieval failed: {str(e)}")
-            return []
-
-    elif mode == "auto":
-        try:
-            return await retrieve_ops_lm(user_query, limit=limit)
-        except Exception as e:
-            logging.warning(
-                "LLM retrieval failed in auto mode (%s), falling back to vector retrieval.",
-                str(e),
-            )
-            try:
-                return retrieve_ops_vector(user_query, limit=limit)
-            except Exception as fallback_e:
-                logging.error(
-                    f"Tool retrieval failed: {str(e)}, fallback retrieval also failed: {str(fallback_e)}",
-                )
-                return []
-
-    else:
-        raise ValueError(
-            f"Invalid mode: {mode}. Must be 'llm', 'vector', or 'auto'",
-        )
+    meta = await retrieve_ops_with_meta(
+        user_query=user_query,
+        limit=limit,
+        mode=mode,
+    )
+    return list(meta.get("names", []))
 
 
 if __name__ == "__main__":

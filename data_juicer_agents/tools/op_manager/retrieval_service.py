@@ -7,7 +7,7 @@ import asyncio
 import os
 import re
 import threading
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, Iterable, List
 
 from data_juicer_agents.tools.dataset_probe import inspect_dataset_schema
 from data_juicer_agents.tools.op_manager.operator_registry import (
@@ -35,9 +35,10 @@ def _load_op_retrieval_funcs():
             get_dj_func_info,
             init_dj_func_info,
             retrieve_ops,
+            retrieve_ops_with_meta,
         )
 
-        return get_dj_func_info, init_dj_func_info, retrieve_ops
+        return get_dj_func_info, init_dj_func_info, retrieve_ops, retrieve_ops_with_meta
     except Exception:
         return None
 
@@ -83,29 +84,66 @@ def _keyword_score(intent: str, operator_name: str, description: str) -> float:
     return _to_float_score(raw)
 
 
-def _safe_async_retrieve(intent: str, top_k: int, mode: str) -> Tuple[List[str], str]:
+def _trace_entry(backend: str, status: str, error: str = "", reason: str = "") -> Dict[str, str]:
+    payload = {
+        "backend": str(backend or "").strip(),
+        "status": str(status or "").strip(),
+    }
+    error_text = str(error or "").strip()
+    reason_text = str(reason or "").strip()
+    if error_text:
+        payload["error"] = error_text
+    if reason_text:
+        payload["reason"] = reason_text
+    return payload
+
+
+def _safe_async_retrieve(intent: str, top_k: int, mode: str) -> Dict[str, Any]:
     api_key = os.environ.get("DASHSCOPE_API_KEY") or os.environ.get("MODELSCOPE_API_TOKEN")
     if not api_key:
-        return [], "lexical"
+        return {
+            "names": [],
+            "source": "lexical",
+            "trace": [_trace_entry("lexical", "selected", reason="missing_api_key")],
+        }
 
     funcs = _load_op_retrieval_funcs()
     if funcs is None:
-        return [], "lexical"
-    _, _, retrieve_ops = funcs
+        return {
+            "names": [],
+            "source": "lexical",
+            "trace": [_trace_entry("lexical", "selected", reason="retrieval_backend_unavailable")],
+        }
+    _, _, retrieve_ops, retrieve_ops_with_meta = funcs
 
     def _normalize_names(names: Any) -> List[str]:
         if not isinstance(names, list):
             return []
         return [str(item) for item in names if str(item).strip()]
 
-    def _run_in_new_thread() -> List[str]:
+    def _normalize_meta(payload: Any) -> Dict[str, Any]:
+        if isinstance(payload, dict):
+            return {
+                "names": _normalize_names(payload.get("names")),
+                "source": str(payload.get("source", "")).strip(),
+                "trace": list(payload.get("trace", [])) if isinstance(payload.get("trace"), list) else [],
+                "items": list(payload.get("items", [])) if isinstance(payload.get("items"), list) else [],
+            }
+        return {
+            "names": _normalize_names(payload),
+            "source": "",
+            "trace": [],
+            "items": [],
+        }
+
+    def _run_in_new_thread() -> Dict[str, Any]:
         payload: Dict[str, Any] = {}
 
         def _worker() -> None:
             loop = asyncio.new_event_loop()
             try:
-                payload["names"] = loop.run_until_complete(
-                    retrieve_ops(intent, limit=top_k, mode=mode)
+                payload["meta"] = loop.run_until_complete(
+                    retrieve_ops_with_meta(intent, limit=top_k, mode=mode)
                 )
             except Exception as exc:
                 payload["error"] = exc
@@ -117,22 +155,28 @@ def _safe_async_retrieve(intent: str, top_k: int, mode: str) -> Tuple[List[str],
         thread.join()
         if "error" in payload:
             raise payload["error"]
-        return _normalize_names(payload.get("names"))
+        return _normalize_meta(payload.get("meta"))
 
     try:
         asyncio.get_running_loop()
-        names = _run_in_new_thread()
-        if names:
-            return names, mode
+        meta = _run_in_new_thread()
+        if meta.get("names"):
+            return meta
+        return meta
     except RuntimeError:
-        names = _normalize_names(
-            asyncio.run(retrieve_ops(intent, limit=top_k, mode=mode))
+        meta = _normalize_meta(
+            asyncio.run(retrieve_ops_with_meta(intent, limit=top_k, mode=mode))
         )
-        if names:
-            return names, mode
-    except Exception:
-        pass
-    return [], "fallback"
+        if meta.get("names"):
+            return meta
+        return meta
+    except Exception as exc:
+        return {
+            "names": [],
+            "source": "",
+            "trace": [_trace_entry(mode, "failed", str(exc))],
+            "items": [],
+        }
 
 
 def _lexical_fallback(intent: str, info_rows: List[Dict[str, Any]], top_k: int) -> List[str]:
@@ -157,17 +201,31 @@ def _build_candidate_row(
     name: str,
     intent: str,
     info_map: Dict[str, Dict[str, Any]],
+    llm_item: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     row = info_map.get(name, {})
     desc = str(row.get("class_desc", "")).strip()
     args_text = str(row.get("arguments", "")).strip()
     args_lines = [line.strip() for line in args_text.splitlines() if line.strip()]
+    llm_desc = str((llm_item or {}).get("description", "")).strip()
+    llm_score = (llm_item or {}).get("relevance_score")
+    key_match = (llm_item or {}).get("key_match")
+    if not isinstance(key_match, list):
+        key_match = []
+    if isinstance(llm_score, (int, float)):
+        relevance_score = _to_float_score(float(llm_score))
+        score_source = "llm"
+    else:
+        relevance_score = _keyword_score(intent, name, desc)
+        score_source = "keyword"
     return {
         "rank": rank,
         "operator_name": name,
         "operator_type": _op_type(name),
-        "description": desc,
-        "relevance_score": _keyword_score(intent, name, desc),
+        "description": llm_desc or desc,
+        "relevance_score": relevance_score,
+        "score_source": score_source,
+        "key_match": [str(item).strip() for item in key_match if str(item).strip()],
         "arguments_preview": args_lines[:4],
     }
 
@@ -188,7 +246,7 @@ def retrieve_operator_candidates(
     info_rows: List[Dict[str, Any]] = []
     funcs = _load_op_retrieval_funcs()
     if funcs is not None:
-        get_dj_func_info, init_dj_func_info, _retrieve_ops = funcs
+        get_dj_func_info, init_dj_func_info, _retrieve_ops, _retrieve_ops_with_meta = funcs
         try:
             init_dj_func_info()
             info_rows = [
@@ -203,9 +261,22 @@ def retrieve_operator_candidates(
         str(item.get("class_name", "")).strip(): item for item in info_rows
     }
 
-    retrieved_names, retrieval_source = _safe_async_retrieve(intent, top_k=top_k, mode=mode)
+    retrieve_meta = _safe_async_retrieve(intent, top_k=top_k, mode=mode)
+    retrieved_names = list(retrieve_meta.get("names", []))
+    retrieval_source = str(retrieve_meta.get("source", "")).strip()
+    retrieval_trace = list(retrieve_meta.get("trace", []))
+    llm_item_map = {}
+    if retrieval_source == "llm":
+        for item in retrieve_meta.get("items", []):
+            if not isinstance(item, dict):
+                continue
+            tool_name = str(item.get("tool_name", "")).strip()
+            if tool_name:
+                llm_item_map[tool_name] = item
     if not retrieved_names:
         retrieved_names = _lexical_fallback(intent, info_rows=info_rows, top_k=top_k)
+        retrieval_source = "lexical"
+        retrieval_trace.append(_trace_entry("lexical", "selected", reason="fallback_after_remote_empty_or_failed"))
 
     available_ops = get_available_operator_names()
     normalized_names: List[str] = []
@@ -220,7 +291,13 @@ def retrieve_operator_candidates(
         normalized_names = _lexical_fallback(intent, info_rows=info_rows, top_k=top_k)
 
     candidates = [
-        _build_candidate_row(idx, name, intent=intent, info_map=info_map)
+        _build_candidate_row(
+            idx,
+            name,
+            intent=intent,
+            info_map=info_map,
+            llm_item=llm_item_map.get(name),
+        )
         for idx, name in enumerate(normalized_names[:top_k], start=1)
     ]
 
@@ -243,6 +320,7 @@ def retrieve_operator_candidates(
         "top_k": top_k,
         "mode": mode,
         "retrieval_source": retrieval_source,
+        "retrieval_trace": retrieval_trace,
         "candidate_count": len(candidates),
         "gap_detected": len(candidates) == 0,
         "candidates": candidates,
