@@ -79,7 +79,7 @@ dj-agents --ui plain --dataset ./data/demo-dataset.jsonl --export ./data/demo-da
 
 Notes:
 - `dj-agents` requires LLM access (API key/model config).
-- In plain mode, press `ESC` to interrupt the current turn.
+- In session mode, press `Ctrl+C` to interrupt the current turn and `Ctrl+D` to exit.
 
 ## 7. DJX Studio (future)
 

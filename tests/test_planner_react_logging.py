@@ -7,7 +7,7 @@ from data_juicer_agents.capabilities.plan.service import (
     PlanningMode,
     default_workflows_dir,
 )
-from data_juicer_agents.agentscope_logging import IgnoreThinkingBlockWarningFilter
+from data_juicer_agents.utils.agentscope_logging import IgnoreThinkingBlockWarningFilter
 
 
 def test_ignore_thinking_warning_filter_blocks_only_target_message():

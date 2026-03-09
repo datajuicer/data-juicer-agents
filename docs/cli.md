@@ -148,8 +148,8 @@ Behavior:
 - LLM required (missing key/model config causes startup failure)
 
 Interrupt:
-- plain mode: press `ESC` to interrupt current turn
-- tui mode: press `ESC` to interrupt current turn
+- plain mode: press `Ctrl+C` to interrupt current turn, `Ctrl+D` to exit
+- tui mode: press `Ctrl+C` to interrupt current turn, `Ctrl+D` to exit
 
 ## Future Scope
 

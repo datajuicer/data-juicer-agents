@@ -15,6 +15,23 @@ def test_session_agent_exit_command_short_circuit():
     assert "Session ended" in reply.text
 
 
+def test_session_agent_sys_prompt_limits_default_working_directory():
+    agent = DJSessionAgent(use_llm_router=False)
+    prompt = agent._session_sys_prompt()
+    assert "current working directory: ./.djx" in prompt
+    assert "only read, write, create, or execute files/commands inside" in prompt
+    assert "always send a final user-facing reply for that turn" in prompt
+    assert "If any new files were saved or written" in prompt
+    assert "If you want ..., tell me ..., and I will ..." in prompt
+
+
+def test_session_agent_sys_prompt_uses_custom_working_directory():
+    agent = DJSessionAgent(use_llm_router=False, working_dir="./workspace")
+    prompt = agent._session_sys_prompt()
+    assert "current working directory: ./workspace" in prompt
+    assert "new working directory for this session" in prompt
+
+
 def test_session_agent_cancel_without_pending():
     agent = DJSessionAgent(use_llm_router=False)
     reply = agent.handle_message("cancel")

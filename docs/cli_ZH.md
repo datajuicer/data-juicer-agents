@@ -148,8 +148,8 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
 - 必须有 LLM 访问配置（缺少 key/model 会启动失败）
 
 中断方式：
-- plain 模式：按 `ESC` 中断当前轮
-- tui 模式：按 `ESC` 中断当前轮
+- plain 模式：按 `Ctrl+C` 中断当前轮，按 `Ctrl+D` 退出
+- tui 模式：按 `Ctrl+C` 中断当前轮，按 `Ctrl+D` 退出
 
 ## 未来范围
 

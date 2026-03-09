@@ -53,8 +53,11 @@ class TuiState:
     timeline: List[TimelineItem] = field(default_factory=list)
     status_line: str = "Ready."
     model_label: str = "session-agent"
+    planner_model_label: str = "planner"
+    llm_base_url: str = ""
     permissions_label: str = "Workspace"
     cwd: str = "~"
+    session_workdir: str = "./.djx"
 
     def add_timeline(
         self,

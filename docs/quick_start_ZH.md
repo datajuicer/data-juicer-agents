@@ -79,7 +79,7 @@ dj-agents --ui plain --dataset ./data/demo-dataset.jsonl --export ./data/demo-da
 
 说明：
 - `dj-agents` 必须可访问 LLM（需 API Key/模型配置）。
-- 在 plain 模式下可按 `ESC` 中断当前轮。
+- 在会话模式下可按 `Ctrl+C` 中断当前轮，按 `Ctrl+D` 退出。
 
 ## 7. DJX Studio（未来项）
 

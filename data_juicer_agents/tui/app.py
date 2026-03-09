@@ -4,12 +4,11 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
 import os
-import select
 import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 from typing import Any
 from typing import Dict
@@ -17,7 +16,8 @@ from typing import Dict
 from rich.console import Console
 from rich.text import Text
 
-from data_juicer_agents.agentscope_logging import install_thinking_warning_filter
+from data_juicer_agents.utils.agentscope_logging import install_thinking_warning_filter
+from data_juicer_agents.utils.terminal_input import TerminalLineReader
 from data_juicer_agents.tui.controller import SessionController
 from data_juicer_agents.tui.event_adapter import apply_event
 from data_juicer_agents.tui.models import TimelineItem
@@ -25,44 +25,11 @@ from data_juicer_agents.tui.models import TuiState
 from data_juicer_agents.tui.noise_filter import install_tui_warning_filters
 from data_juicer_agents.tui.noise_filter import sanitize_reasoning_text
 
-try:
-    import termios
-    import tty
-except Exception:  # pragma: no cover - non-posix runtime
-    termios = None
-    tty = None
 
-
-_INPUT_STYLE = "black on rgb(110,110,110)"
-_USER_STYLE = "black on rgb(48,83,132)"
-_AGENT_STYLE = "black on rgb(81,107,70)"
-
-
-@contextlib.contextmanager
-def _cbreak_stdin():
-    if os.name != "posix" or termios is None or tty is None or not sys.stdin.isatty():
-        yield False
-        return
-    fd = sys.stdin.fileno()
-    attrs = termios.tcgetattr(fd)
-    try:
-        tty.setcbreak(fd)
-        yield True
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, attrs)
-
-
-def _poll_esc(timeout_sec: float = 0.05) -> bool:
-    if os.name != "posix" or termios is None or tty is None or not sys.stdin.isatty():
-        return False
-    ready, _, _ = select.select([sys.stdin], [], [], timeout_sec)
-    if not ready:
-        return False
-    try:
-        key = sys.stdin.read(1)
-    except Exception:
-        return False
-    return key == "\x1b"
+_INPUT_STYLE = "bright_white"
+_USER_STYLE = "bright_cyan"
+_AGENT_STYLE = "bright_cyan"
+_INPUT_PROMPT = "\n> "
 
 
 @dataclass
@@ -110,16 +77,46 @@ class _RunningToolState:
 
 def _print_header(console: Console, state: TuiState) -> None:
     console.print(Text("dj-agents", style="bold"), highlight=False)
-    info = Text()
-    info.append("model: ", style="grey58")
-    info.append(state.model_label)
-    info.append("  cwd: ", style="grey58")
-    info.append(state.cwd, style="cyan")
-    info.append("  permissions: ", style="grey58")
-    info.append(state.permissions_label, style="yellow")
-    console.print(info, highlight=False)
-    console.print(Text("Tip: ESC interrupt, /clear clear transcript, Ctrl+C exit", style="grey58"))
+    line1 = Text()
+    line1.append("session model: ", style="grey58")
+    line1.append(state.model_label, style="bold")
+    line1.append("  planner model: ", style="grey58")
+    line1.append(state.planner_model_label, style="bold")
+    console.print(line1, highlight=False)
+    line2 = Text()
+    line2.append("cwd: ", style="grey58")
+    line2.append(state.cwd, style="cyan")
+    line2.append("  session workdir: ", style="grey58")
+    line2.append(state.session_workdir, style="cyan")
+    console.print(line2, highlight=False)
+    line3 = Text()
+    line3.append("base url: ", style="grey58")
+    line3.append(state.llm_base_url or "-", style="magenta")
+    line3.append("  permissions: ", style="grey58")
+    line3.append(state.permissions_label, style="yellow")
+    console.print(line3, highlight=False)
+    console.print(
+        Text(
+            "Tip: Ctrl+C interrupt current turn, Ctrl+D exit, /clear clear transcript",
+            style="grey58",
+        )
+    )
     console.print()
+
+
+def _new_line_reader() -> TerminalLineReader:
+    return TerminalLineReader()
+
+
+def _usage_hint_text() -> str:
+    return (
+        "Describe your task in natural language.\n"
+        "Examples / 示例:\n"
+        "1. Remove texts longer than 1500 characters from ./data/demo-dataset.jsonl, "
+        "generate a plan, and execute it. / 我要去除 ./data/demo-dataset.jsonl 中长度大于 1500 的文本，帮我生成方案并执行。\n"
+        "2. Retrieve operators for multimodal deduplication and explain when to use them. / "
+        "帮我检索多模态去重相关算子，并说明适用场景。\n"
+    )
 
 
 def _print_block(console: Console, label: str, text: str, style: str, *, markdown: bool = False) -> None:
@@ -129,11 +126,11 @@ def _print_block(console: Console, label: str, text: str, style: str, *, markdow
     if markdown:
         lines = _markdown_to_plain_lines(content)
         for line in lines:
-            console.print(Text(f" {line}", style=style), highlight=False)
+            console.print(Text(f" {line}", style=f"bold {style}"), highlight=False)
     else:
         lines = content.splitlines() or [""]
         for line in lines:
-            console.print(Text(f" {line}", style=style), highlight=False)
+            console.print(Text(f" {line}", style=f"bold {style}"), highlight=False)
     console.print()
 
 
@@ -264,10 +261,22 @@ def run_tui_session(args: argparse.Namespace) -> int:
     install_thinking_warning_filter()
     install_tui_warning_filters()
 
+    session_model = os.environ.get("DJA_SESSION_MODEL", "qwen3-max-2026-01-23")
+    planner_model = os.environ.get("DJA_PLANNER_MODEL", "qwen3-max-2026-01-23")
+    base_url = os.environ.get(
+        "DJA_OPENAI_BASE_URL",
+        "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    )
+
     console = Console()
+    line_reader = _new_line_reader()
     state = TuiState(
         status_line="ready",
+        model_label=session_model,
+        planner_model_label=planner_model,
+        llm_base_url=base_url,
         cwd=os.getcwd(),
+        session_workdir=str((Path.cwd() / ".djx").resolve()),
     )
     controller = SessionController(
         dataset_path=args.dataset,
@@ -285,16 +294,24 @@ def run_tui_session(args: argparse.Namespace) -> int:
     state.add_timeline(
         kind="system",
         title="tip",
-        text="Describe your task in natural language.",
+        text=_usage_hint_text(),
     )
     cursor = _flush_timeline(console, state, cursor=0)
 
     while True:
         try:
-            message = console.input("> ").strip()
-        except (EOFError, KeyboardInterrupt):
+            message = line_reader.read_line(_INPUT_PROMPT).strip()
+        except EOFError:
             console.print("Session ended.")
             return 0
+        except KeyboardInterrupt:
+            state.add_timeline(
+                kind="system",
+                title="interrupt",
+                text="No running task to interrupt. Press Ctrl+D to exit.",
+            )
+            cursor = _flush_timeline(console, state, cursor)
+            continue
 
         if not message:
             continue
@@ -305,9 +322,6 @@ def run_tui_session(args: argparse.Namespace) -> int:
             console.clear()
             _print_header(console, state)
             continue
-
-        state.add_message("you", message, markdown=False)
-        cursor = _flush_timeline(console, state, cursor)
 
         try:
             controller.submit_turn(message)
@@ -323,8 +337,8 @@ def run_tui_session(args: argparse.Namespace) -> int:
         running_tools: Dict[str, _RunningToolState] = {}
         saw_any_turn_event = False
 
-        with _cbreak_stdin() as cbreak_enabled:
-            while controller.is_turn_running():
+        while controller.is_turn_running():
+            try:
                 events = controller.drain_events()
                 if events:
                     spinner.clear()
@@ -345,17 +359,6 @@ def run_tui_session(args: argparse.Namespace) -> int:
                         apply_event(state, event)
                     cursor = _flush_timeline(console, state, cursor)
 
-                if cbreak_enabled and not interrupt_sent and _poll_esc(timeout_sec=0.02):
-                    if controller.request_interrupt():
-                        interrupt_sent = True
-                        spinner.clear()
-                        state.add_timeline(
-                            kind="system",
-                            title="interrupt",
-                            text="Interrupt requested.",
-                        )
-                        cursor = _flush_timeline(console, state, cursor)
-
                 now = time.monotonic()
                 status_text = _running_tool_status_text(running_tools, now)
                 if status_text:
@@ -367,6 +370,24 @@ def run_tui_session(args: argparse.Namespace) -> int:
                 else:
                     spinner.clear()
                 time.sleep(0.03)
+            except KeyboardInterrupt:
+                if not interrupt_sent and controller.request_interrupt():
+                    interrupt_sent = True
+                    spinner.clear()
+                    state.add_timeline(
+                        kind="system",
+                        title="interrupt",
+                        text="Interrupt requested (Ctrl+C).",
+                    )
+                    cursor = _flush_timeline(console, state, cursor)
+                else:
+                    spinner.clear()
+                    state.add_timeline(
+                        kind="system",
+                        title="interrupt",
+                        text="Interrupt ignored.",
+                    )
+                    cursor = _flush_timeline(console, state, cursor)
 
         spinner.clear()
 

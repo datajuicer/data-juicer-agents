@@ -4,22 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
-import os
-import select
 import sys
 import threading
-import time
-
-try:
-    import termios
-    import tty
-except Exception:  # pragma: no cover - non-posix runtime
-    termios = None
-    tty = None
 
 from data_juicer_agents.capabilities.session.orchestrator import DJSessionAgent
-from data_juicer_agents.agentscope_logging import install_thinking_warning_filter
+from data_juicer_agents.utils.agentscope_logging import install_thinking_warning_filter
+from data_juicer_agents.utils.terminal_input import TerminalLineReader
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -51,38 +41,15 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-@contextlib.contextmanager
-def _cbreak_stdin():
-    if os.name != "posix" or termios is None or tty is None or not sys.stdin.isatty():
-        yield False
-        return
-    fd = sys.stdin.fileno()
-    attrs = termios.tcgetattr(fd)
-    try:
-        tty.setcbreak(fd)
-        yield True
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, attrs)
+def _wait_for_turn(done: threading.Event, timeout_sec: float = 0.05) -> bool:
+    return bool(done.wait(timeout_sec))
 
 
-def _poll_esc(timeout_sec: float = 0.1) -> bool:
-    if os.name != "posix" or termios is None or tty is None or not sys.stdin.isatty():
-        time.sleep(timeout_sec)
-        return False
-    ready, _, _ = select.select([sys.stdin], [], [], timeout_sec)
-    if not ready:
-        return False
-    try:
-        key = sys.stdin.read(1)
-    except Exception:
-        return False
-    return key == "\x1b"
+def _new_line_reader() -> TerminalLineReader:
+    return TerminalLineReader()
 
 
 def _run_turn_with_interrupt(agent: DJSessionAgent, message: str):
-    if os.name != "posix" or termios is None or tty is None or not sys.stdin.isatty():
-        return agent.handle_message(message)
-
     result: dict = {}
     error: dict = {}
     done = threading.Event()
@@ -98,13 +65,16 @@ def _run_turn_with_interrupt(agent: DJSessionAgent, message: str):
     thread = threading.Thread(target=_worker, daemon=True)
     thread.start()
     interrupt_sent = False
-
-    with _cbreak_stdin():
-        while not done.wait(0.05):
-            if _poll_esc(timeout_sec=0.05):
-                if not interrupt_sent and agent.request_interrupt():
-                    interrupt_sent = True
-                    print("\n[dj-agents] Interrupt requested (ESC).")
+    while True:
+        try:
+            if _wait_for_turn(done, 0.05):
+                break
+        except KeyboardInterrupt:
+            if not interrupt_sent and agent.request_interrupt():
+                interrupt_sent = True
+                print("\n[dj-agents] Interrupt requested (Ctrl+C).")
+            else:
+                print("\n[dj-agents] Interrupt ignored.")
 
     thread.join()
     if "error" in error:
@@ -123,15 +93,19 @@ def _run_plain_session(args: argparse.Namespace) -> int:
     except Exception as exc:
         print(f"Failed to start dj-agents session: {exc}")
         return 2
+    line_reader = _new_line_reader()
     print("DJ session started. Describe your task in natural language. Type `help` or `exit`.")
-    print("Press ESC to interrupt the current turn without stopping the session.")
+    print("Press Ctrl+C to interrupt the current turn. Press Ctrl+D to exit the session.")
 
     while True:
         try:
-            message = input("you> ")
-        except (EOFError, KeyboardInterrupt):
+            message = line_reader.read_line("you> ")
+        except EOFError:
             print("\nSession ended.")
             return 0
+        except KeyboardInterrupt:
+            print("\n[dj-agents] No running task to interrupt. Press Ctrl+D to exit.")
+            continue
 
         reply = _run_turn_with_interrupt(agent, message)
         print(f"agent> {reply.text}")
