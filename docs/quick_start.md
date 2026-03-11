@@ -1,4 +1,4 @@
-# DJX Quick Start
+# Quick Start
 
 ## 1. Prerequisites
 

@@ -1,4 +1,4 @@
-# DJX Tools and Service Primitives
+# Tools and Service Primitives
 
 This document describes the current atomic primitives behind DJX and how CLI/session compose them.
 
