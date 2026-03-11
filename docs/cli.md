@@ -4,30 +4,29 @@
 
 | Command | Purpose | Source |
 |---|---|---|
-| `djx plan` | Generate/revise a plan YAML (LLM-driven) | `data_juicer_agents/commands/plan_cmd.py` |
-| `djx apply` | Validate and execute a plan via `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
-| `djx trace` | Query run detail/list/stats | `data_juicer_agents/commands/trace_cmd.py` |
-| `djx templates` | List/show built-in workflow templates | `data_juicer_agents/commands/templates_cmd.py` |
+| `djx plan` | Generate a plan YAML from intent, retrieval evidence, and an LLM draft spec | `data_juicer_agents/commands/plan_cmd.py` |
+| `djx apply` | Validate a saved plan and execute or dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | Retrieve candidate operators by intent | `data_juicer_agents/commands/retrieve_cmd.py` |
-| `djx dev` | Generate non-invasive custom operator scaffold | `data_juicer_agents/commands/dev_cmd.py` |
-| `djx evaluate` | Run batch evaluation cases | `data_juicer_agents/commands/evaluate_cmd.py` |
+| `djx dev` | Generate a non-invasive custom operator scaffold | `data_juicer_agents/commands/dev_cmd.py` |
 
-Additional entries:
+Additional entry:
 - `dj-agents`: `data_juicer_agents/session_cli.py`
+
+Current CLI does not include `trace`, `templates`, or `evaluate`.
 
 ## Global Output Levels (`djx`)
 
-All `djx` subcommands support output levels:
+All `djx` subcommands support:
 - `--quiet` (default): summary output
 - `--verbose`: expanded execution output
-- `--debug`: raw structured call details
+- `--debug`: raw structured payloads useful for debugging
 
 Examples:
 
 ```bash
-djx apply --plan ./plan.yaml --yes --quiet
-djx apply --plan ./plan.yaml --yes --verbose
-djx --debug plan "deduplicate" --dataset ./data.jsonl --export ./out.jsonl
+djx plan "deduplicate text" --dataset ./data.jsonl --export ./out.jsonl --quiet
+djx plan "deduplicate text" --dataset ./data.jsonl --export ./out.jsonl --verbose
+djx --debug retrieve "deduplicate text" --dataset ./data.jsonl
 ```
 
 ## `djx plan`
@@ -38,26 +37,22 @@ djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
 
 Key options:
 - `--output`: output plan path (default: `plans/<plan_id>.yaml`)
-- `--base-plan`: revise from existing plan
-- `--from-run-id`: revision context from run trace (requires `--base-plan`)
-- `--custom-operator-paths`: custom operator dirs/files for validation/execution
-- `--from-template`: force template (`rag_cleaning` / `multimodal_dedup`)
-- `--template-retrieve`: intent->template retrieval before full-LLM fallback
-- `--llm-review` / `--no-llm-review`: toggle semantic LLM review after generation
+- `--custom-operator-paths`: custom operator dirs/files used for validation and later execution
 
-Conflict rules:
-- `--base-plan` conflicts with `--from-template` and `--template-retrieve`.
-- if both `--from-template` and `--template-retrieve` are set, template-retrieve is ignored.
+Behavior:
+1. internally retrieves operator candidates from the intent and optional dataset profile
+2. calls the model once to generate a draft spec
+3. reconciles the draft with the deterministic planner core
+4. validates schema, filesystem paths, custom operator paths, and installed operator names
+5. writes the final plan YAML
 
-Planning stage order:
-1. base-plan revision (if `--base-plan`)
-2. explicit template (if `--from-template`)
-3. template retrieve (if `--template-retrieve`)
-4. full-LLM generation fallback
+CLI output:
+- summary: `Plan generated`, `Modality`, `Operators`
+- `--verbose`: planning meta (`planner_model`, `retrieval_source`, `retrieval_candidate_count`)
+- `--debug`: retrieval payload, draft spec payload, and planning meta payload
 
-Notes:
-- planning is always LLM-involved (template+LLM patch or full-LLM).
-- final failure returns structured error metadata (`error_type/error_code/stage/next_actions`).
+Failure behavior:
+- exits non-zero and prints a user-facing error message
 
 ## `djx apply`
 
@@ -66,30 +61,14 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ```
 
 Behavior:
-- validates plan before execution
-- executes `dj-process`
-- stores successful runs in `.djx/runs.jsonl`
-- prints `Run ID` and trace command hint
+- validates the plan before execution
+- writes a recipe to `.djx/recipes/<plan_id>.yaml`
+- executes `dj-process` unless `--dry-run` is set
+- prints `Execution ID`, `Status`, and generated recipe path
 
-## `djx trace`
-
-```bash
-djx trace <run_id>
-djx trace --plan-id <plan_id> [--limit 20]
-djx trace --stats [--plan-id <plan_id>]
-```
-
-Use cases:
-- inspect one run
-- list recent runs by `plan_id`
-- aggregate success/error statistics
-
-## `djx templates`
-
-```bash
-djx templates
-djx templates rag_cleaning
-```
+Notes:
+- current CLI does not persist or expose a separate trace query command
+- `--dry-run` still writes the recipe file
 
 ## `djx retrieve`
 
@@ -99,7 +78,7 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 
 Returns:
 - ranked operator candidates
-- optional dataset profile (when dataset path is provided)
+- optional dataset profile when dataset path is provided
 - retrieval source and notes
 
 ## `djx dev`
@@ -119,22 +98,7 @@ Outputs:
 - summary markdown
 - optional smoke-check result
 
-Default behavior is non-invasive (generate code + guidance, no auto install).
-
-## `djx evaluate`
-
-```bash
-djx evaluate --cases <cases.jsonl> [options]
-```
-
-Important options:
-- `--execute none|dry-run|run`
-- `--planning-mode template-llm|full-llm`
-- `--retries`, `--jobs`, `--timeout`
-- `--output`, `--errors-output`, `--history-file`, `--no-history`
-
-Compatibility:
-- `--llm-full-plan` is a deprecated alias of `--planning-mode full-llm`.
+Default behavior is non-invasive: generate code and guidance, but do not auto-install the operator.
 
 ## `dj-agents`
 
@@ -143,14 +107,22 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
 ```
 
 Behavior:
-- natural-language conversation over atomic tools
-- internal ReAct tool orchestration
-- LLM required (missing key/model config causes startup failure)
+- natural-language conversation over the same planning, retrieval, apply, and dev primitives
+- ReAct agent with a registered session toolkit
+- LLM required at startup
+
+Typical internal planning chain:
+- `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`
 
 Interrupt:
-- plain mode: press `Ctrl+C` to interrupt current turn, `Ctrl+D` to exit
-- tui mode: press `Ctrl+C` to interrupt current turn, `Ctrl+D` to exit
+- plain mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
+- tui mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
 
-## Future Scope
+## Environment Variables
 
-- `DJX Studio` (API + Web UI) is deferred to a future release.
+- `DASHSCOPE_API_KEY` or `MODELSCOPE_API_TOKEN`: API credential
+- `DJA_OPENAI_BASE_URL`: OpenAI-compatible endpoint base URL
+- `DJA_SESSION_MODEL`: model used by `dj-agents`
+- `DJA_PLANNER_MODEL`: model used by `djx plan`
+- `DJA_MODEL_FALLBACKS`: comma-separated fallback models for `llm_gateway.py`
+- `DJA_LLM_THINKING`: toggles `enable_thinking` in model requests

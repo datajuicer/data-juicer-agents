@@ -4,7 +4,7 @@
 
 - Python `>=3.10,<3.13`
 - Data-Juicer runtime (`py-data-juicer`)
-- DashScope/OpenAI-compatible API key
+- A DashScope or OpenAI-compatible API key
 
 ## 2. Install
 
@@ -19,51 +19,53 @@ uv pip install -e .
 
 ```bash
 export DASHSCOPE_API_KEY="<your_key>"
+# or:
+# export MODELSCOPE_API_TOKEN="<your_key>"
+
 # Optional overrides
 export DJA_OPENAI_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1"
 export DJA_SESSION_MODEL="qwen3-max-2026-01-23"
 export DJA_PLANNER_MODEL="qwen3-max-2026-01-23"
-export DJA_VALIDATOR_MODEL="qwen3-max-2026-01-23"
+export DJA_MODEL_FALLBACKS="qwen-max,qwen-plus"
+export DJA_LLM_THINKING="true"
 ```
 
-## 4. Fast CLI path: retrieve -> plan -> apply -> trace
+## 4. Minimal CLI path
+
+Optional inspection step:
 
 ```bash
-# 1) Retrieve candidate operators
 djx retrieve "remove duplicate text records" \
   --dataset ./data/demo-dataset.jsonl \
   --top-k 8
+```
 
-# 2) Generate plan
+Generate a plan:
+
+```bash
 djx plan "deduplicate and clean text for RAG" \
   --dataset ./data/demo-dataset.jsonl \
   --export ./data/demo-dataset-processed.jsonl \
   --output ./data/demo-plan.yaml
-
-# Optional: force template route
-djx plan "rag cleaning" \
-  --dataset ./data/demo-dataset.jsonl \
-  --export ./data/demo-dataset-processed.jsonl \
-  --from-template rag_cleaning \
-  --output ./data/demo-rag-plan.yaml
-
-# 3) Execute
-djx apply --plan ./data/demo-plan.yaml --yes
-
-# 4) Trace
-djx trace <run_id>
-djx trace --stats
 ```
 
-## 5. Revision mode example (base plan)
+Apply the saved plan:
 
 ```bash
-djx plan "tighten length threshold to <= 1000 chars" \
-  --base-plan ./data/demo-plan.yaml \
-  --output ./data/demo-plan-v2.yaml
+djx apply --plan ./data/demo-plan.yaml --yes
 ```
 
-## 6. Session mode (`dj-agents`)
+Dry-run without executing `dj-process`:
+
+```bash
+djx apply --plan ./data/demo-plan.yaml --yes --dry-run
+```
+
+Notes:
+- `djx plan` already performs internal operator retrieval before building the final plan.
+- `djx retrieve` is still useful for inspection and debugging.
+
+## 5. Session mode (`dj-agents`)
 
 Default TUI:
 
@@ -78,23 +80,25 @@ dj-agents --ui plain --dataset ./data/demo-dataset.jsonl --export ./data/demo-da
 ```
 
 Notes:
-- `dj-agents` requires LLM access (API key/model config).
+- `dj-agents` requires LLM access.
 - In session mode, press `Ctrl+C` to interrupt the current turn and `Ctrl+D` to exit.
+- The session agent usually plans with `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`.
 
-## 7. DJX Studio (future)
-
-- Studio API + Web frontend is deferred to a future release.
-- Current quick start only covers `djx` and `dj-agents`.
-
-## 8. Basic sanity checks
+## 6. Basic sanity checks
 
 ```bash
-djx templates
-djx trace --stats
-djx --debug plan "filter long text" --dataset ./data/demo-dataset.jsonl --export ./data/out.jsonl
+djx --help
+djx retrieve "filter long text" --dataset ./data/demo-dataset.jsonl --json
+djx plan "filter long text" --dataset ./data/demo-dataset.jsonl --export ./data/out.jsonl --verbose
+djx apply --plan ./data/demo-plan.yaml --yes --dry-run
+dj-agents --help
 ```
 
-If planning/session fails with API/model errors, verify:
-- `DASHSCOPE_API_KEY`
-- endpoint/model settings
-- local profile in `.djx/config.json`
+## 7. Troubleshooting
+
+If planning or session startup fails with API/model errors, verify:
+- `DASHSCOPE_API_KEY` or `MODELSCOPE_API_TOKEN`
+- `DJA_OPENAI_BASE_URL`
+- `DJA_SESSION_MODEL` and `DJA_PLANNER_MODEL`
+- `DJA_MODEL_FALLBACKS` when you expect model fallback
+- `DJA_LLM_THINKING` if your provider rejects the thinking flag

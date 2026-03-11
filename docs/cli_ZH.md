@@ -4,30 +4,29 @@
 
 | 命令 | 作用 | 源码 |
 |---|---|---|
-| `djx plan` | 生成/修订计划 YAML（LLM 驱动） | `data_juicer_agents/commands/plan_cmd.py` |
-| `djx apply` | 校验并通过 `dj-process` 执行计划 | `data_juicer_agents/commands/apply_cmd.py` |
-| `djx trace` | 查询 run 详情/列表/统计 | `data_juicer_agents/commands/trace_cmd.py` |
-| `djx templates` | 列出/查看内置模板 | `data_juicer_agents/commands/templates_cmd.py` |
+| `djx plan` | 基于 intent、检索证据和 LLM draft spec 生成 plan YAML | `data_juicer_agents/commands/plan_cmd.py` |
+| `djx apply` | 校验已保存的 plan，并执行或 dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | 基于 intent 检索候选算子 | `data_juicer_agents/commands/retrieve_cmd.py` |
 | `djx dev` | 生成非侵入式自定义算子脚手架 | `data_juicer_agents/commands/dev_cmd.py` |
-| `djx evaluate` | 批量评测案例 | `data_juicer_agents/commands/evaluate_cmd.py` |
 
 其他入口：
 - `dj-agents`：`data_juicer_agents/session_cli.py`
+
+当前 CLI 不包含 `trace`、`templates`、`evaluate`。
 
 ## 全局输出级别（`djx`）
 
 所有 `djx` 子命令支持：
 - `--quiet`（默认）：摘要输出
 - `--verbose`：展开执行输出
-- `--debug`：输出结构化原始调用细节
+- `--debug`：输出更完整的结构化调试 payload
 
 示例：
 
 ```bash
-djx apply --plan ./plan.yaml --yes --quiet
-djx apply --plan ./plan.yaml --yes --verbose
-djx --debug plan "deduplicate" --dataset ./data.jsonl --export ./out.jsonl
+djx plan "文本去重" --dataset ./data.jsonl --export ./out.jsonl --quiet
+djx plan "文本去重" --dataset ./data.jsonl --export ./out.jsonl --verbose
+djx --debug retrieve "文本去重" --dataset ./data.jsonl
 ```
 
 ## `djx plan`
@@ -38,26 +37,22 @@ djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
 
 关键参数：
 - `--output`：计划输出路径（默认 `plans/<plan_id>.yaml`）
-- `--base-plan`：基于已有计划修订
-- `--from-run-id`：以历史 run 作为修订上下文（需配合 `--base-plan`）
-- `--custom-operator-paths`：校验/执行时可加载的自定义算子路径
-- `--from-template`：强制模板（`rag_cleaning` / `multimodal_dedup`）
-- `--template-retrieve`：先 intent->template 匹配，再兜底 full-LLM
-- `--llm-review` / `--no-llm-review`：控制生成后的语义 review
+- `--custom-operator-paths`：校验和后续执行时可用的自定义算子目录或文件
 
-冲突规则：
-- `--base-plan` 与 `--from-template`、`--template-retrieve` 互斥。
-- 若同时给出 `--from-template` 与 `--template-retrieve`，后者会被忽略。
+执行行为：
+1. 内部先根据 intent 和可选数据集画像做算子检索
+2. 调用模型生成一次 draft spec
+3. 通过确定性 planner core 将 draft 收敛为最终 plan
+4. 校验 schema、文件路径、自定义算子路径和本地已安装算子
+5. 将最终 plan 以 YAML 落盘
 
-规划阶段顺序：
-1. base-plan 修订（若提供 `--base-plan`）
-2. 显式模板（若提供 `--from-template`）
-3. 模板检索（若启用 `--template-retrieve`）
-4. full-LLM 生成兜底
+CLI 输出：
+- 摘要输出：`Plan generated`、`Modality`、`Operators`
+- `--verbose`：输出 planning meta（`planner_model`、`retrieval_source`、`retrieval_candidate_count`）
+- `--debug`：输出 retrieval payload、draft spec payload 和 planning meta payload
 
-说明：
-- planning 始终会使用 LLM（template+LLM 修订或 full-LLM）。
-- 最终失败返回结构化错误信息（`error_type/error_code/stage/next_actions`）。
+失败行为：
+- 非零退出，并打印面向用户的错误信息
 
 ## `djx apply`
 
@@ -66,30 +61,14 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ```
 
 行为：
-- 执行前校验计划
-- 调用 `dj-process`
-- 成功 run 落盘到 `.djx/runs.jsonl`
-- 输出 `Run ID` 和 trace 指令提示
+- 执行前校验 plan
+- 在 `.djx/recipes/<plan_id>.yaml` 下生成 recipe
+- 若未指定 `--dry-run`，则执行 `dj-process`
+- 输出 `Execution ID`、`Status` 和生成的 recipe 路径
 
-## `djx trace`
-
-```bash
-djx trace <run_id>
-djx trace --plan-id <plan_id> [--limit 20]
-djx trace --stats [--plan-id <plan_id>]
-```
-
-用途：
-- 查看单次 run
-- 查看同一 `plan_id` 的历史 run
-- 查看成功率与错误聚合统计
-
-## `djx templates`
-
-```bash
-djx templates
-djx templates rag_cleaning
-```
+说明：
+- 当前 CLI 不提供独立的 trace 查询命令
+- `--dry-run` 也会生成 recipe 文件
 
 ## `djx retrieve`
 
@@ -99,7 +78,7 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 
 返回：
 - 候选算子排序
-- 可选数据集画像（传入 dataset 时）
+- 若传入 dataset，则附带数据集画像
 - 检索来源与备注
 
 ## `djx dev`
@@ -114,27 +93,12 @@ djx dev "<intent>" \
 ```
 
 输出：
-- 算子代码脚手架
+- 算子脚手架
 - 测试脚手架
-- 总结文档
+- 总结 Markdown
 - 可选 smoke-check 结果
 
-默认是非侵入式流程（生成代码与说明，不自动安装）。
-
-## `djx evaluate`
-
-```bash
-djx evaluate --cases <cases.jsonl> [options]
-```
-
-关键参数：
-- `--execute none|dry-run|run`
-- `--planning-mode template-llm|full-llm`
-- `--retries`、`--jobs`、`--timeout`
-- `--output`、`--errors-output`、`--history-file`、`--no-history`
-
-兼容参数：
-- `--llm-full-plan` 是 `--planning-mode full-llm` 的废弃别名。
+默认是非侵入式流程：生成代码和说明，但不自动安装算子。
 
 ## `dj-agents`
 
@@ -143,14 +107,22 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
 ```
 
 行为：
-- 自然语言会话
-- 内部 ReAct 原子工具编排
-- 必须有 LLM 访问配置（缺少 key/model 会启动失败）
+- 基于同一套 planning、retrieval、apply、dev 原语做自然语言会话
+- 使用已注册 session toolkit 的 ReAct agent
+- 启动时必须能访问 LLM
+
+常见内部 planning 链路：
+- `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`
 
 中断方式：
-- plain 模式：按 `Ctrl+C` 中断当前轮，按 `Ctrl+D` 退出
-- tui 模式：按 `Ctrl+C` 中断当前轮，按 `Ctrl+D` 退出
+- plain 模式：`Ctrl+C` 中断当前轮，`Ctrl+D` 退出
+- tui 模式：`Ctrl+C` 中断当前轮，`Ctrl+D` 退出
 
-## 未来范围
+## 环境变量
 
-- `DJX Studio`（API + Web UI）已调整为后续版本发布。
+- `DASHSCOPE_API_KEY` 或 `MODELSCOPE_API_TOKEN`：API 凭证
+- `DJA_OPENAI_BASE_URL`：OpenAI 兼容接口地址
+- `DJA_SESSION_MODEL`：`dj-agents` 使用的模型
+- `DJA_PLANNER_MODEL`：`djx plan` 使用的模型
+- `DJA_MODEL_FALLBACKS`：`llm_gateway.py` 使用的逗号分隔模型兜底链
+- `DJA_LLM_THINKING`：控制模型请求中的 `enable_thinking`

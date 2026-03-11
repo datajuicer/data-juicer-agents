@@ -16,7 +16,6 @@ A Suite of Agents for **Agentic Data Processing**. Built on [Data-Juicer (DJ)](h
 - 🚀 [2026-03-04] **Major refactor and upgrade of `data_juicer_agents` completed.**
   - The project architecture, CLI/session capabilities, and docs structure were comprehensively redesigned for better maintainability and extensibility.
   - Start here: [Overview](./docs/overview.md) | [Quick Start](./docs/quick_start.md)
-  - Note: DJX Studio (API + Web UI) is moved to a future milestone.
 
 - 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README.md) ***Juicer*** has been deployed on the official [Doc Site](https://datajuicer.github.io/data-juicer/en/main/index.html) | [DingTalk](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord](https://discord.gg/ngQbB9hEVK) of [Data-Juicer](https://github.com/datajuicer/data-juicer). Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem! 
   - Check 📃 [Deploy-ready codes](./qa-copilot/) | 🎬[ More demos](./qa-copilot/DEMO.md) | 🎯 [Dev Roadmap](#roadmap).
@@ -96,9 +95,6 @@ Below is the current development checklist.
 
 - **Q&A Copilot — *Juicer***
   - *[2026-01-15]*: ***Juicer*** is currently available on the official [Doc Site](https://datajuicer.github.io/data-juicer/en/main/index.html) | [DingTalk](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord](https://discord.gg/ngQbB9hEVK) of [Data-Juicer](https://github.com/datajuicer/data-juicer).
-
-- **Interactive Data Analysis Studio** *(In Development)*  
-  - *[2026-01-15]*: A [demo](./interactive_recipe/) is available. The current version primarily relies on predefined workflows. We are working on integrating agent-based intelligence.
 
 - **MCP Service**  
   - [ ] Planned
