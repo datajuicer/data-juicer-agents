@@ -45,10 +45,10 @@
 
 ### 智能体
 
-- [] ~~**Data-Juicer 数据处理智能体（DJ Process Agent** & **Data-Juicer 代码开发智能体（DJ Dev Agent）**~~
-- [] 我们放弃了针对场景开发数据处理智能体，转而为通用智能体开发数据处理`工具 (tools)`，随后
+- [ ] ~~**Data-Juicer 数据处理智能体（DJ Process Agent** & **Data-Juicer 代码开发智能体（DJ Dev Agent）**~~
+- [ ] 我们放弃了针对场景开发数据处理智能体，转而为通用智能体开发数据处理`工具 (tools)`，随后
   - [x] 通过工作流硬编排这些工具为`能力 (capabilities)`，透出为`djx命令行工具 (CLI)`
-  - [] 通过prompt软编排，打包为`技能 (skills)`
+  - [ ] 通过prompt软编排，打包为`技能 (skills)`
   - [x] 依赖agent的自动编排，支持`会话式数据处理`
 
 ---
@@ -57,7 +57,7 @@
 
 - [x] **Q&A Copilot**: 围绕Data-Juicer生态系统的问答助手
   - *[2026-01-15]*：已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK)。
-- [] **InteRecipe**：通过自然语言交互式的数据菜谱构建
+- [ ] **InteRecipe**：通过自然语言交互式的数据菜谱构建
   - *[2026-03-11]*: 当前`./interecipe`下仅展示基于工作流的样例。目前dj-agents CLI入口已构建完成，支持在TUI中通过自然语言交互式构建数据菜谱，我们正在开发以此为基础构建更多功能的前端工具(studio)作为升级。
 
 
