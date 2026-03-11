@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 """Data-Juicer-Agents package (v0.2)."""
 
-from data_juicer_agents.capabilities import ApplyUseCase, PlanUseCase, PlanValidator
-from data_juicer_agents.capabilities.plan.schema import PlanModel, validate_plan
-from data_juicer_agents.capabilities.trace.schema import RunTraceModel
+from data_juicer_agents.capabilities import ApplyUseCase
+from data_juicer_agents.tools.planner import PlanModel, PlanValidator, validate_plan_schema
 
 __all__ = [
-    "PlanUseCase",
     "PlanValidator",
     "ApplyUseCase",
     "PlanModel",
-    "RunTraceModel",
-    "validate_plan",
+    "validate_plan_schema",
 ]

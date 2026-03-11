@@ -41,12 +41,12 @@ def test_add_message_you_appends_single_user_timeline_item():
 def test_running_tool_status_text_shows_elapsed():
     running = {
         "tool_1": _RunningToolState(
-            tool="plan_generate",
+            tool="plan_build",
             started_monotonic=10.0,
         )
     }
     text = _running_tool_status_text(running, now_monotonic=21.0)
-    assert "running plan_generate" in text
+    assert "running plan_build" in text
     assert "(+11s)" in text
 
 

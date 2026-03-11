@@ -19,14 +19,19 @@ def test_filtered_stderr_suppresses_known_noise_lines():
         "Importing operator modules took 1.45 seconds\n"
     )
     filtered.write("<unknown>:43: DeprecationWarning: invalid escape sequence '\\s'\n")
+    filtered.write(
+        "<frozen importlib._bootstrap>:241: DeprecationWarning: "
+        "builtin type SwigPyPacked has no __module__ attribute\n"
+    )
     filtered.write("real stderr line\n")
     filtered.flush()
 
     output = sink.getvalue()
     assert "Importing operator modules took" not in output
     assert "invalid escape sequence" not in output
+    assert "SwigPyPacked" not in output
     assert "real stderr line" in output
-    assert filtered.suppressed_lines == 2
+    assert filtered.suppressed_lines == 3
 
 
 def test_filtered_stderr_keeps_non_newline_tail():
@@ -54,19 +59,24 @@ def test_suppress_tui_noise_stderr_context_filters_only_noise(monkeypatch):
     assert filtered.suppressed_lines == 1
 
 
-def test_install_tui_warning_filters_only_suppresses_known_warning():
+def test_install_tui_warning_filters_suppresses_deprecation_warnings():
     with warnings.catch_warnings(record=True) as records:
         warnings.simplefilter("always")
         install_tui_warning_filters()
         warnings.warn("invalid escape sequence '\\s'", DeprecationWarning)
+        warnings.warn(
+            "builtin type SwigPyPacked has no __module__ attribute",
+            DeprecationWarning,
+        )
         warnings.warn("other deprecation", DeprecationWarning)
 
     messages = [str(item.message) for item in records]
     assert "invalid escape sequence '\\s'" not in messages
-    assert "other deprecation" in messages
+    assert "builtin type SwigPyPacked has no __module__ attribute" not in messages
+    assert "other deprecation" not in messages
 
 
-def test_sanitize_reasoning_text_drops_reflective_summary_block():
+def test_sanitize_reasoning_text_keeps_reflective_summary_block():
     raw = (
         "The task has been successfully completed. Here's a summary:\n"
         "✅ **已完成操作**：\n"
@@ -74,7 +84,7 @@ def test_sanitize_reasoning_text_drops_reflective_summary_block():
         "2. retrieved operators\n"
         "3. applied recipe\n"
     )
-    assert sanitize_reasoning_text(raw) == ""
+    assert sanitize_reasoning_text(raw) == raw.strip()
 
 
 def test_sanitize_reasoning_text_keeps_normal_reasoning():

@@ -14,24 +14,9 @@ from typing import Iterable
 _NOISE_PATTERNS = (
     re.compile(r"Importing operator modules took .* seconds"),
     re.compile(
-        r"^<unknown>:\d+:\s+DeprecationWarning:\s+invalid escape sequence",
+        r"DeprecationWarning:",
         re.IGNORECASE,
     ),
-)
-_REFLECTIVE_REASONING_LINE_MARKERS = (
-    re.compile(r"(?i)^\s*[·•\-\*]?\s*the user (requested|asked)\b"),
-    re.compile(r"(?i)^\s*[·•\-\*]?\s*the task has been (successfully )?(completed|finished)\b"),
-    re.compile(r"(?i)^\s*[·•\-\*]?\s*i (have )?(successfully )?(completed|finished)\b"),
-    re.compile(r"(?i)^\s*[·•\-\*]?\s*here'?s (a )?summary\b"),
-    re.compile(r"^\s*[·•\-\*]?\s*用户(要求|请求|希望)"),
-    re.compile(r"^\s*[·•\-\*]?\s*任务(已)?完成"),
-)
-_SUMMARY_HINTS = (
-    re.compile(r"(?i)\bsummary\b"),
-    re.compile(r"(?i)\bsuccessfully completed\b"),
-    re.compile(r"(?m)^\s*\d+\.\s+"),
-    re.compile(r"已完成操作"),
-    re.compile(r"任务成功完成"),
 )
 
 
@@ -39,43 +24,13 @@ def install_tui_warning_filters() -> None:
     """Install warning filters for known non-actionable runtime noise."""
     warnings.filterwarnings(
         "ignore",
-        message=r"invalid escape sequence.*",
         category=DeprecationWarning,
     )
 
 
 def sanitize_reasoning_text(text: str) -> str:
-    """Drop reflective/meta reasoning recaps from TUI timeline."""
-    body = str(text or "").strip()
-    if not body:
-        return ""
-
-    lines = body.splitlines()
-    first_nonempty = ""
-    for line in lines:
-        stripped = line.strip()
-        if stripped:
-            first_nonempty = stripped
-            break
-
-    starts_reflective = bool(
-        first_nonempty
-        and any(pattern.match(first_nonempty) for pattern in _REFLECTIVE_REASONING_LINE_MARKERS)
-    )
-    has_summary_hint = any(pattern.search(body) for pattern in _SUMMARY_HINTS)
-    if starts_reflective and has_summary_hint:
-        return ""
-
-    kept_lines = []
-    leading = True
-    for line in lines:
-        stripped = line.strip()
-        if leading and stripped and any(pattern.match(stripped) for pattern in _REFLECTIVE_REASONING_LINE_MARKERS):
-            continue
-        if stripped:
-            leading = False
-        kept_lines.append(line)
-    return "\n".join(kept_lines).strip()
+    """Pass through reasoning text without reflective-summary filtering."""
+    return str(text or "").strip()
 
 
 class FilteredStderr(io.TextIOBase):

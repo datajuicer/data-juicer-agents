@@ -1,61 +1,52 @@
 # -*- coding: utf-8 -*-
 
-from data_juicer_agents.capabilities.plan.schema import OperatorStep, PlanModel, validate_plan
+import pytest
+
+from data_juicer_agents.tools.planner import PlannerBuildError, PlannerCore
+from data_juicer_agents.tools.planner import core as core_mod
 
 
-def test_plan_schema_validates_required_fields():
-    plan = PlanModel(
-        plan_id=PlanModel.new_id(),
-        user_intent="clean rag data",
-        workflow="rag_cleaning",
-        dataset_path="/tmp/data.jsonl",
-        export_path="/tmp/out.jsonl",
-        operators=[OperatorStep(name="text_length_filter", params={"min_len": 5})],
+def test_planner_core_builds_plan_without_legacy_fields(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        core_mod,
+        "get_available_operator_names",
+        lambda: {"words_num_filter"},
+    )
+    dataset = tmp_path / "data.jsonl"
+    dataset.write_text('{"text": "hello"}\n', encoding="utf-8")
+    export_path = tmp_path / "out" / "result.jsonl"
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    plan = PlannerCore.build_plan(
+        user_intent="filter short rows",
+        dataset_path=str(dataset),
+        export_path=str(export_path),
+        draft_spec={
+            "text_keys": ["text"],
+            "operators": [
+                {"name": "WordNumFilter", "params": {"min_words": 10}},
+            ],
+        },
     )
 
-    errors = validate_plan(plan)
-    assert errors == []
+    payload = plan.to_dict()
+    assert plan.operators[0].name == "words_num_filter"
+    assert payload["modality"] == "text"
+    assert "workflow" not in payload
+    assert "revision" not in payload
+    assert "parent_plan_id" not in payload
 
 
-def test_plan_schema_rejects_empty_operators():
-    plan = PlanModel(
-        plan_id="p1",
-        user_intent="x",
-        workflow="rag_cleaning",
-        dataset_path="/tmp/data.jsonl",
-        export_path="/tmp/out.jsonl",
-        operators=[],
-    )
-    errors = validate_plan(plan)
-    assert "operators must not be empty" in errors
+def test_planner_core_rejects_empty_operator_list(tmp_path):
+    dataset = tmp_path / "data.jsonl"
+    dataset.write_text('{"text": "hello"}\n', encoding="utf-8")
+    export_path = tmp_path / "out" / "result.jsonl"
+    export_path.parent.mkdir(parents=True, exist_ok=True)
 
-
-def test_plan_schema_rejects_invalid_revision():
-    plan = PlanModel(
-        plan_id="p2",
-        user_intent="x",
-        workflow="rag_cleaning",
-        dataset_path="/tmp/data.jsonl",
-        export_path="/tmp/out.jsonl",
-        revision=0,
-        operators=[OperatorStep(name="text_length_filter", params={"min_len": 1})],
-    )
-    errors = validate_plan(plan)
-    assert "revision must be >= 1" in errors
-
-
-def test_plan_schema_round_trip_custom_operator_paths():
-    plan = PlanModel(
-        plan_id="p3",
-        user_intent="x",
-        workflow="custom",
-        dataset_path="/tmp/data.jsonl",
-        export_path="/tmp/out.jsonl",
-        custom_operator_paths=["/tmp/custom_ops_pkg"],
-        template_source_plan_id="plan_template_v0",
-        operators=[OperatorStep(name="my_custom_mapper", params={})],
-    )
-    data = plan.to_dict()
-    restored = PlanModel.from_dict(data)
-    assert restored.custom_operator_paths == ["/tmp/custom_ops_pkg"]
-    assert restored.template_source_plan_id == "plan_template_v0"
+    with pytest.raises(PlannerBuildError):
+        PlannerCore.build_plan(
+            user_intent="invalid",
+            dataset_path=str(dataset),
+            export_path=str(export_path),
+            draft_spec={"text_keys": ["text"], "operators": []},
+        )
