@@ -472,7 +472,6 @@
   <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.html">data_juicer_agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.core.html">data_juicer_agents.core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.tools.html">data_juicer_agents.tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.cli.html">data_juicer_agents.cli module</a></li>
 </ul>
@@ -537,33 +536,39 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.html">data_juicer_agents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html#data_juicer_agents.create_agent"><code class="docutils literal notranslate"><span class="pre">create_agent()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html#data_juicer_agents.register_dj_agent_hooks"><code class="docutils literal notranslate"><span class="pre">register_dj_agent_hooks()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.core.html">data_juicer_agents.core</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.core.html#data_juicer_agents.core.create_agent"><code class="docutils literal notranslate"><span class="pre">create_agent()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.core.html#data_juicer_agents.core.register_dj_agent_hooks"><code class="docutils literal notranslate"><span class="pre">register_dj_agent_hooks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html#data_juicer_agents.PlanValidator"><code class="docutils literal notranslate"><span class="pre">PlanValidator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html#data_juicer_agents.ApplyUseCase"><code class="docutils literal notranslate"><span class="pre">ApplyUseCase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html#data_juicer_agents.PlanModel"><code class="docutils literal notranslate"><span class="pre">PlanModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html#data_juicer_agents.validate_plan_schema"><code class="docutils literal notranslate"><span class="pre">validate_plan_schema()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.tools.html">data_juicer_agents.tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.agents2toolkit"><code class="docutils literal notranslate"><span class="pre">agents2toolkit()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.get_mcp_toolkit"><code class="docutils literal notranslate"><span class="pre">get_mcp_toolkit()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.execute_safe_command"><code class="docutils literal notranslate"><span class="pre">execute_safe_command()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.view_text_file"><code class="docutils literal notranslate"><span class="pre">view_text_file()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.write_text_file"><code class="docutils literal notranslate"><span class="pre">write_text_file()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.agent_to_tool"><code class="docutils literal notranslate"><span class="pre">agent_to_tool()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.query_dj_operators"><code class="docutils literal notranslate"><span class="pre">query_dj_operators()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.get_ops_signature"><code class="docutils literal notranslate"><span class="pre">get_ops_signature()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.get_basic_files"><code class="docutils literal notranslate"><span class="pre">get_basic_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.get_operator_example"><code class="docutils literal notranslate"><span class="pre">get_operator_example()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.configure_data_juicer_path"><code class="docutils literal notranslate"><span class="pre">configure_data_juicer_path()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.get_advanced_config_info"><code class="docutils literal notranslate"><span class="pre">get_advanced_config_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.ApplyResult"><code class="docutils literal notranslate"><span class="pre">ApplyResult</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.ApplyUseCase"><code class="docutils literal notranslate"><span class="pre">ApplyUseCase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.inspect_dataset_schema"><code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.DevUseCase"><code class="docutils literal notranslate"><span class="pre">DevUseCase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.call_model_json"><code class="docutils literal notranslate"><span class="pre">call_model_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.get_available_operator_names"><code class="docutils literal notranslate"><span class="pre">get_available_operator_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.resolve_operator_name"><code class="docutils literal notranslate"><span class="pre">resolve_operator_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.retrieve_operator_candidates"><code class="docutils literal notranslate"><span class="pre">retrieve_operator_candidates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.extract_candidate_names"><code class="docutils literal notranslate"><span class="pre">extract_candidate_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlanContext"><code class="docutils literal notranslate"><span class="pre">PlanContext</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlanDraftOperator"><code class="docutils literal notranslate"><span class="pre">PlanDraftOperator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlanDraftSpec"><code class="docutils literal notranslate"><span class="pre">PlanDraftSpec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlanModel"><code class="docutils literal notranslate"><span class="pre">PlanModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlanValidator"><code class="docutils literal notranslate"><span class="pre">PlanValidator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlannerBuildError"><code class="docutils literal notranslate"><span class="pre">PlannerBuildError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.PlannerCore"><code class="docutils literal notranslate"><span class="pre">PlannerCore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.plan_build"><code class="docutils literal notranslate"><span class="pre">plan_build()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.plan_build_from_json"><code class="docutils literal notranslate"><span class="pre">plan_build_from_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.plan_validate"><code class="docutils literal notranslate"><span class="pre">plan_validate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.SessionState"><code class="docutils literal notranslate"><span class="pre">SessionState</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.SessionToolRuntime"><code class="docutils literal notranslate"><span class="pre">SessionToolRuntime</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html#data_juicer_agents.tools.build_session_toolkit"><code class="docutils literal notranslate"><span class="pre">build_session_toolkit()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/data_juicer_agents.cli.html">data_juicer_agents.cli module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.cli.html#data_juicer_agents.cli.parse_args"><code class="docutils literal notranslate"><span class="pre">parse_args()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.cli.html#data_juicer_agents.cli.run_agent"><code class="docutils literal notranslate"><span class="pre">run_agent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.cli.html#data_juicer_agents.cli.build_parser"><code class="docutils literal notranslate"><span class="pre">build_parser()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.cli.html#data_juicer_agents.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>

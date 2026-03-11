@@ -1,0 +1,7 @@
+data\_juicer\_agents.commands.plan\_cmd module
+==============================================
+
+.. automodule:: data_juicer_agents.commands.plan_cmd
+   :members:
+   :show-inheritance:
+   :undoc-members:

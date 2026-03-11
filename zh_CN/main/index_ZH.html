@@ -501,14 +501,24 @@
 <h1>Data-Juicer Agents：迈向智能体驱动的数据处理<a class="headerlink" href="#data-juicer-agents" title="链接到此标题。">#</a></h1>
 <p>基于 <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer (DJ)</a> 和 <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a> 构建的 <strong>智能体数据处理</strong> 套件。</p>
 <p><a class="reference internal" href="README_ZH.html"><span class="std std-doc">简体中文</span></a> | <span class="xref myst">English</span></p>
-<p><a class="reference internal" href="#id2">概览</a> • <a class="reference internal" href="#id3">快速开始</a> • <a class="reference external" href="https://datajuicer.github.io/data-juicer-agents/zh/main/">文档</a></p>
+<p>🏗️ <a class="reference internal" href="docs/overview_ZH.html"><span class="std std-doc">架构文档</span></a> • ⚡️ <a class="reference internal" href="docs/quick_start_ZH.html"><span class="std std-doc">快速开始</span></a> • &gt;_ <a class="reference internal" href="docs/cli_ZH.html"><span class="std std-doc">CLI 文档</span></a> • 🔧 <a class="reference internal" href="docs/tools_ZH.html"><span class="std std-doc">工具文档</span></a> • 🎯 <a class="reference internal" href="#id2">路线图</a></p>
 </div>
 <section id="id1">
 <h2>最新动态<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>🚀[2026-01-15] <a class="reference internal" href="qa-copilot/README_ZH.html"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> 已部署在 <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer</a> 的官方 <a class="reference external" href="https://datajuicer.github.io/data-juicer/zh/main/index.html">文档网站</a> | <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&amp;amp;_dt_no_comment=1&amp;amp;origin=11?">钉钉群聊</a> | <a class="reference external" href="https://discord.gg/ngQbB9hEVK">Discord频道</a> 上。欢迎向 <em><strong>Juicer</strong></em> 提出任何与 Data-Juicer 生态相关的问！</p>
 <ul>
-<li><p>查看 📃 <a class="reference internal" href="#./qa-copilot/"><span class="xref myst">一键部署代码</span></a> | 🎬 <a class="reference internal" href="qa-copilot/DEMO_ZH.html"><span class="std std-doc">更多演示</span></a> | 🎯 <a class="reference internal" href="#id6">开发路线图</a>。</p></li>
+<li><p>🚀 [2026-03-11] <strong><code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code> 已完成一次大规模重构与升级。</strong></p>
+<ul class="simple">
+<li><p>我们对项目架构、CLI/会话能力进行了系统性重设计，以提升可维护性与可扩展性。</p></li>
+<li><p>🏗️ <a class="reference internal" href="docs/overview_ZH.html"><span class="std std-doc">架构文档</span></a> | ⚡️ <a class="reference internal" href="docs/quick_start_ZH.html"><span class="std std-doc">快速开始</span></a> | &gt;_ <a class="reference internal" href="docs/cli_ZH.html"><span class="std std-doc">CLI 文档</span></a> | 🔧 <a class="reference internal" href="docs/tools_ZH.html"><span class="std std-doc">工具文档</span></a> | 🎯 <a class="reference internal" href="#id2">路线图</a></p></li>
+<li><p>试试通过和agent对话来处理数据！</p></li>
+</ul>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/1ef8359f-78b9-45f4-9fa6-49836f7b9539" width="100%" controls loop></video>
+</div>
+</li>
+<li><p>🚀[2026-01-15] <a class="reference internal" href="qa-copilot/README_ZH.html"><span class="std std-doc">Q&amp;A Copilot</span></a> 已部署在 <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer</a> 的官方 <a class="reference external" href="https://datajuicer.github.io/data-juicer/zh/main/index.html">文档网站</a> | <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&amp;amp;_dt_no_comment=1&amp;amp;origin=11?">钉钉群聊</a> | <a class="reference external" href="https://discord.gg/ngQbB9hEVK">Discord频道</a> 上。欢迎向 <em><strong>Juicer</strong></em> 提出任何与 Data-Juicer 生态相关的问题！</p>
+<ul class="simple">
+<li><p>📃 <a class="reference internal" href="#./qa-copilot/"><span class="xref myst">一键部署代码</span></a> | 🎬 <a class="reference internal" href="qa-copilot/DEMO_ZH.html"><span class="std std-doc">更多演示</span></a> | 🎯 <a class="reference internal" href="#id2">路线图</a>。</p></li>
 </ul>
 </li>
 </ul>
@@ -517,125 +527,74 @@
 </div>
 </section>
 <section id="id2">
-<h2>概览<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
-<p>本仓库维护了一套智能体（agents），帮助用户以自然语言的方式使用 Data-Juicer 强大的数据处理能力。</p>
-<ul class="simple">
-<li><p>在 Data-Juicer 生态中，Data-Juicer Agents（DJ-Agents）位于「接口层」的关键位置，把用户与 Data-Juicer 强大的基础设施和工具链连接起来，助力构建数据中心化应用。</p></li>
-<li><p>与传统的 API 或命令行交互不同，DJ-Agents 利用智能体交互、工具调用和可扩展性，让非专业用户也能通过直观的自然语言访问 Data-Juicer 的数据处理能力。</p></li>
-<li><p>DJ-Agents 的长期目标是实现一个<strong>零开发的数据处理生命周期</strong>，让开发者更多地关注 <strong>“做什么”</strong>，而不是 <strong>“怎么做”</strong>。</p></li>
-</ul>
-<p>当前 Data-Juicer Agents 家族包含以下成员：</p>
-<ul class="simple">
-<li><p>Data-Juicer 问答智能体（DJ Q&amp;A Agent）</p></li>
-<li><p>Data-Juicer 数据处理智能体（DJ Process Agent）【内测版】</p></li>
-<li><p>Data-Juicer 代码开发智能体（DJ Dev Agent）【内测版】</p></li>
-</ul>
-<p>Data-Juicer Agents 采用 <strong>多智能体路由架构</strong> 来将用户请求路由到合适的智能体。详见 <a class="reference internal" href="docs/AgentIntro_ZH.html"><span class="std std-doc">智能体介绍</span></a>。</p>
-<p align="center">
-  <img src="docs/imgs/dj_agents_workflow.png" width=70%>
-</p>
-</section>
-<section id="id3">
-<h2>快速开始<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
-<section id="id4">
-<h3>在线服务<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p><a class="reference internal" href="qa-copilot/README_ZH.html"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> 已部署在 Data-Juicer 官方<a class="reference external" href="https://datajuicer.github.io/data-juicer/zh/main/index.html">文档页面</a>上！你可以在文档站直接向 <em><strong>Juicer</strong></em> 提问任何与 Data-Juicer 生态相关的问题。</p></li>
-</ul>
-<p>更多在线智能体服务计划开发中，关注我们的<a class="reference internal" href="#id6">路线图</a>，欢迎加入我们！</p>
-</section>
-<section id="id5">
-<h3>本地部署<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
-<p>请参考<a class="reference external" href="https://datajuicer.github.io/data-juicer-agents/zh/main/docs/QuickStart_ZH.html">文档</a> 在本地启动 DJ-Agents。</p>
-<p>如果在使用过程中遇到任何问题，可以先查看<a class="reference internal" href="#id10">常见问题</a>，或前往文档页面向我们的问答 Copilot <em><strong>Juicer</strong></em> 提问。</p>
-</section>
-</section>
-<section id="id6">
-<h2>路线图<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
+<h2>路线图<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <p><strong>DJ-Agents</strong> 的长期愿景是实现一个<strong>零开发的数据处理生命周期</strong>，让开发者能够把精力集中在 <strong>“做什么”</strong> 而不是 <strong>“怎么做”</strong> 上。</p>
 <p>为实现这一愿景，我们正在解决两个核心问题：</p>
 <ul class="simple">
-<li><p><strong>智能体层面</strong>：如何设计并构建在数据处理方面足够强大的智能体</p></li>
-<li><p><strong>服务层面</strong>：如何把这些智能体打包成即开即用、开箱即用的产品</p></li>
+<li><p><strong>智能体</strong>：如何设计并构建在数据处理方面足够强大的智能体</p></li>
+<li><p><strong>服务&amp;工具</strong>：如何把这些智能体打包成即开即用、开箱即用的产品</p></li>
 </ul>
 <p>我们会在这两个方向上持续迭代，路线图也会随着理解的加深与能力的提升而不断演进。</p>
-<p>以下是当前的开发清单。</p>
 <hr class="docutils" />
-<section id="id7">
-<h3>智能体<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
+<section id="id3">
+<h3>智能体<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <strong>Data-Juicer 问答智能体（DJ Q&amp;A Agent</strong>  - 回答来自现有或潜在用户的 Data-Juicer 相关问题。</p></li>
-<li><p><strong>Data-Juicer 数据处理智能体（DJ Process Agent</strong>  - 自动调用 Data-Juicer 工具来完成数据处理请求。</p>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> ~~<strong>Data-Juicer 数据处理智能体（DJ Process Agent</strong> &amp; <strong>Data-Juicer 代码开发智能体（DJ Dev Agent）</strong>~~</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 我们放弃了针对场景开发数据处理智能体，转而为通用智能体开发数据处理<code class="docutils literal notranslate"><span class="pre">工具</span> <span class="pre">(tools)</span></code>，随后</p>
 <ul class="contains-task-list">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 开发中</p></li>
-<li><p><em>[2026-01-15]</em>：当前版本的 <a class="reference internal" href="#./data_juicer_agents/"><span class="xref myst">DJ Process Agent</span></a> 处于内测阶段，我们正在积极进行基准评测和能力优化。</p></li>
-</ul>
-</li>
-<li><p><strong>Data-Juicer 代码开发智能体（DJ Dev Agent）</strong><br />
-根据用户需求自动开发新的数据处理算子（operators）。</p>
-<ul class="contains-task-list">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 开发中</p></li>
-<li><p><em>[2026-01-15]</em>：当前版本的 <a class="reference internal" href="#./data_juicer_agents/"><span class="xref myst">DJ Dev Agent</span></a> 处于内测阶段，能力评估和优化工作仍在进行中。</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 通过工作流硬编排这些工具为<code class="docutils literal notranslate"><span class="pre">能力</span> <span class="pre">(capabilities)</span></code>，透出为<code class="docutils literal notranslate"><span class="pre">djx命令行工具</span> <span class="pre">(CLI)</span></code></p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 通过prompt软编排，打包为<code class="docutils literal notranslate"><span class="pre">技能</span> <span class="pre">(skills)</span></code></p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> 依赖agent的自动编排，支持<code class="docutils literal notranslate"><span class="pre">会话式数据处理</span></code></p></li>
 </ul>
 </li>
 </ul>
 </section>
 <hr class="docutils" />
-<section id="id8">
-<h3>服务<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h3>
+<section id="id4">
+<h3>服务&amp;工具<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
 <ul class="contains-task-list simple">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <strong>Q&amp;A Copilot — <em>Juicer</em></strong></p>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <strong>Q&amp;A Copilot</strong>: 围绕Data-Juicer生态系统的问答助手</p>
 <ul>
 <li><p><em>[2026-01-15]</em>：已部署在 <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer</a> 的官方 <a class="reference external" href="https://datajuicer.github.io/data-juicer/zh/main/index.html">文档网站</a> | <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&amp;amp;_dt_no_comment=1&amp;amp;origin=11?">钉钉群聊</a> | <a class="reference external" href="https://discord.gg/ngQbB9hEVK">Discord频道</a>。</p></li>
 </ul>
 </li>
-<li><p><strong>交互式数据分析工作室（Interactive Data Analysis Studio）</strong> <em>（开发中）</em></p>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <strong>InteRecipe</strong>：通过自然语言交互式的数据菜谱构建</p>
 <ul>
-<li><p><em>[2026-01-15]</em>：已有一个<a class="reference internal" href="#./interactive_recipe/"><span class="xref myst">演示</span></a>，当前版本主要依赖预定义工作流。我们正在将智能体能力融入其中。</p></li>
-</ul>
-</li>
-<li><p><strong>MCP 服务</strong></p>
-<ul class="contains-task-list">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 规划中</p></li>
+<li><p><em>[2026-03-11]</em>: 当前<code class="docutils literal notranslate"><span class="pre">./interecipe</span></code>下仅展示基于工作流的样例。目前dj-agents CLI入口已构建完成，支持在TUI中通过自然语言交互式构建数据菜谱，我们正在开发以此为基础构建更多功能的前端工具(studio)作为升级。</p></li>
 </ul>
 </li>
 </ul>
 </section>
 <hr class="docutils" />
-<section id="id9">
-<h3>未来方向<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
+<section id="id5">
+<h3>优先开发项<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><strong>DJ Skills</strong>: 通过prompt软编排，将<code class="docutils literal notranslate"><span class="pre">工具</span> <span class="pre">(tools)</span></code>打包为<code class="docutils literal notranslate"><span class="pre">技能</span> <span class="pre">(skills)</span></code>透出，供通用智能体使用。</p></li>
+<li><p><strong>InteRecipe Studio</strong>: 支持自然语言交互式的数据菜谱构建，提供多维度展示数据信息以及处理结果。</p></li>
+<li><p><strong>Plan工具</strong>：功能扩展以支持完整的Data-Juicer能力/基于DJ Hub中的recipe匹配模式/...</p></li>
+<li><p><strong>Dev工具</strong>：稳定性测试和优化</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>长期方向<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><strong>持续构建工具/技能以支持更多场景的数据处理需求</strong>，从而支持更广泛、更灵活的数据处理应用。</p>
 <ul>
-<li><p><strong>将工作流作为技能（Workflows as Skills）</strong><br />
-<a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">Data-Juicer Hub</a> 承载着越来越多由 Data-Juicer 社区贡献的数据处理 recipes 和工作流。</p>
-<p>随着数据处理需求扩展到新的场景——例如 <strong>RAG</strong>、<strong>具身智能（Embodied Intelligence）</strong>、以及 <strong>数据湖仓（Data Lakehouse）架构</strong>——我们计划将现有与新开发的工作流作为可复用的 <em>技能</em> 集成进 DJ-Agents，从而支持更广泛、更灵活的数据处理应用。</p>
+<li><p><strong>RAG</strong></p></li>
+<li><p><strong>具身智能（Embodied Intelligence）</strong></p></li>
+<li><p><strong>数据湖仓（Data Lakehouse）架构</strong></p></li>
+</ul>
 </li>
 </ul>
 </section>
 </section>
-<section id="id10">
-<h2>常见问题<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h2>
+<section id="id7">
+<h2>常见问题<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h2>
 <p><strong>问：如何获取 DashScope 的 API key？</strong><br />
 答：请访问 <a class="reference external" href="https://dashscope.aliyun.com/">DashScope 官网</a> 注册账户并申请 API key。</p>
-<p><strong>问：为什么算子检索会失败？</strong><br />
-答：请检查网络连接和 API key 配置，或尝试切换为向量检索模式。</p>
-<p><strong>问：如何调试自定义算子？</strong><br />
-答：请确认已正确配置 Data-Juicer 的路径，并参考代码开发智能体提供的示例代码。</p>
-<p><strong>问：MCP 服务连接失败怎么办？</strong><br />
-答：请检查 MCP 服务器是否已启动，并确认配置文件中的 URL 地址是否正确。</p>
-<p><strong>问：报错 <code class="docutils literal notranslate"><span class="pre">requests.exceptions.HTTPError:</span> <span class="pre">400</span> <span class="pre">Client</span> <span class="pre">Error:</span> <span class="pre">Bad</span> <span class="pre">Request</span> <span class="pre">for</span> <span class="pre">url:</span> <span class="pre">http://localhost:3000/trpc/pushMessage</span></code> 怎么办？</strong><br />
-答：智能体是通过文件引用（路径）而不是直接上传数据来处理数据的，请确认是否提交了非文本文件。</p>
-<section id="id11">
-<h3>优化建议<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>对于大规模数据处理，推荐使用 Data-Juicer 的分布式模式</p></li>
-<li><p>合理设置 batch size，以平衡内存占用与处理速度</p></li>
-<li><p>如需更高级的数据处理能力（如数据合成、Data-Model 联合开发等），请参考 Data-Juicer <a class="reference external" href="https://datajuicer.github.io/data-juicer/zh/main/index.html">文档</a></p></li>
-</ul>
 </section>
-</section>
-<hr class="docutils" />
-<section id="id12">
-<h2>相关资源<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h2>
+<section id="id8">
+<h2>相关资源<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>Data-Juicer 已在大量通义及阿里云内外部用户场景中落地实践，并支撑了多项研究工作；所有代码都在持续维护与增强中。</p></li>
 </ul>
@@ -654,10 +613,10 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="docs_index_ZH.html">文档</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart_ZH.html">快速开始</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro_ZH.html">智能体介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Advanced_ZH.html">高级功能</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension_ZH.html">定制化与扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html">架构概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html">快速开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html">DJX CLI 参考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html">工具与服务原子能力说明</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html">Data-Juicer 问答 Copilot 示例（中文）</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id1">📌 核心功能</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qa-copilot/DEMO_ZH.html#id2">⚙️ 参数说明</a></li>
@@ -690,7 +649,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.html">data_juicer_agents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.core.html">data_juicer_agents.core</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.tools.html">data_juicer_agents.tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data_juicer_agents.cli.html">data_juicer_agents.cli module</a></li>
 </ul>
@@ -737,23 +695,15 @@
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">最新动态</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">概览</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">快速开始</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">在线服务</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">本地部署</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">路线图</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">智能体</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">服务&amp;工具</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">优先开发项</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">长期方向</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">路线图</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">智能体</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">服务</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">未来方向</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">常见问题</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">优化建议</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">相关资源</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">常见问题</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">相关资源</a></li>
 </ul>
   </nav></div>
 

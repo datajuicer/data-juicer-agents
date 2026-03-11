@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.op\_manager.operator\_registry module
+================================================================
+
+.. automodule:: data_juicer_agents.tools.op_manager.operator_registry
+   :members:
+   :show-inheritance:
+   :undoc-members:

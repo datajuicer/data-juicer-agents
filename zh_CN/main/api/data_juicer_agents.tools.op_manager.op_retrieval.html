@@ -520,12 +520,6 @@
   <section id="module-data_juicer_agents.tools.op_manager.op_retrieval">
 <span id="data-juicer-agents-tools-op-manager-op-retrieval-module"></span><h1>data_juicer_agents.tools.op_manager.op_retrieval module<a class="headerlink" href="#module-data_juicer_agents.tools.op_manager.op_retrieval" title="链接到此标题。">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.op_manager.op_retrieval.fast_text_encoder">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.op_manager.op_retrieval.</span></span><span class="sig-name descname"><span class="pre">fast_text_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/op_manager/op_retrieval.html#fast_text_encoder"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.op_manager.op_retrieval.fast_text_encoder" title="链接到此定义。">#</a></dt>
-<dd><p>Fast encoding using xxHash algorithm</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.op_manager.op_retrieval.init_dj_func_info">
 <span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.op_manager.op_retrieval.</span></span><span class="sig-name descname"><span class="pre">init_dj_func_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/op_manager/op_retrieval.html#init_dj_func_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.op_manager.op_retrieval.init_dj_func_info" title="链接到此定义。">#</a></dt>
 <dd><p>Initialize dj_func_info at agent startup</p>
@@ -550,9 +544,21 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_lm_items">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.op_manager.op_retrieval.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_lm_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/op_manager/op_retrieval.html#retrieve_ops_lm_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_lm_items" title="链接到此定义。">#</a></dt>
+<dd><p>Tool retrieval using language model - returns validated tool metadata.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_vector">
 <span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.op_manager.op_retrieval.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/op_manager/op_retrieval.html#retrieve_ops_vector"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_vector" title="链接到此定义。">#</a></dt>
 <dd><p>Tool retrieval using vector search with smart caching - returns list of tool names</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_with_meta">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.op_manager.op_retrieval.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_with_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/op_manager/op_retrieval.html#retrieve_ops_with_meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_with_meta" title="链接到此定义。">#</a></dt>
+<dd><p>Tool retrieval with source/trace metadata.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -607,12 +613,13 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.fast_text_encoder"><code class="docutils literal notranslate"><span class="pre">fast_text_encoder()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.init_dj_func_info"><code class="docutils literal notranslate"><span class="pre">init_dj_func_info()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.refresh_dj_func_info"><code class="docutils literal notranslate"><span class="pre">refresh_dj_func_info()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.get_dj_func_info"><code class="docutils literal notranslate"><span class="pre">get_dj_func_info()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_lm"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_lm()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_lm_items"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_lm_items()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_vector"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_vector()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops_with_meta"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.op_manager.op_retrieval.retrieve_ops"><code class="docutils literal notranslate"><span class="pre">retrieve_ops()</span></code></a></li>
 </ul>
   </nav></div>

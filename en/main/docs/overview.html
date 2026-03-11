@@ -1,0 +1,1099 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Architecture &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/overview';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start" href="quick_start.html" />
+    <link rel="prev" title="DOCS" href="../docs_index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/overview.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/overview_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/overview.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/overview.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/overview_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/overview.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">DJX CLI Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools and Service Primitives</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../qa-copilot/DEMO.html">Data-Juicer Q&amp;A Copilot Demo</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../qa-copilot/README.html">Data-Juicer Q&amp;A Copilot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Architecture</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code> is organized around one core idea: keep data-processing logic in reusable Python modules, then expose the same core through different user-facing surfaces.</p>
+<p>The package is not designed as a single monolithic “agent product”. Its main architectural unit is the reusable data-processing primitive, not the chat shell.</p>
+<section id="package-scope">
+<h2>Package Scope<a class="headerlink" href="#package-scope" title="Link to this heading">#</a></h2>
+<p>Current user-facing surfaces:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Surface</p></th>
+<th class="head"><p>Role</p></th>
+<th class="head"><p>Primary entry</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span></code></p></td>
+<td><p>Deterministic CLI for planning, retrieval, execution, and scaffold generation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/cli.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></p></td>
+<td><p>Conversational ReAct session over the same capability base</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/session_cli.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">skills</span></code> (future)</p></td>
+<td><p>Prompt-packaged compositions for external general-purpose agents</p></td>
+<td><p>not implemented yet</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The design target is:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span></code> for explicit, file-oriented, reproducible workflows</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> for interactive orchestration over the same primitives</p></li>
+<li><p>future <code class="docutils literal notranslate"><span class="pre">skills</span></code> as lightweight packaging of those primitives for other agent runtimes</p></li>
+</ul>
+</section>
+<section id="layer-model">
+<h2>Layer Model<a class="headerlink" href="#layer-model" title="Link to this heading">#</a></h2>
+<p>The package is best understood as four main layers:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Directory</p></th>
+<th class="head"><p>Responsibility</p></th>
+<th class="head"><p>Typical dependencies</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Surface adapters</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">commands/</span></code>, <code class="docutils literal notranslate"><span class="pre">cli.py</span></code>, <code class="docutils literal notranslate"><span class="pre">session_cli.py</span></code>, <code class="docutils literal notranslate"><span class="pre">tui/</span></code></p></td>
+<td><p>Parse user input, select UI mode, print output, translate between shell/session and structured payloads</p></td>
+<td><p>capabilities, tools, utils</p></td>
+</tr>
+<tr class="row-odd"><td><p>Use-case orchestration</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities/</span></code></p></td>
+<td><p>Define one end-to-end user story such as planning or session orchestration</p></td>
+<td><p>tools, utils</p></td>
+</tr>
+<tr class="row-even"><td><p>Reusable domain primitives</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tools/</span></code></p></td>
+<td><p>Contain planner core, retrieval, execution, scaffold generation, session tool adapters, and model gateway</p></td>
+<td><p>external runtimes, utils</p></td>
+</tr>
+<tr class="row-odd"><td><p>Shared infrastructure</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">utils/</span></code></p></td>
+<td><p>Logging, terminal I/O, small helpers</p></td>
+<td><p>standard library and external libs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In dependency terms:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>djx CLI / dj-agents session / future skills
+        -&gt; commands or session entrypoints
+        -&gt; capabilities
+        -&gt; tools
+        -&gt; external runtimes (Data-Juicer CLI, LLM APIs, AgentScope)
+</pre></div>
+</div>
+<p>The important rule is directional:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">commands</span></code> may depend on <code class="docutils literal notranslate"><span class="pre">capabilities</span></code> and selected <code class="docutils literal notranslate"><span class="pre">tools</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capabilities</span></code> may depend on <code class="docutils literal notranslate"><span class="pre">tools</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools</span></code> must not depend on <code class="docutils literal notranslate"><span class="pre">commands</span></code>, <code class="docutils literal notranslate"><span class="pre">cli.py</span></code>, or <code class="docutils literal notranslate"><span class="pre">tui/</span></code></p></li>
+<li><p>future <code class="docutils literal notranslate"><span class="pre">skills</span></code> should depend on <code class="docutils literal notranslate"><span class="pre">capabilities</span></code> or <code class="docutils literal notranslate"><span class="pre">tools</span></code>, not shell out to <code class="docutils literal notranslate"><span class="pre">djx</span></code></p></li>
+</ul>
+</section>
+<section id="surface-adapters">
+<h2>Surface Adapters<a class="headerlink" href="#surface-adapters" title="Link to this heading">#</a></h2>
+<section id="djx-cli">
+<h3><code class="docutils literal notranslate"><span class="pre">djx</span></code> CLI<a class="headerlink" href="#djx-cli" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/cli.py</span></code> defines the deterministic command-line contract:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">commands/</span></code> is intentionally thin. Each command does argument validation, output formatting, exit-code handling, and then hands off to a capability or tool-level API.</p>
+<p>Current command mapping:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Main module</p></th>
+<th class="head"><p>Downstream dependency</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plan</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">commands/plan_cmd.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.plan.PlanOrchestrator</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">apply</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">commands/apply_cmd.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.apply.ApplyUseCase</span></code> + <code class="docutils literal notranslate"><span class="pre">tools.planner.PlanValidator</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">commands/retrieve_cmd.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tools.op_manager.retrieval_service</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dev</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">commands/dev_cmd.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">capabilities.dev.DevUseCase</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This is an important boundary: the CLI is not where domain logic should grow. It is an adapter layer.</p>
+</section>
+<section id="dj-agents-session">
+<h3><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> session<a class="headerlink" href="#dj-agents-session" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/session_cli.py</span></code> is the conversational surface adapter. It is responsible for:</p>
+<ul class="simple">
+<li><p>argument parsing for session startup</p></li>
+<li><p>plain-text versus TUI session selection</p></li>
+<li><p>Ctrl+C / Ctrl+D terminal behavior</p></li>
+<li><p>handing each turn to <code class="docutils literal notranslate"><span class="pre">DJSessionAgent</span></code></p></li>
+</ul>
+<p>The TUI in <code class="docutils literal notranslate"><span class="pre">tui/</span></code> is also a surface adapter, not a domain layer. It renders the event stream emitted by the session capability and should not own planning or execution logic.</p>
+</section>
+<section id="skills-future">
+<h3><code class="docutils literal notranslate"><span class="pre">skills</span></code> (future)<a class="headerlink" href="#skills-future" title="Link to this heading">#</a></h3>
+<p>The future skills outlet should package reusable orchestration for external agents. The intended integration boundary is:</p>
+<ul class="simple">
+<li><p>structured <code class="docutils literal notranslate"><span class="pre">tools/*</span></code></p></li>
+<li><p>selected <code class="docutils literal notranslate"><span class="pre">capabilities/*</span></code></p></li>
+</ul>
+<p>It should not depend on:</p>
+<ul class="simple">
+<li><p>CLI argument parsing</p></li>
+<li><p>shell-oriented output text</p></li>
+<li><p>TUI rendering</p></li>
+<li><p>parsing <code class="docutils literal notranslate"><span class="pre">djx</span></code> stdout back into machine-readable state</p></li>
+</ul>
+</section>
+</section>
+<section id="capabilities">
+<h2>Capabilities<a class="headerlink" href="#capabilities" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">capabilities/</span></code> is the use-case layer. It answers: “what end-to-end workflow do we want to expose?”</p>
+<section id="capabilities-plan">
+<h3><code class="docutils literal notranslate"><span class="pre">capabilities.plan</span></code><a class="headerlink" href="#capabilities-plan" title="Link to this heading">#</a></h3>
+<p>This is the most substantial capability today.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PlanOrchestrator</span></code> in <code class="docutils literal notranslate"><span class="pre">capabilities/plan/service.py</span></code> wires together:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tools.op_manager.retrieval_service.retrieve_operator_candidates</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PlanDraftGenerator</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools.llm_gateway.call_model_json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools.planner.PlannerCore</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools.planner.PlanValidator</span></code></p></li>
+</ol>
+<p>Its role is not to own planning semantics itself; its role is to compose a fixed planning pipeline:</p>
+<p><code class="docutils literal notranslate"><span class="pre">retrieve</span> <span class="pre">evidence</span> <span class="pre">-&gt;</span> <span class="pre">generate</span> <span class="pre">draft</span> <span class="pre">spec</span> <span class="pre">-&gt;</span> <span class="pre">build</span> <span class="pre">deterministic</span> <span class="pre">plan</span> <span class="pre">-&gt;</span> <span class="pre">validate</span></code></p>
+</section>
+<section id="capabilities-session">
+<h3><code class="docutils literal notranslate"><span class="pre">capabilities.session</span></code><a class="headerlink" href="#capabilities-session" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">DJSessionAgent</span></code> in <code class="docutils literal notranslate"><span class="pre">capabilities/session/orchestrator.py</span></code> is the orchestration boundary for conversational use.</p>
+<p>It owns:</p>
+<ul class="simple">
+<li><p>session state bootstrapping</p></li>
+<li><p>AgentScope <code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code> construction</p></li>
+<li><p>tool registration through <code class="docutils literal notranslate"><span class="pre">build_session_toolkit</span></code></p></li>
+<li><p>interrupt handling</p></li>
+<li><p>event emission for plain/TUI rendering</p></li>
+<li><p>session-level system prompt and turn protocol</p></li>
+</ul>
+<p>This capability does not call CLI commands. It calls reusable session tools and tool runtimes directly.</p>
+</section>
+<section id="capabilities-apply-and-capabilities-dev">
+<h3><code class="docutils literal notranslate"><span class="pre">capabilities.apply</span></code> and <code class="docutils literal notranslate"><span class="pre">capabilities.dev</span></code><a class="headerlink" href="#capabilities-apply-and-capabilities-dev" title="Link to this heading">#</a></h3>
+<p>These are currently thin CLI-facing wrappers over tool-level use cases:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">capabilities.apply</span></code> re-exports <code class="docutils literal notranslate"><span class="pre">tools.apply_tool_api.ApplyUseCase</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capabilities.dev</span></code> re-exports <code class="docutils literal notranslate"><span class="pre">tools.dev_tool_api.DevUseCase</span></code></p></li>
+</ul>
+<p>That means the architectural center for apply/dev currently lives in <code class="docutils literal notranslate"><span class="pre">tools/</span></code>, not in extra orchestration code inside <code class="docutils literal notranslate"><span class="pre">capabilities/</span></code>.</p>
+</section>
+</section>
+<section id="tools">
+<h2>Tools<a class="headerlink" href="#tools" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tools/</span></code> is the main reusable kernel of the package. This is where most stable integration boundaries live.</p>
+<section id="tools-planner">
+<h3><code class="docutils literal notranslate"><span class="pre">tools.planner</span></code><a class="headerlink" href="#tools-planner" title="Link to this heading">#</a></h3>
+<p>This module is the deterministic planning core shared by CLI and session tools.</p>
+<p>It contains:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">schema.py</span></code>: <code class="docutils literal notranslate"><span class="pre">PlanDraftSpec</span></code>, <code class="docutils literal notranslate"><span class="pre">PlanContext</span></code>, <code class="docutils literal notranslate"><span class="pre">PlanModel</span></code>, <code class="docutils literal notranslate"><span class="pre">OperatorStep</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core.py</span></code>: <code class="docutils literal notranslate"><span class="pre">PlannerCore</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validation.py</span></code>: <code class="docutils literal notranslate"><span class="pre">PlanValidator</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool_api.py</span></code>: JSON-friendly functions used by session tools</p></li>
+</ul>
+<p>Architecturally, this is the center of plan semantics. Everything else feeds data into it or consumes its outputs.</p>
+</section>
+<section id="tools-op-manager">
+<h3><code class="docutils literal notranslate"><span class="pre">tools.op_manager</span></code><a class="headerlink" href="#tools-op-manager" title="Link to this heading">#</a></h3>
+<p>This module provides operator discovery and normalization:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieval_service.py</span></code>: structured operator retrieval payloads for CLI and session</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">operator_registry.py</span></code>: installed-operator lookup and canonical name resolution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">op_retrieval.py</span></code>: backend retrieval implementation and vector/LLM fallback machinery</p></li>
+</ul>
+<p>Its contract is “given intent plus optional dataset hints, return grounded operator candidates”. It should not know about CLI formatting or session rendering.</p>
+</section>
+<section id="tools-llm-gateway">
+<h3><code class="docutils literal notranslate"><span class="pre">tools.llm_gateway</span></code><a class="headerlink" href="#tools-llm-gateway" title="Link to this heading">#</a></h3>
+<p>This is the narrow LLM boundary:</p>
+<ul class="simple">
+<li><p>OpenAI-compatible client invocation</p></li>
+<li><p>API-key and base-URL resolution</p></li>
+<li><p>JSON extraction</p></li>
+<li><p>candidate-model fallback</p></li>
+</ul>
+<p>The planning layer uses it through <code class="docutils literal notranslate"><span class="pre">PlanDraftGenerator</span></code>, instead of scattering model calls across commands and session code.</p>
+</section>
+<section id="tools-apply-tool-api">
+<h3><code class="docutils literal notranslate"><span class="pre">tools.apply_tool_api</span></code><a class="headerlink" href="#tools-apply-tool-api" title="Link to this heading">#</a></h3>
+<p>This module owns deterministic execution:</p>
+<ul class="simple">
+<li><p>convert <code class="docutils literal notranslate"><span class="pre">PlanModel</span></code> into a Data-Juicer recipe YAML</p></li>
+<li><p>invoke <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></li>
+<li><p>classify execution failures</p></li>
+<li><p>return a structured <code class="docutils literal notranslate"><span class="pre">ApplyResult</span></code></p></li>
+</ul>
+<p>It is intentionally closer to the runtime than to presentation.</p>
+</section>
+<section id="tools-dev-tool-api">
+<h3><code class="docutils literal notranslate"><span class="pre">tools.dev_tool_api</span></code><a class="headerlink" href="#tools-dev-tool-api" title="Link to this heading">#</a></h3>
+<p>This module owns custom-operator scaffold generation and optional smoke checking. It packages:</p>
+<ul class="simple">
+<li><p>argument completeness checks</p></li>
+<li><p>scaffold generation</p></li>
+<li><p>optional smoke-test serialization</p></li>
+</ul>
+</section>
+<section id="tools-session">
+<h3><code class="docutils literal notranslate"><span class="pre">tools.session</span></code><a class="headerlink" href="#tools-session" title="Link to this heading">#</a></h3>
+<p>This module is the bridge between the conversational outlet and the reusable core.</p>
+<p>It contains:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">runtime.py</span></code>: mutable <code class="docutils literal notranslate"><span class="pre">SessionState</span></code>, event emission, saved-plan helpers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">registry.py</span></code>: session tool registration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context_tools.py</span></code>: session context and dataset inspection</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">operator_tools.py</span></code>: operator retrieval tools</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">planner_tools.py</span></code>: draft-plan build/validate/save tools</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_tools.py</span></code>: apply from session</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev_tools.py</span></code>: operator development from session</p></li>
+<li><p>file/process tools for session-side diagnostics and editing</p></li>
+</ul>
+<p>This layer is important because <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> does not wrap <code class="docutils literal notranslate"><span class="pre">djx</span></code>; it re-exposes the same lower-level primitives through an agent-tool interface.</p>
+</section>
+</section>
+<section id="boundary-and-dependency-notes">
+<h2>Boundary and Dependency Notes<a class="headerlink" href="#boundary-and-dependency-notes" title="Link to this heading">#</a></h2>
+<p>The key architectural boundaries are:</p>
+<section id="commands-are-presentation-adapters">
+<h3>1. Commands are presentation adapters<a class="headerlink" href="#commands-are-presentation-adapters" title="Link to this heading">#</a></h3>
+<p>They should own:</p>
+<ul class="simple">
+<li><p>argparse contracts</p></li>
+<li><p>terminal output</p></li>
+<li><p>exit codes</p></li>
+<li><p>human/debug formatting</p></li>
+</ul>
+<p>They should not become the primary home of planning, execution, or retrieval semantics.</p>
+</section>
+<section id="capabilities-define-use-cases">
+<h3>2. Capabilities define use cases<a class="headerlink" href="#capabilities-define-use-cases" title="Link to this heading">#</a></h3>
+<p>They answer:</p>
+<ul class="simple">
+<li><p>what fixed pipeline should be run</p></li>
+<li><p>what state must be carried across a session</p></li>
+<li><p>what confirmation policy exists before execution</p></li>
+</ul>
+<p>They should not absorb UI-specific concerns.</p>
+</section>
+<section id="tools-define-reusable-contracts">
+<h3>3. Tools define reusable contracts<a class="headerlink" href="#tools-define-reusable-contracts" title="Link to this heading">#</a></h3>
+<p>They should return structured payloads that can be reused by:</p>
+<ul class="simple">
+<li><p>CLI commands</p></li>
+<li><p>session tools</p></li>
+<li><p>future skills</p></li>
+<li><p>tests</p></li>
+</ul>
+<p>This is why <code class="docutils literal notranslate"><span class="pre">PlanModel</span></code>, retrieval payloads, and <code class="docutils literal notranslate"><span class="pre">ApplyResult</span></code> matter more than terminal text.</p>
+</section>
+<section id="session-is-not-a-wrapper-around-shell-commands">
+<h3>4. Session is not a wrapper around shell commands<a class="headerlink" href="#session-is-not-a-wrapper-around-shell-commands" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> is architected to call Python tools directly:</p>
+<p><code class="docutils literal notranslate"><span class="pre">session_cli</span> <span class="pre">-&gt;</span> <span class="pre">DJSessionAgent</span> <span class="pre">-&gt;</span> <span class="pre">SessionToolRuntime</span> <span class="pre">+</span> <span class="pre">session</span> <span class="pre">toolkit</span> <span class="pre">-&gt;</span> <span class="pre">tools/*</span></code></p>
+<p>That keeps session orchestration machine-readable, interruptible, and observable through events.</p>
+</section>
+</section>
+<section id="key-call-chains">
+<h2>Key Call Chains<a class="headerlink" href="#key-call-chains" title="Link to this heading">#</a></h2>
+<section id="djx-plan">
+<h3><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code><a class="headerlink" href="#djx-plan" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cli.py
+-&gt; commands/plan_cmd.py
+-&gt; capabilities.plan.PlanOrchestrator
+-&gt; op_manager.retrieval_service
+-&gt; capabilities.plan.PlanDraftGenerator
+-&gt; tools.llm_gateway
+-&gt; tools.planner.PlannerCore
+-&gt; tools.planner.PlanValidator
+-&gt; write plan YAML
+</pre></div>
+</div>
+</section>
+<section id="djx-apply">
+<h3><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code><a class="headerlink" href="#djx-apply" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cli.py
+-&gt; commands/apply_cmd.py
+-&gt; tools.planner.PlanValidator
+-&gt; ApplyUseCase
+-&gt; write recipe under .djx/recipes/
+-&gt; invoke dj-process
+</pre></div>
+</div>
+</section>
+<section id="dj-agents">
+<h3><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code><a class="headerlink" href="#dj-agents" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>session_cli.py
+-&gt; DJSessionAgent
+-&gt; build_session_toolkit
+-&gt; AgentScope ReActAgent
+-&gt; session tool functions
+-&gt; tools.planner / tools.op_manager / ApplyUseCase / DevUseCase / file/process helpers
+</pre></div>
+</div>
+</section>
+</section>
+<section id="runtime-state-and-artifacts">
+<h2>Runtime State and Artifacts<a class="headerlink" href="#runtime-state-and-artifacts" title="Link to this heading">#</a></h2>
+<p>Important on-disk artifacts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.djx/recipes/</span></code>: recipes generated before execution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.djx/session_plans/</span></code>: plans saved from session tools</p></li>
+<li><p>user-specified plan YAML outputs from <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></p></li>
+<li><p>user-specified dataset exports from plan/apply flows</p></li>
+</ul>
+<p>Important in-memory session state in <code class="docutils literal notranslate"><span class="pre">SessionState</span></code>:</p>
+<ul class="simple">
+<li><p>current dataset/export paths</p></li>
+<li><p>current saved plan path</p></li>
+<li><p>current draft plan</p></li>
+<li><p>last retrieval payload</p></li>
+<li><p>last dataset inspection result</p></li>
+</ul>
+<p>This state is what allows the same session to move from inspection to retrieval to planning to confirmation and execution.</p>
+</section>
+<section id="design-intent">
+<h2>Design Intent<a class="headerlink" href="#design-intent" title="Link to this heading">#</a></h2>
+<p>The package is evolving toward this split:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tools</span></code>: stable machine-facing primitives</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capabilities</span></code>: reusable orchestration patterns over those primitives</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span></code>: deterministic operator-facing shell</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>: conversational orchestration surface</p></li>
+<li><p>future <code class="docutils literal notranslate"><span class="pre">skills</span></code>: agent-facing packaging of the same structured building blocks</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../docs_index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DOCS</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="quick_start.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Quick Start</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#package-scope">Package Scope</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-model">Layer Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-adapters">Surface Adapters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-cli"><code class="docutils literal notranslate"><span class="pre">djx</span></code> CLI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-agents-session"><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> session</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#skills-future"><code class="docutils literal notranslate"><span class="pre">skills</span></code> (future)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#capabilities">Capabilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capabilities-plan"><code class="docutils literal notranslate"><span class="pre">capabilities.plan</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capabilities-session"><code class="docutils literal notranslate"><span class="pre">capabilities.session</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capabilities-apply-and-capabilities-dev"><code class="docutils literal notranslate"><span class="pre">capabilities.apply</span></code> and <code class="docutils literal notranslate"><span class="pre">capabilities.dev</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tools">Tools</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-planner"><code class="docutils literal notranslate"><span class="pre">tools.planner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-op-manager"><code class="docutils literal notranslate"><span class="pre">tools.op_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-llm-gateway"><code class="docutils literal notranslate"><span class="pre">tools.llm_gateway</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-apply-tool-api"><code class="docutils literal notranslate"><span class="pre">tools.apply_tool_api</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-dev-tool-api"><code class="docutils literal notranslate"><span class="pre">tools.dev_tool_api</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-session"><code class="docutils literal notranslate"><span class="pre">tools.session</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#boundary-and-dependency-notes">Boundary and Dependency Notes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#commands-are-presentation-adapters">1. Commands are presentation adapters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capabilities-define-use-cases">2. Capabilities define use cases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-define-reusable-contracts">3. Tools define reusable contracts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-is-not-a-wrapper-around-shell-commands">4. Session is not a wrapper around shell commands</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-call-chains">Key Call Chains</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-plan"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-apply"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-agents"><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-state-and-artifacts">Runtime State and Artifacts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-intent">Design Intent</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/overview.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

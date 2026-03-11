@@ -56,7 +56,7 @@
     <link rel="icon" href="_static/icon.png"/>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="快速开始" href="docs/QuickStart_ZH.html" />
+    <link rel="next" title="架构概览" href="docs/overview_ZH.html" />
     <link rel="prev" title="Data-Juicer Agents：迈向智能体驱动的数据处理" href="index_ZH.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="zh-CN"/>
@@ -471,10 +471,10 @@
      aria-label="章节导航">
   <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="docs/QuickStart_ZH.html">快速开始</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/AgentIntro_ZH.html">智能体介绍</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Advanced_ZH.html">高级功能</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Extension_ZH.html">定制化与扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/overview_ZH.html">架构概览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/quick_start_ZH.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/cli_ZH.html">DJX CLI 参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/tools_ZH.html">工具与服务原子能力说明</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="nav bd-sidenav">
@@ -563,27 +563,46 @@
 <h1>文档<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="docs/QuickStart_ZH.html">快速开始</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart_ZH.html#id2">系统要求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart_ZH.html#id3">安装</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart_ZH.html#id4">配置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart_ZH.html#id5">使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/overview_ZH.html">架构概览</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id2">包的定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id3">分层模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id4">表面适配层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#capabilities">Capabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id5">边界与依赖说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id8">关键调用链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id10">运行时状态与产物</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id11">设计意图</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/AgentIntro_ZH.html">智能体介绍</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro_ZH.html#id2">数据处理智能体</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro_ZH.html#id3">代码开发智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/quick_start_ZH.html">快速开始</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#id2">1. 环境前置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#id3">2. 安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#id4">3. 配置模型访问</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#cli">4. 最短 CLI 路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#dj-agents">5. 会话模式（<code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#id5">6. 最小检查</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start_ZH.html#id6">7. 故障排查</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Advanced_ZH.html">高级功能</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/Advanced_ZH.html#id2">算子检索</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Advanced_ZH.html#mcp">MCP 智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/cli_ZH.html">DJX CLI 参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#id1">命令总览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#djx">全局输出级别（<code class="docutils literal notranslate"><span class="pre">djx</span></code>）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#djx-plan"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#djx-apply"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#djx-retrieve"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#djx-dev"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#dj-agents"><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#id2">环境变量</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Extension_ZH.html">定制化与扩展</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension_ZH.html#prompts">自定义 Prompts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension_ZH.html#id2">更换模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension_ZH.html#id3">扩展新智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/tools_ZH.html">工具与服务原子能力说明</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#data-juicer-agents-tools">1) 原子工具层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#data-juicer-agents-capabilities">2) 能力编排层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id2">3) 会话层已暴露工具列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id3">4) 命令到能力映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id4">5) 可观测与产物</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id5">6) 设计边界</a></li>
 </ul>
 </li>
 </ul>
@@ -702,11 +721,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="docs/QuickStart_ZH.html"
+       href="docs/overview_ZH.html"
        title="下一页">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">下一页</p>
-        <p class="prev-next-title">快速开始</p>
+        <p class="prev-next-title">架构概览</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

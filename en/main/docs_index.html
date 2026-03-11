@@ -55,7 +55,7 @@
     <link rel="icon" href="_static/icon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Quick Start" href="docs/QuickStart.html" />
+    <link rel="next" title="Architecture" href="docs/overview.html" />
     <link rel="prev" title="Data-Juicer Agents: Towards Agentic Data Processing" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -470,10 +470,10 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="docs/QuickStart.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/AgentIntro.html">Agent Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Advanced.html">Advanced Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Extension.html">Customization and Extension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/overview.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/cli.html">DJX CLI Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/tools.html">Tools and Service Primitives</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
@@ -559,26 +559,46 @@
 <h1>DOCS<a class="headerlink" href="#docs" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="docs/QuickStart.html">Quick Start</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart.html#system-requirements">System Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/QuickStart.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/overview.html">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#package-scope">Package Scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#layer-model">Layer Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#surface-adapters">Surface Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#capabilities">Capabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#boundary-and-dependency-notes">Boundary and Dependency Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#key-call-chains">Key Call Chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#runtime-state-and-artifacts">Runtime State and Artifacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview.html#design-intent">Design Intent</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/AgentIntro.html">Agent Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro.html#data-processing-agent">Data Processing Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/AgentIntro.html#code-development-agent-dj-dev-agent">Code Development Agent (DJ Dev Agent)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/quick_start.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#prerequisites">1. Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#install">2. Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#configure-model-access">3. Configure model access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#minimal-cli-path">4. Minimal CLI path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#session-mode-dj-agents">5. Session mode (<code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#basic-sanity-checks">6. Basic sanity checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/quick_start.html#troubleshooting">7. Troubleshooting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Advanced.html">Advanced Features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/Advanced.html#operator-retrieval">Operator Retrieval</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Advanced.html#mcp-agent">MCP Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/cli.html">DJX CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#command-map">Command Map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#global-output-levels-djx">Global Output Levels (<code class="docutils literal notranslate"><span class="pre">djx</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#djx-plan"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#djx-apply"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#djx-retrieve"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#djx-dev"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#dj-agents"><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/cli.html#environment-variables">Environment Variables</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/Extension.html">Customization and Extension</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension.html#custom-prompts">Custom Prompts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension.html#model-replacement">Model Replacement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/Extension.html#extending-new-agents">Extending New Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/tools.html">Tools and Service Primitives</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools.html#primitive-tool-layer-data-juicer-agents-tools">1) Primitive Tool Layer (<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools.html#capability-composition-layer-data-juicer-agents-capabilities">2) Capability Composition Layer (<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools.html#session-exposed-tool-set">3) Session-Exposed Tool Set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools.html#command-to-capability-mapping">4) Command-to-Capability Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools.html#observability-and-artifacts">5) Observability and Artifacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools.html#design-boundary">6) Design Boundary</a></li>
 </ul>
 </li>
 </ul>
@@ -681,11 +701,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="docs/QuickStart.html"
+       href="docs/overview.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Quick Start</p>
+        <p class="prev-next-title">Architecture</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

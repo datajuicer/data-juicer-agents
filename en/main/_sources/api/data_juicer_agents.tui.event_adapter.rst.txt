@@ -1,0 +1,7 @@
+data\_juicer\_agents.tui.event\_adapter module
+==============================================
+
+.. automodule:: data_juicer_agents.tui.event_adapter
+   :members:
+   :show-inheritance:
+   :undoc-members:

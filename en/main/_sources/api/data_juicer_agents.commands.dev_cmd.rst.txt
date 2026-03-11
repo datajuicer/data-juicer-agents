@@ -1,0 +1,7 @@
+data\_juicer\_agents.commands.dev\_cmd module
+=============================================
+
+.. automodule:: data_juicer_agents.commands.dev_cmd
+   :members:
+   :show-inheritance:
+   :undoc-members:
