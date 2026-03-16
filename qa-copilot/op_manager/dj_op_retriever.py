@@ -9,7 +9,7 @@ from typing import List, Dict
 from agentscope.tool import ToolResponse
 from agentscope.message import TextBlock
 
-from data_juicer_agents.tools.op_manager.op_retrieval import (
+from .backend import (
     retrieve_ops_vector,
     init_dj_func_info,
     get_dj_func_info,
