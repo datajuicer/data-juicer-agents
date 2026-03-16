@@ -82,7 +82,7 @@ dj-agents --ui plain --dataset ./data/demo-dataset.jsonl --export ./data/demo-da
 说明：
 - `dj-agents` 需要可用的 LLM 访问配置。
 - 会话中按 `Ctrl+C` 可中断当前轮，按 `Ctrl+D` 退出。
-- 会话内常见 planning 链路是 `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`。
+- 会话内常见 planning 链路是 `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`。
 
 ## 6. 最小检查
 

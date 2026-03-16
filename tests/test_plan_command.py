@@ -46,19 +46,13 @@ def test_execute_plan_uses_retrieval_and_writes_new_schema(monkeypatch, tmp_path
                     "arguments_preview": ["min_words: int"],
                 }
             ],
-            "dataset_profile": {"ok": True, "modality": "text"},
         },
     )
     monkeypatch.setattr(
         generator_mod,
         "call_model_json",
         lambda *_args, **_kwargs: {
-            "modality": "text",
-            "text_keys": ["text"],
             "operators": [{"name": "words_num_filter", "params": {"min_words": 10}}],
-            "risk_notes": ["verify threshold"],
-            "estimation": {"complexity": "low"},
-            "approval_required": True,
         },
     )
 
@@ -69,6 +63,9 @@ def test_execute_plan_uses_retrieval_and_writes_new_schema(monkeypatch, tmp_path
     assert payload["modality"] == "text"
     assert payload["operators"][0]["name"] == "words_num_filter"
     assert "workflow" not in payload
+    assert result["dataset_spec"]["binding"]["text_keys"] == ["text"]
+    assert result["process_spec"]["operators"][0]["params"]["min_words"] == 10
+    assert result["system_spec"]["np"] == 1
 
 
 def test_run_plan_prints_modality_not_workflow(monkeypatch, tmp_path, capsys):
@@ -80,15 +77,12 @@ def test_run_plan_prints_modality_not_workflow(monkeypatch, tmp_path, capsys):
             "ok": True,
             "retrieval_source": "lexical",
             "candidates": [{"operator_name": "words_num_filter"}],
-            "dataset_profile": {"ok": True, "modality": "text"},
         },
     )
     monkeypatch.setattr(
         generator_mod,
         "call_model_json",
         lambda *_args, **_kwargs: {
-            "modality": "text",
-            "text_keys": ["text"],
             "operators": [{"name": "words_num_filter", "params": {"min_words": 10}}],
         },
     )

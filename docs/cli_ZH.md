@@ -4,7 +4,7 @@
 
 | 命令 | 作用 | 源码 |
 |---|---|---|
-| `djx plan` | 基于 intent、检索证据和 LLM draft spec 生成 plan YAML | `data_juicer_agents/commands/plan_cmd.py` |
+| `djx plan` | 基于 intent、检索证据、分阶段 spec 和 LLM 生成的 operator list 生成 plan YAML | `data_juicer_agents/commands/plan_cmd.py` |
 | `djx apply` | 校验已保存的 plan，并执行或 dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | 基于 intent 检索候选算子 | `data_juicer_agents/commands/retrieve_cmd.py` |
 | `djx dev` | 生成非侵入式自定义算子脚手架 | `data_juicer_agents/commands/dev_cmd.py` |
@@ -41,15 +41,15 @@ djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
 
 执行行为：
 1. 内部先根据 intent 和可选数据集画像做算子检索
-2. 调用模型生成一次 draft spec
-3. 通过确定性 planner core 将 draft 收敛为最终 plan
-4. 校验 schema、文件路径、自定义算子路径和本地已安装算子
-5. 将最终 plan 以 YAML 落盘
+2. 根据数据集 IO 和画像信息构建确定性的 dataset spec
+3. 调用模型只生成 process spec 所需的 operator list
+4. 依次构建 process spec、system spec，并 assemble 为最终 plan
+5. 校验最终 plan，并将 plan 以 YAML 落盘
 
 CLI 输出：
 - 摘要输出：`Plan generated`、`Modality`、`Operators`
 - `--verbose`：输出 planning meta（`planner_model`、`retrieval_source`、`retrieval_candidate_count`）
-- `--debug`：输出 retrieval payload、draft spec payload 和 planning meta payload
+- `--debug`：输出 retrieval payload、dataset spec、process spec、system spec、validation payload 和 planning meta payload
 
 失败行为：
 - 非零退出，并打印面向用户的错误信息
@@ -61,12 +61,13 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ```
 
 行为：
-- 执行前校验 plan
+- 读取已保存的 plan YAML，并要求顶层为 mapping
 - 在 `.djx/recipes/<plan_id>.yaml` 下生成 recipe
 - 若未指定 `--dry-run`，则执行 `dj-process`
 - 输出 `Execution ID`、`Status` 和生成的 recipe 路径
 
 说明：
+- 当前 CLI 不会自动执行独立的 `plan_validate` 步骤
 - 当前 CLI 不提供独立的 trace 查询命令
 - `--dry-run` 也会生成 recipe 文件
 
@@ -78,8 +79,8 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 
 返回：
 - 候选算子排序
-- 若传入 dataset，则附带数据集画像
-- 检索来源与备注
+- 检索来源、trace 与备注
+- 当前输出 payload 不包含 dataset profile
 
 ## `djx dev`
 
@@ -112,7 +113,7 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
 - 启动时必须能访问 LLM
 
 常见内部 planning 链路：
-- `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`
+- `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`
 
 中断方式：
 - plain 模式：`Ctrl+C` 中断当前轮，`Ctrl+D` 退出
@@ -124,5 +125,5 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
 - `DJA_OPENAI_BASE_URL`：OpenAI 兼容接口地址
 - `DJA_SESSION_MODEL`：`dj-agents` 使用的模型
 - `DJA_PLANNER_MODEL`：`djx plan` 使用的模型
-- `DJA_MODEL_FALLBACKS`：`llm_gateway.py` 使用的逗号分隔模型兜底链
+- `DJA_MODEL_FALLBACKS`：`data_juicer_agents/utils/llm_gateway.py` 使用的逗号分隔模型兜底链
 - `DJA_LLM_THINKING`：控制模型请求中的 `enable_thinking`

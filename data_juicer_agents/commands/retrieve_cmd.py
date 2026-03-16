@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 
-from data_juicer_agents.tools.op_manager.retrieval_service import retrieve_operator_candidates
+from data_juicer_agents.tools.retrieve import retrieve_operator_candidates
 
 
 def _print_human_readable(payload: dict) -> None:
@@ -14,20 +14,6 @@ def _print_human_readable(payload: dict) -> None:
     print(f"Mode: {payload.get('mode', '')}")
     print(f"Source: {payload.get('retrieval_source', '')}")
     print(f"Candidates: {payload.get('candidate_count', 0)}")
-
-    dataset_profile = payload.get("dataset_profile")
-    if isinstance(dataset_profile, dict) and dataset_profile.get("ok"):
-        print(
-            "Dataset profile: "
-            f"modality={dataset_profile.get('modality')}, "
-            f"sampled_records={dataset_profile.get('sampled_records')}"
-        )
-        text_keys = dataset_profile.get("candidate_text_keys", [])
-        image_keys = dataset_profile.get("candidate_image_keys", [])
-        if text_keys:
-            print(f"Candidate text keys: {text_keys}")
-        if image_keys:
-            print(f"Candidate image keys: {image_keys}")
 
     candidates = payload.get("candidates", [])
     if not candidates:

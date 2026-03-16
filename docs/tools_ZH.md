@@ -1,156 +1,180 @@
-# 工具与服务原子能力说明
+# Tools 架构说明
 
-本文档描述 DJX 当前的原子能力，以及 CLI / session 如何基于这些能力进行组合。
+本文档描述当前 `data_juicer_agents` 的工具层架构。
 
-## 1) 原子工具层（`data_juicer_agents/tools`）
+## 1. 设计目标
 
-### `dataset_probe.py`
+工具层是 `data_juicer_agents` 内部稳定的原子能力定义层。
 
-- 入口：`inspect_dataset_schema(dataset_path, sample_size=20)`
-- 作用：
-  - 轻量级数据采样
-  - 模态识别（`text` / `image` / `multimodal` / `unknown`）
-  - 候选文本 / 图像字段发现
+它服务三类消费方：
 
-### `llm_gateway.py`
+- CLI / 命令入口
+- 基于 AgentScope 的 `dj-agents` 会话入口
+- 未来的外部 skill 打包
 
-- 入口：`call_model_json(...)`
-- 作用：
-  - 调用 OpenAI 兼容聊天接口
-  - 强约束 JSON 响应
-  - 通过 `DJA_MODEL_FALLBACKS` 支持模型兜底
+核心规则是：
 
-### `op_manager/retrieval_service.py`
+- 工具定义本身保持 runtime-agnostic，且输入 / 输出必须显式
+- 上层不能依赖隐藏的 session 默认值或工具内部 fallback
+- runtime adapter 只处理传输和 schema 展示，不改变工具语义
 
-- 入口：`retrieve_operator_candidates(intent, top_k, mode, dataset_path)`
-- 作用：
-  - 基于 intent 检索候选 Data-Juicer 算子
-  - 结合检索后端与词法兜底
-  - 可选附带数据集画像提示
+## 2. 核心工具抽象
 
-### `op_manager/operator_registry.py`
+核心抽象位于：
 
-- 入口：
-  - `get_available_operator_names()`
-  - `resolve_operator_name(raw_name, available_ops)`
-- 作用：
-  - 读取本地已安装算子名
-  - 归一化模型生成的算子名
+- `data_juicer_agents/core/tool/contracts.py`
+- `data_juicer_agents/core/tool/registry.py`
+- `data_juicer_agents/core/tool/catalog.py`
 
-### `planner/schema.py`
+定义内容包括：
 
-- 主要模型：
-  - `PlanDraftSpec`
-  - `PlanModel`
-  - `OperatorStep`
-- 作用：
-  - 定义当前 draft spec 与最终 plan schema
-  - 表达不包含 workflow/template 元数据的可执行 plan
+- `ToolSpec`
+- `ToolContext`
+- `ToolResult`
+- `ToolRegistry`
 
-### `planner/core.py`
+职责：
 
-- 入口：`PlannerCore.build_plan(...)`
-- 作用：
-  - 规范化 planner 输入上下文
-  - 将 draft spec 收敛为确定性的最终 plan
-  - 在校验前先做算子名归一化
+- 定义工具是什么
+- 定义显式输入 / 输出 schema
+- 注册内置工具规格
+- 避免直接依赖 AgentScope、TUI、session state 或 CLI 渲染层
 
-### `planner/validation.py`
+## 3. 工具组划分
 
-- 入口：
-  - `validate_plan_schema(plan)`
-  - `PlanValidator.validate(plan)`
-- 作用：
-  - 校验 schema 和模态约束
-  - 校验数据路径、导出路径、自定义算子路径
-  - 根据本地已安装的 Data-Juicer 元数据校验算子可用性
+`data_juicer_agents/tools/` 按工具组组织。
 
-### `planner/tool_api.py`
+每个组通过 `registry.py` 暴露 `TOOL_SPECS`。
 
-- 入口：
-  - `plan_build(...)`
-  - `plan_build_from_json(...)`
-  - `plan_validate(...)`
-- 作用：
-  - 向 session tools 暴露 planner core API
-  - 将 JSON draft spec 桥接为最终 plan
+具体工具通常放在各自的子目录下，并按如下结构组织：
 
-### `apply_tool_api.py`
+- `input.py`：输入模型
+- `logic.py`：可复用实现
+- `tool.py`：`ToolSpec` 绑定
 
-- 主要类型：
-  - `ApplyUseCase`
-  - `ApplyResult`
-- 作用：
-  - 在 `.djx/recipes/` 下物化 recipe YAML
-  - 执行或 dry-run `dj-process`
-  - 返回结构化执行摘要
+包级 `__init__.py` 负责导出稳定 API；部分工具组还会在 `_shared/` 或同级模块中放置共享模型与校验逻辑。
 
-### `dev_scaffold.py`
-
-- 入口：
-  - `generate_operator_scaffold(...)`
-  - `run_smoke_check(scaffold)`
-- 作用：
-  - 生成自定义算子脚手架
-  - 可选执行本地 smoke-check
-
-### `session/*`
-
-- 主要模块：
-  - `context_tools.py`
-  - `operator_tools.py`
-  - `planner_tools.py`
-  - `apply_tools.py`
-  - `dev_tools.py`
-  - `file_tools.py`
-  - `process_tools.py`
-  - `runtime.py`
-  - `registry.py`
-- 作用：
-  - 将底层 API 适配为 ReAct session toolkit
-  - 维护会话状态、事件上报以及文件 / 进程边界
-
-## 2) 能力编排层（`data_juicer_agents/capabilities`）
-
-### Plan capability
+### `tools/context`
 
 - 文件：
-  - `capabilities/plan/generator.py`
-  - `capabilities/plan/service.py`
-- 组合内容：
-  - 算子检索
-  - 基于 LLM 的 plan draft 生成
-  - 确定性 planner core 和 validation
+  - `context/registry.py`
+  - `context/inspect_dataset/{input.py,logic.py,tool.py}`
+- 主要职责：
+  - 数据集探查
+  - 数据集 schema 探针
 
-### Apply capability
+### `tools/retrieve`
 
-- 文件：`capabilities/apply/service.py`
-- 组合内容：
-  - 对 `tools/apply_tool_api.py` 的 CLI 封装
+- 文件：
+  - `retrieve/registry.py`
+  - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
+  - `retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}`
+- 主要职责：
+  - 主包的算子检索入口
+  - 算子名称归一化
+  - 已安装算子查询
 
-### Dev capability
+### `tools/plan`
 
-- 文件：`capabilities/dev/service.py`
-- 组合内容：
-  - 脚手架生成
+- 文件：
+  - `plan/registry.py`
+  - `plan/<tool_name>/{input.py,logic.py,tool.py}`
+  - `plan/_shared/*.py`
+- 主要职责：
+  - 分阶段的 dataset/process/system spec 与最终 plan 模型
+  - 确定性 planner core
+  - plan 校验
+  - 显式的 plan 组装与持久化辅助
+
+### `tools/apply`
+
+- 文件：
+  - `apply/registry.py`
+  - `apply/apply_recipe/{input.py,logic.py,tool.py}`
+- 主要职责：
+  - recipe 物化
+  - plan 执行
+  - 结构化执行结果
+
+### `tools/dev`
+
+- 文件：
+  - `dev/registry.py`
+  - `dev/develop_operator/{input.py,logic.py,tool.py,scaffold.py}`
+- 主要职责：
+  - 自定义算子脚手架生成
   - 可选 smoke-check
 
-### Session capability
+### `tools/files`
 
-- 文件：`capabilities/session/orchestrator.py`
-- 组合内容：
-  - ReAct agent
-  - session toolkit 注册
-  - reasoning / tool 事件上报与中断处理
+- 文件：
+  - `files/registry.py`
+  - `files/{view_text_file,write_text_file,insert_text_file}/...`
+- 主要职责：
+  - 文本文件读 / 写 / 插入
 
-## 3) 会话层已暴露工具列表
+### `tools/process`
 
-当前注册到 ReAct 的工具：
-- `get_session_context`
-- `set_session_context`
+- 文件：
+  - `process/registry.py`
+  - `process/{execute_shell_command,execute_python_code}/...`
+- 主要职责：
+  - shell 执行
+  - Python 代码片段执行
+
+## 4. Runtime Adapter 层
+
+runtime 相关适配不再放在工具组内部。
+
+### AgentScope adapter
+
+- `data_juicer_agents/adapters/agentscope/tools.py`
+- `data_juicer_agents/adapters/agentscope/schema_utils.py`
+
+职责：
+
+- 将 `ToolSpec` 转成 AgentScope 所需 callable / schema
+- 统一规范 JSON schema，保持 agent 调用浅层且显式
+- 将 `ToolResult` 转成 AgentScope 响应
+- 统一处理参数预览截断
+
+### Session runtime / toolkit
+
+- `data_juicer_agents/capabilities/session/toolkit.py`
+- `data_juicer_agents/capabilities/session/runtime.py`
+
+职责：
+
+- 创建 session runtime
+- 发射工具生命周期事件，供 TUI / CLI 观察
+- 选择哪些已注册工具暴露给 `DJSessionAgent`
+- 让 session memory 保持为观察性状态，而不是工具语义的一部分
+
+## 5. 默认 Registry 与 Session Toolkit
+
+内置工具注册通过：
+
+- `data_juicer_agents/core/tool/catalog.py`
+
+该 catalog 会扫描 `data_juicer_agents/tools/` 下的工具组，并加载每组的 `TOOL_SPECS`。当前所有内置工具组都通过 `registry.py` 暴露这些定义，然后交给：
+
+- `build_default_tool_registry()`
+
+session toolkit 当前直接使用默认 registry，并按功能组优先级排序工具。它不再依赖写在 `ToolSpec` 里的 `session` tag。
+
+## 6. 当前 Session 工具集合
+
+默认 registry 当前向 session runtime 暴露这些工具：
+
 - `inspect_dataset`
 - `retrieve_operators`
-- `plan_build`
+- `build_dataset_spec`
+- `build_process_spec`
+- `build_system_spec`
+- `validate_dataset_spec`
+- `validate_process_spec`
+- `validate_system_spec`
+- `assemble_plan`
 - `plan_validate`
 - `plan_save`
 - `apply_recipe`
@@ -161,39 +185,13 @@
 - `execute_shell_command`
 - `execute_python_code`
 
-说明：
-- 当前没有注册 `plan_generate`、`plan_retrieve_candidates`、`trace_run`
-- `plan_build` 依赖会话 agent 将用户目标、数据探查结果和检索结果合成为 `draft_spec_json`
-- `apply_recipe` 需要显式确认后才能执行
+这些工具保持通用语义。session 编排必须基于上一步工具输出，显式传入下一步所需参数。
 
-## 4) 命令到能力映射
+## 7. 边界总结
 
-- `djx plan` -> `PlanOrchestrator` -> `PlanDraftGenerator` + `PlannerCore` + `PlanValidator`
-- `djx apply` -> `ApplyUseCase`
-- `djx retrieve` -> retrieval service
-- `djx dev` -> `DevUseCase`
-- `dj-agents` -> `DJSessionAgent` + `tools/session/*`
+- `core/tool/*` 定义工具抽象、发现与 registry
+- `tools/<group>/*` 只定义原子工具
+- `adapters/agentscope/*` 负责 AgentScope 传输 / schema 适配
+- `capabilities/session/*` 以会话方式编排工具，但不改变工具语义
 
-## 5) 可观测与产物
-
-会话 / 工具事件：
-- `tool_start`
-- `tool_end`
-- `reasoning_step`
-
-命令行输出分级：
-- `--quiet` 摘要
-- `--verbose` 展开执行输出
-- `--debug` 结构化调试 payload
-
-持久化产物：
-- `.djx/recipes/`
-- `.djx/session_plans/`
-- 用户指定的 plan YAML 和导出路径
-
-## 6) 设计边界
-
-- tools 是原子能力
-- capabilities 负责组合 tools 到 CLI 或 session 工作流
-- plan 是基于 LLM draft spec 收敛得到的确定性产物
-- `dev` 默认仍保持非侵入式
+未来无论是 atomic CLI 还是 skill 打包，都应建立在这套内部结构之上。

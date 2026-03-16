@@ -4,7 +4,7 @@ import asyncio
 
 
 def test_retrieve_ops_with_meta_auto_uses_llm_when_available(monkeypatch):
-    from data_juicer_agents.tools.op_manager import op_retrieval as retrieval_mod
+    from data_juicer_agents.tools.retrieve.retrieve_operators import backend as retrieval_mod
 
     async def fake_llm_items(_query, limit=20):  # noqa: ARG001
         return [{"tool_name": "text_length_filter"}][:limit]
@@ -30,7 +30,7 @@ def test_retrieve_ops_with_meta_auto_uses_llm_when_available(monkeypatch):
 
 
 def test_retrieve_ops_with_meta_auto_falls_back_to_vector(monkeypatch):
-    from data_juicer_agents.tools.op_manager import op_retrieval as retrieval_mod
+    from data_juicer_agents.tools.retrieve.retrieve_operators import backend as retrieval_mod
 
     async def fail_llm_items(_query, limit=20):  # noqa: ARG001
         raise ImportError("cannot import async_sessionmaker")
@@ -59,7 +59,7 @@ def test_retrieve_ops_with_meta_auto_falls_back_to_vector(monkeypatch):
 
 
 def test_retrieve_ops_with_meta_auto_returns_empty_when_all_backends_fail(monkeypatch):
-    from data_juicer_agents.tools.op_manager import op_retrieval as retrieval_mod
+    from data_juicer_agents.tools.retrieve.retrieve_operators import backend as retrieval_mod
 
     async def fail_llm_items(_query, limit=20):  # noqa: ARG001
         raise RuntimeError("llm unavailable")

@@ -30,6 +30,7 @@ class ToolCallState:
     args_preview: str = ""
     summary: str = ""
     error_type: Optional[str] = None
+    failure_preview: str = ""
     result_preview: str = ""
 
 
