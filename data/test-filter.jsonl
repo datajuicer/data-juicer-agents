@@ -1,4 +1,0 @@
-{"id": "test_001", "text": "Hello world"}
-{"id": "test_002", "text": "This is a normal length text for filter testing purposes. It contains enough characters to pass the minimum length filter check. We are testing data processing pipelines."}
-{"id": "test_003", "text": "!!!???###$$$%%%***@@@+++===---...,,,:::;;;'''\"\"\"((())))))"}
-{"id": "test_004", "text": "test test test test test test test test test test test test test test test test test test test test"}

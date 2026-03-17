@@ -141,6 +141,7 @@ data/eval-*.jsonl
 data/my-*.jsonl
 data/cleaned-*.jsonl
 data/run-*.jsonl
+data/test-*.jsonl
 data/*_stats.jsonl
 data/*.yaml
 data/202*/
