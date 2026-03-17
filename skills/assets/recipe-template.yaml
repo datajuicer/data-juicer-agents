@@ -1,0 +1,111 @@
+# Data-Juicer Recipe Template
+
+## Basic Structure
+
+```yaml
+project_name: my_project
+dataset_path: ./input.jsonl
+export_path: ./output.jsonl
+text_keys:
+  - text
+np: 1
+skip_op_error: false
+process:
+  - operator_name:
+      param1: value1
+```
+
+---
+
+## Text Cleaning Template
+
+```yaml
+project_name: text_cleaning
+dataset_path: ./input.jsonl
+export_path: ./output.jsonl
+text_keys:
+  - text
+np: 1
+process:
+  - whitespace_normalization_mapper: {}
+  - punctuation_normalization_mapper: {}
+  - text_length_filter:
+      min_len: 20
+      max_len: 5000
+  - special_characters_filter:
+      max_ratio: 0.3
+  - document_deduplicator:
+      lowercase: false
+```
+
+---
+
+## Multimodal Dedup Template
+
+```yaml
+project_name: multimodal_dedup
+dataset_path: ./input.jsonl
+export_path: ./output.jsonl
+text_keys:
+  - text
+image_key: image
+np: 1
+process:
+  - image_deduplicator:
+      method: phash
+      consider_text: false
+  - document_deduplicator:
+      lowercase: false
+```
+
+---
+
+## Language Filter Template
+
+```yaml
+project_name: language_filter
+dataset_path: ./input.jsonl
+export_path: ./output.jsonl
+text_keys:
+  - text
+np: 1
+process:
+  - language_id_score_filter:
+      lang: en
+      min_score: 0.8
+```
+
+---
+
+## Custom Operator Template
+
+```yaml
+project_name: custom_pipeline
+dataset_path: ./input.jsonl
+export_path: ./output.jsonl
+text_keys:
+  - text
+custom_operator_paths:
+  - ./custom_ops
+np: 1
+process:
+  - whitespace_normalization_mapper: {}
+  - my_custom_filter:
+      threshold: 0.5
+```
+
+---
+
+## Field Reference
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `project_name` | Yes | Project identifier |
+| `dataset_path` | Yes | Input dataset path |
+| `export_path` | Yes | Output dataset path |
+| `process` | Yes | Operator sequence |
+| `text_keys` | No | Text field names (default: ["text"]) |
+| `image_key` | No | Image field name |
+| `np` | No | Number of processes (default: 1) |
+| `skip_op_error` | No | Skip operator errors (default: false) |
+| `custom_operator_paths` | No | Custom operator directories |
