@@ -104,7 +104,7 @@ djx dev "<intent>" \
 ## `dj-agents`
 
 ```bash
-dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
+dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui|as_studio] [--studio-url <url>]
 ```
 
 行为：
@@ -118,12 +118,14 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
 中断方式：
 - plain 模式：`Ctrl+C` 中断当前轮，`Ctrl+D` 退出
 - tui 模式：`Ctrl+C` 中断当前轮，`Ctrl+D` 退出
+- as_studio 模式：交互由 AgentScope Studio 驱动
 
 ## 环境变量
 
 - `DASHSCOPE_API_KEY` 或 `MODELSCOPE_API_TOKEN`：API 凭证
 - `DJA_OPENAI_BASE_URL`：OpenAI 兼容接口地址
 - `DJA_SESSION_MODEL`：`dj-agents` 使用的模型
+- `DJA_STUDIO_URL`：`dj-agents --ui as_studio` 使用的 AgentScope Studio 地址
 - `DJA_PLANNER_MODEL`：`djx plan` 使用的模型
 - `DJA_MODEL_FALLBACKS`：`data_juicer_agents/utils/llm_gateway.py` 使用的逗号分隔模型兜底链
 - `DJA_LLM_THINKING`：控制模型请求中的 `enable_thinking`
