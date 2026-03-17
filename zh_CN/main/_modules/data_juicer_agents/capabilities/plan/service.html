@@ -522,15 +522,23 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.op_manager.retrieval_service</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_dataset_schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.retrieve</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">extract_candidate_names</span><span class="p">,</span>
     <span class="n">retrieve_operator_candidates</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.planner</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanValidator</span><span class="p">,</span> <span class="n">PlannerCore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.plan</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PlanModel</span><span class="p">,</span>
+    <span class="n">assemble_plan</span><span class="p">,</span>
+    <span class="n">build_dataset_spec</span><span class="p">,</span>
+    <span class="n">build_process_spec</span><span class="p">,</span>
+    <span class="n">build_system_spec</span><span class="p">,</span>
+    <span class="n">plan_validate</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanDraftGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessOperatorGenerator</span>
 
 
 <span class="n">PLANNER_MODEL_NAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DJA_PLANNER_MODEL&quot;</span><span class="p">,</span> <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">)</span>
@@ -559,7 +567,7 @@
         <span class="n">llm_base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">llm_thinking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">PlanDraftGenerator</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">ProcessOperatorGenerator</span><span class="p">(</span>
             <span class="n">model_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">planner_model_name</span> <span class="ow">or</span> <span class="n">PLANNER_MODEL_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">PLANNER_MODEL_NAME</span><span class="p">,</span>
             <span class="n">api_key</span><span class="o">=</span><span class="n">llm_api_key</span><span class="p">,</span>
             <span class="n">base_url</span><span class="o">=</span><span class="n">llm_base_url</span><span class="p">,</span>
@@ -572,7 +580,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
         <span class="n">retrieved_candidates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -596,7 +604,7 @@
         <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">custom_operator_paths</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">retrieved_candidates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">retrieval_top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="n">retrieval_top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">retrieval_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">retrieval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_retrieval</span><span class="p">(</span>
@@ -606,32 +614,63 @@
             <span class="n">mode</span><span class="o">=</span><span class="n">retrieval_mode</span><span class="p">,</span>
             <span class="n">retrieved_candidates</span><span class="o">=</span><span class="n">retrieved_candidates</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">draft_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+        <span class="n">dataset_profile</span> <span class="o">=</span> <span class="n">inspect_dataset_schema</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+        <span class="n">dataset_result</span> <span class="o">=</span> <span class="n">build_dataset_spec</span><span class="p">(</span>
             <span class="n">user_intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
             <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
             <span class="n">export_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span>
-            <span class="n">retrieval_payload</span><span class="o">=</span><span class="n">retrieval</span><span class="p">,</span>
+            <span class="n">dataset_profile</span><span class="o">=</span><span class="n">dataset_profile</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">plan</span> <span class="o">=</span> <span class="n">PlannerCore</span><span class="o">.</span><span class="n">build_plan</span><span class="p">(</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dataset spec build failed: &quot;</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;validation_errors&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">dataset_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown error&quot;</span><span class="p">))]))</span>
+
+        <span class="n">operator_payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
             <span class="n">user_intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-            <span class="n">export_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span>
-            <span class="n">draft_spec</span><span class="o">=</span><span class="n">draft_spec</span><span class="p">,</span>
+            <span class="n">retrieval_payload</span><span class="o">=</span><span class="n">retrieval</span><span class="p">,</span>
+            <span class="n">dataset_spec</span><span class="o">=</span><span class="n">dataset_result</span><span class="p">[</span><span class="s2">&quot;dataset_spec&quot;</span><span class="p">],</span>
+            <span class="n">dataset_profile</span><span class="o">=</span><span class="n">dataset_profile</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">process_result</span> <span class="o">=</span> <span class="n">build_process_spec</span><span class="p">(</span>
+            <span class="n">operators</span><span class="o">=</span><span class="n">operator_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operators&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;process spec build failed: &quot;</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">process_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;validation_errors&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">process_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown error&quot;</span><span class="p">))]))</span>
+
+        <span class="n">system_result</span> <span class="o">=</span> <span class="n">build_system_spec</span><span class="p">(</span>
             <span class="n">custom_operator_paths</span><span class="o">=</span><span class="n">custom_operator_paths</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">validation_errors</span> <span class="o">=</span> <span class="n">PlanValidator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">validation_errors</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;plan validation failed: &quot;</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">validation_errors</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">system_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;system spec build failed: &quot;</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;validation_errors&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">system_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown error&quot;</span><span class="p">))]))</span>
 
+        <span class="n">assembled</span> <span class="o">=</span> <span class="n">assemble_plan</span><span class="p">(</span>
+            <span class="n">user_intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
+            <span class="n">dataset_spec</span><span class="o">=</span><span class="n">dataset_result</span><span class="p">[</span><span class="s2">&quot;dataset_spec&quot;</span><span class="p">],</span>
+            <span class="n">process_spec</span><span class="o">=</span><span class="n">process_result</span><span class="p">[</span><span class="s2">&quot;process_spec&quot;</span><span class="p">],</span>
+            <span class="n">system_spec</span><span class="o">=</span><span class="n">system_result</span><span class="p">[</span><span class="s2">&quot;system_spec&quot;</span><span class="p">],</span>
+            <span class="n">approval_required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">assembled</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;assemble_plan failed: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">assembled</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown error&quot;</span><span class="p">)))</span>
+
+        <span class="n">validation</span> <span class="o">=</span> <span class="n">plan_validate</span><span class="p">(</span><span class="n">plan_payload</span><span class="o">=</span><span class="n">assembled</span><span class="p">[</span><span class="s2">&quot;plan&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">validation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;plan validation failed: &quot;</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">validation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;validation_errors&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">validation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown error&quot;</span><span class="p">))]))</span>
+
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">PlanModel</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">assembled</span><span class="p">[</span><span class="s2">&quot;plan&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;plan&quot;</span><span class="p">:</span> <span class="n">plan</span><span class="p">,</span>
-            <span class="s2">&quot;draft_spec&quot;</span><span class="p">:</span> <span class="n">draft_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;dataset_spec&quot;</span><span class="p">:</span> <span class="n">dataset_result</span><span class="p">[</span><span class="s2">&quot;dataset_spec&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;process_spec&quot;</span><span class="p">:</span> <span class="n">process_result</span><span class="p">[</span><span class="s2">&quot;process_spec&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;system_spec&quot;</span><span class="p">:</span> <span class="n">system_result</span><span class="p">[</span><span class="s2">&quot;system_spec&quot;</span><span class="p">],</span>
             <span class="s2">&quot;retrieval&quot;</span><span class="p">:</span> <span class="n">retrieval</span><span class="p">,</span>
             <span class="s2">&quot;planning_meta&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;planner_model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
                 <span class="s2">&quot;retrieval_source&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">retrieval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;retrieval_source&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;retrieval_candidate_count&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extract_candidate_names</span><span class="p">(</span><span class="n">retrieval</span><span class="p">))),</span>
             <span class="p">},</span>
+            <span class="s2">&quot;validation&quot;</span><span class="p">:</span> <span class="n">validation</span><span class="p">,</span>
         <span class="p">}</span></div>
 </div>
 

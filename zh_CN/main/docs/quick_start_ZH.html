@@ -474,7 +474,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview_ZH.html">架构概览</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_ZH.html">DJX CLI 参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools_ZH.html">工具与服务原子能力说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools_ZH.html">Tools 架构说明</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="nav bd-sidenav">
@@ -639,7 +639,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> 需要可用的 LLM 访问配置。</p></li>
 <li><p>会话中按 <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> 可中断当前轮，按 <code class="docutils literal notranslate"><span class="pre">Ctrl+D</span></code> 退出。</p></li>
-<li><p>会话内常见 planning 链路是 <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">plan_build</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code>。</p></li>
+<li><p>会话内常见 planning 链路是 <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code>。</p></li>
 </ul>
 </section>
 <section id="id5">

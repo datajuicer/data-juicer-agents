@@ -523,7 +523,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.op_manager.retrieval_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">retrieve_operator_candidates</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.retrieve</span><span class="w"> </span><span class="kn">import</span> <span class="n">retrieve_operator_candidates</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_print_human_readable</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -532,20 +532,6 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source: </span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;retrieval_source&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Candidates: </span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;candidate_count&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="n">dataset_profile</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_profile&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_profile</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dataset_profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;Dataset profile: &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;modality=</span><span class="si">{</span><span class="n">dataset_profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;modality&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;sampled_records=</span><span class="si">{</span><span class="n">dataset_profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sampled_records&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">text_keys</span> <span class="o">=</span> <span class="n">dataset_profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidate_text_keys&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="n">image_keys</span> <span class="o">=</span> <span class="n">dataset_profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidate_image_keys&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="k">if</span> <span class="n">text_keys</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Candidate text keys: </span><span class="si">{</span><span class="n">text_keys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">image_keys</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Candidate image keys: </span><span class="si">{</span><span class="n">image_keys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">candidates</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>

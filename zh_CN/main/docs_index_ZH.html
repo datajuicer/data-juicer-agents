@@ -474,7 +474,7 @@
 <li class="toctree-l1"><a class="reference internal" href="docs/overview_ZH.html">架构概览</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docs/quick_start_ZH.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docs/cli_ZH.html">DJX CLI 参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/tools_ZH.html">工具与服务原子能力说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/tools_ZH.html">Tools 架构说明</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="nav bd-sidenav">
@@ -564,15 +564,11 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="docs/overview_ZH.html">架构概览</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id2">包的定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id3">分层模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id4">表面适配层</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#capabilities">Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#tools">Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id5">边界与依赖说明</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id8">关键调用链</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id10">运行时状态与产物</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id11">设计意图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id2">用户入口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id3">当前分层模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id4">模块边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id5">透出口设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/overview_ZH.html#id6">阅读指引</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="docs/quick_start_ZH.html">快速开始</a><ul>
@@ -596,13 +592,14 @@
 <li class="toctree-l2"><a class="reference internal" href="docs/cli_ZH.html#id2">环境变量</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="docs/tools_ZH.html">工具与服务原子能力说明</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#data-juicer-agents-tools">1) 原子工具层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>）</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#data-juicer-agents-capabilities">2) 能力编排层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>）</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id2">3) 会话层已暴露工具列表</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id3">4) 命令到能力映射</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id4">5) 可观测与产物</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id5">6) 设计边界</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/tools_ZH.html">Tools 架构说明</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id1">1. 设计目标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id2">2. 核心工具抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id3">3. 工具组划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#runtime-adapter">4. Runtime Adapter 层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#registry-session-toolkit">5. 默认 Registry 与 Session Toolkit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#session">6. 当前 Session 工具集合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docs/tools_ZH.html#id4">7. 边界总结</a></li>
 </ul>
 </li>
 </ul>

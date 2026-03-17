@@ -1,0 +1,7 @@
+data_juicer_agents.tools.files.view_text_file
+=============================================
+
+.. automodule:: data_juicer_agents.tools.files.view_text_file
+   :members:
+   :show-inheritance:
+   :undoc-members:

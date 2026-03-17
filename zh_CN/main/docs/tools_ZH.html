@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>工具与服务原子能力说明 &#8212; Data Juicer Agents</title>
+    <title>Tools 架构说明 &#8212; Data Juicer Agents</title>
   
   
   
@@ -474,7 +474,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview_ZH.html">架构概览</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick_start_ZH.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_ZH.html">DJX CLI 参考</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">工具与服务原子能力说明</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tools 架构说明</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="nav bd-sidenav">
@@ -545,7 +545,7 @@
     
     <li class="breadcrumb-item"><a href="../docs_index_ZH.html" class="nav-link">文档</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">工具与服务原子能力说明</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Tools 架构说明</span></li>
   </ul>
 </nav>
 </div>
@@ -562,260 +562,241 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="id1">
-<h1>工具与服务原子能力说明<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
-<p>本文档描述 DJX 当前的原子能力，以及 CLI / session 如何基于这些能力进行组合。</p>
-<section id="data-juicer-agents-tools">
-<h2>1) 原子工具层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>）<a class="headerlink" href="#data-juicer-agents-tools" title="链接到此标题。">#</a></h2>
-<section id="dataset-probe-py">
-<h3><code class="docutils literal notranslate"><span class="pre">dataset_probe.py</span></code><a class="headerlink" href="#dataset-probe-py" title="链接到此标题。">#</a></h3>
+  <section id="tools">
+<h1>Tools 架构说明<a class="headerlink" href="#tools" title="链接到此标题。">#</a></h1>
+<p>本文档描述当前 <code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code> 的工具层架构。</p>
+<section id="id1">
+<h2>1. 设计目标<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
+<p>工具层是 <code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code> 内部稳定的原子能力定义层。</p>
+<p>它服务三类消费方：</p>
 <ul class="simple">
-<li><p>入口：<code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema(dataset_path,</span> <span class="pre">sample_size=20)</span></code></p></li>
-<li><p>作用：</p>
-<ul>
-<li><p>轻量级数据采样</p></li>
-<li><p>模态识别（<code class="docutils literal notranslate"><span class="pre">text</span></code> / <code class="docutils literal notranslate"><span class="pre">image</span></code> / <code class="docutils literal notranslate"><span class="pre">multimodal</span></code> / <code class="docutils literal notranslate"><span class="pre">unknown</span></code>）</p></li>
-<li><p>候选文本 / 图像字段发现</p></li>
+<li><p>CLI / 命令入口</p></li>
+<li><p>基于 AgentScope 的 <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> 会话入口</p></li>
+<li><p>未来的外部 skill 打包</p></li>
 </ul>
-</li>
-</ul>
-</section>
-<section id="llm-gateway-py">
-<h3><code class="docutils literal notranslate"><span class="pre">llm_gateway.py</span></code><a class="headerlink" href="#llm-gateway-py" title="链接到此标题。">#</a></h3>
+<p>核心规则是：</p>
 <ul class="simple">
-<li><p>入口：<code class="docutils literal notranslate"><span class="pre">call_model_json(...)</span></code></p></li>
-<li><p>作用：</p>
-<ul>
-<li><p>调用 OpenAI 兼容聊天接口</p></li>
-<li><p>强约束 JSON 响应</p></li>
-<li><p>通过 <code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code> 支持模型兜底</p></li>
-</ul>
-</li>
+<li><p>工具定义本身保持 runtime-agnostic，且输入 / 输出必须显式</p></li>
+<li><p>上层不能依赖隐藏的 session 默认值或工具内部 fallback</p></li>
+<li><p>runtime adapter 只处理传输和 schema 展示，不改变工具语义</p></li>
 </ul>
 </section>
-<section id="op-manager-retrieval-service-py">
-<h3><code class="docutils literal notranslate"><span class="pre">op_manager/retrieval_service.py</span></code><a class="headerlink" href="#op-manager-retrieval-service-py" title="链接到此标题。">#</a></h3>
+<section id="id2">
+<h2>2. 核心工具抽象<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
+<p>核心抽象位于：</p>
 <ul class="simple">
-<li><p>入口：<code class="docutils literal notranslate"><span class="pre">retrieve_operator_candidates(intent,</span> <span class="pre">top_k,</span> <span class="pre">mode,</span> <span class="pre">dataset_path)</span></code></p></li>
-<li><p>作用：</p>
-<ul>
-<li><p>基于 intent 检索候选 Data-Juicer 算子</p></li>
-<li><p>结合检索后端与词法兜底</p></li>
-<li><p>可选附带数据集画像提示</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/contracts.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/catalog.py</span></code></p></li>
 </ul>
-</li>
-</ul>
-</section>
-<section id="op-manager-operator-registry-py">
-<h3><code class="docutils literal notranslate"><span class="pre">op_manager/operator_registry.py</span></code><a class="headerlink" href="#op-manager-operator-registry-py" title="链接到此标题。">#</a></h3>
+<p>定义内容包括：</p>
 <ul class="simple">
-<li><p>入口：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">get_available_operator_names()</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">resolve_operator_name(raw_name,</span> <span class="pre">available_ops)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolContext</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolResult</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolRegistry</span></code></p></li>
 </ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>读取本地已安装算子名</p></li>
-<li><p>归一化模型生成的算子名</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="planner-schema-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/schema.py</span></code><a class="headerlink" href="#planner-schema-py" title="链接到此标题。">#</a></h3>
+<p>职责：</p>
 <ul class="simple">
-<li><p>主要模型：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">PlanDraftSpec</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PlanModel</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">OperatorStep</span></code></p></li>
-</ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>定义当前 draft spec 与最终 plan schema</p></li>
-<li><p>表达不包含 workflow/template 元数据的可执行 plan</p></li>
-</ul>
-</li>
+<li><p>定义工具是什么</p></li>
+<li><p>定义显式输入 / 输出 schema</p></li>
+<li><p>注册内置工具规格</p></li>
+<li><p>避免直接依赖 AgentScope、TUI、session state 或 CLI 渲染层</p></li>
 </ul>
 </section>
-<section id="planner-core-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/core.py</span></code><a class="headerlink" href="#planner-core-py" title="链接到此标题。">#</a></h3>
+<section id="id3">
+<h2>3. 工具组划分<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools/</span></code> 按工具组组织。</p>
+<p>每个组通过 <code class="docutils literal notranslate"><span class="pre">registry.py</span></code> 暴露 <code class="docutils literal notranslate"><span class="pre">TOOL_SPECS</span></code>。</p>
+<p>具体工具通常放在各自的子目录下，并按如下结构组织：</p>
 <ul class="simple">
-<li><p>入口：<code class="docutils literal notranslate"><span class="pre">PlannerCore.build_plan(...)</span></code></p></li>
-<li><p>作用：</p>
-<ul>
-<li><p>规范化 planner 输入上下文</p></li>
-<li><p>将 draft spec 收敛为确定性的最终 plan</p></li>
-<li><p>在校验前先做算子名归一化</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input.py</span></code>：输入模型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logic.py</span></code>：可复用实现</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool.py</span></code>：<code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> 绑定</p></li>
 </ul>
-</li>
-</ul>
-</section>
-<section id="planner-validation-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/validation.py</span></code><a class="headerlink" href="#planner-validation-py" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>入口：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">validate_plan_schema(plan)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PlanValidator.validate(plan)</span></code></p></li>
-</ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>校验 schema 和模态约束</p></li>
-<li><p>校验数据路径、导出路径、自定义算子路径</p></li>
-<li><p>根据本地已安装的 Data-Juicer 元数据校验算子可用性</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="planner-tool-api-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/tool_api.py</span></code><a class="headerlink" href="#planner-tool-api-py" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>入口：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build(...)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build_from_json(...)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_validate(...)</span></code></p></li>
-</ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>向 session tools 暴露 planner core API</p></li>
-<li><p>将 JSON draft spec 桥接为最终 plan</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="apply-tool-api-py">
-<h3><code class="docutils literal notranslate"><span class="pre">apply_tool_api.py</span></code><a class="headerlink" href="#apply-tool-api-py" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>主要类型：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">ApplyUseCase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ApplyResult</span></code></p></li>
-</ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>在 <code class="docutils literal notranslate"><span class="pre">.djx/recipes/</span></code> 下物化 recipe YAML</p></li>
-<li><p>执行或 dry-run <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></li>
-<li><p>返回结构化执行摘要</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="dev-scaffold-py">
-<h3><code class="docutils literal notranslate"><span class="pre">dev_scaffold.py</span></code><a class="headerlink" href="#dev-scaffold-py" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>入口：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">generate_operator_scaffold(...)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_smoke_check(scaffold)</span></code></p></li>
-</ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>生成自定义算子脚手架</p></li>
-<li><p>可选执行本地 smoke-check</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="session">
-<h3><code class="docutils literal notranslate"><span class="pre">session/*</span></code><a class="headerlink" href="#session" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>主要模块：</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">context_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">operator_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">planner_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">apply_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dev_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">file_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">process_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">runtime.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">registry.py</span></code></p></li>
-</ul>
-</li>
-<li><p>作用：</p>
-<ul>
-<li><p>将底层 API 适配为 ReAct session toolkit</p></li>
-<li><p>维护会话状态、事件上报以及文件 / 进程边界</p></li>
-</ul>
-</li>
-</ul>
-</section>
-</section>
-<section id="data-juicer-agents-capabilities">
-<h2>2) 能力编排层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>）<a class="headerlink" href="#data-juicer-agents-capabilities" title="链接到此标题。">#</a></h2>
-<section id="plan-capability">
-<h3>Plan capability<a class="headerlink" href="#plan-capability" title="链接到此标题。">#</a></h3>
+<p>包级 <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> 负责导出稳定 API；部分工具组还会在 <code class="docutils literal notranslate"><span class="pre">_shared/</span></code> 或同级模块中放置共享模型与校验逻辑。</p>
+<section id="tools-context">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/context</span></code><a class="headerlink" href="#tools-context" title="链接到此标题。">#</a></h3>
 <ul class="simple">
 <li><p>文件：</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">capabilities/plan/generator.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">capabilities/plan/service.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/inspect_dataset/{input.py,logic.py,tool.py}</span></code></p></li>
 </ul>
 </li>
-<li><p>组合内容：</p>
+<li><p>主要职责：</p>
 <ul>
-<li><p>算子检索</p></li>
-<li><p>基于 LLM 的 plan draft 生成</p></li>
-<li><p>确定性 planner core 和 validation</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="apply-capability">
-<h3>Apply capability<a class="headerlink" href="#apply-capability" title="链接到此标题。">#</a></h3>
-<ul class="simple">
-<li><p>文件：<code class="docutils literal notranslate"><span class="pre">capabilities/apply/service.py</span></code></p></li>
-<li><p>组合内容：</p>
-<ul>
-<li><p>对 <code class="docutils literal notranslate"><span class="pre">tools/apply_tool_api.py</span></code> 的 CLI 封装</p></li>
+<li><p>数据集探查</p></li>
+<li><p>数据集 schema 探针</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section id="dev-capability">
-<h3>Dev capability<a class="headerlink" href="#dev-capability" title="链接到此标题。">#</a></h3>
+<section id="tools-retrieve">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/retrieve</span></code><a class="headerlink" href="#tools-retrieve" title="链接到此标题。">#</a></h3>
 <ul class="simple">
-<li><p>文件：<code class="docutils literal notranslate"><span class="pre">capabilities/dev/service.py</span></code></p></li>
-<li><p>组合内容：</p>
+<li><p>文件：</p>
 <ul>
-<li><p>脚手架生成</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}</span></code></p></li>
+</ul>
+</li>
+<li><p>主要职责：</p>
+<ul>
+<li><p>主包的算子检索入口</p></li>
+<li><p>算子名称归一化</p></li>
+<li><p>已安装算子查询</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-plan">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/plan</span></code><a class="headerlink" href="#tools-plan" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>文件：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">plan/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plan/&lt;tool_name&gt;/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plan/_shared/*.py</span></code></p></li>
+</ul>
+</li>
+<li><p>主要职责：</p>
+<ul>
+<li><p>分阶段的 dataset/process/system spec 与最终 plan 模型</p></li>
+<li><p>确定性 planner core</p></li>
+<li><p>plan 校验</p></li>
+<li><p>显式的 plan 组装与持久化辅助</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-apply">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/apply</span></code><a class="headerlink" href="#tools-apply" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>文件：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply/apply_recipe/{input.py,logic.py,tool.py}</span></code></p></li>
+</ul>
+</li>
+<li><p>主要职责：</p>
+<ul>
+<li><p>recipe 物化</p></li>
+<li><p>plan 执行</p></li>
+<li><p>结构化执行结果</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-dev">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/dev</span></code><a class="headerlink" href="#tools-dev" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>文件：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev/develop_operator/{input.py,logic.py,tool.py,scaffold.py}</span></code></p></li>
+</ul>
+</li>
+<li><p>主要职责：</p>
+<ul>
+<li><p>自定义算子脚手架生成</p></li>
 <li><p>可选 smoke-check</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section id="session-capability">
-<h3>Session capability<a class="headerlink" href="#session-capability" title="链接到此标题。">#</a></h3>
+<section id="tools-files">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/files</span></code><a class="headerlink" href="#tools-files" title="链接到此标题。">#</a></h3>
 <ul class="simple">
-<li><p>文件：<code class="docutils literal notranslate"><span class="pre">capabilities/session/orchestrator.py</span></code></p></li>
-<li><p>组合内容：</p>
+<li><p>文件：</p>
 <ul>
-<li><p>ReAct agent</p></li>
-<li><p>session toolkit 注册</p></li>
-<li><p>reasoning / tool 事件上报与中断处理</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">files/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">files/{view_text_file,write_text_file,insert_text_file}/...</span></code></p></li>
+</ul>
+</li>
+<li><p>主要职责：</p>
+<ul>
+<li><p>文本文件读 / 写 / 插入</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-process">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/process</span></code><a class="headerlink" href="#tools-process" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>文件：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">process/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process/{execute_shell_command,execute_python_code}/...</span></code></p></li>
+</ul>
+</li>
+<li><p>主要职责：</p>
+<ul>
+<li><p>shell 执行</p></li>
+<li><p>Python 代码片段执行</p></li>
 </ul>
 </li>
 </ul>
 </section>
 </section>
-<section id="id2">
-<h2>3) 会话层已暴露工具列表<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
-<p>当前注册到 ReAct 的工具：</p>
+<section id="runtime-adapter">
+<h2>4. Runtime Adapter 层<a class="headerlink" href="#runtime-adapter" title="链接到此标题。">#</a></h2>
+<p>runtime 相关适配不再放在工具组内部。</p>
+<section id="agentscope-adapter">
+<h3>AgentScope adapter<a class="headerlink" href="#agentscope-adapter" title="链接到此标题。">#</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">get_session_context</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set_session_context</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/adapters/agentscope/tools.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/adapters/agentscope/schema_utils.py</span></code></p></li>
+</ul>
+<p>职责：</p>
+<ul class="simple">
+<li><p>将 <code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> 转成 AgentScope 所需 callable / schema</p></li>
+<li><p>统一规范 JSON schema，保持 agent 调用浅层且显式</p></li>
+<li><p>将 <code class="docutils literal notranslate"><span class="pre">ToolResult</span></code> 转成 AgentScope 响应</p></li>
+<li><p>统一处理参数预览截断</p></li>
+</ul>
+</section>
+<section id="session-runtime-toolkit">
+<h3>Session runtime / toolkit<a class="headerlink" href="#session-runtime-toolkit" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities/session/toolkit.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities/session/runtime.py</span></code></p></li>
+</ul>
+<p>职责：</p>
+<ul class="simple">
+<li><p>创建 session runtime</p></li>
+<li><p>发射工具生命周期事件，供 TUI / CLI 观察</p></li>
+<li><p>选择哪些已注册工具暴露给 <code class="docutils literal notranslate"><span class="pre">DJSessionAgent</span></code></p></li>
+<li><p>让 session memory 保持为观察性状态，而不是工具语义的一部分</p></li>
+</ul>
+</section>
+</section>
+<section id="registry-session-toolkit">
+<h2>5. 默认 Registry 与 Session Toolkit<a class="headerlink" href="#registry-session-toolkit" title="链接到此标题。">#</a></h2>
+<p>内置工具注册通过：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/catalog.py</span></code></p></li>
+</ul>
+<p>该 catalog 会扫描 <code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools/</span></code> 下的工具组，并加载每组的 <code class="docutils literal notranslate"><span class="pre">TOOL_SPECS</span></code>。当前所有内置工具组都通过 <code class="docutils literal notranslate"><span class="pre">registry.py</span></code> 暴露这些定义，然后交给：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build_default_tool_registry()</span></code></p></li>
+</ul>
+<p>session toolkit 当前直接使用默认 registry，并按功能组优先级排序工具。它不再依赖写在 <code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> 里的 <code class="docutils literal notranslate"><span class="pre">session</span></code> tag。</p>
+</section>
+<section id="session">
+<h2>6. 当前 Session 工具集合<a class="headerlink" href="#session" title="链接到此标题。">#</a></h2>
+<p>默认 registry 当前向 session runtime 暴露这些工具：</p>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_dataset_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_process_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_system_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plan_validate</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plan_save</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></li>
@@ -826,52 +807,17 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">execute_shell_command</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">execute_python_code</span></code></p></li>
 </ul>
-<p>说明：</p>
-<ul class="simple">
-<li><p>当前没有注册 <code class="docutils literal notranslate"><span class="pre">plan_generate</span></code>、<code class="docutils literal notranslate"><span class="pre">plan_retrieve_candidates</span></code>、<code class="docutils literal notranslate"><span class="pre">trace_run</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build</span></code> 依赖会话 agent 将用户目标、数据探查结果和检索结果合成为 <code class="docutils literal notranslate"><span class="pre">draft_spec_json</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code> 需要显式确认后才能执行</p></li>
-</ul>
-</section>
-<section id="id3">
-<h2>4) 命令到能力映射<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PlanOrchestrator</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PlanDraftGenerator</span></code> + <code class="docutils literal notranslate"><span class="pre">PlannerCore</span></code> + <code class="docutils literal notranslate"><span class="pre">PlanValidator</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">ApplyUseCase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code> -&gt; retrieval service</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DevUseCase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DJSessionAgent</span></code> + <code class="docutils literal notranslate"><span class="pre">tools/session/*</span></code></p></li>
-</ul>
+<p>这些工具保持通用语义。session 编排必须基于上一步工具输出，显式传入下一步所需参数。</p>
 </section>
 <section id="id4">
-<h2>5) 可观测与产物<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
-<p>会话 / 工具事件：</p>
+<h2>7. 边界总结<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">tool_start</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tool_end</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reasoning_step</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core/tool/*</span></code> 定义工具抽象、发现与 registry</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools/&lt;group&gt;/*</span></code> 只定义原子工具</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adapters/agentscope/*</span></code> 负责 AgentScope 传输 / schema 适配</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capabilities/session/*</span></code> 以会话方式编排工具，但不改变工具语义</p></li>
 </ul>
-<p>命令行输出分级：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> 摘要</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--verbose</span></code> 展开执行输出</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code> 结构化调试 payload</p></li>
-</ul>
-<p>持久化产物：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">.djx/recipes/</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">.djx/session_plans/</span></code></p></li>
-<li><p>用户指定的 plan YAML 和导出路径</p></li>
-</ul>
-</section>
-<section id="id5">
-<h2>6) 设计边界<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>tools 是原子能力</p></li>
-<li><p>capabilities 负责组合 tools 到 CLI 或 session 工作流</p></li>
-<li><p>plan 是基于 LLM draft spec 收敛得到的确定性产物</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dev</span></code> 默认仍保持非侵入式</p></li>
-</ul>
+<p>未来无论是 atomic CLI 还是 skill 打包，都应建立在这套内部结构之上。</p>
 </section>
 </section>
 
@@ -922,31 +868,26 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-juicer-agents-tools">1) 原子工具层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>）</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-probe-py"><code class="docutils literal notranslate"><span class="pre">dataset_probe.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-gateway-py"><code class="docutils literal notranslate"><span class="pre">llm_gateway.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#op-manager-retrieval-service-py"><code class="docutils literal notranslate"><span class="pre">op_manager/retrieval_service.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#op-manager-operator-registry-py"><code class="docutils literal notranslate"><span class="pre">op_manager/operator_registry.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-schema-py"><code class="docutils literal notranslate"><span class="pre">planner/schema.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-core-py"><code class="docutils literal notranslate"><span class="pre">planner/core.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-validation-py"><code class="docutils literal notranslate"><span class="pre">planner/validation.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-tool-api-py"><code class="docutils literal notranslate"><span class="pre">planner/tool_api.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-tool-api-py"><code class="docutils literal notranslate"><span class="pre">apply_tool_api.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-scaffold-py"><code class="docutils literal notranslate"><span class="pre">dev_scaffold.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session"><code class="docutils literal notranslate"><span class="pre">session/*</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 设计目标</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 核心工具抽象</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3. 工具组划分</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-context"><code class="docutils literal notranslate"><span class="pre">tools/context</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-retrieve"><code class="docutils literal notranslate"><span class="pre">tools/retrieve</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-plan"><code class="docutils literal notranslate"><span class="pre">tools/plan</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-apply"><code class="docutils literal notranslate"><span class="pre">tools/apply</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-dev"><code class="docutils literal notranslate"><span class="pre">tools/dev</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-files"><code class="docutils literal notranslate"><span class="pre">tools/files</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-process"><code class="docutils literal notranslate"><span class="pre">tools/process</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-juicer-agents-capabilities">2) 能力编排层（<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>）</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plan-capability">Plan capability</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-capability">Apply capability</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-capability">Dev capability</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-capability">Session capability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-adapter">4. Runtime Adapter 层</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#agentscope-adapter">AgentScope adapter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-runtime-toolkit">Session runtime / toolkit</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3) 会话层已暴露工具列表</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4) 命令到能力映射</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5) 可观测与产物</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">6) 设计边界</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#registry-session-toolkit">5. 默认 Registry 与 Session Toolkit</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#session">6. 当前 Session 工具集合</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">7. 边界总结</a></li>
 </ul>
   </nav></div>
 

@@ -56,7 +56,7 @@
     <link rel="icon" href="../_static/icon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="工具与服务原子能力说明" href="tools_ZH.html" />
+    <link rel="next" title="Tools 架构说明" href="tools_ZH.html" />
     <link rel="prev" title="快速开始" href="quick_start_ZH.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="zh-CN"/>
@@ -474,7 +474,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview_ZH.html">架构概览</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick_start_ZH.html">快速开始</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">DJX CLI 参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools_ZH.html">工具与服务原子能力说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools_ZH.html">Tools 架构说明</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="nav bd-sidenav">
@@ -575,7 +575,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></p></td>
-<td><p>基于 intent、检索证据和 LLM draft spec 生成 plan YAML</p></td>
+<td><p>基于 intent、检索证据、分阶段 spec 和 LLM 生成的 operator list 生成 plan YAML</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/plan_cmd.py</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></p></td>
@@ -627,16 +627,16 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <p>执行行为：</p>
 <ol class="arabic simple">
 <li><p>内部先根据 intent 和可选数据集画像做算子检索</p></li>
-<li><p>调用模型生成一次 draft spec</p></li>
-<li><p>通过确定性 planner core 将 draft 收敛为最终 plan</p></li>
-<li><p>校验 schema、文件路径、自定义算子路径和本地已安装算子</p></li>
-<li><p>将最终 plan 以 YAML 落盘</p></li>
+<li><p>根据数据集 IO 和画像信息构建确定性的 dataset spec</p></li>
+<li><p>调用模型只生成 process spec 所需的 operator list</p></li>
+<li><p>依次构建 process spec、system spec，并 assemble 为最终 plan</p></li>
+<li><p>校验最终 plan，并将 plan 以 YAML 落盘</p></li>
 </ol>
 <p>CLI 输出：</p>
 <ul class="simple">
 <li><p>摘要输出：<code class="docutils literal notranslate"><span class="pre">Plan</span> <span class="pre">generated</span></code>、<code class="docutils literal notranslate"><span class="pre">Modality</span></code>、<code class="docutils literal notranslate"><span class="pre">Operators</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--verbose</span></code>：输出 planning meta（<code class="docutils literal notranslate"><span class="pre">planner_model</span></code>、<code class="docutils literal notranslate"><span class="pre">retrieval_source</span></code>、<code class="docutils literal notranslate"><span class="pre">retrieval_candidate_count</span></code>）</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>：输出 retrieval payload、draft spec payload 和 planning meta payload</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>：输出 retrieval payload、dataset spec、process spec、system spec、validation payload 和 planning meta payload</p></li>
 </ul>
 <p>失败行为：</p>
 <ul class="simple">
@@ -650,13 +650,14 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </div>
 <p>行为：</p>
 <ul class="simple">
-<li><p>执行前校验 plan</p></li>
+<li><p>读取已保存的 plan YAML，并要求顶层为 mapping</p></li>
 <li><p>在 <code class="docutils literal notranslate"><span class="pre">.djx/recipes/&lt;plan_id&gt;.yaml</span></code> 下生成 recipe</p></li>
 <li><p>若未指定 <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>，则执行 <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></li>
 <li><p>输出 <code class="docutils literal notranslate"><span class="pre">Execution</span> <span class="pre">ID</span></code>、<code class="docutils literal notranslate"><span class="pre">Status</span></code> 和生成的 recipe 路径</p></li>
 </ul>
 <p>说明：</p>
 <ul class="simple">
+<li><p>当前 CLI 不会自动执行独立的 <code class="docutils literal notranslate"><span class="pre">plan_validate</span></code> 步骤</p></li>
 <li><p>当前 CLI 不提供独立的 trace 查询命令</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> 也会生成 recipe 文件</p></li>
 </ul>
@@ -669,8 +670,8 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <p>返回：</p>
 <ul class="simple">
 <li><p>候选算子排序</p></li>
-<li><p>若传入 dataset，则附带数据集画像</p></li>
-<li><p>检索来源与备注</p></li>
+<li><p>检索来源、trace 与备注</p></li>
+<li><p>当前输出 payload 不包含 dataset profile</p></li>
 </ul>
 </section>
 <section id="djx-dev">
@@ -705,7 +706,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>常见内部 planning 链路：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">plan_build</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code></p></li>
 </ul>
 <p>中断方式：</p>
 <ul class="simple">
@@ -720,7 +721,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_OPENAI_BASE_URL</span></code>：OpenAI 兼容接口地址</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_SESSION_MODEL</span></code>：<code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> 使用的模型</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code>：<code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code> 使用的模型</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code>：<code class="docutils literal notranslate"><span class="pre">llm_gateway.py</span></code> 使用的逗号分隔模型兜底链</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code>：<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/utils/llm_gateway.py</span></code> 使用的逗号分隔模型兜底链</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code>：控制模型请求中的 <code class="docutils literal notranslate"><span class="pre">enable_thinking</span></code></p></li>
 </ul>
 </section>
@@ -750,7 +751,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
        title="下一页">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">下一页</p>
-        <p class="prev-next-title">工具与服务原子能力说明</p>
+        <p class="prev-next-title">Tools 架构说明</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

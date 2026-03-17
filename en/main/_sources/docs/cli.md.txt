@@ -4,7 +4,7 @@
 
 | Command | Purpose | Source |
 |---|---|---|
-| `djx plan` | Generate a plan YAML from intent, retrieval evidence, and an LLM draft spec | `data_juicer_agents/commands/plan_cmd.py` |
+| `djx plan` | Generate a plan YAML from intent, retrieval evidence, staged specs, and an LLM-generated operator list | `data_juicer_agents/commands/plan_cmd.py` |
 | `djx apply` | Validate a saved plan and execute or dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | Retrieve candidate operators by intent | `data_juicer_agents/commands/retrieve_cmd.py` |
 | `djx dev` | Generate a non-invasive custom operator scaffold | `data_juicer_agents/commands/dev_cmd.py` |
@@ -41,15 +41,15 @@ Key options:
 
 Behavior:
 1. internally retrieves operator candidates from the intent and optional dataset profile
-2. calls the model once to generate a draft spec
-3. reconciles the draft with the deterministic planner core
-4. validates schema, filesystem paths, custom operator paths, and installed operator names
-5. writes the final plan YAML
+2. builds a deterministic dataset spec from dataset IO and profile signals
+3. calls the model once to generate only the operator list for the process spec
+4. builds the process spec, builds the system spec, and assembles the final plan
+5. validates the final plan and writes the plan YAML
 
 CLI output:
 - summary: `Plan generated`, `Modality`, `Operators`
 - `--verbose`: planning meta (`planner_model`, `retrieval_source`, `retrieval_candidate_count`)
-- `--debug`: retrieval payload, draft spec payload, and planning meta payload
+- `--debug`: retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload
 
 Failure behavior:
 - exits non-zero and prints a user-facing error message
@@ -61,12 +61,13 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ```
 
 Behavior:
-- validates the plan before execution
+- loads the saved plan YAML and requires a mapping payload
 - writes a recipe to `.djx/recipes/<plan_id>.yaml`
 - executes `dj-process` unless `--dry-run` is set
 - prints `Execution ID`, `Status`, and generated recipe path
 
 Notes:
+- current CLI does not run a separate `plan_validate` step automatically
 - current CLI does not persist or expose a separate trace query command
 - `--dry-run` still writes the recipe file
 
@@ -78,8 +79,8 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 
 Returns:
 - ranked operator candidates
-- optional dataset profile when dataset path is provided
-- retrieval source and notes
+- retrieval source, trace, and notes
+- current output payload does not include dataset profile
 
 ## `djx dev`
 
@@ -112,7 +113,7 @@ Behavior:
 - LLM required at startup
 
 Typical internal planning chain:
-- `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`
+- `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`
 
 Interrupt:
 - plain mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
@@ -124,5 +125,5 @@ Interrupt:
 - `DJA_OPENAI_BASE_URL`: OpenAI-compatible endpoint base URL
 - `DJA_SESSION_MODEL`: model used by `dj-agents`
 - `DJA_PLANNER_MODEL`: model used by `djx plan`
-- `DJA_MODEL_FALLBACKS`: comma-separated fallback models for `llm_gateway.py`
+- `DJA_MODEL_FALLBACKS`: comma-separated fallback models for `data_juicer_agents/utils/llm_gateway.py`
 - `DJA_LLM_THINKING`: toggles `enable_thinking` in model requests

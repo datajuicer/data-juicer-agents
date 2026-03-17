@@ -516,24 +516,23 @@
                   
   <h1>Source code for data_juicer_agents.capabilities.plan.generator</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Single-pass LLM generator for plan draft specs.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;LLM generator for process operator lists used by CLI plan orchestration.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.llm_gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_model_json</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.planner</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanDraftSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.llm_gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_model_json</span>
 
 
-<div class="viewcode-block" id="PlanDraftGenerator">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.PlanDraftGenerator">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">PlanDraftGenerator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a plan draft spec from intent and retrieval evidence.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ProcessOperatorGenerator">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.ProcessOperatorGenerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProcessOperatorGenerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate an operator list for staged plan assembly.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PlanDraftGenerator.__init__">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.PlanDraftGenerator.__init__">[docs]</a>
+<div class="viewcode-block" id="ProcessOperatorGenerator.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.ProcessOperatorGenerator.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -552,41 +551,45 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_prompt</span><span class="p">(</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">retrieval_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="n">retrieval_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="n">dataset_profile</span> <span class="o">=</span> <span class="n">retrieval_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_profile&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">profile_payload</span> <span class="o">=</span> <span class="n">dataset_profile</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_profile</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">dataset_binding</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">binding</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;binding&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binding</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">dataset_binding</span> <span class="o">=</span> <span class="n">binding</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;You generate a structured draft spec for a deterministic Data-Juicer planner core.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Return JSON only with keys: modality, text_keys, image_key, operators, risk_notes, estimation, approval_required.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;You generate only the operator list for a staged deterministic Data-Juicer planner.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Return JSON only with one key: operators.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;operators must be a non-empty array of objects: {name: string, params: object}.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Do not include workflow, revision, template, or markdown.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Prefer canonical operator names from retrieved candidates.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Use dataset profile hints when available.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Use canonical operator names from retrieved candidates.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Fill concrete params whenever a threshold, mode, or explicit option is already known.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Do not include modality, text_keys, image_key, risk_notes, estimation, approval_required, workflow, or markdown.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;user_intent: </span><span class="si">{</span><span class="n">user_intent</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;dataset_path: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;export_path: </span><span class="si">{</span><span class="n">export_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;dataset_binding:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dataset_binding</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;retrieved_candidates:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;dataset_profile:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dataset_profile</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;dataset_profile:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">profile_payload</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="PlanDraftGenerator.generate">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.PlanDraftGenerator.generate">[docs]</a>
+<div class="viewcode-block" id="ProcessOperatorGenerator.generate">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.ProcessOperatorGenerator.generate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">retrieval_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlanDraftSpec</span><span class="p">:</span>
+        <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">(</span>
             <span class="n">user_intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-            <span class="n">export_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span>
             <span class="n">retrieval_payload</span><span class="o">=</span><span class="n">retrieval_payload</span><span class="p">,</span>
+            <span class="n">dataset_spec</span><span class="o">=</span><span class="n">dataset_spec</span><span class="p">,</span>
+            <span class="n">dataset_profile</span><span class="o">=</span><span class="n">dataset_profile</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">call_model_json</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
@@ -596,16 +599,16 @@
             <span class="n">thinking</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thinking</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner draft output must be a JSON object&quot;</span><span class="p">)</span>
-        <span class="n">draft</span> <span class="o">=</span> <span class="n">PlanDraftSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">draft</span><span class="o">.</span><span class="n">operators</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner draft output must contain non-empty operators&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">draft</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner operator output must be a JSON object&quot;</span><span class="p">)</span>
+        <span class="n">operators</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operators&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operators</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">operators</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner operator output must contain non-empty operators&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;operators&quot;</span><span class="p">:</span> <span class="n">operators</span><span class="p">}</span></div>
 </div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlanDraftGenerator&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ProcessOperatorGenerator&quot;</span><span class="p">]</span>
 </pre></div>
 
                 </article>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tools and Service Primitives &#8212; Data Juicer Agents</title>
+    <title>Tools Architecture &#8212; Data Juicer Agents</title>
   
   
   
@@ -473,7 +473,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">DJX CLI Reference</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tools and Service Primitives</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tools Architecture</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
@@ -541,7 +541,7 @@
     
     <li class="breadcrumb-item"><a href="../docs_index.html" class="nav-link">DOCS</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Tools and Service Primitives</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Tools Architecture</span></li>
   </ul>
 </nav>
 </div>
@@ -558,260 +558,241 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="tools-and-service-primitives">
-<h1>Tools and Service Primitives<a class="headerlink" href="#tools-and-service-primitives" title="Link to this heading">#</a></h1>
-<p>This document describes the current atomic primitives behind DJX and how CLI/session compose them.</p>
-<section id="primitive-tool-layer-data-juicer-agents-tools">
-<h2>1) Primitive Tool Layer (<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>)<a class="headerlink" href="#primitive-tool-layer-data-juicer-agents-tools" title="Link to this heading">#</a></h2>
-<section id="dataset-probe-py">
-<h3><code class="docutils literal notranslate"><span class="pre">dataset_probe.py</span></code><a class="headerlink" href="#dataset-probe-py" title="Link to this heading">#</a></h3>
+  <section id="tools-architecture">
+<h1>Tools Architecture<a class="headerlink" href="#tools-architecture" title="Link to this heading">#</a></h1>
+<p>This document describes the current tool-layer architecture inside <code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code>.</p>
+<section id="design-goal">
+<h2>1. Design Goal<a class="headerlink" href="#design-goal" title="Link to this heading">#</a></h2>
+<p>The tool layer is the stable atomic capability surface inside <code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code>.</p>
+<p>It serves three consumers:</p>
 <ul class="simple">
-<li><p>Entry: <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema(dataset_path,</span> <span class="pre">sample_size=20)</span></code></p></li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>lightweight dataset sampling</p></li>
-<li><p>modality inference (<code class="docutils literal notranslate"><span class="pre">text</span></code> / <code class="docutils literal notranslate"><span class="pre">image</span></code> / <code class="docutils literal notranslate"><span class="pre">multimodal</span></code> / <code class="docutils literal notranslate"><span class="pre">unknown</span></code>)</p></li>
-<li><p>candidate text/image key discovery</p></li>
+<li><p>CLI and command surfaces</p></li>
+<li><p>the AgentScope-backed <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> session</p></li>
+<li><p>future external skill packaging</p></li>
 </ul>
-</li>
-</ul>
-</section>
-<section id="llm-gateway-py">
-<h3><code class="docutils literal notranslate"><span class="pre">llm_gateway.py</span></code><a class="headerlink" href="#llm-gateway-py" title="Link to this heading">#</a></h3>
+<p>The key rule is:</p>
 <ul class="simple">
-<li><p>Entry: <code class="docutils literal notranslate"><span class="pre">call_model_json(...)</span></code></p></li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>call an OpenAI-compatible chat completion endpoint</p></li>
-<li><p>enforce JSON-oriented responses</p></li>
-<li><p>support fallback models via <code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code></p></li>
-</ul>
-</li>
+<li><p>tool definitions are runtime-agnostic and explicit-input/output</p></li>
+<li><p>higher layers must not rely on hidden session defaults or tool-internal state fallback</p></li>
+<li><p>runtime adapters may change transport/schema presentation, but not tool semantics</p></li>
 </ul>
 </section>
-<section id="op-manager-retrieval-service-py">
-<h3><code class="docutils literal notranslate"><span class="pre">op_manager/retrieval_service.py</span></code><a class="headerlink" href="#op-manager-retrieval-service-py" title="Link to this heading">#</a></h3>
+<section id="core-tool-contracts">
+<h2>2. Core Tool Contracts<a class="headerlink" href="#core-tool-contracts" title="Link to this heading">#</a></h2>
+<p>Core contracts live in:</p>
 <ul class="simple">
-<li><p>Entry: <code class="docutils literal notranslate"><span class="pre">retrieve_operator_candidates(intent,</span> <span class="pre">top_k,</span> <span class="pre">mode,</span> <span class="pre">dataset_path)</span></code></p></li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>retrieve candidate Data-Juicer operators from intent</p></li>
-<li><p>combine backend retrieval with lexical fallback</p></li>
-<li><p>optionally attach dataset profile hints</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/contracts.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/catalog.py</span></code></p></li>
 </ul>
-</li>
-</ul>
-</section>
-<section id="op-manager-operator-registry-py">
-<h3><code class="docutils literal notranslate"><span class="pre">op_manager/operator_registry.py</span></code><a class="headerlink" href="#op-manager-operator-registry-py" title="Link to this heading">#</a></h3>
+<p>They define:</p>
 <ul class="simple">
-<li><p>Entries:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">get_available_operator_names()</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">resolve_operator_name(raw_name,</span> <span class="pre">available_ops)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolContext</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolResult</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolRegistry</span></code></p></li>
 </ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>load installed operator names</p></li>
-<li><p>canonicalize model-produced operator names</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="planner-schema-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/schema.py</span></code><a class="headerlink" href="#planner-schema-py" title="Link to this heading">#</a></h3>
+<p>Responsibilities:</p>
 <ul class="simple">
-<li><p>Main models:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">PlanDraftSpec</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PlanModel</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">OperatorStep</span></code></p></li>
-</ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>define the current draft-spec and final plan schema</p></li>
-<li><p>represent executable plans without workflow/template metadata</p></li>
-</ul>
-</li>
+<li><p>describe what a tool is</p></li>
+<li><p>define explicit input and output schemas</p></li>
+<li><p>register built-in tool specs</p></li>
+<li><p>avoid direct dependency on AgentScope, TUI, session state, or CLI rendering</p></li>
 </ul>
 </section>
-<section id="planner-core-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/core.py</span></code><a class="headerlink" href="#planner-core-py" title="Link to this heading">#</a></h3>
+<section id="tool-groups">
+<h2>3. Tool Groups<a class="headerlink" href="#tool-groups" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools/</span></code> is organized by tool group.</p>
+<p>Each group publishes <code class="docutils literal notranslate"><span class="pre">TOOL_SPECS</span></code> through <code class="docutils literal notranslate"><span class="pre">registry.py</span></code>.</p>
+<p>Concrete tools usually live under per-tool subdirectories with:</p>
 <ul class="simple">
-<li><p>Entry: <code class="docutils literal notranslate"><span class="pre">PlannerCore.build_plan(...)</span></code></p></li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>normalize planner context</p></li>
-<li><p>reconcile draft specs into deterministic final plans</p></li>
-<li><p>canonicalize operator names before validation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input.py</span></code>: input model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logic.py</span></code>: reusable implementation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool.py</span></code>: <code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> binding</p></li>
 </ul>
-</li>
-</ul>
-</section>
-<section id="planner-validation-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/validation.py</span></code><a class="headerlink" href="#planner-validation-py" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>Entries:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">validate_plan_schema(plan)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PlanValidator.validate(plan)</span></code></p></li>
-</ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>validate schema and modality constraints</p></li>
-<li><p>validate dataset/export/custom operator paths</p></li>
-<li><p>validate operator availability against installed Data-Juicer metadata</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="planner-tool-api-py">
-<h3><code class="docutils literal notranslate"><span class="pre">planner/tool_api.py</span></code><a class="headerlink" href="#planner-tool-api-py" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>Entries:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build(...)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build_from_json(...)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_validate(...)</span></code></p></li>
-</ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>expose planner-core APIs to session tools</p></li>
-<li><p>bridge JSON draft specs into final plans</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="apply-tool-api-py">
-<h3><code class="docutils literal notranslate"><span class="pre">apply_tool_api.py</span></code><a class="headerlink" href="#apply-tool-api-py" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>Main types:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">ApplyUseCase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ApplyResult</span></code></p></li>
-</ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>materialize recipe YAML under <code class="docutils literal notranslate"><span class="pre">.djx/recipes/</span></code></p></li>
-<li><p>execute or dry-run <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></li>
-<li><p>return structured execution summaries</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="dev-scaffold-py">
-<h3><code class="docutils literal notranslate"><span class="pre">dev_scaffold.py</span></code><a class="headerlink" href="#dev-scaffold-py" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>Entries:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">generate_operator_scaffold(...)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_smoke_check(scaffold)</span></code></p></li>
-</ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>generate custom operator scaffolds</p></li>
-<li><p>optionally run a local smoke check</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="session">
-<h3><code class="docutils literal notranslate"><span class="pre">session/*</span></code><a class="headerlink" href="#session" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>Main modules:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">context_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">operator_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">planner_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">apply_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dev_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">file_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">process_tools.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">runtime.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">registry.py</span></code></p></li>
-</ul>
-</li>
-<li><p>Purpose:</p>
-<ul>
-<li><p>adapt primitive APIs into the ReAct session toolkit</p></li>
-<li><p>maintain session state, event emission, and file/process boundaries</p></li>
-</ul>
-</li>
-</ul>
-</section>
-</section>
-<section id="capability-composition-layer-data-juicer-agents-capabilities">
-<h2>2) Capability Composition Layer (<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>)<a class="headerlink" href="#capability-composition-layer-data-juicer-agents-capabilities" title="Link to this heading">#</a></h2>
-<section id="plan-capability">
-<h3>Plan capability<a class="headerlink" href="#plan-capability" title="Link to this heading">#</a></h3>
+<p>Package-level <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> files re-export stable helpers, and some groups keep shared models or validators in sibling modules such as <code class="docutils literal notranslate"><span class="pre">_shared/</span></code>.</p>
+<section id="tools-context">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/context</span></code><a class="headerlink" href="#tools-context" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Files:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">capabilities/plan/generator.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">capabilities/plan/service.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/inspect_dataset/{input.py,logic.py,tool.py}</span></code></p></li>
 </ul>
 </li>
-<li><p>Composes:</p>
+<li><p>Main responsibilities:</p>
 <ul>
-<li><p>operator retrieval</p></li>
-<li><p>plan draft generation via LLM</p></li>
-<li><p>deterministic planner core and validation</p></li>
+<li><p>dataset inspection</p></li>
+<li><p>dataset schema probing</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section id="apply-capability">
-<h3>Apply capability<a class="headerlink" href="#apply-capability" title="Link to this heading">#</a></h3>
+<section id="tools-retrieve">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/retrieve</span></code><a class="headerlink" href="#tools-retrieve" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>File: <code class="docutils literal notranslate"><span class="pre">capabilities/apply/service.py</span></code></p></li>
-<li><p>Composes:</p>
+<li><p>Files:</p>
 <ul>
-<li><p>CLI-facing wrapper over <code class="docutils literal notranslate"><span class="pre">tools/apply_tool_api.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}</span></code></p></li>
 </ul>
 </li>
-</ul>
-</section>
-<section id="dev-capability">
-<h3>Dev capability<a class="headerlink" href="#dev-capability" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>File: <code class="docutils literal notranslate"><span class="pre">capabilities/dev/service.py</span></code></p></li>
-<li><p>Composes:</p>
+<li><p>Main responsibilities:</p>
 <ul>
-<li><p>scaffold generator</p></li>
-<li><p>optional smoke-check runner</p></li>
+<li><p>operator retrieval entrypoints for the main package</p></li>
+<li><p>canonical operator-name resolution</p></li>
+<li><p>installed-operator lookup</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section id="session-capability">
-<h3>Session capability<a class="headerlink" href="#session-capability" title="Link to this heading">#</a></h3>
+<section id="tools-plan">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/plan</span></code><a class="headerlink" href="#tools-plan" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>File: <code class="docutils literal notranslate"><span class="pre">capabilities/session/orchestrator.py</span></code></p></li>
-<li><p>Composes:</p>
+<li><p>Files:</p>
 <ul>
-<li><p>ReAct agent</p></li>
-<li><p>session toolkit registration</p></li>
-<li><p>reasoning/tool event emission and interruption handling</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plan/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plan/&lt;tool_name&gt;/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plan/_shared/*.py</span></code></p></li>
+</ul>
+</li>
+<li><p>Main responsibilities:</p>
+<ul>
+<li><p>staged dataset/process/system specs and the final plan model</p></li>
+<li><p>deterministic planner core</p></li>
+<li><p>plan validation</p></li>
+<li><p>explicit plan assembly and persistence helpers</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-apply">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/apply</span></code><a class="headerlink" href="#tools-apply" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Files:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply/apply_recipe/{input.py,logic.py,tool.py}</span></code></p></li>
+</ul>
+</li>
+<li><p>Main responsibilities:</p>
+<ul>
+<li><p>recipe materialization</p></li>
+<li><p>plan execution</p></li>
+<li><p>structured execution results</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-dev">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/dev</span></code><a class="headerlink" href="#tools-dev" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Files:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev/develop_operator/{input.py,logic.py,tool.py,scaffold.py}</span></code></p></li>
+</ul>
+</li>
+<li><p>Main responsibilities:</p>
+<ul>
+<li><p>custom operator scaffold generation</p></li>
+<li><p>optional smoke-check</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-files">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/files</span></code><a class="headerlink" href="#tools-files" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Files:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">files/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">files/{view_text_file,write_text_file,insert_text_file}/...</span></code></p></li>
+</ul>
+</li>
+<li><p>Main responsibilities:</p>
+<ul>
+<li><p>read / write / insert text file helpers</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tools-process">
+<h3><code class="docutils literal notranslate"><span class="pre">tools/process</span></code><a class="headerlink" href="#tools-process" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Files:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">process/registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process/{execute_shell_command,execute_python_code}/...</span></code></p></li>
+</ul>
+</li>
+<li><p>Main responsibilities:</p>
+<ul>
+<li><p>shell execution</p></li>
+<li><p>python snippet execution</p></li>
 </ul>
 </li>
 </ul>
 </section>
 </section>
-<section id="session-exposed-tool-set">
-<h2>3) Session-Exposed Tool Set<a class="headerlink" href="#session-exposed-tool-set" title="Link to this heading">#</a></h2>
-<p>Registered for ReAct calls:</p>
+<section id="runtime-adapters">
+<h2>4. Runtime Adapters<a class="headerlink" href="#runtime-adapters" title="Link to this heading">#</a></h2>
+<p>Runtime-specific adaptation is not placed in the tool groups.</p>
+<section id="agentscope-adapter">
+<h3>AgentScope adapter<a class="headerlink" href="#agentscope-adapter" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">get_session_context</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set_session_context</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/adapters/agentscope/tools.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/adapters/agentscope/schema_utils.py</span></code></p></li>
+</ul>
+<p>Responsibilities:</p>
+<ul class="simple">
+<li><p>convert <code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> into AgentScope-compatible callable/schema</p></li>
+<li><p>normalize JSON schema so agent-facing tool calls stay shallow and explicit</p></li>
+<li><p>map <code class="docutils literal notranslate"><span class="pre">ToolResult</span></code> into AgentScope responses</p></li>
+<li><p>apply generic argument preview truncation</p></li>
+</ul>
+</section>
+<section id="session-runtime-toolkit">
+<h3>Session runtime / toolkit<a class="headerlink" href="#session-runtime-toolkit" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities/session/toolkit.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities/session/runtime.py</span></code></p></li>
+</ul>
+<p>Responsibilities:</p>
+<ul class="simple">
+<li><p>create the session runtime</p></li>
+<li><p>emit tool lifecycle events for TUI/CLI observation</p></li>
+<li><p>choose which registered tools are exposed to <code class="docutils literal notranslate"><span class="pre">DJSessionAgent</span></code></p></li>
+<li><p>keep session memory observational only; tool semantics remain explicit</p></li>
+</ul>
+</section>
+</section>
+<section id="default-registry-and-session-toolkit">
+<h2>5. Default Registry and Session Toolkit<a class="headerlink" href="#default-registry-and-session-toolkit" title="Link to this heading">#</a></h2>
+<p>Built-in tool registration is assembled through:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/core/tool/catalog.py</span></code></p></li>
+</ul>
+<p>That catalog discovers tool groups under <code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools/</span></code> and loads each group’s <code class="docutils literal notranslate"><span class="pre">TOOL_SPECS</span></code> (currently via <code class="docutils literal notranslate"><span class="pre">registry.py</span></code> in every built-in group). It feeds them into:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build_default_tool_registry()</span></code></p></li>
+</ul>
+<p>The session toolkit currently uses the default registry directly and orders tools by functional group priority. It does not depend on <code class="docutils literal notranslate"><span class="pre">session</span></code> tags embedded in tool definitions.</p>
+</section>
+<section id="current-session-tool-set">
+<h2>6. Current Session Tool Set<a class="headerlink" href="#current-session-tool-set" title="Link to this heading">#</a></h2>
+<p>The default registry currently exposes these tools to the session runtime:</p>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_dataset_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_process_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_system_spec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plan_validate</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plan_save</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></li>
@@ -822,52 +803,17 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">execute_shell_command</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">execute_python_code</span></code></p></li>
 </ul>
-<p>Notes:</p>
-<ul class="simple">
-<li><p>there is no registered <code class="docutils literal notranslate"><span class="pre">plan_generate</span></code>, <code class="docutils literal notranslate"><span class="pre">plan_retrieve_candidates</span></code>, or <code class="docutils literal notranslate"><span class="pre">trace_run</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">plan_build</span></code> expects the session agent to synthesize <code class="docutils literal notranslate"><span class="pre">draft_spec_json</span></code> from user goal + dataset inspection + retrieval evidence</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code> requires explicit confirmation</p></li>
-</ul>
+<p>These tools stay generic. Session orchestration must call them with explicit arguments based on prior tool outputs.</p>
 </section>
-<section id="command-to-capability-mapping">
-<h2>4) Command-to-Capability Mapping<a class="headerlink" href="#command-to-capability-mapping" title="Link to this heading">#</a></h2>
+<section id="boundary-summary">
+<h2>7. Boundary Summary<a class="headerlink" href="#boundary-summary" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PlanOrchestrator</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PlanDraftGenerator</span></code> + <code class="docutils literal notranslate"><span class="pre">PlannerCore</span></code> + <code class="docutils literal notranslate"><span class="pre">PlanValidator</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">ApplyUseCase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code> -&gt; retrieval service</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DevUseCase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DJSessionAgent</span></code> + <code class="docutils literal notranslate"><span class="pre">tools/session/*</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core/tool/*</span></code> defines tool contracts, discovery, and registry</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools/&lt;group&gt;/*</span></code> defines atomic tools only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adapters/agentscope/*</span></code> adapts tools to AgentScope transport/schema</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capabilities/session/*</span></code> orchestrates tools conversationally without changing tool semantics</p></li>
 </ul>
-</section>
-<section id="observability-and-artifacts">
-<h2>5) Observability and Artifacts<a class="headerlink" href="#observability-and-artifacts" title="Link to this heading">#</a></h2>
-<p>Session/tool events:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">tool_start</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tool_end</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reasoning_step</span></code></p></li>
-</ul>
-<p>Command-side output control:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> summary</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--verbose</span></code> expanded execution output</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code> structured debug payloads</p></li>
-</ul>
-<p>Persistent artifacts:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">.djx/recipes/</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">.djx/session_plans/</span></code></p></li>
-<li><p>user-specified plan YAML and export paths</p></li>
-</ul>
-</section>
-<section id="design-boundary">
-<h2>6) Design Boundary<a class="headerlink" href="#design-boundary" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>tools are atomic primitives</p></li>
-<li><p>capabilities compose tools into CLI or session workflows</p></li>
-<li><p>plans are deterministic artifacts built from an LLM-produced draft spec</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dev</span></code> remains non-invasive by default</p></li>
-</ul>
+<p>This is the internal shape that future atomic CLI and skill packaging should build on.</p>
 </section>
 </section>
 
@@ -918,31 +864,26 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#primitive-tool-layer-data-juicer-agents-tools">1) Primitive Tool Layer (<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/tools</span></code>)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-probe-py"><code class="docutils literal notranslate"><span class="pre">dataset_probe.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-gateway-py"><code class="docutils literal notranslate"><span class="pre">llm_gateway.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#op-manager-retrieval-service-py"><code class="docutils literal notranslate"><span class="pre">op_manager/retrieval_service.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#op-manager-operator-registry-py"><code class="docutils literal notranslate"><span class="pre">op_manager/operator_registry.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-schema-py"><code class="docutils literal notranslate"><span class="pre">planner/schema.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-core-py"><code class="docutils literal notranslate"><span class="pre">planner/core.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-validation-py"><code class="docutils literal notranslate"><span class="pre">planner/validation.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planner-tool-api-py"><code class="docutils literal notranslate"><span class="pre">planner/tool_api.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-tool-api-py"><code class="docutils literal notranslate"><span class="pre">apply_tool_api.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-scaffold-py"><code class="docutils literal notranslate"><span class="pre">dev_scaffold.py</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session"><code class="docutils literal notranslate"><span class="pre">session/*</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-goal">1. Design Goal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-tool-contracts">2. Core Tool Contracts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-groups">3. Tool Groups</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-context"><code class="docutils literal notranslate"><span class="pre">tools/context</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-retrieve"><code class="docutils literal notranslate"><span class="pre">tools/retrieve</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-plan"><code class="docutils literal notranslate"><span class="pre">tools/plan</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-apply"><code class="docutils literal notranslate"><span class="pre">tools/apply</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-dev"><code class="docutils literal notranslate"><span class="pre">tools/dev</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-files"><code class="docutils literal notranslate"><span class="pre">tools/files</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-process"><code class="docutils literal notranslate"><span class="pre">tools/process</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#capability-composition-layer-data-juicer-agents-capabilities">2) Capability Composition Layer (<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/capabilities</span></code>)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plan-capability">Plan capability</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-capability">Apply capability</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-capability">Dev capability</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-capability">Session capability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-adapters">4. Runtime Adapters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#agentscope-adapter">AgentScope adapter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-runtime-toolkit">Session runtime / toolkit</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#session-exposed-tool-set">3) Session-Exposed Tool Set</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#command-to-capability-mapping">4) Command-to-Capability Mapping</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observability-and-artifacts">5) Observability and Artifacts</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-boundary">6) Design Boundary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#default-registry-and-session-toolkit">5. Default Registry and Session Toolkit</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-session-tool-set">6. Current Session Tool Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#boundary-summary">7. Boundary Summary</a></li>
 </ul>
   </nav></div>
 

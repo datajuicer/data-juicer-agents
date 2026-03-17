@@ -530,11 +530,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.session</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SessionState</span><span class="p">,</span>
-    <span class="n">SessionToolRuntime</span><span class="p">,</span>
-    <span class="n">build_session_toolkit</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.session.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionState</span><span class="p">,</span> <span class="n">SessionToolRuntime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.session.toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_session_toolkit</span>
 
 <span class="n">_SESSION_MODEL</span> <span class="o">=</span> <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
 
@@ -549,7 +546,7 @@
 <span class="p">)</span>
 
 <div class="viewcode-block" id="SessionReply">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.html#data_juicer_agents.capabilities.SessionReply">[文档]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.SessionReply">[文档]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SessionReply</span><span class="p">:</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
@@ -580,12 +577,12 @@
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DJSessionAgent">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.html#data_juicer_agents.capabilities.DJSessionAgent">[文档]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DJSessionAgent</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Session agent that orchestrates djx atomic commands via ReAct tools.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DJSessionAgent.__init__">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.html#data_juicer_agents.capabilities.DJSessionAgent.__init__">[文档]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent.__init__">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">use_llm_router</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -618,6 +615,7 @@
             <span class="n">event_callback</span><span class="o">=</span><span class="n">event_callback</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning_step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_react_loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -649,7 +647,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_react_inflight</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="DJSessionAgent.request_interrupt">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.html#data_juicer_agents.capabilities.DJSessionAgent.request_interrupt">[文档]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent.request_interrupt">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">request_interrupt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -696,21 +694,34 @@
             <span class="s2">&quot;then keep all later file and command operations inside it.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;If a requested path is outside the current working directory, do not operate on it until the user explicitly changes the working directory.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;For planning requests, prefer this chain: &quot;</span>
-            <span class="s2">&quot;inspect_dataset -&gt; retrieve_operators -&gt; plan_build -&gt; plan_validate (draft) -&gt; plan_save.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Before calling plan_build, synthesize a grounded spec that merges: &quot;</span>
-            <span class="s2">&quot;(a) user goal, (b) inspect_dataset findings (modality, candidate keys, sample stats), &quot;</span>
-            <span class="s2">&quot;(c) retrieve_operators outputs (canonical operator names).</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Build draft_spec_json with explicit target fields, threshold/unit constraints, and canonical operator names.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Never ignore inspect/retrieve results when forming plan_build inputs.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;inspect_dataset -&gt; retrieve_operators -&gt; build_dataset_spec -&gt; build_process_spec -&gt; build_system_spec -&gt; assemble_plan -&gt; plan_validate -&gt; plan_save.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;All plan tools require explicit arguments. Do not rely on any hidden session defaults, current draft state, or current context fallback.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Use inspect_dataset first, then pass its full dataset_profile output into build_dataset_spec together with explicit intent, dataset_path, and export_path.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;retrieve_operators does not inspect the dataset for you and does not return dataset_profile. If dataset structure matters, call inspect_dataset explicitly first.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Use retrieve_operators before build_process_spec, then pass an explicit operators array with canonical operator names and filled params. build_process_spec will not canonicalize or repair operator names for you. Do not pass only operator names when a concrete threshold, mode, or option is already known.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Use build_system_spec to produce the deterministic minimal runtime profile, then pass the full dataset_spec, process_spec, and system_spec objects into assemble_plan.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;After assemble_plan, pass the full returned plan object into plan_validate and plan_save. When calling plan_save, also provide an explicit output_path.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;When calling apply_recipe, always pass an explicit plan_path. apply_recipe executes the plan and does not validate it for you; call plan_validate explicitly beforehand when validation is needed.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Never ignore inspect/retrieve results when forming build_dataset_spec or build_process_spec inputs.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;For concrete dataset transformation requests (for example filtering/cleaning/dedup), &quot;</span>
             <span class="s2">&quot;you must execute tools instead of only providing reasoning.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Do not end the turn with only planned tool calls; execute the planned tools and then summarize results.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;If plan_build fails, inspect the returned errors and retry plan_build with corrected spec fields before asking user follow-up questions.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;You should usually retry plan_build at least once when failure is recoverable.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;If build_dataset_spec, build_process_spec, build_system_spec, or assemble_plan fails, inspect the returned errors and retry the failed stage with corrected inputs before asking user follow-up questions.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;You should usually retry a recoverable staged planning tool at least once.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Warnings from build_system_spec and validate_process_spec are expected in this iteration; do not treat those warnings alone as fatal.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Use view_text_file/write_text_file/insert_text_file for file operations when needed.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Use execute_shell_command/execute_python_code for diagnostic or programmatic tasks when needed.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;After apply_recipe succeeds, do not call any more tools in this turn. &quot;</span>
+            <span class="s2">&quot;Do not run inspect_dataset, execute_shell_command, execute_python_code, view_text_file, or any other &quot;</span>
+            <span class="s2">&quot;post-apply verification step unless the user explicitly asked for verification. &quot;</span>
+            <span class="s2">&quot;Immediately write the final natural-language summary based on the apply result and current context. &quot;</span>
+            <span class="s2">&quot;If deeper post-apply inspection may be useful, mention that you can help inspect the output in a &quot;</span>
+            <span class="s2">&quot;follow-up turn.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;When required fields are missing, ask concise follow-up questions.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Before running apply_recipe, ask user for explicit confirmation.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;If you receive a system hint telling you that you failed to generate a response within the maximum iterations, &quot;</span>
+            <span class="s2">&quot;or asking you to summarize the current situation directly, do not call any tools. &quot;</span>
+            <span class="s2">&quot;In that case, produce only a plain natural-language summary of the current state, completed actions, failures, saved files, and next step.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Turn completion protocol:</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;- Every turn must end with a final user-facing natural language reply.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;- Do not end a turn with only tool calls, tool results, or empty text.</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -776,7 +787,7 @@
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">formatter</span><span class="o">=</span><span class="n">formatter</span><span class="p">,</span>
             <span class="n">toolkit</span><span class="o">=</span><span class="n">toolkit</span><span class="p">,</span>
-            <span class="n">max_iters</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">max_iters</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
             <span class="n">parallel_tool_calls</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_react_hooks</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
@@ -885,6 +896,10 @@
             <span class="c1"># mutates process-wide sys.stdout/sys.stderr, which suppresses TUI</span>
             <span class="c1"># rendering from the main thread while this worker turn is running.</span>
             <span class="n">reply</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_agent</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">prompt</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
             <span class="n">text</span><span class="p">,</span> <span class="n">thinking</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_reply_text_and_thinking</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span> <span class="o">=</span> <span class="n">thinking</span>
             <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply_marked_interrupted</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
@@ -933,7 +948,7 @@
                 <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DJSessionAgent.handle_message">
-<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.html#data_juicer_agents.capabilities.DJSessionAgent.handle_message">[文档]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent.handle_message">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -972,6 +987,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">text</span><span class="p">,</span> <span class="n">interrupted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_reply</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">interrupted</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_interrupted&quot;</span><span class="p">)</span>
@@ -983,7 +999,7 @@
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The request was processed, but no displayable text was returned.&quot;</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="ow">or</span> <span class="s2">&quot;The request was processed, but no displayable text was returned.&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_received&quot;</span><span class="p">)</span>
                 <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">thinking</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>

@@ -55,7 +55,7 @@
     <link rel="icon" href="../_static/icon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tools and Service Primitives" href="tools.html" />
+    <link rel="next" title="Tools Architecture" href="tools.html" />
     <link rel="prev" title="Quick Start" href="quick_start.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -473,7 +473,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">DJX CLI Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools and Service Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools Architecture</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
@@ -571,7 +571,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></p></td>
-<td><p>Generate a plan YAML from intent, retrieval evidence, and an LLM draft spec</p></td>
+<td><p>Generate a plan YAML from intent, retrieval evidence, staged specs, and an LLM-generated operator list</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/plan_cmd.py</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></p></td>
@@ -623,16 +623,16 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <p>Behavior:</p>
 <ol class="arabic simple">
 <li><p>internally retrieves operator candidates from the intent and optional dataset profile</p></li>
-<li><p>calls the model once to generate a draft spec</p></li>
-<li><p>reconciles the draft with the deterministic planner core</p></li>
-<li><p>validates schema, filesystem paths, custom operator paths, and installed operator names</p></li>
-<li><p>writes the final plan YAML</p></li>
+<li><p>builds a deterministic dataset spec from dataset IO and profile signals</p></li>
+<li><p>calls the model once to generate only the operator list for the process spec</p></li>
+<li><p>builds the process spec, builds the system spec, and assembles the final plan</p></li>
+<li><p>validates the final plan and writes the plan YAML</p></li>
 </ol>
 <p>CLI output:</p>
 <ul class="simple">
 <li><p>summary: <code class="docutils literal notranslate"><span class="pre">Plan</span> <span class="pre">generated</span></code>, <code class="docutils literal notranslate"><span class="pre">Modality</span></code>, <code class="docutils literal notranslate"><span class="pre">Operators</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--verbose</span></code>: planning meta (<code class="docutils literal notranslate"><span class="pre">planner_model</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieval_source</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieval_candidate_count</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>: retrieval payload, draft spec payload, and planning meta payload</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>: retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload</p></li>
 </ul>
 <p>Failure behavior:</p>
 <ul class="simple">
@@ -646,13 +646,14 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </div>
 <p>Behavior:</p>
 <ul class="simple">
-<li><p>validates the plan before execution</p></li>
+<li><p>loads the saved plan YAML and requires a mapping payload</p></li>
 <li><p>writes a recipe to <code class="docutils literal notranslate"><span class="pre">.djx/recipes/&lt;plan_id&gt;.yaml</span></code></p></li>
 <li><p>executes <code class="docutils literal notranslate"><span class="pre">dj-process</span></code> unless <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> is set</p></li>
 <li><p>prints <code class="docutils literal notranslate"><span class="pre">Execution</span> <span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Status</span></code>, and generated recipe path</p></li>
 </ul>
 <p>Notes:</p>
 <ul class="simple">
+<li><p>current CLI does not run a separate <code class="docutils literal notranslate"><span class="pre">plan_validate</span></code> step automatically</p></li>
 <li><p>current CLI does not persist or expose a separate trace query command</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> still writes the recipe file</p></li>
 </ul>
@@ -665,8 +666,8 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <p>Returns:</p>
 <ul class="simple">
 <li><p>ranked operator candidates</p></li>
-<li><p>optional dataset profile when dataset path is provided</p></li>
-<li><p>retrieval source and notes</p></li>
+<li><p>retrieval source, trace, and notes</p></li>
+<li><p>current output payload does not include dataset profile</p></li>
 </ul>
 </section>
 <section id="djx-dev">
@@ -701,7 +702,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>Typical internal planning chain:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">plan_build</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code></p></li>
 </ul>
 <p>Interrupt:</p>
 <ul class="simple">
@@ -716,7 +717,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_OPENAI_BASE_URL</span></code>: OpenAI-compatible endpoint base URL</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_SESSION_MODEL</span></code>: model used by <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code>: model used by <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code>: comma-separated fallback models for <code class="docutils literal notranslate"><span class="pre">llm_gateway.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code>: comma-separated fallback models for <code class="docutils literal notranslate"><span class="pre">data_juicer_agents/utils/llm_gateway.py</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code>: toggles <code class="docutils literal notranslate"><span class="pre">enable_thinking</span></code> in model requests</p></li>
 </ul>
 </section>
@@ -746,7 +747,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Tools and Service Primitives</p>
+        <p class="prev-next-title">Tools Architecture</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

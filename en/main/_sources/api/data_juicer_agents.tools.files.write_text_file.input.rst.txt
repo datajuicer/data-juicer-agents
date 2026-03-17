@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.files.write\_text\_file.input module
+===============================================================
+
+.. automodule:: data_juicer_agents.tools.files.write_text_file.input
+   :members:
+   :show-inheritance:
+   :undoc-members:

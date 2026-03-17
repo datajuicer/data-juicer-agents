@@ -82,7 +82,7 @@ dj-agents --ui plain --dataset ./data/demo-dataset.jsonl --export ./data/demo-da
 Notes:
 - `dj-agents` requires LLM access.
 - In session mode, press `Ctrl+C` to interrupt the current turn and `Ctrl+D` to exit.
-- The session agent usually plans with `inspect_dataset -> retrieve_operators -> plan_build -> plan_validate -> plan_save`.
+- The session agent usually plans with `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`.
 
 ## 6. Basic sanity checks
 

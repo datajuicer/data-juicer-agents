@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.files.view\_text\_file.logic module
+==============================================================
+
+.. automodule:: data_juicer_agents.tools.files.view_text_file.logic
+   :members:
+   :show-inheritance:
+   :undoc-members:

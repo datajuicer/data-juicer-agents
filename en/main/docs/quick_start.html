@@ -473,7 +473,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Architecture</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">DJX CLI Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools and Service Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools Architecture</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
@@ -635,7 +635,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> requires LLM access.</p></li>
 <li><p>In session mode, press <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to interrupt the current turn and <code class="docutils literal notranslate"><span class="pre">Ctrl+D</span></code> to exit.</p></li>
-<li><p>The session agent usually plans with <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">plan_build</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code>.</p></li>
+<li><p>The session agent usually plans with <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code>.</p></li>
 </ul>
 </section>
 <section id="basic-sanity-checks">

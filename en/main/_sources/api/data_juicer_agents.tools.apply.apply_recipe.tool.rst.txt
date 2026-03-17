@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.apply.apply\_recipe.tool module
+==========================================================
+
+.. automodule:: data_juicer_agents.tools.apply.apply_recipe.tool
+   :members:
+   :show-inheritance:
+   :undoc-members:
