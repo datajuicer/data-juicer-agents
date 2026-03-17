@@ -43,7 +43,7 @@ djx = "data_juicer_agents.cli:main"
 dj-agents = "data_juicer_agents.session_cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=6.0", "black", "flake8", "mypy"]
+dev = ["pytest>=7,<8", "black", "flake8", "mypy"]
 qa = ["qdrant-client>=1.11.0,<1.12.0"]
 
 [project.urls]

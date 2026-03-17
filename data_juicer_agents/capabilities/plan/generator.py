@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Single-pass LLM generator for plan draft specs."""
+"""LLM generator for process operator lists used by CLI plan orchestration."""
 
 from __future__ import annotations
 
 import json
 from typing import Any, Dict
 
-from data_juicer_agents.tools.llm_gateway import call_model_json
-from data_juicer_agents.tools.planner import PlanDraftSpec
+from data_juicer_agents.utils.llm_gateway import call_model_json
 
 
-class PlanDraftGenerator:
-    """Generate a plan draft spec from intent and retrieval evidence."""
+class ProcessOperatorGenerator:
+    """Generate an operator list for staged plan assembly."""
 
     def __init__(
         self,
@@ -30,39 +29,43 @@ class PlanDraftGenerator:
     def _prompt(
         *,
         user_intent: str,
-        dataset_path: str,
-        export_path: str,
         retrieval_payload: Dict[str, Any],
+        dataset_spec: Dict[str, Any],
+        dataset_profile: Dict[str, Any] | None = None,
     ) -> str:
         candidates = retrieval_payload.get("candidates", [])
-        dataset_profile = retrieval_payload.get("dataset_profile", {})
+        profile_payload = dataset_profile if isinstance(dataset_profile, dict) else {}
+        dataset_binding = {}
+        if isinstance(dataset_spec, dict):
+            binding = dataset_spec.get("binding", {})
+            if isinstance(binding, dict):
+                dataset_binding = binding
         return (
-            "You generate a structured draft spec for a deterministic Data-Juicer planner core.\n"
-            "Return JSON only with keys: modality, text_keys, image_key, operators, risk_notes, estimation, approval_required.\n"
+            "You generate only the operator list for a staged deterministic Data-Juicer planner.\n"
+            "Return JSON only with one key: operators.\n"
             "operators must be a non-empty array of objects: {name: string, params: object}.\n"
-            "Do not include workflow, revision, template, or markdown.\n"
-            "Prefer canonical operator names from retrieved candidates.\n"
-            "Use dataset profile hints when available.\n\n"
+            "Use canonical operator names from retrieved candidates.\n"
+            "Fill concrete params whenever a threshold, mode, or explicit option is already known.\n"
+            "Do not include modality, text_keys, image_key, risk_notes, estimation, approval_required, workflow, or markdown.\n\n"
             f"user_intent: {user_intent}\n"
-            f"dataset_path: {dataset_path}\n"
-            f"export_path: {export_path}\n"
+            f"dataset_binding:\n{json.dumps(dataset_binding, ensure_ascii=False, indent=2)}\n"
             f"retrieved_candidates:\n{json.dumps(candidates, ensure_ascii=False, indent=2)}\n"
-            f"dataset_profile:\n{json.dumps(dataset_profile, ensure_ascii=False, indent=2)}\n"
+            f"dataset_profile:\n{json.dumps(profile_payload, ensure_ascii=False, indent=2)}\n"
         )
 
     def generate(
         self,
         *,
         user_intent: str,
-        dataset_path: str,
-        export_path: str,
         retrieval_payload: Dict[str, Any],
-    ) -> PlanDraftSpec:
+        dataset_spec: Dict[str, Any],
+        dataset_profile: Dict[str, Any] | None = None,
+    ) -> Dict[str, Any]:
         prompt = self._prompt(
             user_intent=user_intent,
-            dataset_path=dataset_path,
-            export_path=export_path,
             retrieval_payload=retrieval_payload,
+            dataset_spec=dataset_spec,
+            dataset_profile=dataset_profile,
         )
         payload = call_model_json(
             self.model_name,
@@ -72,11 +75,11 @@ class PlanDraftGenerator:
             thinking=self.thinking,
         )
         if not isinstance(payload, dict):
-            raise ValueError("planner draft output must be a JSON object")
-        draft = PlanDraftSpec.from_dict(payload)
-        if not draft.operators:
-            raise ValueError("planner draft output must contain non-empty operators")
-        return draft
+            raise ValueError("planner operator output must be a JSON object")
+        operators = payload.get("operators", [])
+        if not isinstance(operators, list) or not operators:
+            raise ValueError("planner operator output must contain non-empty operators")
+        return {"operators": operators}
 
 
-__all__ = ["PlanDraftGenerator"]
+__all__ = ["ProcessOperatorGenerator"]

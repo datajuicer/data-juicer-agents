@@ -12,11 +12,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 
-from data_juicer_agents.tools.session import (
-    SessionState,
-    SessionToolRuntime,
-    build_session_toolkit,
-)
+from data_juicer_agents.capabilities.session.runtime import SessionState, SessionToolRuntime
+from data_juicer_agents.capabilities.session.toolkit import build_session_toolkit
 
 _SESSION_MODEL = "qwen3-max-2026-01-23"
 
@@ -93,6 +90,7 @@ class DJSessionAgent:
             event_callback=event_callback,
         )
         self._last_reply_thinking = ""
+        self._last_reply_raw = ""
         self._reasoning_step = 0
         self._interrupt_lock = threading.RLock()
         self._active_react_loop: asyncio.AbstractEventLoop | None = None
@@ -167,21 +165,34 @@ class DJSessionAgent:
             "then keep all later file and command operations inside it.\n"
             "If a requested path is outside the current working directory, do not operate on it until the user explicitly changes the working directory.\n"
             "For planning requests, prefer this chain: "
-            "inspect_dataset -> retrieve_operators -> plan_build -> plan_validate (draft) -> plan_save.\n"
-            "Before calling plan_build, synthesize a grounded spec that merges: "
-            "(a) user goal, (b) inspect_dataset findings (modality, candidate keys, sample stats), "
-            "(c) retrieve_operators outputs (canonical operator names).\n"
-            "Build draft_spec_json with explicit target fields, threshold/unit constraints, and canonical operator names.\n"
-            "Never ignore inspect/retrieve results when forming plan_build inputs.\n"
+            "inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save.\n"
+            "All plan tools require explicit arguments. Do not rely on any hidden session defaults, current draft state, or current context fallback.\n"
+            "Use inspect_dataset first, then pass its full dataset_profile output into build_dataset_spec together with explicit intent, dataset_path, and export_path.\n"
+            "retrieve_operators does not inspect the dataset for you and does not return dataset_profile. If dataset structure matters, call inspect_dataset explicitly first.\n"
+            "Use retrieve_operators before build_process_spec, then pass an explicit operators array with canonical operator names and filled params. build_process_spec will not canonicalize or repair operator names for you. Do not pass only operator names when a concrete threshold, mode, or option is already known.\n"
+            "Use build_system_spec to produce the deterministic minimal runtime profile, then pass the full dataset_spec, process_spec, and system_spec objects into assemble_plan.\n"
+            "After assemble_plan, pass the full returned plan object into plan_validate and plan_save. When calling plan_save, also provide an explicit output_path.\n"
+            "When calling apply_recipe, always pass an explicit plan_path. apply_recipe executes the plan and does not validate it for you; call plan_validate explicitly beforehand when validation is needed.\n"
+            "Never ignore inspect/retrieve results when forming build_dataset_spec or build_process_spec inputs.\n"
             "For concrete dataset transformation requests (for example filtering/cleaning/dedup), "
             "you must execute tools instead of only providing reasoning.\n"
             "Do not end the turn with only planned tool calls; execute the planned tools and then summarize results.\n"
-            "If plan_build fails, inspect the returned errors and retry plan_build with corrected spec fields before asking user follow-up questions.\n"
-            "You should usually retry plan_build at least once when failure is recoverable.\n"
+            "If build_dataset_spec, build_process_spec, build_system_spec, or assemble_plan fails, inspect the returned errors and retry the failed stage with corrected inputs before asking user follow-up questions.\n"
+            "You should usually retry a recoverable staged planning tool at least once.\n"
+            "Warnings from build_system_spec and validate_process_spec are expected in this iteration; do not treat those warnings alone as fatal.\n"
             "Use view_text_file/write_text_file/insert_text_file for file operations when needed.\n"
             "Use execute_shell_command/execute_python_code for diagnostic or programmatic tasks when needed.\n"
+            "After apply_recipe succeeds, do not call any more tools in this turn. "
+            "Do not run inspect_dataset, execute_shell_command, execute_python_code, view_text_file, or any other "
+            "post-apply verification step unless the user explicitly asked for verification. "
+            "Immediately write the final natural-language summary based on the apply result and current context. "
+            "If deeper post-apply inspection may be useful, mention that you can help inspect the output in a "
+            "follow-up turn.\n"
             "When required fields are missing, ask concise follow-up questions.\n"
             "Before running apply_recipe, ask user for explicit confirmation.\n"
+            "If you receive a system hint telling you that you failed to generate a response within the maximum iterations, "
+            "or asking you to summarize the current situation directly, do not call any tools. "
+            "In that case, produce only a plain natural-language summary of the current state, completed actions, failures, saved files, and next step.\n"
             "Turn completion protocol:\n"
             "- Every turn must end with a final user-facing natural language reply.\n"
             "- Do not end a turn with only tool calls, tool results, or empty text.\n"
@@ -247,7 +258,7 @@ class DJSessionAgent:
             model=model,
             formatter=formatter,
             toolkit=toolkit,
-            max_iters=10,
+            max_iters=15,
             parallel_tool_calls=False,
         )
         self._register_react_hooks(agent)
@@ -356,6 +367,10 @@ class DJSessionAgent:
             # mutates process-wide sys.stdout/sys.stderr, which suppresses TUI
             # rendering from the main thread while this worker turn is running.
             reply = await self._react_agent(Msg(name="user", role="user", content=prompt))
+            try:
+                self._last_reply_raw = str(reply)
+            except Exception:
+                self._last_reply_raw = repr(reply)
             text, thinking = self._extract_reply_text_and_thinking(reply)
             self._last_reply_thinking = thinking
             return text.strip(), self._reply_marked_interrupted(reply)
@@ -441,6 +456,7 @@ class DJSessionAgent:
 
         try:
             self._last_reply_thinking = ""
+            self._last_reply_raw = ""
             text, interrupted = self._react_reply(message)
             if interrupted:
                 self._debug("react_reply_interrupted")
@@ -452,7 +468,7 @@ class DJSessionAgent:
                 )
             else:
                 if not text:
-                    text = "The request was processed, but no displayable text was returned."
+                    text = self._last_reply_raw or "The request was processed, but no displayable text was returned."
                 self._debug("react_reply_received")
                 reply = SessionReply(text=text, thinking=self._last_reply_thinking)
         except asyncio.CancelledError:

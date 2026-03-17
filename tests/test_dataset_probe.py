@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from data_juicer_agents.tools.dataset_probe import inspect_dataset_schema
+from data_juicer_agents.tools.context import inspect_dataset_schema
 
 
 def test_inspect_dataset_schema_text(tmp_path: Path):
@@ -50,4 +50,3 @@ def test_inspect_dataset_schema_multimodal(tmp_path: Path):
     assert out["modality"] == "multimodal"
     assert "text" in out["candidate_text_keys"]
     assert "image" in out["candidate_image_keys"]
-

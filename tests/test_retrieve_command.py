@@ -26,7 +26,6 @@ def test_retrieve_command_json_output(monkeypatch, capsys):
                 "arguments_preview": [],
             }
         ],
-        "dataset_profile": None,
         "notes": [],
     }
 
@@ -48,4 +47,3 @@ def test_retrieve_command_json_output(monkeypatch, capsys):
 def test_retrieve_command_top_k_validation():
     code = main(["retrieve", "dedup", "--top-k", "0"])
     assert code == 2
-

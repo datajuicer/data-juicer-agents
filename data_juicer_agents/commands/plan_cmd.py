@@ -56,7 +56,7 @@ def execute_plan(args) -> Dict[str, Any]:
     except Exception as exc:
         return _error_result(
             f"Plan generation failed: {exc}",
-            stage="plan_build",
+            stage="plan_orchestration",
         )
 
     plan = payload["plan"]
@@ -80,7 +80,10 @@ def execute_plan(args) -> Dict[str, Any]:
         "operator_names": [op.name for op in plan.operators],
         "planning_meta": payload.get("planning_meta", {}),
         "retrieval": payload.get("retrieval", {}),
-        "draft_spec": payload.get("draft_spec", {}),
+        "dataset_spec": payload.get("dataset_spec", {}),
+        "process_spec": payload.get("process_spec", {}),
+        "system_spec": payload.get("system_spec", {}),
+        "validation": payload.get("validation", {}),
     }
 
 
@@ -107,8 +110,14 @@ def run_plan(args) -> int:
     if enabled(args, "debug"):
         emit(args, "Debug retrieval payload:", level="debug")
         emit_json(args, result.get("retrieval", {}), level="debug")
-        emit(args, "Debug draft spec:", level="debug")
-        emit_json(args, result.get("draft_spec", {}), level="debug")
+        emit(args, "Debug dataset spec:", level="debug")
+        emit_json(args, result.get("dataset_spec", {}), level="debug")
+        emit(args, "Debug process spec:", level="debug")
+        emit_json(args, result.get("process_spec", {}), level="debug")
+        emit(args, "Debug system spec:", level="debug")
+        emit_json(args, result.get("system_spec", {}), level="debug")
+        emit(args, "Debug validation payload:", level="debug")
+        emit_json(args, result.get("validation", {}), level="debug")
         emit(args, "Debug planning meta:", level="debug")
         emit_json(args, result.get("planning_meta", {}), level="debug")
 

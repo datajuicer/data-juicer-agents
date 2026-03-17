@@ -5,9 +5,11 @@ from types import SimpleNamespace
 
 import yaml
 
+from data_juicer_agents.adapters.agentscope import invoke_tool_spec
 from data_juicer_agents.commands.apply_cmd import run_apply
-from data_juicer_agents.tools.apply_tool_api import ApplyUseCase
-from data_juicer_agents.tools.planner import OperatorStep, PlanModel
+from data_juicer_agents.core.tool import ToolContext, build_default_tool_registry
+from data_juicer_agents.tools.apply import ApplyUseCase
+from data_juicer_agents.tools.plan import OperatorStep, PlanModel
 
 
 def test_apply_dry_run_prints_execution_summary_without_trace(tmp_path: Path, capsys):
@@ -94,10 +96,10 @@ def test_apply_exec_uses_shell_free_command_with_spaced_recipe_path(tmp_path: Pa
         captured["start_new_session"] = start_new_session
         return DummyProc()
 
-    monkeypatch.setattr("data_juicer_agents.tools.apply_tool_api.subprocess.Popen", fake_popen)
+    monkeypatch.setattr("data_juicer_agents.tools.apply.apply_recipe.logic.subprocess.Popen", fake_popen)
 
     result, code, stdout, stderr = ApplyUseCase().execute(
-        plan=plan,
+        plan_payload=plan.to_dict(),
         runtime_dir=tmp_path / "runtime dir",
         dry_run=False,
         timeout_seconds=5,
@@ -111,3 +113,22 @@ def test_apply_exec_uses_shell_free_command_with_spaced_recipe_path(tmp_path: Pa
     assert isinstance(captured["command"], list)
     assert captured["command"][:2] == ["dj-process", "--config"]
     assert "runtime dir" in captured["command"][2]
+
+
+def test_apply_recipe_failure_payload_includes_failure_preview(tmp_path: Path):
+    plan_path = tmp_path / "plan.yaml"
+    plan_path.write_text("[]\n", encoding="utf-8")
+
+    ctx = ToolContext(working_dir=str(tmp_path))
+    registry = build_default_tool_registry()
+
+    result = invoke_tool_spec(
+        registry.get("apply_recipe"),
+        ctx=ctx,
+        raw_kwargs={"plan_path": str(plan_path), "confirm": True, "dry_run": False, "timeout": 30},
+    )
+
+    assert result["ok"] is False
+    assert result["error_type"] == "plan_not_found"
+    assert "failure_preview" in result
+    assert "failed to load plan file" in result["failure_preview"]

@@ -1,156 +1,180 @@
-# Tools and Service Primitives
+# Tools Architecture
 
-This document describes the current atomic primitives behind DJX and how CLI/session compose them.
+This document describes the current tool-layer architecture inside `data_juicer_agents`.
 
-## 1) Primitive Tool Layer (`data_juicer_agents/tools`)
+## 1. Design Goal
 
-### `dataset_probe.py`
+The tool layer is the stable atomic capability surface inside `data_juicer_agents`.
 
-- Entry: `inspect_dataset_schema(dataset_path, sample_size=20)`
-- Purpose:
-  - lightweight dataset sampling
-  - modality inference (`text` / `image` / `multimodal` / `unknown`)
-  - candidate text/image key discovery
+It serves three consumers:
 
-### `llm_gateway.py`
+- CLI and command surfaces
+- the AgentScope-backed `dj-agents` session
+- future external skill packaging
 
-- Entry: `call_model_json(...)`
-- Purpose:
-  - call an OpenAI-compatible chat completion endpoint
-  - enforce JSON-oriented responses
-  - support fallback models via `DJA_MODEL_FALLBACKS`
+The key rule is:
 
-### `op_manager/retrieval_service.py`
+- tool definitions are runtime-agnostic and explicit-input/output
+- higher layers must not rely on hidden session defaults or tool-internal state fallback
+- runtime adapters may change transport/schema presentation, but not tool semantics
 
-- Entry: `retrieve_operator_candidates(intent, top_k, mode, dataset_path)`
-- Purpose:
-  - retrieve candidate Data-Juicer operators from intent
-  - combine backend retrieval with lexical fallback
-  - optionally attach dataset profile hints
+## 2. Core Tool Contracts
 
-### `op_manager/operator_registry.py`
+Core contracts live in:
 
-- Entries:
-  - `get_available_operator_names()`
-  - `resolve_operator_name(raw_name, available_ops)`
-- Purpose:
-  - load installed operator names
-  - canonicalize model-produced operator names
+- `data_juicer_agents/core/tool/contracts.py`
+- `data_juicer_agents/core/tool/registry.py`
+- `data_juicer_agents/core/tool/catalog.py`
 
-### `planner/schema.py`
+They define:
 
-- Main models:
-  - `PlanDraftSpec`
-  - `PlanModel`
-  - `OperatorStep`
-- Purpose:
-  - define the current draft-spec and final plan schema
-  - represent executable plans without workflow/template metadata
+- `ToolSpec`
+- `ToolContext`
+- `ToolResult`
+- `ToolRegistry`
 
-### `planner/core.py`
+Responsibilities:
 
-- Entry: `PlannerCore.build_plan(...)`
-- Purpose:
-  - normalize planner context
-  - reconcile draft specs into deterministic final plans
-  - canonicalize operator names before validation
+- describe what a tool is
+- define explicit input and output schemas
+- register built-in tool specs
+- avoid direct dependency on AgentScope, TUI, session state, or CLI rendering
 
-### `planner/validation.py`
+## 3. Tool Groups
 
-- Entries:
-  - `validate_plan_schema(plan)`
-  - `PlanValidator.validate(plan)`
-- Purpose:
-  - validate schema and modality constraints
-  - validate dataset/export/custom operator paths
-  - validate operator availability against installed Data-Juicer metadata
+`data_juicer_agents/tools/` is organized by tool group.
 
-### `planner/tool_api.py`
+Each group publishes `TOOL_SPECS` through `registry.py`.
 
-- Entries:
-  - `plan_build(...)`
-  - `plan_build_from_json(...)`
-  - `plan_validate(...)`
-- Purpose:
-  - expose planner-core APIs to session tools
-  - bridge JSON draft specs into final plans
+Concrete tools usually live under per-tool subdirectories with:
 
-### `apply_tool_api.py`
+- `input.py`: input model
+- `logic.py`: reusable implementation
+- `tool.py`: `ToolSpec` binding
 
-- Main types:
-  - `ApplyUseCase`
-  - `ApplyResult`
-- Purpose:
-  - materialize recipe YAML under `.djx/recipes/`
-  - execute or dry-run `dj-process`
-  - return structured execution summaries
+Package-level `__init__.py` files re-export stable helpers, and some groups keep shared models or validators in sibling modules such as `_shared/`.
 
-### `dev_scaffold.py`
-
-- Entries:
-  - `generate_operator_scaffold(...)`
-  - `run_smoke_check(scaffold)`
-- Purpose:
-  - generate custom operator scaffolds
-  - optionally run a local smoke check
-
-### `session/*`
-
-- Main modules:
-  - `context_tools.py`
-  - `operator_tools.py`
-  - `planner_tools.py`
-  - `apply_tools.py`
-  - `dev_tools.py`
-  - `file_tools.py`
-  - `process_tools.py`
-  - `runtime.py`
-  - `registry.py`
-- Purpose:
-  - adapt primitive APIs into the ReAct session toolkit
-  - maintain session state, event emission, and file/process boundaries
-
-## 2) Capability Composition Layer (`data_juicer_agents/capabilities`)
-
-### Plan capability
+### `tools/context`
 
 - Files:
-  - `capabilities/plan/generator.py`
-  - `capabilities/plan/service.py`
-- Composes:
-  - operator retrieval
-  - plan draft generation via LLM
-  - deterministic planner core and validation
+  - `context/registry.py`
+  - `context/inspect_dataset/{input.py,logic.py,tool.py}`
+- Main responsibilities:
+  - dataset inspection
+  - dataset schema probing
 
-### Apply capability
+### `tools/retrieve`
 
-- File: `capabilities/apply/service.py`
-- Composes:
-  - CLI-facing wrapper over `tools/apply_tool_api.py`
+- Files:
+  - `retrieve/registry.py`
+  - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
+  - `retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}`
+- Main responsibilities:
+  - operator retrieval entrypoints for the main package
+  - canonical operator-name resolution
+  - installed-operator lookup
 
-### Dev capability
+### `tools/plan`
 
-- File: `capabilities/dev/service.py`
-- Composes:
-  - scaffold generator
-  - optional smoke-check runner
+- Files:
+  - `plan/registry.py`
+  - `plan/<tool_name>/{input.py,logic.py,tool.py}`
+  - `plan/_shared/*.py`
+- Main responsibilities:
+  - staged dataset/process/system specs and the final plan model
+  - deterministic planner core
+  - plan validation
+  - explicit plan assembly and persistence helpers
 
-### Session capability
+### `tools/apply`
 
-- File: `capabilities/session/orchestrator.py`
-- Composes:
-  - ReAct agent
-  - session toolkit registration
-  - reasoning/tool event emission and interruption handling
+- Files:
+  - `apply/registry.py`
+  - `apply/apply_recipe/{input.py,logic.py,tool.py}`
+- Main responsibilities:
+  - recipe materialization
+  - plan execution
+  - structured execution results
 
-## 3) Session-Exposed Tool Set
+### `tools/dev`
 
-Registered for ReAct calls:
-- `get_session_context`
-- `set_session_context`
+- Files:
+  - `dev/registry.py`
+  - `dev/develop_operator/{input.py,logic.py,tool.py,scaffold.py}`
+- Main responsibilities:
+  - custom operator scaffold generation
+  - optional smoke-check
+
+### `tools/files`
+
+- Files:
+  - `files/registry.py`
+  - `files/{view_text_file,write_text_file,insert_text_file}/...`
+- Main responsibilities:
+  - read / write / insert text file helpers
+
+### `tools/process`
+
+- Files:
+  - `process/registry.py`
+  - `process/{execute_shell_command,execute_python_code}/...`
+- Main responsibilities:
+  - shell execution
+  - python snippet execution
+
+## 4. Runtime Adapters
+
+Runtime-specific adaptation is not placed in the tool groups.
+
+### AgentScope adapter
+
+- `data_juicer_agents/adapters/agentscope/tools.py`
+- `data_juicer_agents/adapters/agentscope/schema_utils.py`
+
+Responsibilities:
+
+- convert `ToolSpec` into AgentScope-compatible callable/schema
+- normalize JSON schema so agent-facing tool calls stay shallow and explicit
+- map `ToolResult` into AgentScope responses
+- apply generic argument preview truncation
+
+### Session runtime / toolkit
+
+- `data_juicer_agents/capabilities/session/toolkit.py`
+- `data_juicer_agents/capabilities/session/runtime.py`
+
+Responsibilities:
+
+- create the session runtime
+- emit tool lifecycle events for TUI/CLI observation
+- choose which registered tools are exposed to `DJSessionAgent`
+- keep session memory observational only; tool semantics remain explicit
+
+## 5. Default Registry and Session Toolkit
+
+Built-in tool registration is assembled through:
+
+- `data_juicer_agents/core/tool/catalog.py`
+
+That catalog discovers tool groups under `data_juicer_agents/tools/` and loads each group's `TOOL_SPECS` (currently via `registry.py` in every built-in group). It feeds them into:
+
+- `build_default_tool_registry()`
+
+The session toolkit currently uses the default registry directly and orders tools by functional group priority. It does not depend on `session` tags embedded in tool definitions.
+
+## 6. Current Session Tool Set
+
+The default registry currently exposes these tools to the session runtime:
+
 - `inspect_dataset`
 - `retrieve_operators`
-- `plan_build`
+- `build_dataset_spec`
+- `build_process_spec`
+- `build_system_spec`
+- `validate_dataset_spec`
+- `validate_process_spec`
+- `validate_system_spec`
+- `assemble_plan`
 - `plan_validate`
 - `plan_save`
 - `apply_recipe`
@@ -161,39 +185,13 @@ Registered for ReAct calls:
 - `execute_shell_command`
 - `execute_python_code`
 
-Notes:
-- there is no registered `plan_generate`, `plan_retrieve_candidates`, or `trace_run`
-- `plan_build` expects the session agent to synthesize `draft_spec_json` from user goal + dataset inspection + retrieval evidence
-- `apply_recipe` requires explicit confirmation
+These tools stay generic. Session orchestration must call them with explicit arguments based on prior tool outputs.
 
-## 4) Command-to-Capability Mapping
+## 7. Boundary Summary
 
-- `djx plan` -> `PlanOrchestrator` -> `PlanDraftGenerator` + `PlannerCore` + `PlanValidator`
-- `djx apply` -> `ApplyUseCase`
-- `djx retrieve` -> retrieval service
-- `djx dev` -> `DevUseCase`
-- `dj-agents` -> `DJSessionAgent` + `tools/session/*`
+- `core/tool/*` defines tool contracts, discovery, and registry
+- `tools/<group>/*` defines atomic tools only
+- `adapters/agentscope/*` adapts tools to AgentScope transport/schema
+- `capabilities/session/*` orchestrates tools conversationally without changing tool semantics
 
-## 5) Observability and Artifacts
-
-Session/tool events:
-- `tool_start`
-- `tool_end`
-- `reasoning_step`
-
-Command-side output control:
-- `--quiet` summary
-- `--verbose` expanded execution output
-- `--debug` structured debug payloads
-
-Persistent artifacts:
-- `.djx/recipes/`
-- `.djx/session_plans/`
-- user-specified plan YAML and export paths
-
-## 6) Design Boundary
-
-- tools are atomic primitives
-- capabilities compose tools into CLI or session workflows
-- plans are deterministic artifacts built from an LLM-produced draft spec
-- `dev` remains non-invasive by default
+This is the internal shape that future atomic CLI and skill packaging should build on.

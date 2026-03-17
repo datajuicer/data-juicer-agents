@@ -2,11 +2,11 @@
 
 import asyncio
 
-from data_juicer_agents.tools.op_manager.retrieval_service import retrieve_operator_candidates
+from data_juicer_agents.tools.retrieve import retrieve_operator_candidates
 
 
 def test_retrieval_service_falls_back_to_lexical(monkeypatch):
-    from data_juicer_agents.tools.op_manager import retrieval_service as svc
+    from data_juicer_agents.tools.retrieve.retrieve_operators import logic as svc
 
     rows = [
         {
@@ -51,12 +51,13 @@ def test_retrieval_service_falls_back_to_lexical(monkeypatch):
     assert payload["candidate_count"] >= 1
     assert payload["retrieval_source"] == "lexical"
     assert payload["retrieval_trace"][-1]["backend"] == "lexical"
+    assert "dataset_profile" not in payload
     names = [item["operator_name"] for item in payload["candidates"]]
     assert "document_deduplicator" in names
 
 
 def test_safe_async_retrieve_works_inside_running_loop(monkeypatch):
-    from data_juicer_agents.tools.op_manager import retrieval_service as svc
+    from data_juicer_agents.tools.retrieve.retrieve_operators import logic as svc
 
     async def fake_retrieve_ops_with_meta(intent, limit=10, mode="auto"):
         return {
@@ -82,7 +83,7 @@ def test_safe_async_retrieve_works_inside_running_loop(monkeypatch):
 
 
 def test_retrieval_service_prefers_true_backend_source(monkeypatch):
-    from data_juicer_agents.tools.op_manager import retrieval_service as svc
+    from data_juicer_agents.tools.retrieve.retrieve_operators import logic as svc
 
     rows = [
         {
@@ -130,7 +131,7 @@ def test_retrieval_service_prefers_true_backend_source(monkeypatch):
 
 
 def test_retrieval_service_uses_llm_scores_when_source_is_llm(monkeypatch):
-    from data_juicer_agents.tools.op_manager import retrieval_service as svc
+    from data_juicer_agents.tools.retrieve.retrieve_operators import logic as svc
 
     rows = [
         {

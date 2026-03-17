@@ -57,6 +57,10 @@ def _tool_names(planned_tools: Any) -> str:
 
 
 def _build_tool_detail(call: ToolCallState) -> str:
+    if call.status == "failed":
+        failure_preview = str(call.failure_preview or "").strip()
+        if failure_preview:
+            return failure_preview
     summary = str(call.summary or "").strip()
     args_preview = str(call.args_preview or "").strip()
     if call.tool in {"execute_shell_command", "execute_python_code"}:
@@ -106,6 +110,7 @@ def apply_event(state: TuiState, event: Dict[str, Any]) -> None:
         call.args_preview = args_preview
         call.summary = ""
         call.error_type = None
+        call.failure_preview = ""
         call.result_preview = ""
         state.status_line = f"Running {tool}"
         state.upsert_tool_call(call)
@@ -128,8 +133,11 @@ def apply_event(state: TuiState, event: Dict[str, Any]) -> None:
             call.elapsed_sec = max(delta, 0.0)
 
         call.error_type = str(event.get("error_type", "")).strip() or None
+        call.failure_preview = _format_preview(event.get("failure_preview"), max_chars=280)
         call.summary = _format_preview(event.get("summary"))
         call.result_preview = _format_preview(event.get("result_preview"))
+        if not ok and call.failure_preview:
+            call.summary = call.failure_preview
         if not call.summary:
             call.summary = call.result_preview
         if not call.summary and call.error_type:

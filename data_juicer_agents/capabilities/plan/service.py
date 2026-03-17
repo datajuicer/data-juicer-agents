@@ -4,15 +4,23 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable
 
-from data_juicer_agents.tools.op_manager.retrieval_service import (
+from data_juicer_agents.tools.context import inspect_dataset_schema
+from data_juicer_agents.tools.retrieve import (
     extract_candidate_names,
     retrieve_operator_candidates,
 )
-from data_juicer_agents.tools.planner import PlanValidator, PlannerCore
+from data_juicer_agents.tools.plan import (
+    PlanModel,
+    assemble_plan,
+    build_dataset_spec,
+    build_process_spec,
+    build_system_spec,
+    plan_validate,
+)
 
-from .generator import PlanDraftGenerator
+from .generator import ProcessOperatorGenerator
 
 
 PLANNER_MODEL_NAME = os.environ.get("DJA_PLANNER_MODEL", "qwen3-max-2026-01-23")
@@ -37,7 +45,7 @@ class PlanOrchestrator:
         llm_base_url: str | None = None,
         llm_thinking: bool | None = None,
     ):
-        self.generator = PlanDraftGenerator(
+        self.generator = ProcessOperatorGenerator(
             model_name=str(planner_model_name or PLANNER_MODEL_NAME).strip() or PLANNER_MODEL_NAME,
             api_key=llm_api_key,
             base_url=llm_base_url,
@@ -49,7 +57,7 @@ class PlanOrchestrator:
         *,
         user_intent: str,
         dataset_path: str,
-        top_k: int = 12,
+        top_k: int = 5,
         mode: str = "auto",
         retrieved_candidates: Dict[str, Any] | None = None,
     ) -> Dict[str, Any]:
@@ -71,7 +79,7 @@ class PlanOrchestrator:
         export_path: str,
         custom_operator_paths: Iterable[Any] | None = None,
         retrieved_candidates: Dict[str, Any] | None = None,
-        retrieval_top_k: int = 12,
+        retrieval_top_k: int = 5,
         retrieval_mode: str = "auto",
     ) -> Dict[str, Any]:
         retrieval = self._resolve_retrieval(
@@ -81,32 +89,63 @@ class PlanOrchestrator:
             mode=retrieval_mode,
             retrieved_candidates=retrieved_candidates,
         )
-        draft_spec = self.generator.generate(
+        dataset_profile = inspect_dataset_schema(dataset_path, sample_size=20)
+
+        dataset_result = build_dataset_spec(
             user_intent=user_intent,
             dataset_path=dataset_path,
             export_path=export_path,
-            retrieval_payload=retrieval,
+            dataset_profile=dataset_profile,
         )
-        plan = PlannerCore.build_plan(
+        if not dataset_result.get("ok"):
+            raise ValueError("dataset spec build failed: " + "; ".join(dataset_result.get("validation_errors", []) or [str(dataset_result.get("message", "unknown error"))]))
+
+        operator_payload = self.generator.generate(
             user_intent=user_intent,
-            dataset_path=dataset_path,
-            export_path=export_path,
-            draft_spec=draft_spec,
+            retrieval_payload=retrieval,
+            dataset_spec=dataset_result["dataset_spec"],
+            dataset_profile=dataset_profile,
+        )
+
+        process_result = build_process_spec(
+            operators=operator_payload.get("operators", []),
+        )
+        if not process_result.get("ok"):
+            raise ValueError("process spec build failed: " + "; ".join(process_result.get("validation_errors", []) or [str(process_result.get("message", "unknown error"))]))
+
+        system_result = build_system_spec(
             custom_operator_paths=custom_operator_paths,
         )
-        validation_errors = PlanValidator.validate(plan)
-        if validation_errors:
-            raise ValueError("plan validation failed: " + "; ".join(validation_errors))
+        if not system_result.get("ok"):
+            raise ValueError("system spec build failed: " + "; ".join(system_result.get("validation_errors", []) or [str(system_result.get("message", "unknown error"))]))
 
+        assembled = assemble_plan(
+            user_intent=user_intent,
+            dataset_spec=dataset_result["dataset_spec"],
+            process_spec=process_result["process_spec"],
+            system_spec=system_result["system_spec"],
+            approval_required=True,
+        )
+        if not assembled.get("ok"):
+            raise ValueError("assemble_plan failed: " + str(assembled.get("message", "unknown error")))
+
+        validation = plan_validate(plan_payload=assembled["plan"])
+        if not validation.get("ok"):
+            raise ValueError("plan validation failed: " + "; ".join(validation.get("validation_errors", []) or [str(validation.get("message", "unknown error"))]))
+
+        plan = PlanModel.from_dict(assembled["plan"])
         return {
             "plan": plan,
-            "draft_spec": draft_spec.to_dict(),
+            "dataset_spec": dataset_result["dataset_spec"],
+            "process_spec": process_result["process_spec"],
+            "system_spec": system_result["system_spec"],
             "retrieval": retrieval,
             "planning_meta": {
                 "planner_model": self.generator.model_name,
                 "retrieval_source": str(retrieval.get("retrieval_source", "")).strip() or "unknown",
                 "retrieval_candidate_count": str(len(extract_candidate_names(retrieval))),
             },
+            "validation": validation,
         }
 
 

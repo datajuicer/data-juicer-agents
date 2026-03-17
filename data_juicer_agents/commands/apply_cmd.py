@@ -8,15 +8,14 @@ from pathlib import Path
 import yaml
 
 from data_juicer_agents.capabilities.apply.service import ApplyUseCase
-from data_juicer_agents.tools.planner import PlanModel, PlanValidator
 from data_juicer_agents.commands.output_control import emit, emit_json, enabled
 
 
-def _confirm(plan: PlanModel) -> bool:
-    print(f"About to execute plan: {plan.plan_id}")
-    print(f"Modality: {plan.modality}")
-    print(f"Dataset: {plan.dataset_path}")
-    print(f"Export: {plan.export_path}")
+def _confirm(plan_data: dict) -> bool:
+    print(f"About to execute plan: {str(plan_data.get('plan_id', '')).strip()}")
+    print(f"Modality: {str(plan_data.get('modality', '')).strip()}")
+    print(f"Dataset: {str(plan_data.get('dataset_path', '')).strip()}")
+    print(f"Export: {str(plan_data.get('export_path', '')).strip()}")
     answer = input("Proceed? [y/N]: ").strip().lower()
     return answer in {"y", "yes"}
 
@@ -34,23 +33,18 @@ def run_apply(args) -> int:
     with open(plan_path, "r", encoding="utf-8") as f:
         plan_data = yaml.safe_load(f)
 
-    plan = PlanModel.from_dict(plan_data)
-
-    errors = PlanValidator.validate(plan)
-    if errors:
-        print("Plan validation failed:")
-        for item in errors:
-            print(f"- {item}")
+    if not isinstance(plan_data, dict):
+        print(f"Plan file is not a mapping: {plan_path}")
         return 2
 
-    if not args.yes and not _confirm(plan):
+    if not args.yes and not _confirm(plan_data):
         print("Execution canceled")
         return 1
 
     runtime_dir = Path(".djx") / "recipes"
     executor = ApplyUseCase()
     result, returncode, stdout, stderr = executor.execute(
-        plan=plan,
+        plan_payload=plan_data,
         runtime_dir=runtime_dir,
         dry_run=args.dry_run,
         timeout_seconds=args.timeout,
