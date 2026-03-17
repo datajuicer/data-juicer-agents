@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from agentscope.message import Msg
 
 from data_juicer_agents.adapters.agentscope import invoke_tool_spec
 from data_juicer_agents.capabilities.session.orchestrator import DJSessionAgent
@@ -214,3 +215,152 @@ def test_session_runtime_remains_observational_after_tool_invocation(tmp_path: P
     assert result["ok"] is True
     assert runtime.state.process_spec is None
     assert runtime.state.dataset_path == "/tmp/original.jsonl"
+
+
+def test_session_agent_handle_message_async_uses_async_react_path(monkeypatch):
+    agent = DJSessionAgent(use_llm_router=False)
+    agent._react_agent = object()  # pylint: disable=protected-access
+    raw_reply = Msg(
+        name="assistant",
+        role="assistant",
+        content=[{"type": "thinking", "thinking": "trace"}, {"type": "text", "text": "done"}],
+    )
+
+    async def _fake_react_reply_msg_async(message):
+        assert message == "hello"
+        return raw_reply, "done", "trace", False
+
+    monkeypatch.setattr(agent, "_react_reply_msg_async", _fake_react_reply_msg_async)
+
+    import asyncio
+
+    reply = asyncio.run(agent.handle_message_async("hello"))
+
+    assert reply.text == "done"
+    assert reply.thinking == "trace"
+    assert reply.stop is False
+    assert agent.state.history == [
+        {"role": "user", "content": "hello"},
+        {"role": "assistant", "content": "done"},
+    ]
+
+
+def test_session_agent_does_not_leak_raw_msg_repr_when_reply_has_no_text(monkeypatch):
+    agent = DJSessionAgent(use_llm_router=False)
+    agent._react_agent = object()  # pylint: disable=protected-access
+
+    async def _fake_react_reply_msg_async(_message):
+        reply = Msg(
+            name="assistant",
+            role="assistant",
+            content=[{"type": "tool_use", "name": "noop", "input": {}}],
+        )
+        return reply, agent._extract_reply_text_and_thinking(reply)[0], "", False  # pylint: disable=protected-access
+
+    monkeypatch.setattr(agent, "_react_reply_msg_async", _fake_react_reply_msg_async)
+
+    import asyncio
+
+    reply = asyncio.run(agent.handle_message_async("hello"))
+
+    assert reply.text == "The request was processed, but no displayable text was returned."
+    assert "Msg(" not in reply.text
+
+
+def test_session_agent_handle_message_as_msg_async_preserves_react_msg(monkeypatch):
+    agent = DJSessionAgent(use_llm_router=False)
+    agent._react_agent = object()  # pylint: disable=protected-access
+
+    raw_reply = Msg(
+        name="assistant",
+        role="assistant",
+        content=[
+            {"type": "thinking", "thinking": "trace"},
+            {"type": "text", "text": "done"},
+        ],
+        metadata={"source": "react"},
+    )
+
+    async def _fake_react_reply_msg_async(message):
+        assert message == "hello"
+        return raw_reply, "done", "trace", False
+
+    monkeypatch.setattr(agent, "_react_reply_msg_async", _fake_react_reply_msg_async)
+
+    import asyncio
+
+    reply = asyncio.run(agent.handle_message_as_msg_async("hello"))
+
+    assert reply.msg is raw_reply
+    assert reply.thinking == "trace"
+    assert reply.stop is False
+    assert reply.interrupted is False
+    assert agent.state.history == [
+        {"role": "user", "content": "hello"},
+        {"role": "assistant", "content": "done"},
+    ]
+
+
+def test_session_agent_forward_stream_chunk_uses_callback():
+    from agentscope.message import Msg
+
+    seen = []
+
+    async def _callback(msg, last):
+        seen.append((msg.content, last))
+
+    agent = DJSessionAgent(use_llm_router=False, enable_streaming=True, stream_callback=_callback)
+
+    asyncio = __import__("asyncio")
+    asyncio.run(agent._forward_stream_chunk(Msg(name="assistant", role="assistant", content="chunk"), False))  # pylint: disable=protected-access
+
+    assert seen == [("chunk", False)]
+
+
+def test_session_agent_forward_stream_chunk_ignores_callback_failure():
+    from agentscope.message import Msg
+
+    async def _callback(_msg, _last):
+        raise RuntimeError("boom")
+
+    agent = DJSessionAgent(use_llm_router=False, enable_streaming=True, stream_callback=_callback, verbose=True)
+
+    asyncio = __import__("asyncio")
+    asyncio.run(agent._forward_stream_chunk(Msg(name="assistant", role="assistant", content="chunk"), True))  # pylint: disable=protected-access
+
+
+def test_session_agent_build_react_agent_enables_model_streaming(monkeypatch):
+    seen = {}
+
+    class _Model:
+        def __init__(self, **kwargs):
+            seen["stream"] = kwargs.get("stream")
+
+    class _Formatter:
+        pass
+
+    class _Agent:
+        def __init__(self, **kwargs):
+            self.print = self._print
+            seen["agent_kwargs"] = kwargs
+
+        async def _print(self, msg, last=True, speech=None):  # noqa: ARG002
+            return None
+
+        def register_instance_hook(self, *_args, **_kwargs):
+            return None
+
+        def set_console_output_enabled(self, enabled):
+            seen["console_enabled"] = enabled
+
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
+    monkeypatch.setattr("agentscope.model.OpenAIChatModel", _Model)
+    monkeypatch.setattr("agentscope.formatter.OpenAIChatFormatter", _Formatter)
+    monkeypatch.setattr("agentscope.agent.ReActAgent", _Agent)
+
+    agent = DJSessionAgent(use_llm_router=False, enable_streaming=True)
+    react_agent = agent._build_react_agent()  # pylint: disable=protected-access
+
+    assert seen["stream"] is True
+    assert seen["console_enabled"] is False
+    assert callable(react_agent.print)

@@ -32,6 +32,13 @@ def test_session_cli_parser_default_ui_is_tui():
     assert args.ui == "tui"
 
 
+def test_session_cli_parser_accepts_as_studio_and_studio_url():
+    parser = build_parser()
+    args = parser.parse_args(["--ui", "as_studio", "--studio-url", "http://localhost:4000"])
+    assert args.ui == "as_studio"
+    assert args.studio_url == "http://localhost:4000"
+
+
 def test_run_turn_with_interrupt_requests_ctrl_c_interrupt(monkeypatch, capsys):
     class _Agent:
         def __init__(self):
