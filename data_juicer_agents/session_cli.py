@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 import threading
 
@@ -35,14 +34,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--ui",
-        choices=["plain", "tui", "as_studio"],
+        choices=["plain", "tui"],
         default="tui",
         help="Session UI mode (default: tui)",
-    )
-    parser.add_argument(
-        "--studio-url",
-        default=os.environ.get("DJA_STUDIO_URL", "http://localhost:3000"),
-        help="AgentScope Studio URL for --ui as_studio (default: http://localhost:3000)",
     )
     return parser
 
@@ -126,11 +120,6 @@ def main(argv=None) -> int:
     if args.ui == "plain":
         install_thinking_warning_filter()
         return _run_plain_session(args)
-    if args.ui == "as_studio":
-        from data_juicer_agents.adapters.as_studio import run_as_studio_session
-
-        install_thinking_warning_filter()
-        return run_as_studio_session(args)
 
     from data_juicer_agents.tui import run_tui_session
 
