@@ -126,8 +126,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# macOS
+.DS_Store
+
 # Data-Juicer Agents artifacts
 .djx/
+.eval_djx/
+eval_cases/results/
 data/processed*.jsonl
 data/processed*.txt
 data/demo-dataset-filtered*.jsonl
