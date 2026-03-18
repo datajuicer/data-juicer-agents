@@ -89,7 +89,7 @@ dj-agents --ui as_studio --studio-url http://localhost:3000 --dataset ./data/dem
 Notes:
 - `dj-agents` requires LLM access.
 - In session mode, press `Ctrl+C` to interrupt the current turn and `Ctrl+D` to exit.
-- In `as_studio` mode, start AgentScope Studio separately before launching `dj-agents`.
+- In `as_studio` mode, start [AgentScope Studio](https://github.com/agentscope-ai/agentscope-studio) separately before launching `dj-agents`.
 - The session agent usually plans with `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`.
 
 ## 6. Basic sanity checks
