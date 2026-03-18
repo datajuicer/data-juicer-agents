@@ -79,9 +79,17 @@ dj-agents --dataset ./data/demo-dataset.jsonl --export ./data/demo-dataset-proce
 dj-agents --ui plain --dataset ./data/demo-dataset.jsonl --export ./data/demo-dataset-processed.jsonl
 ```
 
+AgentScope Studio 模式：
+
+```bash
+as_studio
+dj-agents --ui as_studio --studio-url http://localhost:3000 --dataset ./data/demo-dataset.jsonl --export ./data/demo-dataset-processed.jsonl
+```
+
 说明：
 - `dj-agents` 需要可用的 LLM 访问配置。
 - 会话中按 `Ctrl+C` 可中断当前轮，按 `Ctrl+D` 退出。
+- `as_studio` 模式需要先单独启动 [AgentScope Studio](https://github.com/agentscope-ai/agentscope-studio)。
 - 会话内常见 planning 链路是 `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`。
 
 ## 6. 最小检查

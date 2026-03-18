@@ -525,9 +525,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.session.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionState</span><span class="p">,</span> <span class="n">SessionToolRuntime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.session.toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_session_toolkit</span>
@@ -555,6 +556,21 @@
 
 
 
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SessionMsgReply</span><span class="p">:</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">thinking</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">interrupted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_StudioTurnResult</span><span class="p">:</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">should_emit_final</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_block_text</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -575,6 +591,23 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_coerce_inbound_message_text</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">parts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
 <div class="viewcode-block" id="DJSessionAgent">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DJSessionAgent</span><span class="p">:</span>
@@ -594,6 +627,7 @@
         <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">thinking</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">event_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">enable_streaming</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_llm_router</span> <span class="o">=</span> <span class="n">use_llm_router</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
@@ -608,13 +642,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">model_name</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thinking</span> <span class="o">=</span> <span class="n">thinking</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thinking</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span> <span class="o">=</span> <span class="n">event_callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_streaming</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">enable_streaming</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stream_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tool_runtime</span> <span class="o">=</span> <span class="n">SessionToolRuntime</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">event_callback</span><span class="o">=</span><span class="n">event_callback</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning_step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_react_loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -744,6 +778,17 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_toolkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">build_session_toolkit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tool_runtime</span><span class="p">)</span>
 
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_forward_stream_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_callback</span>
+        <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">forwarded</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">last</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutine</span><span class="p">(</span><span class="n">forwarded</span><span class="p">):</span>
+                <span class="k">await</span> <span class="n">forwarded</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - defensive callback guard</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stream_callback_failed error=</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_react_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReActAgent</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatFormatter</span>
@@ -771,7 +816,7 @@
         <span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatModel</span><span class="p">(</span>
             <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-            <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_enable_streaming</span><span class="p">,</span>
             <span class="n">client_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;base_url&quot;</span><span class="p">:</span> <span class="n">base_url</span><span class="p">},</span>
             <span class="n">generate_kwargs</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -790,6 +835,15 @@
             <span class="n">parallel_tool_calls</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_react_hooks</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+        <span class="n">original_print</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">print</span>
+
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_wrapped_print</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">speech</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;assistant&quot;</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_stream_chunk</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">original_print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="n">last</span><span class="p">,</span> <span class="n">speech</span><span class="o">=</span><span class="n">speech</span><span class="p">)</span>
+
+        <span class="n">agent</span><span class="o">.</span><span class="n">print</span> <span class="o">=</span> <span class="n">_wrapped_print</span>
         <span class="n">agent</span><span class="o">.</span><span class="n">set_console_output_enabled</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">agent</span>
 
@@ -877,7 +931,7 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_react_reply_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_react_reply_msg_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_agent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -895,13 +949,8 @@
             <span class="c1"># mutates process-wide sys.stdout/sys.stderr, which suppresses TUI</span>
             <span class="c1"># rendering from the main thread while this worker turn is running.</span>
             <span class="n">reply</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_agent</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">prompt</span><span class="p">))</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
             <span class="n">text</span><span class="p">,</span> <span class="n">thinking</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_reply_text_and_thinking</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span> <span class="o">=</span> <span class="n">thinking</span>
-            <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply_marked_interrupted</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">reply</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">thinking</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply_marked_interrupted</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_clear_active_react_context</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
 
@@ -912,6 +961,31 @@
             <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reply_msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">reply_msg</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">_coerce_block_text</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">blocks</span> <span class="o">=</span> <span class="n">reply_msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">text_parts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
+                <span class="n">block_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">block_type</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;thinking&quot;</span><span class="p">,</span> <span class="s2">&quot;reasoning&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">}:</span>
+                    <span class="k">continue</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">_coerce_block_text</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">text_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">text_parts</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">text_parts</span> <span class="k">if</span> <span class="n">part</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
         <span class="n">thinking_parts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">try</span><span class="p">:</span>
@@ -934,17 +1008,166 @@
 
         <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">thinking</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_react_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_simple_reply_msg</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interrupted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">stop</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dj_stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">interrupted</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dj_interrupted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dj-agents&quot;</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_message_as_msg_async_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SessionMsgReply</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_SessionMsgReply</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="s2">&quot;Please enter a non-empty message.&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;user_message=</span><span class="si">{</span><span class="n">message</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">})</span>
+
+        <span class="n">lowered</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;exit&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;bye&quot;</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;退出&quot;</span><span class="p">}:</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="s2">&quot;Session ended.&quot;</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Session ended.&quot;</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">reply</span>
+        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;帮助&quot;</span><span class="p">,</span> <span class="s2">&quot;说明&quot;</span><span class="p">}:</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="n">_HELP_TEXT</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_HELP_TEXT</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">reply</span>
+        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;cancel&quot;</span><span class="p">,</span> <span class="s2">&quot;取消&quot;</span><span class="p">}:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;No pending action. Continue with natural language requests.&quot;</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">reply</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Session misconfigured: ReAct agent is unavailable. &quot;</span>
+                <span class="s2">&quot;Please restart `dj-agents` with valid LLM settings.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">reply</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_react_reply_async</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
-        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;asyncio.run() cannot be called from a running event loop&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">):</span>
-                <span class="k">raise</span>
-            <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_react_reply_async</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">reply_msg</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">thinking</span><span class="p">,</span> <span class="n">interrupted</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_reply_msg_async</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">interrupted</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The current task was interrupted. You can continue with your next request.&quot;</span>
+                <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">interrupted</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                    <span class="n">interrupted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">thinking</span><span class="o">=</span><span class="n">thinking</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="n">reply_msg</span><span class="p">,</span>
+                    <span class="n">interrupted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">thinking</span><span class="o">=</span><span class="n">thinking</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The request was processed, but no displayable text was returned.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_received&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">interrupted</span> <span class="k">else</span> <span class="s2">&quot;react_reply_interrupted&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_interrupted&quot;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The current task was interrupted. You can continue with your next request.&quot;</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">interrupted</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">interrupted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;react_reply_failed error=</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;LLM session call failed, exiting session.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;error: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">_SessionMsgReply</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_simple_reply_msg</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">reply</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_message_async_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SessionReply</span><span class="p">:</span>
+        <span class="n">msg_reply</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_message_as_msg_async_impl</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">thinking</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_reply_text_and_thinking</span><span class="p">(</span><span class="n">msg_reply</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The request was processed, but no displayable text was returned.&quot;</span>
+        <span class="n">thinking</span> <span class="o">=</span> <span class="n">msg_reply</span><span class="o">.</span><span class="n">thinking</span> <span class="ow">or</span> <span class="n">thinking</span>
+        <span class="k">return</span> <span class="n">SessionReply</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">thinking</span><span class="o">=</span><span class="n">thinking</span><span class="p">,</span>
+            <span class="n">stop</span><span class="o">=</span><span class="n">msg_reply</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
+            <span class="n">interrupted</span><span class="o">=</span><span class="n">msg_reply</span><span class="o">.</span><span class="n">interrupted</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DJSessionAgent.handle_message_async">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent.handle_message_async">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_message_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SessionReply</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_message_async_impl</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DJSessionAgent.handle_as_studio_turn_async">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent.handle_as_studio_turn_async">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_as_studio_turn_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">inbound_msg</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">emit_chunk</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_StudioTurnResult</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">_coerce_inbound_message_text</span><span class="p">(</span><span class="n">inbound_msg</span><span class="p">)</span>
+        <span class="n">stream_emitted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">stream_last</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">previous_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_callback</span>
+
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_emit_studio_chunk</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">nonlocal</span> <span class="n">stream_emitted</span><span class="p">,</span> <span class="n">stream_last</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dj_stream&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="ow">or</span> <span class="kc">None</span>
+            <span class="n">forwarded</span> <span class="o">=</span> <span class="n">emit_chunk</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutine</span><span class="p">(</span><span class="n">forwarded</span><span class="p">):</span>
+                <span class="k">await</span> <span class="n">forwarded</span>
+            <span class="n">stream_emitted</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">stream_last</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stream_callback</span> <span class="o">=</span> <span class="n">_emit_studio_chunk</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg_reply</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_message_as_msg_async_impl</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stream_callback</span> <span class="o">=</span> <span class="n">previous_callback</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">msg_reply</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="n">msg_reply</span><span class="o">.</span><span class="n">stop</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dj_stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">msg_reply</span><span class="o">.</span><span class="n">interrupted</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dj_interrupted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">msg_reply</span><span class="o">.</span><span class="n">thinking</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dj_thinking&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg_reply</span><span class="o">.</span><span class="n">thinking</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">msg_reply</span><span class="o">.</span><span class="n">msg</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="ow">or</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">_StudioTurnResult</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+            <span class="n">stop</span><span class="o">=</span><span class="n">msg_reply</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
+            <span class="n">should_emit_final</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span><span class="n">stream_emitted</span> <span class="ow">and</span> <span class="n">stream_last</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="DJSessionAgent.handle_message">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.session.orchestrator.html#data_juicer_agents.capabilities.DJSessionAgent.handle_message">[docs]</a>
@@ -952,73 +1175,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SessionReply</span><span class="p">:</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">SessionReply</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Please enter a non-empty message.&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;user_message=</span><span class="si">{</span><span class="n">message</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">})</span>
-
-        <span class="n">lowered</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;exit&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;bye&quot;</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;退出&quot;</span><span class="p">}:</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Session ended.&quot;</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="p">})</span>
-            <span class="k">return</span> <span class="n">reply</span>
-        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;帮助&quot;</span><span class="p">,</span> <span class="s2">&quot;说明&quot;</span><span class="p">}:</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">_HELP_TEXT</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="p">})</span>
-            <span class="k">return</span> <span class="n">reply</span>
-        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;cancel&quot;</span><span class="p">,</span> <span class="s2">&quot;取消&quot;</span><span class="p">}:</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;No pending action. Continue with natural language requests.&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="p">})</span>
-            <span class="k">return</span> <span class="n">reply</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span>
-                <span class="n">text</span><span class="o">=</span><span class="p">(</span>
-                    <span class="s2">&quot;Session misconfigured: ReAct agent is unavailable. &quot;</span>
-                    <span class="s2">&quot;Please restart `dj-agents` with valid LLM settings.&quot;</span>
-                <span class="p">),</span>
-                <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="p">})</span>
-            <span class="k">return</span> <span class="n">reply</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="n">text</span><span class="p">,</span> <span class="n">interrupted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_react_reply</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">interrupted</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_interrupted&quot;</span><span class="p">)</span>
-                <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span>
-                    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;The current task was interrupted. You can continue with your next request.&quot;</span><span class="p">,</span>
-                    <span class="n">stop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">interrupted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">thinking</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_raw</span> <span class="ow">or</span> <span class="s2">&quot;The request was processed, but no displayable text was returned.&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_received&quot;</span><span class="p">)</span>
-                <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">thinking</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_reply_thinking</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s2">&quot;react_reply_interrupted&quot;</span><span class="p">)</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span>
-                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;The current task was interrupted. You can continue with your next request.&quot;</span><span class="p">,</span>
-                <span class="n">stop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">interrupted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;react_reply_failed error=</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="n">SessionReply</span><span class="p">(</span>
-                <span class="n">text</span><span class="o">=</span><span class="p">(</span>
-                    <span class="s2">&quot;LLM session call failed, exiting session.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;error: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">),</span>
-                <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="p">})</span>
-        <span class="k">return</span> <span class="n">reply</span></div>
+        <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_message_async_impl</span><span class="p">(</span><span class="n">message</span><span class="p">))</span></div>
 </div>
 
 </pre></div>

@@ -631,10 +631,16 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-agents<span class="w"> </span>--ui<span class="w"> </span>plain<span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/demo-dataset-processed.jsonl
 </pre></div>
 </div>
+<p>AgentScope Studio mode:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_studio
+dj-agents<span class="w"> </span>--ui<span class="w"> </span>as_studio<span class="w"> </span>--studio-url<span class="w"> </span>http://localhost:3000<span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/demo-dataset-processed.jsonl
+</pre></div>
+</div>
 <p>Notes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> requires LLM access.</p></li>
 <li><p>In session mode, press <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to interrupt the current turn and <code class="docutils literal notranslate"><span class="pre">Ctrl+D</span></code> to exit.</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">as_studio</span></code> mode, start <a class="reference external" href="https://github.com/agentscope-ai/agentscope-studio">AgentScope Studio</a> separately before launching <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>.</p></li>
 <li><p>The session agent usually plans with <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code>.</p></li>
 </ul>
 </section>
