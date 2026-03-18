@@ -15,41 +15,42 @@ def validate_plan_schema(plan: PlanModel) -> List[str]:
         errors.append("plan_id is required")
     if not plan.user_intent:
         errors.append("user_intent is required")
-    if not plan.dataset_path:
-        errors.append("dataset_path is required")
-    if not plan.export_path:
-        errors.append("export_path is required")
+    if not plan.recipe:
+        errors.append("recipe is required")
     if plan.modality not in _ALLOWED_MODALITIES:
         errors.append("modality must be one of text/image/audio/video/multimodal/unknown")
-    if not isinstance(plan.custom_operator_paths, list):
-        errors.append("custom_operator_paths must be an array")
     if not isinstance(plan.warnings, list):
         errors.append("warnings must be an array")
-    if not plan.executor_type:
-        errors.append("executor_type is required")
-    if int(plan.np or 0) <= 0:
-        errors.append("np must be >= 1")
-    if not plan.operators:
-        errors.append("operators must not be empty")
-    for idx, op in enumerate(plan.operators):
-        if not op.name:
-            errors.append(f"operators[{idx}].name is required")
-        if not isinstance(op.params, dict):
-            errors.append(f"operators[{idx}].params must be an object")
-    if plan.modality == "text" and not plan.text_keys:
+    if plan.modality == "text" and not plan.recipe["text_keys"]:
         errors.append("text modality requires text_keys")
-    if plan.modality == "image" and not plan.image_key:
+    if plan.modality == "image" and not plan.recipe["image_key"]:
         errors.append("image modality requires image_key")
-    if plan.modality == "audio" and not plan.audio_key:
+    if plan.modality == "audio" and not plan.recipe["audio_key"]:
         errors.append("audio modality requires audio_key")
-    if plan.modality == "video" and not plan.video_key:
+    if plan.modality == "video" and not plan.recipe["video_key"]:
         errors.append("video modality requires video_key")
     if plan.modality == "multimodal":
-        active = sum([bool(plan.text_keys), bool(plan.image_key), bool(plan.audio_key), bool(plan.video_key)])
+        active = sum([bool(plan.recipe["text_keys"]), bool(plan.recipe["image_key"]), bool(plan.recipe["audio_key"]), bool(plan.recipe["video_key"])])
         if active < 2:
             errors.append("multimodal modality requires at least two bound modalities")
     return errors
 
+def validate_recipe_with_dj(recipe: Dict[str, Any]) -> List[str]:
+    """Validate the recipe dict using Data-Juicer's native config validation.
+ 
+    This catches any unknown keys, type mismatches, or constraint violations
+    that DJ itself would reject at runtime.
+    """
+    try:
+        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
+        bridge = get_dj_config_bridge()
+        is_valid, dj_errors = bridge.validate_config(recipe)
+        if not is_valid:
+            return [f"DJ config error: {err}" for err in dj_errors]
+    except Exception as exc:
+        # DJ not installed or validation unavailable — skip silently
+        return [f"DJ validation unavailable: {exc}"]
+    return []
 
 class PlanValidator:
     """Validate plan schema and local filesystem preconditions."""
@@ -57,17 +58,18 @@ class PlanValidator:
     @staticmethod
     def validate(plan: PlanModel) -> List[str]:
         errors = validate_plan_schema(plan)
+        errors.extend(validate_recipe_with_dj(plan.recipe))
 
-        dataset_path = Path(plan.dataset_path).expanduser()
+        dataset_path = Path(plan.recipe["dataset_path"]).expanduser()
         if not dataset_path.exists():
-            errors.append(f"dataset_path does not exist: {plan.dataset_path}")
+            errors.append(f"dataset_path does not exist: {plan.recipe['dataset_path']}")
 
-        export_parent = Path(plan.export_path).expanduser().resolve().parent
+        export_parent = Path(plan.recipe["export_path"]).expanduser().resolve().parent
         if not export_parent.exists():
             errors.append(f"export parent directory does not exist: {export_parent}")
 
-        if plan.custom_operator_paths:
-            for raw_path in plan.custom_operator_paths:
+        if plan.recipe.get("custom_operator_paths"):
+            for raw_path in plan.recipe["custom_operator_paths"]:
                 path = Path(str(raw_path)).expanduser()
                 if not path.exists():
                     errors.append(f"custom_operator_path does not exist: {path}")
@@ -89,7 +91,7 @@ def plan_validate(*, plan_payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "ok": len(errors) == 0,
         "plan_id": plan.plan_id,
-        "operator_names": [item.name for item in plan.operators],
+        "operator_names": [list(item.keys())[0] for item in plan.recipe.get("process", []) if isinstance(item, dict)],
         "validation_errors": errors,
         "warnings": list(plan.warnings),
         "message": "plan is valid" if not errors else "plan validation failed",

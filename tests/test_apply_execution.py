@@ -9,8 +9,7 @@ from data_juicer_agents.adapters.agentscope import invoke_tool_spec
 from data_juicer_agents.commands.apply_cmd import run_apply
 from data_juicer_agents.core.tool import ToolContext, build_default_tool_registry
 from data_juicer_agents.tools.apply import ApplyUseCase
-from data_juicer_agents.tools.plan import OperatorStep, PlanModel
-
+from data_juicer_agents.tools.plan import PlanModel
 
 def test_apply_dry_run_prints_execution_summary_without_trace(tmp_path: Path, capsys):
     dataset = tmp_path / "data.jsonl"
@@ -22,11 +21,15 @@ def test_apply_dry_run_prints_execution_summary_without_trace(tmp_path: Path, ca
     plan = PlanModel(
         plan_id="plan_apply_001",
         user_intent="filter short rows",
-        dataset_path=str(dataset),
-        export_path=str(export_path),
         modality="text",
-        text_keys=["text"],
-        operators=[OperatorStep(name="words_num_filter", params={"min_words": 10})],
+        recipe={
+            "dataset_path": str(dataset),
+            "export_path": str(export_path),
+            "text_keys": ["text"],
+            "np": 1,
+            "executor_type": "default",
+            "process": [{"words_num_filter": {"min_words": 10}}],
+        },
     )
     with open(plan_path, "w", encoding="utf-8") as handle:
         yaml.safe_dump(plan.to_dict(), handle, allow_unicode=False, sort_keys=False)
@@ -59,11 +62,15 @@ def test_apply_exec_uses_shell_free_command_with_spaced_recipe_path(tmp_path: Pa
     plan = PlanModel(
         plan_id="plan_apply_002",
         user_intent="filter short rows",
-        dataset_path=str(dataset),
-        export_path=str(export_path),
         modality="text",
-        text_keys=["text"],
-        operators=[OperatorStep(name="words_num_filter", params={"min_words": 10})],
+        recipe={
+            "dataset_path": str(dataset),
+            "export_path": str(export_path),
+            "text_keys": ["text"],
+            "np": 1,
+            "executor_type": "default",
+            "process": [{"words_num_filter": {"min_words": 10}}],
+        },
     )
 
     captured: dict = {}

@@ -33,7 +33,7 @@ def test_planner_core_builds_plan_from_specs_without_legacy_fields(tmp_path):
     )
 
     payload = plan.to_dict()
-    assert plan.operators[0].name == "WordNumFilter"
+    assert list(plan.recipe["process"][0].keys())[0] == "WordNumFilter"
     assert payload["modality"] == "text"
     assert "workflow" not in payload
     assert "revision" not in payload

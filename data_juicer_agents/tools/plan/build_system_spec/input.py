@@ -15,7 +15,7 @@ class BuildSystemSpecInput(BaseModel):
     Use list_system_config tool to discover all available options.
     """
     
-    class Config:
+    class ConfigDict:
         extra = 'allow'  # Allow any additional fields
     
     # Core parameters (most commonly used)

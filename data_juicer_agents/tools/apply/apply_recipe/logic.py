@@ -161,37 +161,23 @@ class ApplyUseCase:
         runtime_dir.mkdir(parents=True, exist_ok=True)
         plan_id = str(plan.get("plan_id", "")).strip() or "plan_apply"
         recipe_path = runtime_dir / f"{plan_id}.yaml"
-        operators = ApplyUseCase._operator_steps(plan)
-        recipe = {
-            "project_name": plan_id,
-            "export_path": str(plan.get("export_path", "")).strip(),
-            "dataset_path": str(plan.get("dataset_path", "")).strip(),
-            "text_keys": ApplyUseCase._string_list(plan.get("text_keys")),
-            "executor_type": str(plan.get("executor_type", "default") or "default").strip() or "default",
-            "np": max(int(plan.get("np", 1) or 1), 1),
-            "open_tracer": bool(plan.get("open_tracer", False)),
-            "skip_op_error": bool(plan.get("skip_op_error", False)),
-            "process": [{step["name"]: step["params"]} for step in operators if step["name"]],
-        }
-        if str(plan.get("image_key", "")).strip():
-            recipe["image_key"] = str(plan.get("image_key", "")).strip()
-        if str(plan.get("audio_key", "")).strip():
-            recipe["audio_key"] = str(plan.get("audio_key", "")).strip()
-        if str(plan.get("video_key", "")).strip():
-            recipe["video_key"] = str(plan.get("video_key", "")).strip()
-        if str(plan.get("image_bytes_key", "")).strip():
-            recipe["image_bytes_key"] = str(plan.get("image_bytes_key", "")).strip()
-        if isinstance(plan.get("dataset"), dict):
-            recipe["dataset"] = dict(plan["dataset"])
-        if isinstance(plan.get("generated_dataset_config"), dict):
-            recipe["generated_dataset_config"] = dict(plan["generated_dataset_config"])
-        if isinstance(plan.get("open_monitor"), bool):
-            recipe["open_monitor"] = bool(plan["open_monitor"])
-        if isinstance(plan.get("use_cache"), bool):
-            recipe["use_cache"] = bool(plan["use_cache"])
-        custom_operator_paths = ApplyUseCase._string_list(plan.get("custom_operator_paths"))
-        if custom_operator_paths:
-            recipe["custom_operator_paths"] = custom_operator_paths
+
+        recipe = plan.get("recipe")
+        if not isinstance(recipe, dict):
+            raise ValueError("plan must contain a 'recipe' dict")
+
+        recipe = dict(recipe)
+        recipe.setdefault("project_name", plan_id)
+
+        # Normalise process: stored as [{name, params}], DJ expects [{name: params}]
+        raw_process = recipe.get("process", [])
+        if isinstance(raw_process, list) and raw_process and isinstance(raw_process[0], dict) and "name" in raw_process[0]:
+            recipe["process"] = [
+                {step["name"]: step.get("params", {})}
+                for step in raw_process
+                if isinstance(step, dict) and str(step.get("name", "")).strip()
+            ]
+
         with open(recipe_path, "w", encoding="utf-8") as handle:
             yaml.safe_dump(recipe, handle, allow_unicode=False, sort_keys=False)
         return recipe_path
@@ -314,7 +300,7 @@ class ApplyUseCase:
             generated_recipe_path=str(recipe_path),
             command=command_display,
             status=status,
-            artifacts={"export_path": str(plan.get("export_path", "")).strip()},
+            artifacts={"export_path": str((plan.get("recipe") or {}).get("export_path", "")).strip()},
             error_type=error_type,
             error_message="" if returncode == 0 else stderr.strip(),
             retry_level=retry_level,

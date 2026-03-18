@@ -27,37 +27,26 @@ def normalize_system_spec(
     *,
     custom_operator_paths: Iterable[Any] | None = None,
 ) -> SystemSpec:
+    """Normalize system spec, preserving all dynamic fields from Data-Juicer."""
+    # Convert to SystemSpec if needed (from_dict handles all dynamic fields)
     if isinstance(system_spec, SystemSpec):
-        source = system_spec
+        spec = system_spec
     elif isinstance(system_spec, dict):
-        source = SystemSpec.from_dict(system_spec)
+        spec = SystemSpec.from_dict(system_spec)
     elif system_spec is None:
-        source = SystemSpec()
+        spec = SystemSpec()
     else:
         raise ValueError("system_spec must be a dict object")
 
-    warnings = _normalize_string_list(source.warnings)
-    if SYSTEM_SPEC_DEFERRED_WARNING not in warnings:
-        warnings.append(SYSTEM_SPEC_DEFERRED_WARNING)
+    # Inject deferred warning if not present
+    if SYSTEM_SPEC_DEFERRED_WARNING not in spec.warnings:
+        spec.warnings.append(SYSTEM_SPEC_DEFERRED_WARNING)
 
-    # Build normalized spec dict with all fields
-    normalized_dict = {
-        "executor_type": str(source.executor_type or "default").strip() or "default",
-        "np": max(int(source.np or 1), 1),
-        "custom_operator_paths": (
-            _normalize_string_list(custom_operator_paths)
-            or _normalize_string_list(source.custom_operator_paths)
-        ),
-        "warnings": warnings,
-    }
-    
-    # Add all extra fields from source
-    source_dict = source.to_dict()
-    for key, value in source_dict.items():
-        if key not in normalized_dict:
-            normalized_dict[key] = value
-    
-    return SystemSpec.from_dict(normalized_dict)
+    # Override custom_operator_paths if provided externally
+    if custom_operator_paths is not None:
+        spec.custom_operator_paths = _normalize_string_list(custom_operator_paths)
+
+    return spec
 
 
 def validate_system_spec_payload(system_spec: SystemSpec | Dict[str, Any]) -> Tuple[List[str], List[str]]:
@@ -84,7 +73,7 @@ def validate_system_spec_payload(system_spec: SystemSpec | Dict[str, Any]) -> Tu
         is_valid, dj_errors = validate_system_config(dj_dict)
         
         if not is_valid:
-            errors.append(dj_errors)
+            errors.extend(dj_errors)
     except Exception:
         # Fallback to basic validation if DJ validation fails
         pass

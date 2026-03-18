@@ -60,12 +60,13 @@ def test_execute_plan_uses_retrieval_and_writes_new_schema(monkeypatch, tmp_path
 
     assert result["ok"] is True
     payload = yaml.safe_load(Path(result["plan_path"]).read_text(encoding="utf-8"))
+    # modality is a plan-level field
     assert payload["modality"] == "text"
-    assert payload["operators"][0]["name"] == "words_num_filter"
+    # operators live inside recipe.process as DJ-native format
+    assert payload["recipe"]["process"][0] == {"words_num_filter": {"min_words": 10}}
     assert "workflow" not in payload
     assert result["dataset_spec"]["binding"]["text_keys"] == ["text"]
     assert result["process_spec"]["operators"][0]["params"]["min_words"] == 10
-    assert result["system_spec"]["np"] == 1
 
 
 def test_run_plan_prints_modality_not_workflow(monkeypatch, tmp_path, capsys):

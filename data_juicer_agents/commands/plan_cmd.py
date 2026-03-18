@@ -77,7 +77,7 @@ def execute_plan(args) -> Dict[str, Any]:
         "exit_code": 0,
         "plan_path": str(output_path),
         "plan": plan.to_dict(),
-        "operator_names": [op.name for op in plan.operators],
+        "operator_names": [list(op.keys())[0] for op in plan.recipe["process"]],
         "planning_meta": payload.get("planning_meta", {}),
         "retrieval": payload.get("retrieval", {}),
         "dataset_spec": payload.get("dataset_spec", {}),
