@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 class BuildSystemSpecInput(BaseModel):
     """Input for building system spec.
@@ -15,8 +15,7 @@ class BuildSystemSpecInput(BaseModel):
     Use list_system_config tool to discover all available options.
     """
     
-    class ConfigDict:
-        extra = 'allow'  # Allow any additional fields
+    model_config = ConfigDict(extra='allow')  # Allow any additional fields
     
     # Core parameters (most commonly used)
     np: Optional[int] = Field(

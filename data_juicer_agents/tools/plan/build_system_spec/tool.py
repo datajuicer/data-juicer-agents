@@ -14,18 +14,9 @@ class GenericOutput(BaseModel):
     ok: bool = True
 
 def _build_system_spec(_ctx: ToolContext, args: BuildSystemSpecInput) -> ToolResult:
-    # Get all extra fields (beyond the core ones)
-    extra_config = {
-        k: v for k, v in args.model_dump().items()
-        if k not in ('np', 'executor_type', 'custom_operator_paths')
-        and v is not None
-    }
     
     result = build_system_spec(
-        custom_operator_paths=args.custom_operator_paths,
-        np=args.np,
-        executor_type=args.executor_type,
-        extra_config=extra_config if extra_config else None
+        **args.model_dump(exclude_none=True),
     )
     if result.get("ok"):
         return ToolResult.success(summary=str(result.get("message", "system spec built")), data=result)
@@ -59,8 +50,7 @@ BUILD_SYSTEM_SPEC = ToolSpec(
     name="build_system_spec",
     description=(
         "Build a system spec with Data-Juicer configuration. "
-        "Specify core parameters (np, executor_type, custom_operator_paths) directly, "
-        "or use extra_config for advanced options. "
+        "Specify parameters (np, executor_type, custom_operator_paths and additional system config options) directly, "
         "Use list_system_config to discover all available system configuration options."
     ),
     input_model=BuildSystemSpecInput,

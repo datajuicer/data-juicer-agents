@@ -45,7 +45,7 @@ def build_system_spec(
     custom_operator_paths: Iterable[Any] | None = None,
     np: int | None = None,
     executor_type: str | None = None,
-    extra_config: Dict[str, Any] | None = None
+    **kwargs: Any
 ) -> Dict[str, Any]:
     """Build system spec with complete config dynamically loaded from Data-Juicer.
     
@@ -56,38 +56,44 @@ def build_system_spec(
         custom_operator_paths: Optional list of custom operator paths
         np: Optional number of processes
         executor_type: Optional executor type
-        extra_config: Optional dict of additional system config options
+        **kwargs: Any additional system config options (must be valid DJ system
+                  config fields — unknown keys will raise ValueError)
         
     Returns:
         Dict containing the built system spec and validation results
     """
     # Load complete system config from Data-Juicer
     dj_system_config = _load_dj_system_config()
-    
+
     # Override core parameters if provided
     if custom_operator_paths is not None:
         dj_system_config['custom_operator_paths'] = _normalize_string_list(custom_operator_paths)
-    
+
     if np is not None:
         dj_system_config['np'] = np
-    
+
     if executor_type is not None:
         dj_system_config['executor_type'] = executor_type
-    
-    # Merge extra_config if provided
-    if extra_config:
-        for key, value in extra_config.items():
-            dj_system_config[key] = value
-    
+
+    # Merge kwargs
+    if kwargs:
+        unknown_keys = [k for k in kwargs if k not in dj_system_config]
+        if unknown_keys:
+            raise ValueError(
+                f"Unknown system config field(s): {unknown_keys}. "
+                f"Valid fields are: {sorted(dj_system_config.keys())}"
+            )
+        dj_system_config.update(kwargs)
+
     # Add warnings
     dj_system_config['warnings'] = [SYSTEM_SPEC_DEFERRED_WARNING]
-    
+
     # Create SystemSpec from DJ config (dynamically handles all fields)
     spec = SystemSpec.from_dj_config(dj_system_config)
-    
+
     # Validate using DJ-aware validation
     errors, warnings = validate_system_spec_payload(spec)
-    
+
     return {
         "ok": len(errors) == 0,
         "system_spec": spec.to_dict(),
@@ -95,5 +101,6 @@ def build_system_spec(
         "warnings": warnings,
         "message": "system spec built" if not errors else "system spec build failed",
     }
+
 
 __all__ = ["build_system_spec"]
