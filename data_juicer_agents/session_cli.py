@@ -121,17 +121,12 @@ def _run_plain_session(args: argparse.Namespace) -> int:
             return 0
 
 
-def _resolve_studio_url(args: argparse.Namespace) -> str:
-    value = str(getattr(args, "studio_url", "") or os.environ.get("DJA_STUDIO_URL") or "").strip()
-    return value or "http://localhost:3000"
-
-
 async def _run_as_studio_session_async(args: argparse.Namespace) -> int:
     import agentscope
     from agentscope.agent import AgentBase, UserAgent
     from agentscope.message import Msg
 
-    studio_url = _resolve_studio_url(args)
+    studio_url = str(args.studio_url).strip()
     run_id = f"dj_agents_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
     agentscope.init(
         project="data-juicer-agents",

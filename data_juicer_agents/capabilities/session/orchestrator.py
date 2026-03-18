@@ -450,7 +450,7 @@ class DJSessionAgent:
                 if block_type in {"thinking", "reasoning", "tool_use"}:
                     continue
                 value = ""
-                for key in ("text", "content", "reasoning", "thinking"):
+                for key in ("text", "content"):
                     value = _coerce_block_text(block.get(key))
                     if value:
                         break
