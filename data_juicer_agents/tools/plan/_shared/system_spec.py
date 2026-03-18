@@ -7,9 +7,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 from .._shared.schema import SystemSpec
 
-SYSTEM_SPEC_DEFERRED_WARNING = (
-    "system spec inference deferred; using deterministic minimal profile"
-)
+SYSTEM_SPEC_DEFERRED_WARNING = ""
 
 
 def _normalize_string_list(values: Iterable[Any] | None) -> List[str]:
@@ -42,33 +40,60 @@ def normalize_system_spec(
     if SYSTEM_SPEC_DEFERRED_WARNING not in warnings:
         warnings.append(SYSTEM_SPEC_DEFERRED_WARNING)
 
-    return SystemSpec(
-        executor_type=str(source.executor_type or "default").strip() or "default",
-        np=max(int(source.np or 1), 1),
-        open_tracer=bool(source.open_tracer),
-        open_monitor=source.open_monitor if isinstance(source.open_monitor, bool) else None,
-        use_cache=source.use_cache if isinstance(source.use_cache, bool) else None,
-        skip_op_error=bool(source.skip_op_error),
-        custom_operator_paths=(
+    # Build normalized spec dict with all fields
+    normalized_dict = {
+        "executor_type": str(source.executor_type or "default").strip() or "default",
+        "np": max(int(source.np or 1), 1),
+        "custom_operator_paths": (
             _normalize_string_list(custom_operator_paths)
             or _normalize_string_list(source.custom_operator_paths)
         ),
-        warnings=warnings,
-    )
+        "warnings": warnings,
+    }
+    
+    # Add all extra fields from source
+    source_dict = source.to_dict()
+    for key, value in source_dict.items():
+        if key not in normalized_dict:
+            normalized_dict[key] = value
+    
+    return SystemSpec.from_dict(normalized_dict)
 
 
 def validate_system_spec_payload(system_spec: SystemSpec | Dict[str, Any]) -> Tuple[List[str], List[str]]:
+    """Validate system spec using Data-Juicer's native validation when possible."""
     if isinstance(system_spec, dict):
         system_spec = SystemSpec.from_dict(system_spec)
+    
     errors: List[str] = []
     warnings: List[str] = []
+    
+    # Basic validation for core fields
     if not system_spec.executor_type:
         errors.append("executor_type is required")
     if int(system_spec.np or 0) <= 0:
         errors.append("np must be >= 1")
+    
+    # Try to use Data-Juicer's native validation
+    try:
+        from data_juicer_agents.utils.dj_config_bridge import validate_system_config
+        
+        system_dict = system_spec.to_dict()
+        # Remove non-DJ fields before validation (warnings is our internal field)
+        dj_dict = {k: v for k, v in system_dict.items() if k != 'warnings'}
+        is_valid, dj_errors = validate_system_config(dj_dict)
+        
+        if not is_valid:
+            errors.append(dj_errors)
+    except Exception:
+        # Fallback to basic validation if DJ validation fails
+        pass
+    
+    # Add deferred warning if not present
     if SYSTEM_SPEC_DEFERRED_WARNING not in system_spec.warnings:
         warnings.append(SYSTEM_SPEC_DEFERRED_WARNING)
     warnings.extend([item for item in system_spec.warnings if item and item not in warnings])
+    
     return errors, warnings
 
 
