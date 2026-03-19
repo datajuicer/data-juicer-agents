@@ -26,14 +26,6 @@ def _coerce_optional_text(value: Any) -> Optional[str]:
 
 
 @dataclass
-class OperatorStep:
-    """One executable operator invocation."""
-
-    name: str
-    params: Dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass
 class SystemSpec:
     """Runtime/executor-level settings shared by the whole recipe.
 
@@ -80,12 +72,23 @@ class SystemSpec:
             ),
         }
 
-        # Store all other fields in _extra_fields
-        extra_fields = {}
+        # Store all other fields in _extra_fields, coercing types via DJ parser
         core_field_names = {"executor_type", "np", "custom_operator_paths", "warnings"}
-        for key, value in data.items():
-            if key not in core_field_names:
-                extra_fields[key] = value
+        raw_extra_fields = {k: v for k, v in data.items() if k not in core_field_names}
+
+        coerce_errors: List[str] = []
+        try:
+            from data_juicer_agents.utils.dj_config_bridge import coerce_extra_fields
+            extra_fields, coerce_errors = coerce_extra_fields(raw_extra_fields)
+        except Exception:
+            # Fallback: store as-is if bridge is unavailable
+            extra_fields = raw_extra_fields
+
+        # Surface any type-coercion errors as warnings so callers can see them
+        if coerce_errors:
+            core_fields["warnings"] = list(core_fields["warnings"]) + [
+                f"[type coercion] {err}" for err in coerce_errors
+            ]
 
         return cls(**core_fields, _extra_fields=extra_fields)
 

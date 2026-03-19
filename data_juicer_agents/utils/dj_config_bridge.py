@@ -209,3 +209,109 @@ def get_system_param_descriptions() -> Dict[str, str]:
             descriptions[dest] = help_text
     
     return descriptions
+
+
+def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
+    """Coerce extra system fields to their correct types using the DJ parser.
+
+    Uses ``parser.parse_object()`` to enforce type hints (e.g. ``bool`` for
+    ``open_tracer``) without writing any temporary files or requiring a full
+    config.  Fields whose keys are not registered in the parser are passed
+    through unchanged.
+
+    Args:
+        extra_fields: Dict of extra system config fields to coerce.
+
+    Returns:
+        A tuple ``(coerced_fields, errors)`` where ``errors`` is a list of
+        human-readable messages for any field that failed type coercion.
+    """
+    if not extra_fields:
+        return {}, []
+
+    bridge = get_dj_config_bridge()
+
+    known_parser_dests = {
+        action.dest
+        for action in bridge.parser._actions
+        if hasattr(action, "dest") and action.dest != "help"
+    }
+
+    known_fields = {k: v for k, v in extra_fields.items() if k in known_parser_dests}
+    unknown_fields = {k: v for k, v in extra_fields.items() if k not in known_parser_dests}
+
+    if not known_fields:
+        return dict(extra_fields), []
+
+    errors: List[str] = []
+    coerced_known: Dict[str, Any] = dict(known_fields)
+
+    try:
+        # parse_object accepts a plain dict and applies type coercion without
+        # requiring a temporary file or a fully-populated config.
+        namespace = bridge.parser.parse_object(known_fields)
+        for key in known_fields:
+            if hasattr(namespace, key):
+                coerced_known[key] = getattr(namespace, key)
+    except SystemExit:
+        # jsonargparse calls sys.exit(2) on type errors; treat as a soft error
+        errors.append(
+            f"Type coercion failed for fields: {list(known_fields.keys())}. "
+            "Values kept as-is."
+        )
+    except Exception as exc:
+        errors.append(str(exc))
+
+    return {**coerced_known, **unknown_fields}, errors
+
+
+def get_op_valid_params(op_names: set) -> Tuple[Dict[str, set], set]:
+    """Get valid parameter names for each operator, and all known operator names.
+
+    Uses ``_build_parser_with_ops`` to register the requested operators into a
+    fresh parser, then extracts the set of valid parameter names from the
+    resulting flat actions (e.g. ``text_length_filter.min_len`` → ``min_len``).
+
+    Args:
+        op_names: Set of operator names to look up.
+
+    Returns:
+        A tuple ``(op_param_map, known_op_names)`` where:
+        - ``op_param_map``: ``{op_name: {valid_param_name, ...}}``
+        - ``known_op_names``: set of all registered operator names in DJ
+    """
+    bridge = get_dj_config_bridge()
+
+    # All registered operator names from DJ's OPERATORS registry
+    try:
+        from data_juicer.ops.base_op import OPERATORS
+        known_op_names: set = set(OPERATORS.modules.keys())
+    except Exception:
+        known_op_names = set()
+
+    if not op_names:
+        return {}, known_op_names
+
+    # Only build parser for ops that actually exist in the registry
+    valid_requested = op_names & known_op_names
+    if not valid_requested:
+        return {}, known_op_names
+
+    try:
+        parser = bridge._build_parser_with_ops(valid_requested)
+    except Exception:
+        return {}, known_op_names
+
+    # Extract {op_name: {param_name, ...}} from flat actions like "op_name.param_name"
+    op_param_map: Dict[str, set] = {op: set() for op in valid_requested}
+    for action in parser._actions:
+        if not hasattr(action, "dest"):
+            continue
+        dest = action.dest
+        if "." not in dest:
+            continue
+        op_name, param_name = dest.split(".", 1)
+        if op_name in op_param_map:
+            op_param_map[op_name].add(param_name)
+
+    return op_param_map, known_op_names

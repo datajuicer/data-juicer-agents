@@ -45,6 +45,8 @@ def validate_process_spec_payload(
 
     errors: List[str] = []
     warnings: List[str] = []
+
+    # Basic structural validation
     if not process_spec.operators:
         errors.append("operators must not be empty")
     for idx, op in enumerate(process_spec.operators):
@@ -52,6 +54,32 @@ def validate_process_spec_payload(
             errors.append(f"operators[{idx}].name is required")
         if not isinstance(op.params, dict):
             errors.append(f"operators[{idx}].params must be an object")
+
+    # Operator name and parameter name validation via DJ bridge
+    try:
+        from data_juicer_agents.utils.dj_config_bridge import get_op_valid_params
+
+        op_names = {op.name for op in process_spec.operators if op.name}
+        op_param_map, known_op_names = get_op_valid_params(op_names)
+
+        for idx, op in enumerate(process_spec.operators):
+            if not op.name:
+                continue
+            if op.name not in known_op_names:
+                errors.append(
+                    f"operators[{idx}]: unknown operator '{op.name}'"
+                )
+            elif isinstance(op.params, dict) and op.name in op_param_map:
+                valid_params = op_param_map[op.name]
+                for param_key in op.params:
+                    if param_key not in valid_params:
+                        errors.append(
+                            f"operators[{idx}].{op.name}: unknown param '{param_key}'"
+                        )
+    except Exception:
+        warnings.append(
+            "operator name/param validation skipped: DJ bridge unavailable"
+        )
 
     if PROCESS_SPEC_DEFERRED_WARNING not in warnings:
         warnings.append(PROCESS_SPEC_DEFERRED_WARNING)
