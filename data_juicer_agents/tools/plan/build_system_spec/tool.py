@@ -44,22 +44,3 @@ BUILD_SYSTEM_SPEC = ToolSpec(
 )
 
 __all__ = ["BUILD_SYSTEM_SPEC"]
-
-
-BUILD_SYSTEM_SPEC = ToolSpec(
-    name="build_system_spec",
-    description=(
-        "Build a system spec with Data-Juicer configuration. "
-        "Specify parameters (np, executor_type, custom_operator_paths and additional system config options) directly, "
-        "Use list_system_config to discover all available system configuration options."
-    ),
-    input_model=BuildSystemSpecInput,
-    output_model=GenericOutput,
-    executor=_build_system_spec,
-    tags=("plan",),
-    effects="write",
-    confirmation="none",
-)
-
-
-__all__ = ["BUILD_SYSTEM_SPEC"]

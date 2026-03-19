@@ -321,6 +321,7 @@ class PlanModel:
     plan_id: str
     user_intent: str
     modality: str = "unknown"
+    operator_names: List[str] = field(default_factory=list)
     recipe: Dict[str, Any] = field(default_factory=dict)
     risk_notes: List[str] = field(default_factory=list)
     estimation: Dict[str, Any] = field(default_factory=dict)
@@ -337,6 +338,15 @@ class PlanModel:
         recipe = data.get("recipe")
         if not isinstance(recipe, dict):
             raise ValueError("plan must contain a 'recipe' dict")
+
+        if "process" in recipe and isinstance(recipe["process"], list):
+            operator_names = [
+                list(step.keys())[0]
+                for step in recipe["process"]
+                if isinstance(step, dict)
+            ]
+        else:
+            operator_names = []
 
         warnings = (
             [
@@ -360,7 +370,9 @@ class PlanModel:
         return cls(
             plan_id=str(data.get("plan_id", "")).strip(),
             user_intent=str(data.get("user_intent", "")).strip(),
-            modality=str(data.get("modality", "unknown") or "unknown").strip() or "unknown",
+            modality=str(data.get("modality", "unknown") or "unknown").strip()
+            or "unknown",
+            operator_names=operator_names,
             recipe=dict(recipe),
             risk_notes=risk_notes,
             estimation=estimation,
@@ -375,6 +387,7 @@ class PlanModel:
             "plan_id": self.plan_id,
             "user_intent": self.user_intent,
             "modality": self.modality,
+            "operator_names": list(self.operator_names),
             "recipe": dict(self.recipe),
             "risk_notes": list(self.risk_notes),
             "estimation": dict(self.estimation),
@@ -382,6 +395,7 @@ class PlanModel:
             "approval_required": self.approval_required,
             "created_at": self.created_at,
         }
+
 
 __all__ = [
     "DatasetBindingSpec",
