@@ -216,7 +216,7 @@ def assemble_plan(
     )
     process_steps = plan.recipe.get("process", [])
     operator_names = [
-        list(step.keys())[0] for step in process_steps if isinstance(step, dict)
+        list(step.keys())[0] for step in process_steps if isinstance(step, dict) and step
     ]
     return {
         "ok": True,

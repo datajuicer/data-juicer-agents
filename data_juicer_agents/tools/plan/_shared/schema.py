@@ -346,7 +346,7 @@ class PlanModel:
             operator_names = [
                 list(step.keys())[0]
                 for step in recipe["process"]
-                if isinstance(step, dict)
+                if isinstance(step, dict) and step
             ]
         else:
             operator_names = []

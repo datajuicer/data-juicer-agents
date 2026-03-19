@@ -14,7 +14,6 @@ class ListSystemConfigOutput(BaseModel):
     ok: bool = True
     message: str = ""
     config: dict = {}
-    categories: dict = {}
     total_count: int = 0
     filter_applied: str | None = None
 

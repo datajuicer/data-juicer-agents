@@ -91,7 +91,7 @@ def plan_validate(*, plan_payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "ok": len(errors) == 0,
         "plan_id": plan.plan_id,
-        "operator_names": plan.operator_names,
+        "operator_names": list(plan.operator_names),
         "validation_errors": errors,
         "warnings": list(plan.warnings),
         "message": "plan is valid" if not errors else "plan validation failed",

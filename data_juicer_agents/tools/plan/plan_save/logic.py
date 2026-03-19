@@ -52,7 +52,7 @@ def save_plan_file(
         "plan_path": str(out_path),
         "plan_id": plan.plan_id,
         "modality": plan.modality,
-        "operator_names": [],
+        "operator_names": list(plan.operator_names),
         "warnings": list(plan.warnings),
         "message": f"plan saved: {out_path}",
     }
