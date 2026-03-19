@@ -8,9 +8,10 @@ import concurrent.futures
 import json
 import os
 import threading
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from data_juicer_agents.capabilities.session.runtime import SessionState, SessionToolRuntime
 from data_juicer_agents.capabilities.session.toolkit import build_session_toolkit
@@ -35,6 +36,21 @@ class SessionReply:
     interrupted: bool = False
 
 
+@dataclass
+class _SessionMsgReply:
+    msg: Any
+    thinking: str = ""
+    stop: bool = False
+    interrupted: bool = False
+
+
+@dataclass
+class _StudioTurnResult:
+    msg: Any
+    stop: bool = False
+    should_emit_final: bool = True
+
+
 def _coerce_block_text(value: Any) -> str:
     if value is None:
         return ""
@@ -55,6 +71,23 @@ def _coerce_block_text(value: Any) -> str:
         return "\n".join(parts).strip()
     return str(value).strip()
 
+
+def _coerce_inbound_message_text(msg: Any) -> str:
+    if msg is None:
+        return ""
+    content = getattr(msg, "content", msg)
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts: List[str] = []
+        for item in content:
+            if isinstance(item, dict) and item.get("type") == "text":
+                text = str(item.get("text", "")).strip()
+                if text:
+                    parts.append(text)
+        return "\n".join(parts).strip()
+    return str(content).strip()
+
 class DJSessionAgent:
     """Session agent that orchestrates djx atomic commands via ReAct tools."""
 
@@ -70,6 +103,7 @@ class DJSessionAgent:
         model_name: Optional[str] = None,
         thinking: Optional[bool] = None,
         event_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        enable_streaming: bool = False,
     ) -> None:
         self.use_llm_router = use_llm_router
         self.verbose = bool(verbose)
@@ -84,13 +118,13 @@ class DJSessionAgent:
         self._model_name = str(model_name).strip() if model_name else None
         self._thinking = thinking if isinstance(thinking, bool) else None
         self._event_callback = event_callback
+        self._enable_streaming = bool(enable_streaming)
+        self._stream_callback: Optional[Callable[[Any, bool], Awaitable[None] | None]] = None
         self._tool_runtime = SessionToolRuntime(
             state=self.state,
             verbose=self.verbose,
             event_callback=event_callback,
         )
-        self._last_reply_thinking = ""
-        self._last_reply_raw = ""
         self._reasoning_step = 0
         self._interrupt_lock = threading.RLock()
         self._active_react_loop: asyncio.AbstractEventLoop | None = None
@@ -217,6 +251,17 @@ class DJSessionAgent:
     def _build_toolkit(self):
         return build_session_toolkit(self._tool_runtime)
 
+    async def _forward_stream_chunk(self, msg: Any, last: bool) -> None:
+        callback = self._stream_callback
+        if callback is None:
+            return
+        try:
+            forwarded = callback(deepcopy(msg), last)
+            if asyncio.iscoroutine(forwarded):
+                await forwarded
+        except Exception as exc:  # pragma: no cover - defensive callback guard
+            self._debug(f"stream_callback_failed error={exc}")
+
     def _build_react_agent(self):
         from agentscope.agent import ReActAgent
         from agentscope.formatter import OpenAIChatFormatter
@@ -244,7 +289,7 @@ class DJSessionAgent:
         model = OpenAIChatModel(
             model_name=model_name,
             api_key=api_key,
-            stream=False,
+            stream=self._enable_streaming,
             client_kwargs={"base_url": base_url},
             generate_kwargs={
                 "temperature": 0,
@@ -263,6 +308,15 @@ class DJSessionAgent:
             parallel_tool_calls=False,
         )
         self._register_react_hooks(agent)
+        original_print = agent.print
+
+        async def _wrapped_print(msg: Any, last: bool = True, speech: Any = None) -> None:
+            role = str(getattr(msg, "role", "") or "").strip().lower()
+            if role == "assistant":
+                await self._forward_stream_chunk(msg, last)
+            await original_print(msg, last=last, speech=speech)
+
+        agent.print = _wrapped_print
         agent.set_console_output_enabled(enabled=self.verbose)
         return agent
 
@@ -350,7 +404,7 @@ class DJSessionAgent:
             return True
         return False
 
-    async def _react_reply_async(self, message: str) -> tuple[str, bool]:
+    async def _react_reply_msg_async(self, message: str) -> tuple[Any, str, str, bool]:
         from agentscope.message import Msg
 
         assert self._react_agent is not None
@@ -368,13 +422,8 @@ class DJSessionAgent:
             # mutates process-wide sys.stdout/sys.stderr, which suppresses TUI
             # rendering from the main thread while this worker turn is running.
             reply = await self._react_agent(Msg(name="user", role="user", content=prompt))
-            try:
-                self._last_reply_raw = str(reply)
-            except Exception:
-                self._last_reply_raw = repr(reply)
             text, thinking = self._extract_reply_text_and_thinking(reply)
-            self._last_reply_thinking = thinking
-            return text.strip(), self._reply_marked_interrupted(reply)
+            return reply, text.strip(), thinking.strip(), self._reply_marked_interrupted(reply)
         finally:
             self._clear_active_react_context(loop)
 
@@ -385,6 +434,31 @@ class DJSessionAgent:
             text = str(reply_msg.get_text_content() or "")
         except Exception:
             text = ""
+        if not text:
+            try:
+                content = getattr(reply_msg, "content", None)
+                text = _coerce_block_text(content)
+            except Exception:
+                text = ""
+        if not text:
+            try:
+                blocks = reply_msg.get_content_blocks()
+            except Exception:
+                blocks = []
+            text_parts: List[str] = []
+            for block in blocks:
+                block_type = str(block.get("type", "")).strip().lower()
+                if block_type in {"thinking", "reasoning", "tool_use"}:
+                    continue
+                value = ""
+                for key in ("text", "content"):
+                    value = _coerce_block_text(block.get(key))
+                    if value:
+                        break
+                if value:
+                    text_parts.append(value)
+            if text_parts:
+                text = "\n\n".join(part for part in text_parts if part).strip()
 
         thinking_parts: List[str] = []
         try:
@@ -407,86 +481,163 @@ class DJSessionAgent:
 
         return text.strip(), thinking.strip()
 
-    def _react_reply(self, message: str) -> tuple[str, bool]:
-        try:
-            return asyncio.run(self._react_reply_async(message))
-        except RuntimeError as exc:
-            if "asyncio.run() cannot be called from a running event loop" not in str(exc):
-                raise
-            loop = asyncio.new_event_loop()
-            try:
-                return loop.run_until_complete(self._react_reply_async(message))
-            finally:
-                loop.close()
+    @staticmethod
+    def _build_simple_reply_msg(text: str, *, stop: bool = False, interrupted: bool = False):
+        from agentscope.message import Msg
 
-    def handle_message(
-        self,
-        message: str,
-    ) -> SessionReply:
+        metadata: Dict[str, Any] = {}
+        if stop:
+            metadata["dj_stop"] = True
+        if interrupted:
+            metadata["dj_interrupted"] = True
+        return Msg(
+            name="dj-agents",
+            role="assistant",
+            content=text,
+            metadata=metadata or None,
+        )
+
+    async def _handle_message_as_msg_async_impl(self, message: str) -> _SessionMsgReply:
         message = message.strip()
         if not message:
-            return SessionReply(text="Please enter a non-empty message.")
+            return _SessionMsgReply(msg=self._build_simple_reply_msg("Please enter a non-empty message."))
 
         self._debug(f"user_message={message!r}")
         self.state.history.append({"role": "user", "content": message})
 
         lowered = message.lower()
         if lowered in {"exit", "quit", "bye", "q", "退出"}:
-            reply = SessionReply(text="Session ended.", stop=True)
-            self.state.history.append({"role": "assistant", "content": reply.text})
+            reply = _SessionMsgReply(
+                msg=self._build_simple_reply_msg("Session ended.", stop=True),
+                stop=True,
+            )
+            self.state.history.append({"role": "assistant", "content": "Session ended."})
             return reply
         if lowered in {"help", "h", "?", "帮助", "说明"}:
-            reply = SessionReply(text=_HELP_TEXT)
-            self.state.history.append({"role": "assistant", "content": reply.text})
+            reply = _SessionMsgReply(msg=self._build_simple_reply_msg(_HELP_TEXT))
+            self.state.history.append({"role": "assistant", "content": _HELP_TEXT})
             return reply
         if lowered in {"cancel", "取消"}:
-            reply = SessionReply(text="No pending action. Continue with natural language requests.")
-            self.state.history.append({"role": "assistant", "content": reply.text})
+            text = "No pending action. Continue with natural language requests."
+            reply = _SessionMsgReply(msg=self._build_simple_reply_msg(text))
+            self.state.history.append({"role": "assistant", "content": text})
             return reply
 
         if self._react_agent is None:
-            reply = SessionReply(
-                text=(
-                    "Session misconfigured: ReAct agent is unavailable. "
-                    "Please restart `dj-agents` with valid LLM settings."
-                ),
+            text = (
+                "Session misconfigured: ReAct agent is unavailable. "
+                "Please restart `dj-agents` with valid LLM settings."
+            )
+            reply = _SessionMsgReply(
+                msg=self._build_simple_reply_msg(text, stop=True),
                 stop=True,
             )
-            self.state.history.append({"role": "assistant", "content": reply.text})
+            self.state.history.append({"role": "assistant", "content": text})
             return reply
 
         try:
-            self._last_reply_thinking = ""
-            self._last_reply_raw = ""
-            text, interrupted = self._react_reply(message)
+            reply_msg, text, thinking, interrupted = await self._react_reply_msg_async(message)
             if interrupted:
-                self._debug("react_reply_interrupted")
-                reply = SessionReply(
-                    text="The current task was interrupted. You can continue with your next request.",
-                    stop=False,
+                text = "The current task was interrupted. You can continue with your next request."
+                reply = _SessionMsgReply(
+                    msg=self._build_simple_reply_msg(text, interrupted=True),
                     interrupted=True,
-                    thinking=self._last_reply_thinking,
+                    thinking=thinking,
                 )
             else:
+                reply = _SessionMsgReply(
+                    msg=reply_msg,
+                    interrupted=False,
+                    thinking=thinking,
+                )
                 if not text:
-                    text = self._last_reply_raw or "The request was processed, but no displayable text was returned."
-                self._debug("react_reply_received")
-                reply = SessionReply(text=text, thinking=self._last_reply_thinking)
+                    text = "The request was processed, but no displayable text was returned."
+            self._debug("react_reply_received" if not interrupted else "react_reply_interrupted")
         except asyncio.CancelledError:
             self._debug("react_reply_interrupted")
-            reply = SessionReply(
-                text="The current task was interrupted. You can continue with your next request.",
-                stop=False,
+            text = "The current task was interrupted. You can continue with your next request."
+            reply = _SessionMsgReply(
+                msg=self._build_simple_reply_msg(text, interrupted=True),
                 interrupted=True,
             )
         except Exception as exc:
             self._debug(f"react_reply_failed error={exc}")
-            reply = SessionReply(
-                text=(
-                    "LLM session call failed, exiting session.\n"
-                    f"error: {exc}"
-                ),
+            text = (
+                "LLM session call failed, exiting session.\n"
+                f"error: {exc}"
+            )
+            reply = _SessionMsgReply(
+                msg=self._build_simple_reply_msg(text, stop=True),
                 stop=True,
             )
-        self.state.history.append({"role": "assistant", "content": reply.text})
+
+        self.state.history.append({"role": "assistant", "content": text})
         return reply
+
+    async def _handle_message_async_impl(self, message: str) -> SessionReply:
+        msg_reply = await self._handle_message_as_msg_async_impl(message)
+        text, thinking = self._extract_reply_text_and_thinking(msg_reply.msg)
+        if not text:
+            text = "The request was processed, but no displayable text was returned."
+        thinking = msg_reply.thinking or thinking
+        return SessionReply(
+            text=text,
+            thinking=thinking,
+            stop=msg_reply.stop,
+            interrupted=msg_reply.interrupted,
+        )
+
+    async def handle_message_async(
+        self,
+        message: str,
+    ) -> SessionReply:
+        return await self._handle_message_async_impl(message)
+
+    async def handle_as_studio_turn_async(
+        self,
+        inbound_msg: Any,
+        emit_chunk: Callable[[Any, bool], Awaitable[None] | None],
+    ) -> _StudioTurnResult:
+        text = _coerce_inbound_message_text(inbound_msg)
+        stream_emitted = False
+        stream_last = False
+        previous_callback = self._stream_callback
+
+        async def _emit_studio_chunk(msg: Any, last: bool) -> None:
+            nonlocal stream_emitted, stream_last
+            metadata = dict(getattr(msg, "metadata", None) or {})
+            metadata["dj_stream"] = True
+            msg.metadata = metadata or None
+            forwarded = emit_chunk(msg, last)
+            if asyncio.iscoroutine(forwarded):
+                await forwarded
+            stream_emitted = True
+            stream_last = bool(last)
+
+        self._stream_callback = _emit_studio_chunk
+        try:
+            msg_reply = await self._handle_message_as_msg_async_impl(text)
+        finally:
+            self._stream_callback = previous_callback
+
+        metadata = dict(getattr(msg_reply.msg, "metadata", None) or {})
+        if msg_reply.stop:
+            metadata["dj_stop"] = True
+        if msg_reply.interrupted:
+            metadata["dj_interrupted"] = True
+        if msg_reply.thinking:
+            metadata["dj_thinking"] = msg_reply.thinking
+
+        out = msg_reply.msg
+        out.metadata = metadata or None
+        return _StudioTurnResult(
+            msg=out,
+            stop=msg_reply.stop,
+            should_emit_final=not (stream_emitted and stream_last),
+        )
+
+    def handle_message(
+        self,
+        message: str,
+    ) -> SessionReply:
+        return asyncio.run(self._handle_message_async_impl(message))

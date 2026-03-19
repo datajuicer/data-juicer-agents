@@ -104,7 +104,7 @@ Default behavior is non-invasive: generate code and guidance, but do not auto-in
 ## `dj-agents`
 
 ```bash
-dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui]
+dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui|as_studio] [--studio-url <url>]
 ```
 
 Behavior:
@@ -118,12 +118,14 @@ Typical internal planning chain:
 Interrupt:
 - plain mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
 - tui mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
+- as_studio mode: interaction is driven by AgentScope Studio
 
 ## Environment Variables
 
 - `DASHSCOPE_API_KEY` or `MODELSCOPE_API_TOKEN`: API credential
 - `DJA_OPENAI_BASE_URL`: OpenAI-compatible endpoint base URL
 - `DJA_SESSION_MODEL`: model used by `dj-agents`
+- `DJA_STUDIO_URL`: AgentScope Studio URL used by `dj-agents --ui as_studio`
 - `DJA_PLANNER_MODEL`: model used by `djx plan`
 - `DJA_MODEL_FALLBACKS`: comma-separated fallback models for `data_juicer_agents/utils/llm_gateway.py`
 - `DJA_LLM_THINKING`: toggles `enable_thinking` in model requests
