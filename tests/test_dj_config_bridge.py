@@ -2,6 +2,7 @@
 
 from data_juicer_agents.utils.dj_config_bridge import (
     DJConfigBridge,
+    coerce_extra_fields,
     get_dj_config_bridge,
     validate_system_config,
     get_system_config_schema,
@@ -174,3 +175,99 @@ def test_extract_dataset_config_with_none_uses_defaults():
     # Should only contain dataset fields
     for key in result.keys():
         assert key in dataset_fields
+
+
+# --- coerce_extra_fields tests ---
+
+def test_coerce_extra_fields_str_to_bool():
+    """Test that string booleans are coerced to Python bool."""
+    # open_monitor has a bool default in DJ parser
+    result, errors = coerce_extra_fields({"open_monitor": "true"})
+    assert result["open_monitor"] is True
+    assert errors == []
+
+    result, errors = coerce_extra_fields({"open_monitor": "false"})
+    assert result["open_monitor"] is False
+    assert errors == []
+
+    result, errors = coerce_extra_fields({"open_monitor": "yes"})
+    assert result["open_monitor"] is True
+    assert errors == []
+
+    result, errors = coerce_extra_fields({"open_monitor": "0"})
+    assert result["open_monitor"] is False
+    assert errors == []
+
+    # Non-parseable string should be kept as-is with an error
+    result, errors = coerce_extra_fields({"open_monitor": "maybe"})
+    assert result["open_monitor"] == "maybe"
+    assert len(errors) == 1
+
+
+def test_coerce_extra_fields_str_to_int():
+    """Test that string integers are coerced to Python int."""
+    # np has an int default in DJ parser
+    result, errors = coerce_extra_fields({"np": "8"})
+    assert result["np"] == 8
+    assert isinstance(result["np"], int)
+    assert errors == []
+
+    # Non-parseable string should be kept as-is with an error
+    result, errors = coerce_extra_fields({"np": "not_a_number"})
+    assert result["np"] == "not_a_number"
+    assert len(errors) == 1
+
+
+def test_coerce_extra_fields_str_to_float():
+    """Test that string floats are coerced to Python float."""
+    # data_probe_ratio has a float default in DJ parser
+    result, errors = coerce_extra_fields({"data_probe_ratio": "0.5"})
+    assert result["data_probe_ratio"] == 0.5
+    assert isinstance(result["data_probe_ratio"], float)
+    assert errors == []
+
+
+def test_coerce_extra_fields_unknown_fields_passthrough():
+    """Test that fields not registered in the parser are passed through unchanged."""
+    result, errors = coerce_extra_fields({
+        "totally_unknown_field": "some_value",
+        "another_unknown": 42,
+    })
+    assert result["totally_unknown_field"] == "some_value"
+    assert result["another_unknown"] == 42
+    assert errors == []
+
+
+def test_coerce_extra_fields_non_basic_type_passthrough():
+    """Test that fields with non-basic target types are not converted."""
+    # project_name has a str default; passing an int should keep it as-is
+    result, errors = coerce_extra_fields({"project_name": 1000})
+    assert result["project_name"] == 1000
+    assert errors == []
+
+    # Already-correct types should pass through without conversion
+    result, errors = coerce_extra_fields({"np": 4})
+    assert result["np"] == 4
+    assert isinstance(result["np"], int)
+    assert errors == []
+
+
+def test_coerce_extra_fields_empty_input():
+    """Test that empty input returns empty output."""
+    result, errors = coerce_extra_fields({})
+    assert result == {}
+    assert errors == []
+
+
+def test_coerce_extra_fields_mixed_known_and_unknown():
+    """Test mixed known and unknown fields are handled correctly."""
+    result, errors = coerce_extra_fields({
+        "open_monitor": "true",
+        "np": "16",
+        "my_custom_field": [1, 2, 3],
+    })
+    assert result["open_monitor"] is True
+    assert result["np"] == 16
+    assert isinstance(result["np"], int)
+    assert result["my_custom_field"] == [1, 2, 3]
+    assert errors == []

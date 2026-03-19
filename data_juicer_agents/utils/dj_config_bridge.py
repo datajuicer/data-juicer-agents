@@ -212,12 +212,14 @@ def get_system_param_descriptions() -> Dict[str, str]:
 
 
 def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
-    """Coerce extra system fields to their correct types using the DJ parser.
+    """Coerce extra system fields to their correct basic Python types.
 
-    Uses ``parser.parse_object()`` to enforce type hints (e.g. ``bool`` for
-    ``open_tracer``) without writing any temporary files or requiring a full
-    config.  Fields whose keys are not registered in the parser are passed
-    through unchanged.
+    Only performs safe conversions for basic types (``bool``, ``int``,
+    ``float``) by inspecting the DJ parser's registered type hints.
+    Fields with non-basic target types or fields not registered in the
+    parser are passed through unchanged.  This avoids jsonargparse
+    wrapping values in internal types that ``yaml.safe_dump`` cannot
+    serialise.
 
     Args:
         extra_fields: Dict of extra system config fields to coerce.
@@ -231,11 +233,16 @@ def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], L
 
     bridge = get_dj_config_bridge()
 
-    known_parser_dests = {
-        action.dest
-        for action in bridge.parser._actions
-        if hasattr(action, "dest") and action.dest != "help"
-    }
+    # Build a mapping from dest -> target type inferred from default values.
+    # jsonargparse does not populate action.type; the default value is the
+    # most reliable indicator of the expected Python type.
+    action_type_map: Dict[str, Any] = {}
+    known_parser_dests: set = set()
+    for action in bridge.parser._actions:
+        if hasattr(action, "dest") and action.dest != "help":
+            known_parser_dests.add(action.dest)
+            default = getattr(action, "default", None)
+            action_type_map[action.dest] = type(default) if default is not None else None
 
     known_fields = {k: v for k, v in extra_fields.items() if k in known_parser_dests}
     unknown_fields = {k: v for k, v in extra_fields.items() if k not in known_parser_dests}
@@ -244,23 +251,45 @@ def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], L
         return dict(extra_fields), []
 
     errors: List[str] = []
-    coerced_known: Dict[str, Any] = dict(known_fields)
+    coerced_known: Dict[str, Any] = {}
 
-    try:
-        # parse_object accepts a plain dict and applies type coercion without
-        # requiring a temporary file or a fully-populated config.
-        namespace = bridge.parser.parse_object(known_fields)
-        for key in known_fields:
-            if hasattr(namespace, key):
-                coerced_known[key] = getattr(namespace, key)
-    except SystemExit:
-        # jsonargparse calls sys.exit(2) on type errors; treat as a soft error
-        errors.append(
-            f"Type coercion failed for fields: {list(known_fields.keys())}. "
-            "Values kept as-is."
-        )
-    except Exception as exc:
-        errors.append(str(exc))
+    _BOOL_TRUE = {"true", "1", "yes"}
+    _BOOL_FALSE = {"false", "0", "no"}
+
+    for key, value in known_fields.items():
+        expected_type = action_type_map.get(key)
+
+        if expected_type is bool and isinstance(value, str):
+            lowered = value.strip().lower()
+            if lowered in _BOOL_TRUE:
+                coerced_known[key] = True
+            elif lowered in _BOOL_FALSE:
+                coerced_known[key] = False
+            else:
+                coerced_known[key] = value
+                errors.append(
+                    f"Cannot coerce {key}={value!r} to bool; kept as-is."
+                )
+        elif expected_type is int and isinstance(value, str):
+            try:
+                coerced_known[key] = int(value)
+            except (ValueError, TypeError):
+                coerced_known[key] = value
+                errors.append(
+                    f"Cannot coerce {key}={value!r} to int; kept as-is."
+                )
+        elif expected_type is float and isinstance(value, str):
+            try:
+                coerced_known[key] = float(value)
+            except (ValueError, TypeError):
+                coerced_known[key] = value
+                errors.append(
+                    f"Cannot coerce {key}={value!r} to float; kept as-is."
+                )
+        else:
+            # Non-basic target type or value is already the right type;
+            # pass through unchanged.
+            coerced_known[key] = value
 
     return {**coerced_known, **unknown_fields}, errors
 

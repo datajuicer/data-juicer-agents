@@ -43,7 +43,7 @@ def test_execute_plan_uses_retrieval_and_writes_new_schema(monkeypatch, tmp_path
                     "operator_name": "words_num_filter",
                     "description": "filter by word count",
                     "operator_type": "filter",
-                    "arguments_preview": ["min_words: int"],
+                    "arguments_preview": ["min_num: int"],
                 }
             ],
         },
@@ -52,7 +52,7 @@ def test_execute_plan_uses_retrieval_and_writes_new_schema(monkeypatch, tmp_path
         generator_mod,
         "call_model_json",
         lambda *_args, **_kwargs: {
-            "operators": [{"name": "words_num_filter", "params": {"min_words": 10}}],
+            "operators": [{"name": "words_num_filter", "params": {"min_num": 10}}],
         },
     )
 
@@ -63,10 +63,10 @@ def test_execute_plan_uses_retrieval_and_writes_new_schema(monkeypatch, tmp_path
     # modality is a plan-level field
     assert payload["modality"] == "text"
     # operators live inside recipe.process as DJ-native format
-    assert payload["recipe"]["process"][0] == {"words_num_filter": {"min_words": 10}}
+    assert payload["recipe"]["process"][0] == {"words_num_filter": {"min_num": 10}}
     assert "workflow" not in payload
     assert result["dataset_spec"]["binding"]["text_keys"] == ["text"]
-    assert result["process_spec"]["operators"][0]["params"]["min_words"] == 10
+    assert result["process_spec"]["operators"][0]["params"]["min_num"] == 10
 
 
 def test_run_plan_prints_modality_not_workflow(monkeypatch, tmp_path, capsys):
@@ -84,7 +84,7 @@ def test_run_plan_prints_modality_not_workflow(monkeypatch, tmp_path, capsys):
         generator_mod,
         "call_model_json",
         lambda *_args, **_kwargs: {
-            "operators": [{"name": "words_num_filter", "params": {"min_words": 10}}],
+            "operators": [{"name": "words_num_filter", "params": {"min_num": 10}}],
         },
     )
 

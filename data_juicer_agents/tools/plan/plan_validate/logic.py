@@ -91,7 +91,7 @@ def plan_validate(*, plan_payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "ok": len(errors) == 0,
         "plan_id": plan.plan_id,
-        "operator_names": [list(item.keys())[0] for item in plan.recipe.get("process", []) if isinstance(item, dict)],
+        "operator_names": plan.operator_names,
         "validation_errors": errors,
         "warnings": list(plan.warnings),
         "message": "plan is valid" if not errors else "plan validation failed",
