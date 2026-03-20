@@ -32,52 +32,100 @@ Verify & Return Results
 
 ### Prerequisites
 
-- Python 3.10 – 3.12 (3.11 recommended)
+- **Python**: 3.10 – 3.12 (3.11 recommended)
+- **Package Manager**: [uv](https://github.com/astral-sh/uv) — if not installed, run: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
 ### Step 1: Create Virtual Environment
 
 ```bash
-python3.11 -m venv .venv
+uv venv --python 3.11 .venv
 source .venv/bin/activate    # macOS / Linux
 # .venv\Scripts\activate     # Windows
 ```
 
 ### Step 2: Install Data-Juicer
 
+The PyPI package is `py-data-juicer` (latest: v1.5.1).
+
+**Basic installation:**
 ```bash
 uv pip install py-data-juicer
 ```
 
-Or without uv:
+> **Note:** This might take a while as it compiles some dependencies. Please be patient and wait for the installation to complete.
+
+**With optional extras** (install what you need):
 ```bash
-pip install py-data-juicer
+# Single extra
+uv pip install "py-data-juicer[vision]"
+
+# Multiple extras
+uv pip install "py-data-juicer[vision,nlp]"
+
+# Full installation (all features)
+uv pip install "py-data-juicer[all]"
 ```
+
+**Available Extras:**
+
+| Extra | Purpose | Required For |
+|-------|---------|-------------|
+| `generic` | ML/DL frameworks (torch, transformers, vllm) | General ML operations |
+| `vision` | Computer Vision (opencv, ultralytics, diffusers) | Image processing operators |
+| `nlp` | NLP/Text (nltk, fasttext, kenlm, spacy-pkuseg) | `perplexity_filter`, `language_id_score_filter` |
+| `audio` | Audio processing (torchaudio, soundfile) | Audio operators |
+| `distributed` | Distributed computing (ray, pyspark) | `executor_type: ray` |
+| `ai_services` | AI integrations (dashscope, openai) | API-based operators |
+| `dev` | Development tools (pytest, black, sphinx) | Contributing |
+| `all` | All of the above | Full feature set |
 
 ### Step 3: Install Data-Juicer-Agents (MANDATORY)
 
-Required for programmatic access to operator retrieval and plan tools:
+Required for programmatic access to operator retrieval and recipe tools:
 
 ```bash
-pip install data-juicer-agents==0.0.1
+uv pip install data-juicer-agents
 ```
+
+> **Note:** This might take a while as it downloads models and dependencies. Please be patient and wait for the installation to complete.
 
 ### Verify Installation
 
 ```bash
-# Check dj-process is available
+# Check CLI tools are available
 dj-process --help
+dj-analyze --help
 
 # Check Data-Juicer version
 python -c "import data_juicer; print(data_juicer.__version__)"
+
+# Check data-juicer-agents
+python -c "import data_juicer_agents; print('data-juicer-agents OK')"
 ```
+
+### Available CLI Tools
+
+Installing `py-data-juicer` provides these command-line tools:
+
+| Command | Purpose |
+|---------|--------|
+| `dj-process` | Execute YAML recipe pipelines |
+| `dj-analyze` | Analyze datasets |
+| `dj-install` | Install operator-specific dependencies |
+| `dj-mcp` | MCP server for tool integrations |
 
 ### Setup Troubleshooting
 
 | Issue | Fix |
 |---|---|
-| `command not found: dj-process` | Ensure venv is activated; re-run `pip install py-data-juicer` |
+| `command not found: dj-process` | Ensure venv is activated; re-run `uv pip install py-data-juicer` |
 | `command not found: uv` | Install uv: `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | Python version mismatch | Use `python3.11` explicitly |
+| `ModuleNotFoundError: kenlm` | Install nlp extra: `uv pip install "py-data-juicer[nlp]"` |
+| `ModuleNotFoundError: cv2` | Install vision extra: `uv pip install "py-data-juicer[vision]"` |
+| `perplexity_filter` fails | Requires nlp extra: `uv pip install "py-data-juicer[nlp]"` |
+| `language_id_score_filter` fails | Requires nlp extra: `uv pip install "py-data-juicer[nlp]"` |
+| Ray executor not available | Install distributed extra: `uv pip install "py-data-juicer[distributed]"` |
 
 ---
 
