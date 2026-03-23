@@ -21,16 +21,16 @@ def validate_plan_schema(plan: PlanModel) -> List[str]:
         errors.append("modality must be one of text/image/audio/video/multimodal/unknown")
     if not isinstance(plan.warnings, list):
         errors.append("warnings must be an array")
-    if plan.modality == "text" and not plan.recipe["text_keys"]:
+    if plan.modality == "text" and not plan.recipe.get("text_keys"):
         errors.append("text modality requires text_keys")
-    if plan.modality == "image" and not plan.recipe["image_key"]:
+    if plan.modality == "image" and not plan.recipe.get("image_key"):
         errors.append("image modality requires image_key")
-    if plan.modality == "audio" and not plan.recipe["audio_key"]:
+    if plan.modality == "audio" and not plan.recipe.get("audio_key"):
         errors.append("audio modality requires audio_key")
-    if plan.modality == "video" and not plan.recipe["video_key"]:
+    if plan.modality == "video" and not plan.recipe.get("video_key"):
         errors.append("video modality requires video_key")
     if plan.modality == "multimodal":
-        active = sum([bool(plan.recipe["text_keys"]), bool(plan.recipe["image_key"]), bool(plan.recipe["audio_key"]), bool(plan.recipe["video_key"])])
+        active = sum([bool(plan.recipe.get("text_keys")), bool(plan.recipe.get("image_key")), bool(plan.recipe.get("audio_key")), bool(plan.recipe.get("video_key"))])
         if active < 2:
             errors.append("multimodal modality requires at least two bound modalities")
     return errors
@@ -60,13 +60,21 @@ class PlanValidator:
         errors = validate_plan_schema(plan)
         errors.extend(validate_recipe_with_dj(plan.recipe))
 
-        dataset_path = Path(plan.recipe["dataset_path"]).expanduser()
-        if not dataset_path.exists():
-            errors.append(f"dataset_path does not exist: {plan.recipe['dataset_path']}")
+        dataset_path_str = plan.recipe.get("dataset_path")
+        if not dataset_path_str:
+            errors.append("recipe.dataset_path is required")
+        else:
+            dataset_path = Path(dataset_path_str).expanduser()
+            if not dataset_path.exists():
+                errors.append(f"dataset_path does not exist: {dataset_path_str}")
 
-        export_parent = Path(plan.recipe["export_path"]).expanduser().resolve().parent
-        if not export_parent.exists():
-            errors.append(f"export parent directory does not exist: {export_parent}")
+        export_path_str = plan.recipe.get("export_path")
+        if not export_path_str:
+            errors.append("recipe.export_path is required")
+        else:
+            export_parent = Path(export_path_str).expanduser().resolve().parent
+            if not export_parent.exists():
+                errors.append(f"export parent directory does not exist: {export_parent}")
 
         if plan.recipe.get("custom_operator_paths"):
             for raw_path in plan.recipe["custom_operator_paths"]:
