@@ -136,7 +136,7 @@ This section guides you to create a dj-process compatible YAML recipe from a use
 ### Core Flow
 
 ```
-User Intent → Inspect Dataset → Choose Operators → Write YAML → Validate → Save
+User Intent → Inspect Dataset → Retrieve Operators → Choose Operators → Write YAML → Validate → Save
 ```
 
 ### Step 1: Parse User Intent
@@ -169,9 +169,63 @@ Key things to determine:
 - **image_key**: Field for image paths/URLs (if multimodal)
 - **Modality**: text-only, image, multimodal
 
-### Step 3: Choose Operators
+### Step 3: Retrieve Operator Candidates
 
-Based on the user's goals, select operators from the Operator Catalog. Common patterns:
+Use the `retrieve_operators` tool to find suitable operators based on the user's intent:
+
+```python
+from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
+from data_juicer_agents.core.tool import ToolContext
+
+ctx = ToolContext(working_dir="./.djx")
+result = RETRIEVE_OPERATORS.execute(
+    ctx=ctx,
+    raw_input={
+        "intent": "remove duplicate documents and filter short texts",
+        "top_k": 5,
+        "mode": "auto",
+        "dataset_path": "./input.jsonl"
+    }
+)
+
+if result.ok:
+    for candidate in result.data.get("payload", {}).get("candidates", []):
+        print(f"  {candidate['operator_name']}: {candidate['description']}")
+        print(f"    Type: {candidate['operator_type']}, Score: {candidate.get('relevance_score', 'N/A')}")
+        if candidate.get('arguments_preview'):
+            print(f"    Params: {', '.join(candidate['arguments_preview'][:3])}")
+```
+
+**Retrieval Modes:**
+- `auto`: Automatically chooses the best retrieval method (LLM or vector-based)
+- `llm`: Uses LLM-based semantic retrieval
+- `vector`: Uses vector similarity search
+
+**Response Structure:**
+```python
+{
+    "ok": True,
+    "intent": "...",
+    "candidate_count": 5,
+    "candidate_names": ["document_deduplicator", "text_length_filter", ...],
+    "payload": {
+        "candidates": [
+            {
+                "rank": 1,
+                "operator_name": "document_deduplicator",
+                "operator_type": "deduplicator",
+                "description": "Exact document deduplication",
+                "relevance_score": 0.95,
+                "arguments_preview": ["lowercase: bool", "ignore_non_character: bool"]
+            }
+        ]
+    }
+}
+```
+
+### Step 4: Choose Operators
+
+Based on the retrieval results and user's goals, select operators. Common patterns:
 
 **Text Cleaning Pipeline:**
 - `fix_unicode_mapper` → `whitespace_normalization_mapper` → `clean_html_mapper` → `text_length_filter` → `words_num_filter`
@@ -185,7 +239,7 @@ Based on the user's goals, select operators from the Operator Catalog. Common pa
 **Full Pipeline (clean + filter + dedup):**
 - `fix_unicode_mapper` → `clean_html_mapper` → `whitespace_normalization_mapper` → `text_length_filter` → `words_num_filter` → `special_characters_filter` → `document_minhash_deduplicator`
 
-### Step 4: Write YAML Recipe
+### Step 5: Write YAML Recipe
 
 **Recipe Format** (this is what `dj-process --config` expects):
 
@@ -222,7 +276,7 @@ process:
 3. **`text_keys`** must be a YAML list, not a string
 4. **`np`** ≥ 1 (number of parallel workers)
 
-### Step 5: Validate Recipe
+### Step 6: Validate Recipe
 
 ```python
 import yaml
@@ -242,7 +296,7 @@ assert os.path.exists(config["dataset_path"]), f"Dataset not found: {config['dat
 print("✓ Recipe is valid")
 ```
 
-### Step 6: Save Recipe
+### Step 7: Save Recipe
 
 ```python
 import yaml
@@ -525,16 +579,33 @@ process:
       param2: value2
 ```
 
-### Discover More Operators
+### Discover Operators via Retrieval
+
+Use the `retrieve_operators` tool to find operators by intent:
+
+```python
+from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
+from data_juicer_agents.core.tool import ToolContext
+
+ctx = ToolContext(working_dir="./.djx")
+result = RETRIEVE_OPERATORS.execute(
+    ctx=ctx,
+    raw_input={"intent": "remove duplicate documents", "top_k": 5}
+)
+if result.ok:
+    for candidate in result.data.get("payload", {}).get("candidates", []):
+        print(f"  {candidate['operator_name']}: {candidate['description']}")
+```
+
+Or list all available operators:
 
 ```bash
 python -c "
-from data_juicer.ops import load_ops
-ops = load_ops()
-for op_type, op_list in ops.items():
-    print(f'{op_type}: {len(op_list)} operators')
-    for op in sorted(op_list):
-        print(f'  - {op}')
+from data_juicer_agents.tools.retrieve import get_available_operator_names
+ops = get_available_operator_names()
+print(f'Total operators: {len(ops)}')
+for op in sorted(ops)[:20]:
+    print(f'  - {op}')
 "
 ```
 
