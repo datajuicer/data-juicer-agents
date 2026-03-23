@@ -14,8 +14,9 @@ from data_juicer_agents.commands.output_control import emit, emit_json, enabled
 def _confirm(plan_data: dict) -> bool:
     print(f"About to execute plan: {str(plan_data.get('plan_id', '')).strip()}")
     print(f"Modality: {str(plan_data.get('modality', '')).strip()}")
-    print(f"Dataset: {str(plan_data.get('dataset_path', '')).strip()}")
-    print(f"Export: {str(plan_data.get('export_path', '')).strip()}")
+    recipe = plan_data.get("recipe", {})    
+    print(f"Dataset: {str(recipe.get('dataset_path', '')).strip()}")
+    print(f"Export: {str(recipe.get('export_path', '')).strip()}")
     answer = input("Proceed? [y/N]: ").strip().lower()
     return answer in {"y", "yes"}
 

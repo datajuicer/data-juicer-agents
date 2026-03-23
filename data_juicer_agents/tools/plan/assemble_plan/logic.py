@@ -103,25 +103,25 @@ class PlannerCore:
     @classmethod
     def _build_recipe(
         cls,
-        normalized_dataset: DatasetSpec,
-        normalized_process: ProcessSpec,
-        normalized_system: SystemSpec,
+        normalized_dataset_spec: DatasetSpec,
+        normalized_process_spec: ProcessSpec,
+        normalized_system_spec: SystemSpec,
     ) -> Dict[str, Any]:
         """Assemble a DJ-native recipe dict from the three normalized specs."""
         recipe: Dict[str, Any] = {}
 
         # --- dataset IO fields ---
-        recipe["dataset_path"] = normalized_dataset.io.dataset_path
-        recipe["export_path"] = normalized_dataset.io.export_path
-        if normalized_dataset.io.dataset:
-            recipe["dataset"] = dict(normalized_dataset.io.dataset)
-        if normalized_dataset.io.generated_dataset_config:
+        recipe["dataset_path"] = normalized_dataset_spec.io.dataset_path
+        recipe["export_path"] = normalized_dataset_spec.io.export_path
+        if normalized_dataset_spec.io.dataset:
+            recipe["dataset"] = dict(normalized_dataset_spec.io.dataset)
+        if normalized_dataset_spec.io.generated_dataset_config:
             recipe["generated_dataset_config"] = dict(
-                normalized_dataset.io.generated_dataset_config
+                normalized_dataset_spec.io.generated_dataset_config
             )
 
         # --- dataset binding fields ---
-        binding = normalized_dataset.binding
+        binding = normalized_dataset_spec.binding
         if binding.text_keys:
             recipe["text_keys"] = list(binding.text_keys)
         if binding.image_key:
@@ -135,11 +135,11 @@ class PlannerCore:
 
         # --- process: DJ-native format [{op_name: params}] ---
         recipe["process"] = [
-            {op.name: op.params} for op in normalized_process.operators
+            {op.name: op.params} for op in normalized_process_spec.operators
         ]
 
         # --- system fields ---
-        system_dict = normalized_system.to_dict()
+        system_dict = normalized_system_spec.to_dict()
         # warnings is our internal field, not part of DJ recipe
         system_dict.pop("warnings", None)
         recipe.update(system_dict)

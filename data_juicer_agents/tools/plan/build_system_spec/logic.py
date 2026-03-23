@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Any, Dict, Iterable
 
 from .._shared.schema import SystemSpec
-from .._shared.system_spec import SYSTEM_SPEC_DEFERRED_WARNING, validate_system_spec_payload
+from .._shared.system_spec import validate_system_spec_payload
 
 def _normalize_string_list(values: Iterable[Any] | None) -> list[str]:
     items: list[str] = []
@@ -84,9 +84,6 @@ def build_system_spec(
                 f"Valid fields are: {sorted(dj_system_config.keys())}"
             )
         dj_system_config.update(kwargs)
-
-    # Add warnings
-    dj_system_config['warnings'] = [SYSTEM_SPEC_DEFERRED_WARNING]
 
     # Create SystemSpec from DJ config (dynamically handles all fields)
     spec = SystemSpec.from_dj_config(dj_system_config)

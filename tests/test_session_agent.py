@@ -141,7 +141,7 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
     )
     assert system_spec["ok"] is True
     assert system_spec["system_spec"]["np"] == 1
-    assert system_spec["warnings"]
+    assert "warnings" in system_spec
 
     validated_dataset = invoke_tool_spec(
         registry.get("validate_dataset_spec"),
