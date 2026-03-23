@@ -85,9 +85,8 @@ class DJConfigBridge:
             dest = action.dest
             default_value = getattr(action, "default", None)
 
-            # Handle special cases
-            if default_value is not None:
-                defaults[dest] = default_value
+            # Include all parser destinations, even those with None defaults
+            defaults[dest] = default_value
 
         self._default_config = defaults
         return defaults
