@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Literal, Optional, Tuple, Type
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 
 ToolEffect = Literal["read", "write", "execute", "external"]
@@ -133,6 +133,8 @@ class ToolSpec:
             else:
                 parsed = self.input_model.model_validate(raw_input)
             return self.executor(ctx, parsed)
+        except ValidationError:
+            raise
         except Exception as exc:
             return ToolResult.failure(
                 summary=f"tool '{self.name}' raised an unexpected exception: {exc}",
