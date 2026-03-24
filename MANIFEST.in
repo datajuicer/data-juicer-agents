@@ -1,0 +1,19 @@
+include pyproject.toml
+include README.md
+include LICENSE
+graft data_juicer_agents
+
+prune .github
+prune data
+prune docs
+prune eval_cases
+prune interactive_recipe
+prune plans
+prune qa-copilot
+prune recipes
+prune studio
+prune tests
+
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.so

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data-juicer-agents"
-version = "0.1.0"
+version = "0.0.1"
 description = "A multi-agent data processing system built on AgentScope and Data-Juicer"
 readme = "README.md"
 license = "Apache-2.0"
@@ -43,7 +43,7 @@ djx = "data_juicer_agents.cli:main"
 dj-agents = "data_juicer_agents.session_cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=7,<8", "black", "flake8", "mypy"]
+dev = ["pytest>=7,<8", "black", "flake8", "mypy", "twine"]
 qa = ["qdrant-client>=1.11.0,<1.12.0"]
 
 [project.urls]
@@ -52,6 +52,7 @@ Repository = "https://github.com/datajuicer/data-juicer-agents"
 Documentation = "https://github.com/datajuicer/data-juicer-agents#readme"
 
 [tool.setuptools]
+include-package-data = false
 
 [tool.setuptools.packages.find]
 include = ["data_juicer_agents*"]
