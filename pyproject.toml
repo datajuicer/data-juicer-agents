@@ -36,6 +36,7 @@ dependencies = [
     "oyaml",
     "prompt-toolkit>=3.0.36",
     "rich>=13.7.0",
+    "rank-bm25>=0.2.2",
 ]
 
 [project.scripts]
