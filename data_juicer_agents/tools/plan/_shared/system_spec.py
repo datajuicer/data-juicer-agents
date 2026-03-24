@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Shared system-spec helpers for plan tools."""
-
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, Iterable, List, Tuple
 
 from .normalize import normalize_string_list
@@ -48,14 +48,11 @@ def normalize_system_spec(
 
         coerce_errors = extra_errors + core_errors
         if coerce_errors:
-            spec.warnings.extend(
-                f"[type coercion] {err}" for err in coerce_errors
-            )
+            spec.warnings.extend(f"[type coercion] {err}" for err in coerce_errors)
     except Exception:
         pass  # bridge unavailable — skip coercion
 
     # --- Auto-corrections (mirrors DJ init_setup_from_cfg) ----------------
-    import os
 
     # np cap: ensure np does not exceed available CPU cores
     cpu_count = os.cpu_count() or 1
@@ -83,8 +80,7 @@ def normalize_system_spec(
     op_fusion = spec.get("op_fusion", False)
     if op_fusion and spec.get("use_checkpoint", False):
         spec.warnings.append(
-            "[auto-corrected] use_checkpoint disabled because "
-            "op_fusion is enabled"
+            "[auto-corrected] use_checkpoint disabled because " "op_fusion is enabled"
         )
         spec.set("use_checkpoint", False)
 

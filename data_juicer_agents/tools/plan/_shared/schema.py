@@ -27,11 +27,7 @@ def _coerce_optional_text(value: Any) -> Optional[str]:
 
 @dataclass
 class SystemSpec:
-    """Runtime/executor-level settings shared by the whole recipe.
-
-    This class dynamically wraps Data-Juicer's system configuration,
-    automatically syncing with any changes in the upstream library.
-    """
+    """Runtime/executor-level settings shared by the whole recipe."""
 
     # Core fields that are always present
     executor_type: str = "default"
@@ -39,12 +35,13 @@ class SystemSpec:
     custom_operator_paths: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
 
-    # Dynamic fields storage for any additional DJ system config
+    # Extra fields storage for any additional DJ system config fields
+    # Note: system fields are statically maintained in dj_config_bridge.system_fields
     _extra_fields: Dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "SystemSpec":
-        """Create SystemSpec from dict, dynamically handling all DJ system fields."""
+        """Create SystemSpec from dict."""
         # Extract core fields
         core_fields = {
             "executor_type": str(
@@ -80,7 +77,7 @@ class SystemSpec:
         return cls(**core_fields, _extra_fields=raw_extra_fields)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dict, including all dynamic fields."""
+        """Convert to dict, including all extra fields."""
         result = {
             "executor_type": self.executor_type,
             "np": self.np,
