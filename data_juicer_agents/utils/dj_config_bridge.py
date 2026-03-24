@@ -7,13 +7,30 @@ eliminating the need to manually sync schema definitions.
 Public API:
     get_dj_config_bridge()  → singleton DJConfigBridge instance
     coerce_fields()         → type-coerce dict values via DJ parser hints
+
+Field classification lists:
+    dataset_fields          → dataset I/O and binding fields
+    system_fields           → runtime/executor system fields
+    agent_managed_fields    → fields auto-set by the agent (not by LLM)
 """
 
+import logging
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Field classification
 # ---------------------------------------------------------------------------
+
+# Fields automatically managed by the agent layer (not exposed to LLM).
+# These are set programmatically during apply (e.g. project_name ← plan_id).
+agent_managed_fields = [
+    "project_name",
+    "job_id",
+    "auto",  # This is for auto-analyze mode, temporarily added here to avoid LLM exposure until we decide how to handle it.
+    "config",  # This is for passing the full config dict to the agent for internal use, not for LLM configuration.
+]
 
 # Dataset-related field names
 dataset_fields = [
@@ -42,9 +59,72 @@ dataset_fields = [
     "keep_hashes_in_res_ds",
 ]
 
+# System/runtime-related field names (executor, parallelism, caching, etc.)
+system_fields = [
+    "adaptive_batch_size",
+    "auto_num",
+    "auto_op_parallelism",
+    "backup_count",
+    "cache_compress",
+    "checkpoint.enabled",
+    "checkpoint.n_ops",
+    "checkpoint.op_names",
+    "checkpoint.strategy",
+    "checkpoint_dir",
+    "conflict_resolve_strategy",
+    "custom_operator_paths",
+    "data_probe_algo",
+    "data_probe_ratio",
+    "debug",
+    "ds_cache_dir",
+    "event_log_dir",
+    "event_logging.enabled",
+    "executor_type",
+    "export_original_dataset",
+    "fusion_strategy",
+    "hpo_config",
+    "intermediate_storage.cleanup_on_success",
+    "intermediate_storage.cleanup_temp_files",
+    "intermediate_storage.compression",
+    "intermediate_storage.format",
+    "intermediate_storage.max_retention_days",
+    "intermediate_storage.preserve_intermediate_data",
+    "intermediate_storage.retention_policy",
+    "intermediate_storage.write_partitions",
+    "max_log_size_mb",
+    "max_partition_size_mb",
+    "min_common_dep_num_to_combine",
+    "np",
+    "op_fusion",
+    "op_list_to_mine",
+    "op_list_to_trace",
+    "open_insight_mining",
+    "open_monitor",
+    "open_tracer",
+    "partition.mode",
+    "partition.num_of_partitions",
+    "partition.target_size_mb",
+    "partition_dir",
+    "partition_size",
+    "percentiles",
+    "preserve_intermediate_data",
+    "ray_address",
+    "resource_optimization.auto_configure",
+    "save_stats_in_one_file",
+    "skip_op_error",
+    "temp_dir",
+    "trace_keys",
+    "trace_num",
+    "turbo",
+    "use_cache",
+    "use_checkpoint",
+    "work_dir",
+]
+
 # ---------------------------------------------------------------------------
 # Bridge class
 # ---------------------------------------------------------------------------
+
 
 class DJConfigBridge:
     """Bridge to Data-Juicer's native configuration and validation.
@@ -64,6 +144,7 @@ class DJConfigBridge:
         """Lazy load Data-Juicer base parser (no OPs registered)."""
         if self._parser is None:
             from data_juicer.config.config import build_base_parser
+
             self._parser = build_base_parser()
         return self._parser
 
@@ -101,18 +182,35 @@ class DJConfigBridge:
         self._default_config = defaults
         return defaults
 
-    def extract_system_config(self, config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Extract system-related fields (excluding dataset fields and process)."""
+    def extract_system_config(
+        self, config: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Extract system-related fields based on the explicit ``system_fields`` list."""
         config_dict = config if config is not None else self.get_default_config()
-        system_fields = set(config_dict.keys()) - set(dataset_fields) - {"process"}
         return {f: config_dict[f] for f in system_fields if f in config_dict}
 
-    def extract_dataset_config(self, config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def extract_dataset_config(
+        self, config: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Extract dataset-related fields."""
         config_dict = config if config is not None else self.get_default_config()
         return {f: config_dict[f] for f in dataset_fields if f in config_dict}
 
-    def extract_process_config(self, config: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def extract_agent_managed_config(
+        self, config: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Extract agent-managed fields (auto-set by agent, not by LLM).
+
+        These fields (e.g. ``project_name``) are programmatically set
+        during the apply phase and should not be exposed to the LLM for
+        configuration.
+        """
+        config_dict = config if config is not None else self.get_default_config()
+        return {f: config_dict[f] for f in agent_managed_fields if f in config_dict}
+
+    def extract_process_config(
+        self, config: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
         """Extract process operator list."""
         config_dict = config if config is not None else self.get_default_config()
         return config_dict.get("process", [])
@@ -142,6 +240,7 @@ class DJConfigBridge:
         """
         try:
             from jsonargparse import Namespace
+
             ns = Namespace(**config)
             self.parser.validate(ns)
             return True, []
@@ -167,6 +266,7 @@ class DJConfigBridge:
         """
         try:
             from data_juicer.ops.base_op import OPERATORS
+
             known_op_names: set = set(OPERATORS.modules.keys())
         except Exception:
             known_op_names = set()
@@ -196,11 +296,13 @@ class DJConfigBridge:
 
         return op_param_map, known_op_names
 
+
 # ---------------------------------------------------------------------------
 # Singleton
 # ---------------------------------------------------------------------------
 
 _bridge = None
+
 
 def get_dj_config_bridge() -> DJConfigBridge:
     """Get singleton DJConfigBridge instance."""
@@ -209,9 +311,11 @@ def get_dj_config_bridge() -> DJConfigBridge:
         _bridge = DJConfigBridge()
     return _bridge
 
+
 # ---------------------------------------------------------------------------
 # Standalone utility (used by normalize layer, not a bridge wrapper)
 # ---------------------------------------------------------------------------
+
 
 def coerce_fields(fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
     """Coerce field values to their correct basic Python types via DJ parser.
@@ -243,7 +347,9 @@ def coerce_fields(fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
         if hasattr(action, "dest") and action.dest != "help":
             known_parser_dests.add(action.dest)
             default = getattr(action, "default", None)
-            action_type_map[action.dest] = type(default) if default is not None else None
+            action_type_map[action.dest] = (
+                type(default) if default is not None else None
+            )
 
     known_fields = {k: v for k, v in fields.items() if k in known_parser_dests}
     unknown_fields = {k: v for k, v in fields.items() if k not in known_parser_dests}
@@ -268,25 +374,19 @@ def coerce_fields(fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
                 coerced_known[key] = False
             else:
                 coerced_known[key] = value
-                errors.append(
-                    f"Cannot coerce {key}={value!r} to bool; kept as-is."
-                )
+                errors.append(f"Cannot coerce {key}={value!r} to bool; kept as-is.")
         elif expected_type is int and isinstance(value, str):
             try:
                 coerced_known[key] = int(value)
             except (ValueError, TypeError):
                 coerced_known[key] = value
-                errors.append(
-                    f"Cannot coerce {key}={value!r} to int; kept as-is."
-                )
+                errors.append(f"Cannot coerce {key}={value!r} to int; kept as-is.")
         elif expected_type is float and isinstance(value, str):
             try:
                 coerced_known[key] = float(value)
             except (ValueError, TypeError):
                 coerced_known[key] = value
-                errors.append(
-                    f"Cannot coerce {key}={value!r} to float; kept as-is."
-                )
+                errors.append(f"Cannot coerce {key}={value!r} to float; kept as-is.")
         else:
             coerced_known[key] = value
 

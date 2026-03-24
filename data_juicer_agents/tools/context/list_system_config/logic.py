@@ -23,12 +23,34 @@ def list_system_config(
         Dict containing configuration information and available parameters
     """
     try:
-        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
+        from data_juicer_agents.utils.dj_config_bridge import (
+            agent_managed_fields,
+            dataset_fields,
+            get_dj_config_bridge,
+            system_fields,
+        )
 
         bridge = get_dj_config_bridge()
 
-        # Get all system config fields with defaults
+        # Get all system config fields with defaults (based on explicit system_fields list)
         system_config = bridge.extract_system_config()
+
+        # Detect unclassified fields: fields in DJ parser but not in any known category.
+        # This happens when the upstream Data-Juicer adds new config fields that we
+        # haven't categorised yet.
+        all_parser_fields = set(bridge.get_default_config().keys())
+        classified_fields = (
+            set(system_fields) | set(dataset_fields) | set(agent_managed_fields) | {"process"}
+        )
+        unclassified_fields = sorted(all_parser_fields - classified_fields)
+
+        warnings = []
+        if unclassified_fields:
+            warnings.append(
+                f"The following {len(unclassified_fields)} DJ config field(s) are not yet "
+                f"classified into system/dataset/agent-managed categories and have been "
+                f"excluded from the listing: {unclassified_fields}"
+            )
 
         # Get descriptions if requested
         descriptions = {}
@@ -56,14 +78,16 @@ def list_system_config(
             
             config[param_name] = param_info
         
-        
-        return {
+        result = {
             "ok": True,
             "message": f"Listed {len(config)} system configuration parameters",
             "config": config,
             "total_count": len(config),
             "filter_applied": filter_prefix,
         }
+        if warnings:
+            result["warnings"] = warnings
+        return result
         
     except Exception as e:
         return {
