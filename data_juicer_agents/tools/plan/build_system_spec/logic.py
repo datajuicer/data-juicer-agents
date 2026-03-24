@@ -5,19 +5,9 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable
 
+from .._shared.normalize import normalize_string_list
 from .._shared.schema import SystemSpec
 from .._shared.system_spec import validate_system_spec_payload
-
-def _normalize_string_list(values: Iterable[Any] | None) -> list[str]:
-    items: list[str] = []
-    seen = set()
-    for value in values or []:
-        text = str(value or "").strip()
-        if not text or text in seen:
-            continue
-        items.append(text)
-        seen.add(text)
-    return items
 
 def _load_dj_system_config() -> Dict[str, Any]:
     """Load complete system configuration from Data-Juicer dynamically.
@@ -67,7 +57,7 @@ def build_system_spec(
 
     # Override core parameters if provided
     if custom_operator_paths is not None:
-        dj_system_config['custom_operator_paths'] = _normalize_string_list(custom_operator_paths)
+        dj_system_config['custom_operator_paths'] = normalize_string_list(custom_operator_paths)
 
     if np is not None:
         dj_system_config['np'] = np

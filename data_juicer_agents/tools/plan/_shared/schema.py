@@ -72,25 +72,12 @@ class SystemSpec:
             ),
         }
 
-        # Store all other fields in _extra_fields, coercing types via DJ parser
+        # Store all other fields in _extra_fields as-is.
+        # Type coercion is handled later by normalize_system_spec().
         core_field_names = {"executor_type", "np", "custom_operator_paths", "warnings"}
         raw_extra_fields = {k: v for k, v in data.items() if k not in core_field_names}
 
-        coerce_errors: List[str] = []
-        try:
-            from data_juicer_agents.utils.dj_config_bridge import coerce_extra_fields
-            extra_fields, coerce_errors = coerce_extra_fields(raw_extra_fields)
-        except Exception:
-            # Fallback: store as-is if bridge is unavailable
-            extra_fields = raw_extra_fields
-
-        # Surface any type-coercion errors as warnings so callers can see them
-        if coerce_errors:
-            core_fields["warnings"] = list(core_fields["warnings"]) + [
-                f"[type coercion] {err}" for err in coerce_errors
-            ]
-
-        return cls(**core_fields, _extra_fields=extra_fields)
+        return cls(**core_fields, _extra_fields=raw_extra_fields)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dict, including all dynamic fields."""

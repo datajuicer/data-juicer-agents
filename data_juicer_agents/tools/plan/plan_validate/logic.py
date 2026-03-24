@@ -37,14 +37,14 @@ def validate_plan_schema(plan: PlanModel) -> List[str]:
 
 def validate_recipe_with_dj(recipe: Dict[str, Any]) -> List[str]:
     """Validate the recipe dict using Data-Juicer's native config validation.
- 
+
     This catches any unknown keys, type mismatches, or constraint violations
     that DJ itself would reject at runtime.
     """
     try:
         from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
         bridge = get_dj_config_bridge()
-        is_valid, dj_errors = bridge.validate_config(recipe)
+        is_valid, dj_errors = bridge.validate(recipe)
         if not is_valid:
             return [f"DJ config error: {err}" for err in dj_errors]
     except Exception as exc:

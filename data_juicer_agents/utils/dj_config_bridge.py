@@ -3,12 +3,17 @@
 
 This module provides a dynamic bridge to Data-Juicer's configuration,
 eliminating the need to manually sync schema definitions.
+
+Public API:
+    get_dj_config_bridge()  → singleton DJConfigBridge instance
+    coerce_fields()         → type-coerce dict values via DJ parser hints
 """
 
 from typing import Any, Dict, List, Optional, Tuple
-import tempfile
-import json
-import os
+
+# ---------------------------------------------------------------------------
+# Field classification
+# ---------------------------------------------------------------------------
 
 # Dataset-related field names
 dataset_fields = [
@@ -37,13 +42,22 @@ dataset_fields = [
     "keep_hashes_in_res_ds",
 ]
 
+# ---------------------------------------------------------------------------
+# Bridge class
+# ---------------------------------------------------------------------------
 
 class DJConfigBridge:
-    """Bridge to Data-Juicer's native configuration and validation."""
+    """Bridge to Data-Juicer's native configuration and validation.
+
+    All DJ-dependent logic is centralised here.  Callers should obtain
+    the singleton via ``get_dj_config_bridge()`` and call methods on it.
+    """
 
     def __init__(self):
         self._parser = None
         self._default_config = None
+
+    # -- parser helpers -----------------------------------------------------
 
     @property
     def parser(self):
@@ -71,55 +85,21 @@ class DJConfigBridge:
             )
         return parser
 
+    # -- config extraction --------------------------------------------------
+
     def get_default_config(self) -> Dict[str, Any]:
+        """Return all parser fields with their default values (cached)."""
         if self._default_config is not None:
             return self._default_config
 
         defaults = {}
-
-        # Extract defaults from parser actions
         for action in self.parser._actions:
             if not hasattr(action, "dest") or action.dest == "help":
                 continue
-
-            dest = action.dest
-            default_value = getattr(action, "default", None)
-
-            # Include all parser destinations, even those with None defaults
-            defaults[dest] = default_value
+            defaults[action.dest] = getattr(action, "default", None)
 
         self._default_config = defaults
         return defaults
-
-    def validate_config(self, config: Dict[str, Any]) -> Tuple[bool, List[str]]:
-        """Validate config dict using Data-Juicer's parser.
-
-        Works for full config, partial config (system/dataset/process only).
-
-        Args:
-            config: Config dict to validate
-
-        Returns:
-            (is_valid, error_messages)
-        """
-        used_ops = {
-            list(op.keys())[0]
-            for op in config.get("process", [])
-            if op
-        }
-        parser = self._build_parser_with_ops(used_ops or None)
-
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            json.dump(config, f)
-            temp_path = f.name
-
-        try:
-            parser.parse_args(["--config", temp_path])
-            return True, []
-        except Exception as e:
-            return False, [str(e)]
-        finally:
-            os.unlink(temp_path)
 
     def extract_system_config(self, config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Extract system-related fields (excluding dataset fields and process)."""
@@ -145,9 +125,82 @@ class DJConfigBridge:
             if hasattr(action, "dest") and action.dest != "help"
         }
 
-# Singleton instance
-_bridge = None
+    # -- validation ---------------------------------------------------------
 
+    def validate(self, config: Dict[str, Any]) -> Tuple[bool, List[str]]:
+        """Validate a config dict using DJ base parser.
+
+        Checks system/dataset field types and rejects unknown keys.
+        Does NOT validate process list contents or operator params
+        (that is handled by get_op_valid_params in the agents layer).
+
+        Args:
+            config: Config dict to validate.
+
+        Returns:
+            ``(is_valid, error_messages)``
+        """
+        try:
+            from jsonargparse import Namespace
+            ns = Namespace(**config)
+            self.parser.validate(ns)
+            return True, []
+        except Exception as e:
+            return False, [str(e)]
+
+    # -- operator introspection ---------------------------------------------
+
+    def get_op_valid_params(self, op_names: set) -> Tuple[Dict[str, set], set]:
+        """Get valid parameter names for each operator.
+
+        Registers the requested operators into a fresh parser, then
+        extracts valid parameter names from the resulting flat actions
+        (e.g. ``text_length_filter.min_len`` -> ``min_len``).
+
+        Args:
+            op_names: Set of operator names to look up.
+
+        Returns:
+            ``(op_param_map, known_op_names)`` where
+            *op_param_map* is ``{op_name: {param, ...}}`` and
+            *known_op_names* is the full set of registered DJ operators.
+        """
+        try:
+            from data_juicer.ops.base_op import OPERATORS
+            known_op_names: set = set(OPERATORS.modules.keys())
+        except Exception:
+            known_op_names = set()
+
+        if not op_names:
+            return {}, known_op_names
+
+        valid_requested = op_names & known_op_names
+        if not valid_requested:
+            return {}, known_op_names
+
+        try:
+            parser = self._build_parser_with_ops(valid_requested)
+        except Exception:
+            return {}, known_op_names
+
+        op_param_map: Dict[str, set] = {op: set() for op in valid_requested}
+        for action in parser._actions:
+            if not hasattr(action, "dest"):
+                continue
+            dest = action.dest
+            if "." not in dest:
+                continue
+            op_name, param_name = dest.split(".", 1)
+            if op_name in op_param_map:
+                op_param_map[op_name].add(param_name)
+
+        return op_param_map, known_op_names
+
+# ---------------------------------------------------------------------------
+# Singleton
+# ---------------------------------------------------------------------------
+
+_bridge = None
 
 def get_dj_config_bridge() -> DJConfigBridge:
     """Get singleton DJConfigBridge instance."""
@@ -156,85 +209,34 @@ def get_dj_config_bridge() -> DJConfigBridge:
         _bridge = DJConfigBridge()
     return _bridge
 
+# ---------------------------------------------------------------------------
+# Standalone utility (used by normalize layer, not a bridge wrapper)
+# ---------------------------------------------------------------------------
 
-def validate_system_config(system_config: Dict[str, Any]) -> Tuple[bool, List[str]]:
-    """Validate system config fields only.
-    
-    Args:
-        system_config: System config fields to validate
-        
-    Returns:
-        (is_valid, error_messages)
-    """
-    bridge = get_dj_config_bridge()
-    
-    # Merge system config into defaults to get a complete valid config
-    base = bridge.get_default_config().copy()
-    base.update(system_config)
-    
-    # Remove process to skip OP validation
-    base.pop("process", None)
-    
-    return bridge.validate_config(base)
+def coerce_fields(fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
+    """Coerce field values to their correct basic Python types via DJ parser.
 
+    Performs safe conversions for basic types (``bool``, ``int``, ``float``)
+    by inspecting the DJ parser's registered default-value types.  Fields
+    with non-basic target types or fields not registered in the parser are
+    passed through unchanged.
 
-def get_system_config_schema() -> Dict[str, Any]:
-    """Get system configuration schema from Data-Juicer.
-    
-    Returns:
-        Dict with system config fields and their default values
-    """
-    bridge = get_dj_config_bridge()
-    return bridge.extract_system_config()
-
-
-def get_system_param_descriptions() -> Dict[str, str]:
-    """Get descriptions for all system parameters from Data-Juicer parser.
-    
-    Returns:
-        Dict mapping parameter names to their descriptions
-    """
-    bridge = get_dj_config_bridge()
-    descriptions = {}
-    
-    for action in bridge.parser._actions:
-        if not hasattr(action, 'dest') or action.dest == 'help':
-            continue
-        
-        dest = action.dest
-        help_text = getattr(action, 'help', '')
-        
-        if help_text and dest:
-            descriptions[dest] = help_text
-    
-    return descriptions
-
-
-def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
-    """Coerce extra system fields to their correct basic Python types.
-
-    Only performs safe conversions for basic types (``bool``, ``int``,
-    ``float``) by inspecting the DJ parser's registered type hints.
-    Fields with non-basic target types or fields not registered in the
-    parser are passed through unchanged.  This avoids jsonargparse
-    wrapping values in internal types that ``yaml.safe_dump`` cannot
-    serialise.
+    This is used during normalization to ensure values serialise correctly
+    in recipe YAML (e.g. ``"true"`` -> ``True``, ``"4"`` -> ``4``).
 
     Args:
-        extra_fields: Dict of extra system config fields to coerce.
+        fields: Dict of config fields to coerce.
 
     Returns:
-        A tuple ``(coerced_fields, errors)`` where ``errors`` is a list of
-        human-readable messages for any field that failed type coercion.
+        ``(coerced_fields, errors)`` where *errors* lists human-readable
+        messages for any field that failed type coercion.
     """
-    if not extra_fields:
+    if not fields:
         return {}, []
 
     bridge = get_dj_config_bridge()
 
-    # Build a mapping from dest -> target type inferred from default values.
-    # jsonargparse does not populate action.type; the default value is the
-    # most reliable indicator of the expected Python type.
+    # Build dest -> expected type mapping from parser default values.
     action_type_map: Dict[str, Any] = {}
     known_parser_dests: set = set()
     for action in bridge.parser._actions:
@@ -243,11 +245,11 @@ def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], L
             default = getattr(action, "default", None)
             action_type_map[action.dest] = type(default) if default is not None else None
 
-    known_fields = {k: v for k, v in extra_fields.items() if k in known_parser_dests}
-    unknown_fields = {k: v for k, v in extra_fields.items() if k not in known_parser_dests}
+    known_fields = {k: v for k, v in fields.items() if k in known_parser_dests}
+    unknown_fields = {k: v for k, v in fields.items() if k not in known_parser_dests}
 
     if not known_fields:
-        return dict(extra_fields), []
+        return dict(fields), []
 
     errors: List[str] = []
     coerced_known: Dict[str, Any] = {}
@@ -286,60 +288,6 @@ def coerce_extra_fields(extra_fields: Dict[str, Any]) -> Tuple[Dict[str, Any], L
                     f"Cannot coerce {key}={value!r} to float; kept as-is."
                 )
         else:
-            # Non-basic target type or value is already the right type;
-            # pass through unchanged.
             coerced_known[key] = value
 
     return {**coerced_known, **unknown_fields}, errors
-
-
-def get_op_valid_params(op_names: set) -> Tuple[Dict[str, set], set]:
-    """Get valid parameter names for each operator, and all known operator names.
-
-    Uses ``_build_parser_with_ops`` to register the requested operators into a
-    fresh parser, then extracts the set of valid parameter names from the
-    resulting flat actions (e.g. ``text_length_filter.min_len`` → ``min_len``).
-
-    Args:
-        op_names: Set of operator names to look up.
-
-    Returns:
-        A tuple ``(op_param_map, known_op_names)`` where:
-        - ``op_param_map``: ``{op_name: {valid_param_name, ...}}``
-        - ``known_op_names``: set of all registered operator names in DJ
-    """
-    bridge = get_dj_config_bridge()
-
-    # All registered operator names from DJ's OPERATORS registry
-    try:
-        from data_juicer.ops.base_op import OPERATORS
-        known_op_names: set = set(OPERATORS.modules.keys())
-    except Exception:
-        known_op_names = set()
-
-    if not op_names:
-        return {}, known_op_names
-
-    # Only build parser for ops that actually exist in the registry
-    valid_requested = op_names & known_op_names
-    if not valid_requested:
-        return {}, known_op_names
-
-    try:
-        parser = bridge._build_parser_with_ops(valid_requested)
-    except Exception:
-        return {}, known_op_names
-
-    # Extract {op_name: {param_name, ...}} from flat actions like "op_name.param_name"
-    op_param_map: Dict[str, set] = {op: set() for op in valid_requested}
-    for action in parser._actions:
-        if not hasattr(action, "dest"):
-            continue
-        dest = action.dest
-        if "." not in dest:
-            continue
-        op_name, param_name = dest.split(".", 1)
-        if op_name in op_param_map:
-            op_param_map[op_name].add(param_name)
-
-    return op_param_map, known_op_names

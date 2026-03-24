@@ -4,21 +4,53 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, List, Tuple
 
-from .._shared.schema import DatasetBindingSpec, DatasetSpec, _ALLOWED_MODALITIES
+from .normalize import normalize_optional_text, normalize_params, normalize_string_list
+from .schema import DatasetBindingSpec, DatasetSpec, _ALLOWED_MODALITIES
 
 
-def _normalize_string_list(values: Iterable[Any] | None) -> List[str]:
-    normalized: List[str] = []
-    seen = set()
-    for item in values or []:
-        text = str(item or "").strip()
-        if not text or text in seen:
-            continue
-        normalized.append(text)
-        seen.add(text)
-    return normalized
+def normalize_dataset_spec(
+    dataset_spec: DatasetSpec | Dict[str, Any],
+) -> DatasetSpec:
+    """Normalize dataset spec: strip strings, deduplicate lists."""
+    if isinstance(dataset_spec, DatasetSpec):
+        source = dataset_spec
+    elif isinstance(dataset_spec, dict):
+        source = DatasetSpec.from_dict(dataset_spec)
+    else:
+        raise ValueError("dataset_spec must be a dict object")
+
+    return DatasetSpec.from_dict(
+        {
+            "io": {
+                "dataset_path": str(source.io.dataset_path or "").strip(),
+                "dataset": (
+                    normalize_params(source.io.dataset)
+                    if isinstance(source.io.dataset, dict)
+                    else None
+                ),
+                "generated_dataset_config": (
+                    normalize_params(source.io.generated_dataset_config)
+                    if isinstance(source.io.generated_dataset_config, dict)
+                    else None
+                ),
+                "export_path": str(source.io.export_path or "").strip(),
+            },
+            "binding": {
+                "modality": str(source.binding.modality or "unknown").strip()
+                or "unknown",
+                "text_keys": normalize_string_list(source.binding.text_keys),
+                "image_key": normalize_optional_text(source.binding.image_key),
+                "audio_key": normalize_optional_text(source.binding.audio_key),
+                "video_key": normalize_optional_text(source.binding.video_key),
+                "image_bytes_key": normalize_optional_text(
+                    source.binding.image_bytes_key
+                ),
+            },
+            "warnings": normalize_string_list(source.warnings),
+        }
+    )
 
 
 def infer_modality(binding: DatasetBindingSpec) -> str:
@@ -68,6 +100,7 @@ def validate_dataset_spec_payload(
     *,
     dataset_profile: Dict[str, Any] | None = None,
 ) -> Tuple[List[str], List[str]]:
+    """Validate dataset spec with our business rules + DJ parser."""
     if isinstance(dataset_spec, dict):
         dataset_spec = DatasetSpec.from_dict(dataset_spec)
 
@@ -140,7 +173,38 @@ def validate_dataset_spec_payload(
         if normalized_types == {"remote"} and len(dataset_cfg.get("configs", [])) > 1:
             errors.append("multiple remote datasets are not supported")
 
+    # DJ parser validation for dataset fields
+    try:
+        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
+
+        bridge = get_dj_config_bridge()
+        dataset_dict: Dict[str, Any] = {}
+        if io.dataset_path:
+            dataset_dict["dataset_path"] = io.dataset_path
+        if io.export_path:
+            dataset_dict["export_path"] = io.export_path
+        if binding.text_keys:
+            dataset_dict["text_keys"] = list(binding.text_keys)
+        if binding.image_key:
+            dataset_dict["image_key"] = binding.image_key
+        if binding.audio_key:
+            dataset_dict["audio_key"] = binding.audio_key
+        if binding.video_key:
+            dataset_dict["video_key"] = binding.video_key
+        if binding.image_bytes_key:
+            dataset_dict["image_bytes_key"] = binding.image_bytes_key
+        if dataset_dict:
+            is_valid, dj_errors = bridge.validate(dataset_dict)
+            if not is_valid:
+                errors.extend(dj_errors)
+    except Exception:
+        pass
+
     return errors, warnings
 
 
-__all__ = ["infer_modality", "validate_dataset_spec_payload"]
+__all__ = [
+    "infer_modality",
+    "normalize_dataset_spec",
+    "validate_dataset_spec_payload",
+]

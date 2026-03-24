@@ -1,28 +1,14 @@
-# -*- coding: utf-8 -*-
-"""Pure logic for build_dataset_spec."""
-
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable, List
+from collections.abc import Iterable
+from typing import Any, Dict
 
-from .._shared.schema import DatasetSpec
 from .._shared.dataset_spec import infer_modality, validate_dataset_spec_payload
+from .._shared.normalize import normalize_string_list
+from .._shared.schema import DatasetSpec
 
 
-def _normalize_string_list(values: Iterable[Any] | None) -> List[str]:
-    items: List[str] = []
-    seen = set()
-    for value in values or []:
-        text = str(value or "").strip()
-        if not text or text in seen:
-            continue
-        items.append(text)
-        seen.add(text)
-    return items
-
-
-def build_dataset_spec(
-    *,
+def build_dataset_spec(    *,
     user_intent: str,
     dataset_path: str,
     export_path: str,
@@ -56,7 +42,7 @@ def build_dataset_spec(
     candidate_image = profile.get("candidate_image_keys", []) if isinstance(profile.get("candidate_image_keys"), list) else []
     requested_modality = str(modality_hint or "").strip().lower()
 
-    text_keys = _normalize_string_list(text_keys_hint) or _normalize_string_list(candidate_text)
+    text_keys = normalize_string_list(text_keys_hint) or normalize_string_list(candidate_text)
     image_key = str(image_key_hint or "").strip() or (str(candidate_image[0]).strip() if candidate_image else "")
     audio_key = str(audio_key_hint or "").strip()
     video_key = str(video_key_hint or "").strip()

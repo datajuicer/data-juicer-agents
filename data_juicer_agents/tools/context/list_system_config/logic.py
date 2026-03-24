@@ -23,20 +23,21 @@ def list_system_config(
         Dict containing configuration information and available parameters
     """
     try:
-        from data_juicer_agents.utils.dj_config_bridge import (
-            get_dj_config_bridge,
-            get_system_param_descriptions,
-        )
-        
+        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
+
         bridge = get_dj_config_bridge()
-        
+
         # Get all system config fields with defaults
         system_config = bridge.extract_system_config()
-        
+
         # Get descriptions if requested
         descriptions = {}
         if include_descriptions:
-            descriptions = get_system_param_descriptions()
+            all_descriptions = bridge.get_param_descriptions()
+            # Filter to only system config fields
+            descriptions = {
+                k: v for k, v in all_descriptions.items() if k in system_config
+            }
         
         # Build config for each parameter
         config = {}
