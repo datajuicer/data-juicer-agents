@@ -65,6 +65,18 @@ djx apply --plan ./data/demo-plan.yaml --yes --dry-run
 - `djx plan` 在构建最终 plan 之前会先做内部算子检索。
 - `djx retrieve` 仍适合用于观察和调试候选算子。
 
+最短原子工具路径：
+
+```bash
+djx tool list --tag plan
+djx tool schema inspect_dataset
+djx tool run list_system_config --input-json '{}'
+```
+
+说明：
+- `djx tool` 默认是 JSON-first，主要服务 agent / skill 自动化调用。
+- 写入或执行类工具需要显式传 `--yes`。
+
 ## 5. 会话模式（`dj-agents`）
 
 默认 TUI：

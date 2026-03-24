@@ -10,6 +10,7 @@ from data_juicer_agents.commands.apply_cmd import run_apply
 from data_juicer_agents.commands.dev_cmd import run_dev
 from data_juicer_agents.commands.plan_cmd import run_plan
 from data_juicer_agents.commands.retrieve_cmd import run_retrieve
+from data_juicer_agents.commands.tool_cmd import run_tool
 
 
 def _add_output_level_args(
@@ -152,6 +153,74 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run an optional local dj-process smoke check using custom_operator_paths",
     )
     dev.set_defaults(handler=run_dev)
+
+    tool = sub.add_parser(
+        "tool",
+        help="Inspect or execute atomic built-in tools",
+    )
+    tool_sub = tool.add_subparsers(dest="tool_action", required=True)
+
+    tool_list = tool_sub.add_parser(
+        "list",
+        help="List all registered tools",
+    )
+    tool_list.add_argument(
+        "--tag",
+        action="append",
+        default=[],
+        help="Optional tag filter; may be repeated",
+    )
+    tool_list.add_argument(
+        "--human",
+        action="store_true",
+        help="Print human-readable output instead of JSON",
+    )
+    tool_list.set_defaults(handler=run_tool)
+
+    tool_schema = tool_sub.add_parser(
+        "schema",
+        help="Show tool metadata and input schema",
+    )
+    tool_schema.add_argument("tool_name", type=str, help="Registered tool name")
+    tool_schema.add_argument(
+        "--human",
+        action="store_true",
+        help="Print human-readable output instead of JSON",
+    )
+    tool_schema.set_defaults(handler=run_tool)
+
+    tool_run = tool_sub.add_parser(
+        "run",
+        help="Execute a tool with JSON input",
+    )
+    tool_run.add_argument("tool_name", type=str, help="Registered tool name")
+    input_group = tool_run.add_mutually_exclusive_group(required=True)
+    input_group.add_argument(
+        "--input-json",
+        default=None,
+        help="Inline JSON object input for the tool",
+    )
+    input_group.add_argument(
+        "--input-file",
+        default=None,
+        help="Path to a JSON file containing the tool input object",
+    )
+    tool_run.add_argument(
+        "--working-dir",
+        default=None,
+        help="Working directory used to build ToolContext",
+    )
+    tool_run.add_argument(
+        "--yes",
+        action="store_true",
+        help="Explicitly confirm running write/execute tools",
+    )
+    tool_run.add_argument(
+        "--human",
+        action="store_true",
+        help="Print human-readable output instead of JSON",
+    )
+    tool_run.set_defaults(handler=run_tool)
 
     return parser
 

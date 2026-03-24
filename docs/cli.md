@@ -8,6 +8,7 @@
 | `djx apply` | Validate a saved plan and execute or dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | Retrieve candidate operators by intent | `data_juicer_agents/commands/retrieve_cmd.py` |
 | `djx dev` | Generate a non-invasive custom operator scaffold | `data_juicer_agents/commands/dev_cmd.py` |
+| `djx tool` | Inspect or execute any registered atomic tool through a generic JSON-first wrapper | `data_juicer_agents/commands/tool_cmd.py` |
 
 Additional entry:
 - `dj-agents`: `data_juicer_agents/session_cli.py`
@@ -100,6 +101,52 @@ Outputs:
 - optional smoke-check result
 
 Default behavior is non-invasive: generate code and guidance, but do not auto-install the operator.
+
+## `djx tool`
+
+```bash
+djx tool list [--tag <tag>] [--human]
+djx tool schema <tool-name> [--human]
+djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes] [--human]
+```
+
+Purpose:
+- expose the atomic `ToolSpec` layer directly for agents, skills, and automation
+- keep workflow commands such as `plan`, `apply`, `retrieve`, and `dev` unchanged
+- avoid hand-maintaining one bespoke CLI adapter per tool
+
+Default behavior:
+- output is JSON by default for `list`, `schema`, and `run`
+- `--human` switches to best-effort human-readable output for ad hoc debugging
+- write / execute tools are non-interactive; if a tool declares `confirmation=recommended|required`, you must pass `--yes`
+
+Subcommands:
+- `list`: returns registered tool metadata (`name`, `tags`, `effects`, `confirmation`, input/output model names)
+- `schema`: returns tool metadata plus the input model JSON Schema
+- `run`: loads JSON input, builds a minimal `ToolContext`, executes the tool, and returns the normalized tool payload
+
+Exit codes:
+- `0`: success
+- `2`: CLI misuse, unknown tool, invalid JSON input, or input-model validation failure
+- `3`: explicit confirmation required but not granted
+- `4`: tool executed and returned a failure payload
+
+Examples:
+
+```bash
+djx tool list --tag plan
+djx tool schema inspect_dataset
+djx tool run list_system_config --input-json '{}'
+djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo-dataset.jsonl","sample_size":5}'
+djx tool run write_text_file --yes --input-json '{"file_path":"./tmp.txt","content":"hello"}'
+djx tool run plan_validate --input-file ./examples/plan_payload.json
+```
+
+Notes:
+- v1 is intentionally JSON-first; it does not expand tool input fields into per-tool CLI flags
+- the exposed context surface is intentionally small: only `--working-dir` is supported
+- `ToolContext.env` and `runtime_values` are not exposed through CLI in v1
+- `tool run` is suitable for machine-to-machine use; stable JSON output is the primary contract
 
 ## `dj-agents`
 
