@@ -1,0 +1,1021 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer_agents.utils.dj_config_bridge &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer_agents/utils/dj_config_bridge';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer_agents/utils/dj_config_bridge.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer_agents/utils/dj_config_bridge_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer_agents/utils/dj_config_bridge.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer_agents/utils/dj_config_bridge.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer_agents/utils/dj_config_bridge_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer_agents/utils/dj_config_bridge.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.utils.dj_config_bridge</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer_agents.utils.dj_config_bridge 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Bridge to Data-Juicer&#39;s native configuration system.</span>
+
+<span class="sd">This module provides a dynamic bridge to Data-Juicer&#39;s configuration,</span>
+<span class="sd">eliminating the need to manually sync schema definitions.</span>
+
+<span class="sd">Public API:</span>
+<span class="sd">    get_dj_config_bridge()  → singleton DJConfigBridge instance</span>
+<span class="sd">    coerce_fields()         → type-coerce dict values via DJ parser hints</span>
+
+<span class="sd">Field classification lists:</span>
+<span class="sd">    dataset_fields          → dataset I/O and binding fields</span>
+<span class="sd">    system_fields           → runtime/executor system fields</span>
+<span class="sd">    agent_managed_fields    → fields auto-set by the agent (not by LLM)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Field classification</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1"># Fields automatically managed by the agent layer (not exposed to LLM).</span>
+<span class="c1"># These are set programmatically during apply (e.g. project_name ← plan_id).</span>
+<span class="n">agent_managed_fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;project_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;job_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto&quot;</span><span class="p">,</span>  <span class="c1"># This is for auto-analyze mode, temporarily added here to avoid LLM exposure until we decide how to handle it.</span>
+    <span class="s2">&quot;config&quot;</span><span class="p">,</span>  <span class="c1"># This is for passing the full config dict to the agent for internal use, not for LLM configuration.</span>
+<span class="p">]</span>
+
+<span class="c1"># Dataset-related field names</span>
+<span class="n">dataset_fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;validators&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;load_dataset_kwargs&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_shard_size&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_in_parallel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_extra_args&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_aws_credentials&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;text_keys&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_bytes_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_special_token&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;audio_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;audio_special_token&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;video_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;video_special_token&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eoc_special_token&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;suffixes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;keep_stats_in_res_ds&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;keep_hashes_in_res_ds&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># System/runtime-related field names (executor, parallelism, caching, etc.)</span>
+<span class="n">system_fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;adaptive_batch_size&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_num&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;backup_count&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cache_compress&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;checkpoint.enabled&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;checkpoint.n_ops&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;checkpoint.op_names&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;checkpoint.strategy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;checkpoint_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;conflict_resolve_strategy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data_probe_algo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data_probe_ratio&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ds_cache_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;event_log_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;event_logging.enabled&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;executor_type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_original_dataset&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fusion_strategy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hpo_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.cleanup_on_success&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.cleanup_temp_files&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.compression&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.format&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.max_retention_days&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.preserve_intermediate_data&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.retention_policy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate_storage.write_partitions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;max_log_size_mb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;max_partition_size_mb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;min_common_dep_num_to_combine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;np&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;op_fusion&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;op_list_to_mine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;op_list_to_trace&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;open_insight_mining&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;open_monitor&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;open_tracer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;partition.mode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;partition.num_of_partitions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;partition.target_size_mb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;partition_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;partition_size&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;percentiles&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;preserve_intermediate_data&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ray_address&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resource_optimization.auto_configure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;save_stats_in_one_file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;skip_op_error&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;temp_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;trace_keys&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;trace_num&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;turbo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use_cache&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use_checkpoint&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;work_dir&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Bridge class</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="DJConfigBridge">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DJConfigBridge</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bridge to Data-Juicer&#39;s native configuration and validation.</span>
+
+<span class="sd">    All DJ-dependent logic is centralised here.  Callers should obtain</span>
+<span class="sd">    the singleton via ``get_dj_config_bridge()`` and call methods on it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DJConfigBridge.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="c1"># -- parser helpers -----------------------------------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lazy load Data-Juicer base parser (no OPs registered).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_base_parser</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="o">=</span> <span class="n">build_base_parser</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_parser_with_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">used_ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a fresh parser with OP arguments registered.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">build_base_parser</span><span class="p">,</span>
+            <span class="n">sort_op_by_types_and_names</span><span class="p">,</span>
+            <span class="n">_collect_config_info_from_class_docs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span>
+
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">build_base_parser</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">used_ops</span><span class="p">:</span>
+            <span class="n">ops_sorted</span> <span class="o">=</span> <span class="n">sort_op_by_types_and_names</span><span class="p">(</span><span class="n">OPERATORS</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="n">_collect_config_info_from_class_docs</span><span class="p">(</span>
+                <span class="p">[(</span><span class="n">name</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">ops_sorted</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">used_ops</span><span class="p">],</span>
+                <span class="n">parser</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">parser</span>
+
+    <span class="c1"># -- config extraction --------------------------------------------------</span>
+
+<div class="viewcode-block" id="DJConfigBridge.get_default_config">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_default_config">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_default_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all parser fields with their default values (cached).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span>
+
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">==</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">defaults</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span> <span class="o">=</span> <span class="n">defaults</span>
+        <span class="k">return</span> <span class="n">defaults</span></div>
+
+
+<div class="viewcode-block" id="DJConfigBridge.extract_system_config">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.extract_system_config">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_system_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract system-related fields based on the explicit ``system_fields`` list.&quot;&quot;&quot;</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">system_fields</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="DJConfigBridge.extract_dataset_config">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.extract_dataset_config">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_dataset_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract dataset-related fields.&quot;&quot;&quot;</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataset_fields</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="DJConfigBridge.extract_agent_managed_config">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.extract_agent_managed_config">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_agent_managed_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract agent-managed fields (auto-set by agent, not by LLM).</span>
+
+<span class="sd">        These fields (e.g. ``project_name``) are programmatically set</span>
+<span class="sd">        during the apply phase and should not be exposed to the LLM for</span>
+<span class="sd">        configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">agent_managed_fields</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="DJConfigBridge.extract_process_config">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.extract_process_config">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_process_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract process operator list.&quot;&quot;&quot;</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="p">[])</span></div>
+
+
+<div class="viewcode-block" id="DJConfigBridge.get_param_descriptions">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_param_descriptions">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_param_descriptions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get help text for all parameters from parser.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">_actions</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">&quot;help&quot;</span>
+        <span class="p">}</span></div>
+
+
+    <span class="c1"># -- validation ---------------------------------------------------------</span>
+
+<div class="viewcode-block" id="DJConfigBridge.validate">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.validate">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate a config dict using DJ base parser.</span>
+
+<span class="sd">        Checks system/dataset field types and rejects unknown keys.</span>
+<span class="sd">        Does NOT validate process list contents or operator params</span>
+<span class="sd">        (that is handled by get_op_valid_params in the agents layer).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: Config dict to validate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``(is_valid, error_messages)``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">jsonargparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+
+            <span class="n">ns</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)]</span></div>
+
+
+    <span class="c1"># -- operator introspection ---------------------------------------------</span>
+
+<div class="viewcode-block" id="DJConfigBridge.get_op_valid_params">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_op_valid_params">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_op_valid_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">],</span> <span class="nb">set</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get valid parameter names for each operator.</span>
+
+<span class="sd">        Registers the requested operators into a fresh parser, then</span>
+<span class="sd">        extracts valid parameter names from the resulting flat actions</span>
+<span class="sd">        (e.g. ``text_length_filter.min_len`` -&gt; ``min_len``).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            op_names: Set of operator names to look up.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``(op_param_map, known_op_names)`` where</span>
+<span class="sd">            *op_param_map* is ``{op_name: {param, ...}}`` and</span>
+<span class="sd">            *known_op_names* is the full set of registered DJ operators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span>
+
+            <span class="n">known_op_names</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">OPERATORS</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">known_op_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{},</span> <span class="n">known_op_names</span>
+
+        <span class="n">valid_requested</span> <span class="o">=</span> <span class="n">op_names</span> <span class="o">&amp;</span> <span class="n">known_op_names</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_requested</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{},</span> <span class="n">known_op_names</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_parser_with_ops</span><span class="p">(</span><span class="n">valid_requested</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{},</span> <span class="n">known_op_names</span>
+
+        <span class="n">op_param_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">op</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">valid_requested</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span>
+            <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dest</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">op_name</span><span class="p">,</span> <span class="n">param_name</span> <span class="o">=</span> <span class="n">dest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">op_name</span> <span class="ow">in</span> <span class="n">op_param_map</span><span class="p">:</span>
+                <span class="n">op_param_map</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">op_param_map</span><span class="p">,</span> <span class="n">known_op_names</span></div>
+</div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Singleton</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">_bridge</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="get_dj_config_bridge">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.get_dj_config_bridge">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dj_config_bridge</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DJConfigBridge</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get singleton DJConfigBridge instance.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_bridge</span>
+    <span class="k">if</span> <span class="n">_bridge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_bridge</span> <span class="o">=</span> <span class="n">DJConfigBridge</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">_bridge</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Standalone utility (used by normalize layer, not a bridge wrapper)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="coerce_fields">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.coerce_fields">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coerce_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coerce field values to their correct basic Python types via DJ parser.</span>
+
+<span class="sd">    Performs safe conversions for basic types (``bool``, ``int``, ``float``)</span>
+<span class="sd">    by inspecting the DJ parser&#39;s registered default-value types.  Fields</span>
+<span class="sd">    with non-basic target types or fields not registered in the parser are</span>
+<span class="sd">    passed through unchanged.</span>
+
+<span class="sd">    This is used during normalization to ensure values serialise correctly</span>
+<span class="sd">    in recipe YAML (e.g. ``&quot;true&quot;`` -&gt; ``True``, ``&quot;4&quot;`` -&gt; ``4``).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fields: Dict of config fields to coerce.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``(coerced_fields, errors)`` where *errors* lists human-readable</span>
+<span class="sd">        messages for any field that failed type coercion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="p">[]</span>
+
+    <span class="n">bridge</span> <span class="o">=</span> <span class="n">get_dj_config_bridge</span><span class="p">()</span>
+
+    <span class="c1"># Build dest -&gt; expected type mapping from parser default values.</span>
+    <span class="n">action_type_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">known_parser_dests</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">bridge</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+            <span class="n">known_parser_dests</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">)</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">action_type_map</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+
+    <span class="n">known_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">known_parser_dests</span><span class="p">}</span>
+    <span class="n">unknown_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_parser_dests</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">known_fields</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fields</span><span class="p">),</span> <span class="p">[]</span>
+
+    <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">coerced_known</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">_BOOL_TRUE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">}</span>
+    <span class="n">_BOOL_FALSE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">known_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">expected_type</span> <span class="o">=</span> <span class="n">action_type_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="nb">bool</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">lowered</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="n">_BOOL_TRUE</span><span class="p">:</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="n">_BOOL_FALSE</span><span class="p">:</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to bool; kept as-is.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="nb">int</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to int; kept as-is.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="nb">float</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to float; kept as-is.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">coerced_known</span><span class="p">,</span> <span class="o">**</span><span class="n">unknown_fields</span><span class="p">},</span> <span class="n">errors</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

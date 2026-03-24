@@ -521,18 +521,32 @@
 <p>Input models for build_system_spec.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.plan.build_system_spec.input.</span></span><span class="sig-name descname"><span class="pre">BuildSystemSpecInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_operator_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/plan/build_system_spec/input.html#BuildSystemSpecInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.plan.build_system_spec.input.</span></span><span class="sig-name descname"><span class="pre">BuildSystemSpecInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">np</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_operator_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**extra_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/plan/build_system_spec/input.html#BuildSystemSpecInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Input for building system spec.</p>
+<p>Core parameters are exposed directly for common use cases.
+All other system parameters can be passed as additional kwargs.
+Use list_system_config tool to discover all available options.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'extra':</span> <span class="pre">'allow'}</span></span><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.np">
+<span class="sig-name descname"><span class="pre">np</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.np" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.executor_type">
+<span class="sig-name descname"><span class="pre">executor_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.executor_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.custom_operator_paths">
 <span class="sig-name descname"><span class="pre">custom_operator_paths</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.custom_operator_paths" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.model_config" title="Link to this definition">#</a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
 
 </dd></dl>
 
@@ -568,8 +582,10 @@
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput"><code class="docutils literal notranslate"><span class="pre">BuildSystemSpecInput</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.custom_operator_paths"><code class="docutils literal notranslate"><span class="pre">BuildSystemSpecInput.custom_operator_paths</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.model_config"><code class="docutils literal notranslate"><span class="pre">BuildSystemSpecInput.model_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.np"><code class="docutils literal notranslate"><span class="pre">BuildSystemSpecInput.np</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.executor_type"><code class="docutils literal notranslate"><span class="pre">BuildSystemSpecInput.executor_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.plan.build_system_spec.input.BuildSystemSpecInput.custom_operator_paths"><code class="docutils literal notranslate"><span class="pre">BuildSystemSpecInput.custom_operator_paths</span></code></a></li>
 </ul>
 </li>
 </ul>

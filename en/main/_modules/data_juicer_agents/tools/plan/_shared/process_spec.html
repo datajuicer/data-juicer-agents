@@ -522,18 +522,16 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessOperator</span><span class="p">,</span> <span class="n">ProcessSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.normalize</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_params</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessOperator</span><span class="p">,</span> <span class="n">ProcessSpec</span>
 
 <span class="n">PROCESS_SPEC_DEFERRED_WARNING</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;operator parameter validation deferred; runtime errors will be used as the repair signal&quot;</span>
 <span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_params</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">normalize_process_spec</span><span class="p">(</span><span class="n">process_spec</span><span class="p">:</span> <span class="n">ProcessSpec</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ProcessSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize process spec: strip names, ensure params are dicts.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">process_spec</span><span class="p">,</span> <span class="n">ProcessSpec</span><span class="p">):</span>
         <span class="n">source</span> <span class="o">=</span> <span class="n">process_spec</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">process_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -546,7 +544,9 @@
         <span class="n">raw_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_name</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ProcessOperator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw_name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">_normalize_params</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">params</span><span class="p">)))</span>
+        <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">ProcessOperator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw_name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">normalize_params</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">params</span><span class="p">))</span>
+        <span class="p">)</span>
 
     <span class="n">spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="n">operators</span><span class="o">=</span><span class="n">operators</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">spec</span><span class="o">.</span><span class="n">operators</span><span class="p">:</span>
@@ -559,11 +559,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_process_spec_payload</span><span class="p">(</span>
     <span class="n">process_spec</span><span class="p">:</span> <span class="n">ProcessSpec</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate process spec structure and operator names/params via DJ bridge.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">process_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">process_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">process_spec</span><span class="p">)</span>
 
     <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Basic structural validation</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">process_spec</span><span class="o">.</span><span class="n">operators</span><span class="p">:</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;operators must not be empty&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">process_spec</span><span class="o">.</span><span class="n">operators</span><span class="p">):</span>
@@ -571,6 +574,33 @@
             <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operators[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].name is required&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operators[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].params must be an object&quot;</span><span class="p">)</span>
+
+    <span class="c1"># DJ bridge validation (two steps)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dj_config_bridge</span>
+
+        <span class="n">bridge</span> <span class="o">=</span> <span class="n">get_dj_config_bridge</span><span class="p">()</span>
+
+        <span class="c1"># Step 1: op_registry validation (dj-agents-side business logic)</span>
+        <span class="c1"># ProcessSpec structure is natural for this: use op.name / op.params directly</span>
+        <span class="n">op_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">op</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">process_spec</span><span class="o">.</span><span class="n">operators</span> <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+        <span class="n">op_param_map</span><span class="p">,</span> <span class="n">known_op_names</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">get_op_valid_params</span><span class="p">(</span><span class="n">op_names</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">process_spec</span><span class="o">.</span><span class="n">operators</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_op_names</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operators[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">]: unknown operator &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">op</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">op_param_map</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">param_key</span> <span class="ow">in</span> <span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">params</span> <span class="ow">or</span> <span class="p">{}):</span>
+                    <span class="k">if</span> <span class="n">param_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_param_map</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">name</span><span class="p">]:</span>
+                        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;operators[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: unknown param &#39;</span><span class="si">{</span><span class="n">param_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;operator name/param validation skipped: DJ bridge unavailable&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">PROCESS_SPEC_DEFERRED_WARNING</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PROCESS_SPEC_DEFERRED_WARNING</span><span class="p">)</span>

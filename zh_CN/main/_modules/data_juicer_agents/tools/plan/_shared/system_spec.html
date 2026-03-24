@@ -518,28 +518,13 @@
   <h1>data_juicer_agents.tools.plan._shared.system_spec 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Shared system-spec helpers for plan tools.&quot;&quot;&quot;</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemSpec</span>
-
-<span class="n">SYSTEM_SPEC_DEFERRED_WARNING</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;system spec inference deferred; using deterministic minimal profile&quot;</span>
-<span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_string_list</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="n">normalized</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">values</span> <span class="ow">or</span> <span class="p">[]:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span> <span class="ow">or</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">normalized</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.normalize</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_string_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemSpec</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">normalize_system_spec</span><span class="p">(</span>
@@ -547,54 +532,150 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">custom_operator_paths</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SystemSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize system spec, preserving all dynamic fields from Data-Juicer.</span>
+
+<span class="sd">    Performs type coercion on all fields (core + extra) via</span>
+<span class="sd">    ``coerce_fields`` so that values serialise correctly in recipe YAML.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system_spec</span><span class="p">,</span> <span class="n">SystemSpec</span><span class="p">):</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">system_spec</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">system_spec</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">SystemSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">system_spec</span><span class="p">)</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">SystemSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">system_spec</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">system_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">SystemSpec</span><span class="p">()</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">SystemSpec</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;system_spec must be a dict object&quot;</span><span class="p">)</span>
 
-    <span class="n">warnings</span> <span class="o">=</span> <span class="n">_normalize_string_list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">SYSTEM_SPEC_DEFERRED_WARNING</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SYSTEM_SPEC_DEFERRED_WARNING</span><span class="p">)</span>
+    <span class="c1"># Override custom_operator_paths if provided externally</span>
+    <span class="k">if</span> <span class="n">custom_operator_paths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">custom_operator_paths</span> <span class="o">=</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">custom_operator_paths</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">SystemSpec</span><span class="p">(</span>
-        <span class="n">executor_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">executor_type</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-        <span class="n">np</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">np</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="n">open_tracer</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">open_tracer</span><span class="p">),</span>
-        <span class="n">open_monitor</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">open_monitor</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">open_monitor</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">use_cache</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">use_cache</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">use_cache</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">skip_op_error</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">),</span>
-        <span class="n">custom_operator_paths</span><span class="o">=</span><span class="p">(</span>
-            <span class="n">_normalize_string_list</span><span class="p">(</span><span class="n">custom_operator_paths</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">_normalize_string_list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">custom_operator_paths</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="c1"># Coerce all fields to correct types for YAML serialization</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">coerce_fields</span>
+
+        <span class="c1"># Coerce extra fields</span>
+        <span class="n">coerced_extra</span><span class="p">,</span> <span class="n">extra_errors</span> <span class="o">=</span> <span class="n">coerce_fields</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">_extra_fields</span> <span class="o">=</span> <span class="n">coerced_extra</span>
+
+        <span class="c1"># Coerce core fields (np might be string from LLM)</span>
+        <span class="n">core_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">np</span><span class="p">,</span> <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">executor_type</span><span class="p">}</span>
+        <span class="n">coerced_core</span><span class="p">,</span> <span class="n">core_errors</span> <span class="o">=</span> <span class="n">coerce_fields</span><span class="p">(</span><span class="n">core_dict</span><span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">np</span> <span class="o">=</span> <span class="n">coerced_core</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">np</span><span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">executor_type</span> <span class="o">=</span> <span class="n">coerced_core</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;executor_type&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">executor_type</span><span class="p">)</span>
+
+        <span class="n">coerce_errors</span> <span class="o">=</span> <span class="n">extra_errors</span> <span class="o">+</span> <span class="n">core_errors</span>
+        <span class="k">if</span> <span class="n">coerce_errors</span><span class="p">:</span>
+            <span class="n">spec</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[type coercion] </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">coerce_errors</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># bridge unavailable — skip coercion</span>
+
+    <span class="c1"># --- Auto-corrections (mirrors DJ init_setup_from_cfg) ----------------</span>
+
+    <span class="c1"># np cap: ensure np does not exceed available CPU cores</span>
+    <span class="n">cpu_count</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">np</span> <span class="o">&gt;</span> <span class="n">cpu_count</span><span class="p">:</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[auto-corrected] np=</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">np</span><span class="si">}</span><span class="s2"> exceeds CPU count &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">cpu_count</span><span class="si">}</span><span class="s2">); capped to </span><span class="si">{</span><span class="n">cpu_count</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">np</span> <span class="o">=</span> <span class="n">cpu_count</span>
+
+    <span class="c1"># cache / checkpoint mutual exclusion:</span>
+    <span class="c1"># disabling cache or enabling checkpoint makes cache_compress meaningless</span>
+    <span class="n">use_cache</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_cache&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">use_checkpoint</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_checkpoint&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">cache_compress</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cache_compress&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">use_cache</span> <span class="ow">or</span> <span class="n">use_checkpoint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cache_compress</span><span class="p">:</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;[auto-corrected] cache_compress disabled because &quot;</span>
+            <span class="s2">&quot;cache is off or checkpoint is on&quot;</span>
+        <span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;cache_compress&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># op_fusion / checkpoint mutual exclusion:</span>
+    <span class="c1"># op fusion is not compatible with checkpoint mode</span>
+    <span class="n">op_fusion</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;op_fusion&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_fusion</span> <span class="ow">and</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_checkpoint&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;[auto-corrected] use_checkpoint disabled because &quot;</span> <span class="s2">&quot;op_fusion is enabled&quot;</span>
+        <span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;use_checkpoint&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">spec</span>
 
 
 <div class="viewcode-block" id="validate_system_spec_payload">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.validate_system_spec_payload">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_system_spec_payload</span><span class="p">(</span><span class="n">system_spec</span><span class="p">:</span> <span class="n">SystemSpec</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_system_spec_payload</span><span class="p">(</span>
+    <span class="n">system_spec</span><span class="p">:</span> <span class="n">SystemSpec</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate system spec using Data-Juicer&#39;s native validation when possible.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">system_spec</span> <span class="o">=</span> <span class="n">SystemSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">system_spec</span><span class="p">)</span>
+
     <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Basic validation for core fields</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">system_spec</span><span class="o">.</span><span class="n">executor_type</span><span class="p">:</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;executor_type is required&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">system_spec</span><span class="o">.</span><span class="n">np</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;np must be &gt;= 1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">SYSTEM_SPEC_DEFERRED_WARNING</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">system_spec</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SYSTEM_SPEC_DEFERRED_WARNING</span><span class="p">)</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">system_spec</span><span class="o">.</span><span class="n">warnings</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">and</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">])</span>
+
+    <span class="c1"># DJ parser validation</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dj_config_bridge</span>
+
+        <span class="n">bridge</span> <span class="o">=</span> <span class="n">get_dj_config_bridge</span><span class="p">()</span>
+        <span class="n">system_dict</span> <span class="o">=</span> <span class="n">system_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="c1"># Remove non-DJ fields before validation</span>
+        <span class="n">dj_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">system_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;warnings&quot;</span><span class="p">}</span>
+        <span class="n">is_valid</span><span class="p">,</span> <span class="n">dj_errors</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dj_dict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dj_errors</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># --- Semantic validation (mirrors DJ init_setup_from_cfg) -------------</span>
+
+    <span class="c1"># fusion_strategy must be in FUSION_STRATEGIES when op_fusion is on</span>
+    <span class="n">op_fusion</span> <span class="o">=</span> <span class="n">system_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;op_fusion&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_fusion</span><span class="p">:</span>
+        <span class="n">fusion_strategy</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">system_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fusion_strategy&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">fusion_strategy</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.op_fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">FUSION_STRATEGIES</span>
+
+                <span class="k">if</span> <span class="n">fusion_strategy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FUSION_STRATEGIES</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;fusion_strategy &#39;</span><span class="si">{</span><span class="n">fusion_strategy</span><span class="si">}</span><span class="s2">&#39; is not supported; &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">FUSION_STRATEGIES</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># DJ unavailable — skip check</span>
+
+    <span class="c1"># work_dir: {job_id} placeholder must be the last path component</span>
+    <span class="n">work_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">system_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;work_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">work_dir</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">{job_id}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">work_dir</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">work_dir</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{job_id}</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">&quot;work_dir: &#39;</span><span class="si">{job_id}</span><span class="s2">&#39; placeholder must be the last &quot;</span>
+                <span class="s2">&quot;component of the path&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">system_spec</span><span class="o">.</span><span class="n">warnings</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">and</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">]</span>
+    <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span></div>
 
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;SYSTEM_SPEC_DEFERRED_WARNING&quot;</span><span class="p">,</span>
     <span class="s2">&quot;normalize_system_spec&quot;</span><span class="p">,</span>
     <span class="s2">&quot;validate_system_spec_payload&quot;</span><span class="p">,</span>
 <span class="p">]</span>

@@ -543,73 +543,124 @@
     <span class="k">return</span> <span class="n">text</span>
 
 
-<div class="viewcode-block" id="OperatorStep">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.OperatorStep">[文档]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">OperatorStep</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;One executable operator invocation.&quot;&quot;&quot;</span>
-
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="SystemSpec">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.SystemSpec">[文档]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SystemSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Runtime/executor-level settings shared by the whole recipe.&quot;&quot;&quot;</span>
 
+    <span class="c1"># Core fields that are always present</span>
     <span class="n">executor_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
     <span class="n">np</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">open_tracer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">open_monitor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">use_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">skip_op_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">custom_operator_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="c1"># Extra fields storage for any additional DJ system config fields</span>
+    <span class="c1"># Note: system fields are statically maintained in dj_config_bridge.system_fields</span>
+    <span class="n">_extra_fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SystemSpec.from_dict">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.SystemSpec.from_dict">[文档]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;SystemSpec&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">executor_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;executor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="n">open_tracer</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_tracer&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
-            <span class="n">open_monitor</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_monitor&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_monitor&quot;</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">use_cache</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_cache&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_cache&quot;</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">skip_op_error</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;skip_op_error&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
-            <span class="n">custom_operator_paths</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
-            <span class="n">warnings</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
-        <span class="p">)</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create SystemSpec from dict.&quot;&quot;&quot;</span>
+        <span class="c1"># Extract core fields</span>
+        <span class="n">core_fields</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;executor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="k">else</span> <span class="p">[]</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="k">else</span> <span class="p">[]</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Store all other fields in _extra_fields as-is.</span>
+        <span class="c1"># Type coercion is handled later by normalize_system_spec().</span>
+        <span class="n">core_field_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;executor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;warnings&quot;</span><span class="p">}</span>
+        <span class="n">raw_extra_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">core_field_names</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">core_fields</span><span class="p">,</span> <span class="n">_extra_fields</span><span class="o">=</span><span class="n">raw_extra_fields</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SystemSpec.to_dict">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.SystemSpec.to_dict">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">{</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to dict, including all extra fields.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor_type</span><span class="p">,</span>
             <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">np</span><span class="p">,</span>
-            <span class="s2">&quot;open_tracer&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_tracer</span><span class="p">,</span>
-            <span class="s2">&quot;open_monitor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_monitor</span><span class="p">,</span>
-            <span class="s2">&quot;use_cache&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span><span class="p">,</span>
-            <span class="s2">&quot;skip_op_error&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span>
             <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_operator_paths</span><span class="p">),</span>
             <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">),</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
+
+        <span class="c1"># Add all extra fields</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SystemSpec.get">
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.SystemSpec.get">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a field value, checking both core and extra fields.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor_type</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;np&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">np</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_operator_paths</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;warnings&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SystemSpec.set">
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.SystemSpec.set">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a field value, updating core or extra fields as appropriate.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">executor_type</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;np&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">np</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">custom_operator_paths</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;warnings&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="SystemSpec.from_dj_config">
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.SystemSpec.from_dj_config">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dj_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dj_system_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;SystemSpec&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create SystemSpec directly from Data-Juicer system config.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dj_system_config: System config dict from DJConfigBridge</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SystemSpec instance with all DJ system fields</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dj_system_config</span><span class="p">)</span></div>
 </div>
 
 
@@ -634,7 +685,9 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">dataset_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="n">dataset</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">generated_dataset_config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">generated_dataset_config</span><span class="o">=</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
             <span class="n">export_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
         <span class="p">)</span></div>
 
@@ -674,14 +727,17 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;DatasetBindingSpec&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">modality</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-            <span class="n">text_keys</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
+            <span class="n">modality</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+            <span class="n">text_keys</span><span class="o">=</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="k">else</span> <span class="p">[]</span>
+            <span class="p">),</span>
             <span class="n">image_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_key&quot;</span><span class="p">)),</span>
             <span class="n">audio_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio_key&quot;</span><span class="p">)),</span>
             <span class="n">video_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_key&quot;</span><span class="p">)),</span>
@@ -721,17 +777,21 @@
         <span class="n">io_payload</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;io&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">binding_payload</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;binding&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">io</span><span class="o">=</span><span class="n">DatasetIOSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">io_payload</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">io_payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}),</span>
+            <span class="n">io</span><span class="o">=</span><span class="n">DatasetIOSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+                <span class="n">io_payload</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">io_payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="p">),</span>
             <span class="n">binding</span><span class="o">=</span><span class="n">DatasetBindingSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
                 <span class="n">binding_payload</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binding_payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
             <span class="p">),</span>
-            <span class="n">warnings</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="k">else</span> <span class="p">[]</span>
+            <span class="p">),</span>
         <span class="p">)</span></div>
 
 
@@ -788,8 +848,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;operators&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators</span>
+                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">params</span><span class="p">}</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators</span>
             <span class="p">],</span>
         <span class="p">}</span></div>
 </div>
@@ -813,30 +872,26 @@
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.html#data_juicer_agents.PlanModel">[文档]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlanModel</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Final flattened execution plan representation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execution plan: plan metadata + embedded DJ-native recipe.</span>
 
+<span class="sd">    The ``recipe`` field is a plain dict that maps 1-to-1 with a</span>
+<span class="sd">    Data-Juicer YAML config file.  All dataset, system, and process</span>
+<span class="sd">    settings live inside ``recipe``; ``PlanModel`` itself only owns</span>
+<span class="sd">    plan-level metadata.</span>
+
+<span class="sd">    Downstream code should access recipe fields via ``plan.recipe[key]``</span>
+<span class="sd">    or ``plan.recipe.get(key)`` to keep the boundary between plan</span>
+<span class="sd">    metadata and DJ config clear.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Plan-level metadata (strong-typed)</span>
     <span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">generated_dataset_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">modality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-    <span class="n">text_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">image_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">audio_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">video_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">image_bytes_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">operators</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OperatorStep</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">operator_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">recipe</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">risk_notes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">estimation</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="n">executor_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-    <span class="n">np</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">open_tracer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">open_monitor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">use_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">skip_op_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">custom_operator_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">approval_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">created_at</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">_utc_now_iso</span><span class="p">)</span>
@@ -852,70 +907,51 @@
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.html#data_juicer_agents.PlanModel.from_dict">[文档]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlanModel&quot;</span><span class="p">:</span>
-        <span class="n">operators</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operators&quot;</span><span class="p">,</span> <span class="p">[]):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;params&quot;</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
-                <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OperatorStep</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
-        <span class="n">generated</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">plan_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plan_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-            <span class="n">user_intent</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_intent&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-            <span class="n">export_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">generated_dataset_config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">modality</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-            <span class="n">text_keys</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">recipe</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;plan must contain a &#39;recipe&#39; dict&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;process&quot;</span> <span class="ow">in</span> <span class="n">recipe</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;process&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">operator_names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;process&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step</span>
             <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
-            <span class="n">image_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_key&quot;</span><span class="p">)),</span>
-            <span class="n">audio_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio_key&quot;</span><span class="p">)),</span>
-            <span class="n">video_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_key&quot;</span><span class="p">)),</span>
-            <span class="n">image_bytes_key</span><span class="o">=</span><span class="n">_coerce_optional_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_bytes_key&quot;</span><span class="p">)),</span>
-            <span class="n">operators</span><span class="o">=</span><span class="n">operators</span><span class="p">,</span>
-            <span class="n">risk_notes</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;risk_notes&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;risk_notes&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
-            <span class="n">estimation</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimation&quot;</span><span class="p">,</span> <span class="p">{}))</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimation&quot;</span><span class="p">,</span> <span class="p">{}),</span> <span class="nb">dict</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">{},</span>
-            <span class="n">executor_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;executor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="n">open_tracer</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_tracer&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
-            <span class="n">open_monitor</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_monitor&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_monitor&quot;</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">use_cache</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_cache&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_cache&quot;</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">skip_op_error</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;skip_op_error&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
-            <span class="n">custom_operator_paths</span><span class="o">=</span><span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
-            <span class="n">warnings</span><span class="o">=</span><span class="p">[</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">operator_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[])</span>
                 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings&quot;</span><span class="p">,</span> <span class="p">[]),</span> <span class="nb">list</span><span class="p">)</span>
-            <span class="k">else</span> <span class="p">[],</span>
+            <span class="k">else</span> <span class="p">[]</span>
+        <span class="p">)</span>
+
+        <span class="n">risk_notes_raw</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;risk_notes&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">risk_notes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">risk_notes_raw</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">risk_notes_raw</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="k">else</span> <span class="p">[]</span>
+        <span class="p">)</span>
+        <span class="n">estimation_raw</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimation&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">estimation</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">estimation_raw</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">estimation_raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">plan_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plan_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">user_intent</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_intent&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">modality</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+            <span class="n">operator_names</span><span class="o">=</span><span class="n">operator_names</span><span class="p">,</span>
+            <span class="n">recipe</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">recipe</span><span class="p">),</span>
+            <span class="n">risk_notes</span><span class="o">=</span><span class="n">risk_notes</span><span class="p">,</span>
+            <span class="n">estimation</span><span class="o">=</span><span class="n">estimation</span><span class="p">,</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">,</span>
             <span class="n">approval_required</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approval_required&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
-            <span class="n">created_at</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="n">_utc_now_iso</span><span class="p">()))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">_utc_now_iso</span><span class="p">(),</span>
+            <span class="n">created_at</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="n">_utc_now_iso</span><span class="p">()))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="n">_utc_now_iso</span><span class="p">(),</span>
         <span class="p">)</span></div>
 
 
@@ -925,33 +961,11 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;plan_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_id</span><span class="p">,</span>
             <span class="s2">&quot;user_intent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_intent</span><span class="p">,</span>
-            <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">,</span>
-            <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_path</span><span class="p">,</span>
-            <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-                <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">),</span>
             <span class="s2">&quot;modality&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modality</span><span class="p">,</span>
-            <span class="s2">&quot;text_keys&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text_keys</span><span class="p">),</span>
-            <span class="s2">&quot;image_key&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_key</span><span class="p">,</span>
-            <span class="s2">&quot;audio_key&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_key</span><span class="p">,</span>
-            <span class="s2">&quot;video_key&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">,</span>
-            <span class="s2">&quot;image_bytes_key&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_bytes_key</span><span class="p">,</span>
-            <span class="s2">&quot;operators&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators</span>
-            <span class="p">],</span>
+            <span class="s2">&quot;operator_names&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator_names</span><span class="p">),</span>
+            <span class="s2">&quot;recipe&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recipe</span><span class="p">),</span>
             <span class="s2">&quot;risk_notes&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">risk_notes</span><span class="p">),</span>
             <span class="s2">&quot;estimation&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimation</span><span class="p">),</span>
-            <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor_type</span><span class="p">,</span>
-            <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">np</span><span class="p">,</span>
-            <span class="s2">&quot;open_tracer&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_tracer</span><span class="p">,</span>
-            <span class="s2">&quot;open_monitor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_monitor</span><span class="p">,</span>
-            <span class="s2">&quot;use_cache&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span><span class="p">,</span>
-            <span class="s2">&quot;skip_op_error&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span>
-            <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_operator_paths</span><span class="p">),</span>
             <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">),</span>
             <span class="s2">&quot;approval_required&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">approval_required</span><span class="p">,</span>
             <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">created_at</span><span class="p">,</span>
@@ -964,7 +978,6 @@
     <span class="s2">&quot;DatasetBindingSpec&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DatasetIOSpec&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DatasetSpec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;OperatorStep&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PlanContext&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PlanModel&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ProcessOperator&quot;</span><span class="p">,</span>
