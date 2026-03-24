@@ -586,6 +586,10 @@
 <td><p>Generate a non-invasive custom operator scaffold</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/dev_cmd.py</span></code></p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code></p></td>
+<td><p>Inspect or execute any registered atomic tool through a generic JSON-first wrapper</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/tool_cmd.py</span></code></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -593,7 +597,7 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>: <code class="docutils literal notranslate"><span class="pre">data_juicer_agents/session_cli.py</span></code></p></li>
 </ul>
-<p>Current CLI does not include <code class="docutils literal notranslate"><span class="pre">trace</span></code>, <code class="docutils literal notranslate"><span class="pre">templates</span></code>, or <code class="docutils literal notranslate"><span class="pre">evaluate</span></code>.</p>
+<p>The CLI does not include <code class="docutils literal notranslate"><span class="pre">trace</span></code>, <code class="docutils literal notranslate"><span class="pre">templates</span></code>, or <code class="docutils literal notranslate"><span class="pre">evaluate</span></code>.</p>
 </section>
 <section id="global-output-levels-djx">
 <h2>Global Output Levels (<code class="docutils literal notranslate"><span class="pre">djx</span></code>)<a class="headerlink" href="#global-output-levels-djx" title="Link to this heading">#</a></h2>
@@ -653,9 +657,9 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>Notes:</p>
 <ul class="simple">
-<li><p>current CLI does not run a separate <code class="docutils literal notranslate"><span class="pre">plan_validate</span></code> step automatically</p></li>
-<li><p>current CLI does not persist or expose a separate trace query command</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> still writes the recipe file</p></li>
+<li><p>the CLI does not run a separate <code class="docutils literal notranslate"><span class="pre">plan_validate</span></code> step automatically</p></li>
+<li><p>the CLI does not persist or expose a separate trace query command</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> also writes the recipe file</p></li>
 </ul>
 </section>
 <section id="djx-retrieve">
@@ -667,7 +671,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <ul class="simple">
 <li><p>ranked operator candidates</p></li>
 <li><p>retrieval source, trace, and notes</p></li>
-<li><p>current output payload does not include dataset profile</p></li>
+<li><p>the output payload does not include dataset profile</p></li>
 </ul>
 </section>
 <section id="djx-dev">
@@ -688,6 +692,55 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <li><p>optional smoke-check result</p></li>
 </ul>
 <p>Default behavior is non-invasive: generate code and guidance, but do not auto-install the operator.</p>
+</section>
+<section id="djx-tool">
+<h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code><a class="headerlink" href="#djx-tool" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>--tag<span class="w"> </span>&lt;tag&gt;<span class="o">]</span>
+djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>&lt;tool-name&gt;
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>&lt;tool-name&gt;<span class="w"> </span><span class="o">(</span>--input-json<span class="w"> </span><span class="s1">&#39;&lt;json&gt;&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--input-file<span class="w"> </span>&lt;input.json&gt;<span class="o">)</span><span class="w"> </span><span class="o">[</span>--working-dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yes<span class="o">]</span>
+</pre></div>
+</div>
+<p>Purpose:</p>
+<ul class="simple">
+<li><p>expose the atomic <code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> layer directly for agents, skills, and automation</p></li>
+<li><p>keep workflow commands such as <code class="docutils literal notranslate"><span class="pre">plan</span></code>, <code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>, and <code class="docutils literal notranslate"><span class="pre">dev</span></code> unchanged</p></li>
+<li><p>avoid hand-maintaining one bespoke CLI adapter per tool</p></li>
+</ul>
+<p>Default behavior:</p>
+<ul class="simple">
+<li><p>output is JSON for <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">schema</span></code>, and <code class="docutils literal notranslate"><span class="pre">run</span></code></p></li>
+<li><p>write / execute tools are non-interactive; if a tool declares <code class="docutils literal notranslate"><span class="pre">confirmation=recommended|required</span></code>, you must pass <code class="docutils literal notranslate"><span class="pre">--yes</span></code></p></li>
+</ul>
+<p>Subcommands:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code>: returns registered tool metadata (<code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">tags</span></code>, <code class="docutils literal notranslate"><span class="pre">effects</span></code>, <code class="docutils literal notranslate"><span class="pre">confirmation</span></code>, input/output model names)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">schema</span></code>: returns tool metadata plus the input model JSON Schema</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run</span></code>: loads JSON input, builds a minimal <code class="docutils literal notranslate"><span class="pre">ToolContext</span></code>, executes the tool, and returns the normalized tool payload</p></li>
+</ul>
+<p>Exit codes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: CLI misuse, unknown tool, invalid JSON input, or input-model validation failure</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code>: explicit confirmation required but not granted</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">4</span></code>: tool executed and returned a failure payload</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
+djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;:&quot;./data/demo-dataset.jsonl&quot;,&quot;sample_size&quot;:5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;:&quot;./tmp.txt&quot;,&quot;content&quot;:&quot;hello&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_validate<span class="w"> </span>--input-file<span class="w"> </span>./examples/plan_payload.json
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>the tool interface is JSON-only; it does not expand tool input fields into per-tool CLI flags</p></li>
+<li><p>the exposed context surface is limited to <code class="docutils literal notranslate"><span class="pre">--working-dir</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolContext.env</span></code> and <code class="docutils literal notranslate"><span class="pre">runtime_values</span></code> are not exposed through the CLI</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool</span> <span class="pre">run</span></code> is suitable for machine-to-machine use; stable JSON output is the primary contract</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code>, <code class="docutils literal notranslate"><span class="pre">--verbose</span></code>, and <code class="docutils literal notranslate"><span class="pre">--debug</span></code> are accepted for CLI-shape consistency with other <code class="docutils literal notranslate"><span class="pre">djx</span></code> subcommands, but they do not change <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> output</p></li>
+</ul>
 </section>
 <section id="dj-agents">
 <h2><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code><a class="headerlink" href="#dj-agents" title="Link to this heading">#</a></h2>
@@ -778,6 +831,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-apply"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-retrieve"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-dev"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-tool"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-agents"><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment Variables</a></li>
 </ul>

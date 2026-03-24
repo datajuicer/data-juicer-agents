@@ -8,11 +8,12 @@
 | `djx apply` | 校验已保存的 plan，并执行或 dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | 基于 intent 检索候选算子 | `data_juicer_agents/commands/retrieve_cmd.py` |
 | `djx dev` | 生成非侵入式自定义算子脚手架 | `data_juicer_agents/commands/dev_cmd.py` |
+| `djx tool` | 通过统一的 JSON-first 外壳观察或执行任意已注册原子工具 | `data_juicer_agents/commands/tool_cmd.py` |
 
 其他入口：
 - `dj-agents`：`data_juicer_agents/session_cli.py`
 
-当前 CLI 不包含 `trace`、`templates`、`evaluate`。
+CLI 不包含 `trace`、`templates`、`evaluate`。
 
 ## 全局输出级别（`djx`）
 
@@ -67,8 +68,8 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 - 输出 `Execution ID`、`Status` 和生成的 recipe 路径
 
 说明：
-- 当前 CLI 不会自动执行独立的 `plan_validate` 步骤
-- 当前 CLI 不提供独立的 trace 查询命令
+- CLI 不会自动执行独立的 `plan_validate` 步骤
+- CLI 不提供独立的 trace 查询命令
 - `--dry-run` 也会生成 recipe 文件
 
 ## `djx retrieve`
@@ -80,7 +81,7 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 返回：
 - 候选算子排序
 - 检索来源、trace 与备注
-- 当前输出 payload 不包含 dataset profile
+- 输出 payload 不包含 dataset profile
 
 ## `djx dev`
 
@@ -100,6 +101,52 @@ djx dev "<intent>" \
 - 可选 smoke-check 结果
 
 默认是非侵入式流程：生成代码和说明，但不自动安装算子。
+
+## `djx tool`
+
+```bash
+djx tool list [--tag <tag>]
+djx tool schema <tool-name>
+djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes]
+```
+
+用途：
+- 直接透出原子 `ToolSpec` 层，便于 agents、skills 和自动化调用
+- 保持 `plan`、`apply`、`retrieve`、`dev` 这些工作流命令不变
+- 避免为每个 tool 单独维护一套 CLI 适配层
+
+默认行为：
+- `list`、`schema`、`run` 都输出 JSON
+- 写入 / 执行类工具默认非交互；如果工具声明了 `confirmation=recommended|required`，必须显式传 `--yes`
+
+子命令：
+- `list`：返回已注册工具的元数据（`name`、`tags`、`effects`、`confirmation`、输入/输出模型名）
+- `schema`：返回工具元数据和输入模型的 JSON Schema
+- `run`：读取 JSON 输入，构造最小 `ToolContext`，执行工具并返回标准化结果
+
+退出码：
+- `0`：成功
+- `2`：CLI 用法错误、未知工具、JSON 输入非法、或输入模型校验失败
+- `3`：需要显式确认但未提供
+- `4`：工具已执行，但返回失败 payload
+
+示例：
+
+```bash
+djx tool list --tag plan
+djx tool schema inspect_dataset
+djx tool run list_system_config --input-json '{}'
+djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo-dataset.jsonl","sample_size":5}'
+djx tool run write_text_file --yes --input-json '{"file_path":"./tmp.txt","content":"hello"}'
+djx tool run plan_validate --input-file ./examples/plan_payload.json
+```
+
+说明：
+- 该工具接口只输出 JSON，不会把每个工具输入模型字段展开成单独 CLI flags
+- CLI 暴露的上下文面仅包含 `--working-dir`
+- `ToolContext.env` 和 `runtime_values` 不通过 CLI 暴露
+- `tool run` 的主要设计目标是机器间调用，稳定 JSON 输出是第一契约
+- `--quiet`、`--verbose`、`--debug` 仅用于与其他 `djx` 子命令保持 CLI 形态一致，不会改变 `djx tool` 的输出
 
 ## `dj-agents`
 

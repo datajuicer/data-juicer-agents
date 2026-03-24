@@ -618,7 +618,18 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <p>Notes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code> already performs internal operator retrieval before building the final plan.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code> is still useful for inspection and debugging.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code> is useful for inspection and debugging.</p></li>
+</ul>
+<p>Minimal atomic tool path:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
+djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> is JSON-only and primarily intended for agent / skill automation.</p></li>
+<li><p>write or execute tools require explicit <code class="docutils literal notranslate"><span class="pre">--yes</span></code>.</p></li>
 </ul>
 </section>
 <section id="session-mode-dj-agents">

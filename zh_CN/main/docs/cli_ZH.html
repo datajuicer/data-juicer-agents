@@ -590,6 +590,10 @@
 <td><p>生成非侵入式自定义算子脚手架</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/dev_cmd.py</span></code></p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code></p></td>
+<td><p>通过统一的 JSON-first 外壳观察或执行任意已注册原子工具</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/tool_cmd.py</span></code></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -597,7 +601,7 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>：<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/session_cli.py</span></code></p></li>
 </ul>
-<p>当前 CLI 不包含 <code class="docutils literal notranslate"><span class="pre">trace</span></code>、<code class="docutils literal notranslate"><span class="pre">templates</span></code>、<code class="docutils literal notranslate"><span class="pre">evaluate</span></code>。</p>
+<p>CLI 不包含 <code class="docutils literal notranslate"><span class="pre">trace</span></code>、<code class="docutils literal notranslate"><span class="pre">templates</span></code>、<code class="docutils literal notranslate"><span class="pre">evaluate</span></code>。</p>
 </section>
 <section id="djx">
 <h2>全局输出级别（<code class="docutils literal notranslate"><span class="pre">djx</span></code>）<a class="headerlink" href="#djx" title="链接到此标题。">#</a></h2>
@@ -657,8 +661,8 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>说明：</p>
 <ul class="simple">
-<li><p>当前 CLI 不会自动执行独立的 <code class="docutils literal notranslate"><span class="pre">plan_validate</span></code> 步骤</p></li>
-<li><p>当前 CLI 不提供独立的 trace 查询命令</p></li>
+<li><p>CLI 不会自动执行独立的 <code class="docutils literal notranslate"><span class="pre">plan_validate</span></code> 步骤</p></li>
+<li><p>CLI 不提供独立的 trace 查询命令</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> 也会生成 recipe 文件</p></li>
 </ul>
 </section>
@@ -671,7 +675,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <ul class="simple">
 <li><p>候选算子排序</p></li>
 <li><p>检索来源、trace 与备注</p></li>
-<li><p>当前输出 payload 不包含 dataset profile</p></li>
+<li><p>输出 payload 不包含 dataset profile</p></li>
 </ul>
 </section>
 <section id="djx-dev">
@@ -692,6 +696,55 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <li><p>可选 smoke-check 结果</p></li>
 </ul>
 <p>默认是非侵入式流程：生成代码和说明，但不自动安装算子。</p>
+</section>
+<section id="djx-tool">
+<h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code><a class="headerlink" href="#djx-tool" title="链接到此标题。">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>--tag<span class="w"> </span>&lt;tag&gt;<span class="o">]</span>
+djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>&lt;tool-name&gt;
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>&lt;tool-name&gt;<span class="w"> </span><span class="o">(</span>--input-json<span class="w"> </span><span class="s1">&#39;&lt;json&gt;&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--input-file<span class="w"> </span>&lt;input.json&gt;<span class="o">)</span><span class="w"> </span><span class="o">[</span>--working-dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yes<span class="o">]</span>
+</pre></div>
+</div>
+<p>用途：</p>
+<ul class="simple">
+<li><p>直接透出原子 <code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code> 层，便于 agents、skills 和自动化调用</p></li>
+<li><p>保持 <code class="docutils literal notranslate"><span class="pre">plan</span></code>、<code class="docutils literal notranslate"><span class="pre">apply</span></code>、<code class="docutils literal notranslate"><span class="pre">retrieve</span></code>、<code class="docutils literal notranslate"><span class="pre">dev</span></code> 这些工作流命令不变</p></li>
+<li><p>避免为每个 tool 单独维护一套 CLI 适配层</p></li>
+</ul>
+<p>默认行为：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code>、<code class="docutils literal notranslate"><span class="pre">schema</span></code>、<code class="docutils literal notranslate"><span class="pre">run</span></code> 都输出 JSON</p></li>
+<li><p>写入 / 执行类工具默认非交互；如果工具声明了 <code class="docutils literal notranslate"><span class="pre">confirmation=recommended|required</span></code>，必须显式传 <code class="docutils literal notranslate"><span class="pre">--yes</span></code></p></li>
+</ul>
+<p>子命令：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code>：返回已注册工具的元数据（<code class="docutils literal notranslate"><span class="pre">name</span></code>、<code class="docutils literal notranslate"><span class="pre">tags</span></code>、<code class="docutils literal notranslate"><span class="pre">effects</span></code>、<code class="docutils literal notranslate"><span class="pre">confirmation</span></code>、输入/输出模型名）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">schema</span></code>：返回工具元数据和输入模型的 JSON Schema</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run</span></code>：读取 JSON 输入，构造最小 <code class="docutils literal notranslate"><span class="pre">ToolContext</span></code>，执行工具并返回标准化结果</p></li>
+</ul>
+<p>退出码：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>：成功</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>：CLI 用法错误、未知工具、JSON 输入非法、或输入模型校验失败</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code>：需要显式确认但未提供</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">4</span></code>：工具已执行，但返回失败 payload</p></li>
+</ul>
+<p>示例：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
+djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;:&quot;./data/demo-dataset.jsonl&quot;,&quot;sample_size&quot;:5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;:&quot;./tmp.txt&quot;,&quot;content&quot;:&quot;hello&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_validate<span class="w"> </span>--input-file<span class="w"> </span>./examples/plan_payload.json
+</pre></div>
+</div>
+<p>说明：</p>
+<ul class="simple">
+<li><p>该工具接口只输出 JSON，不会把每个工具输入模型字段展开成单独 CLI flags</p></li>
+<li><p>CLI 暴露的上下文面仅包含 <code class="docutils literal notranslate"><span class="pre">--working-dir</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ToolContext.env</span></code> 和 <code class="docutils literal notranslate"><span class="pre">runtime_values</span></code> 不通过 CLI 暴露</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool</span> <span class="pre">run</span></code> 的主要设计目标是机器间调用，稳定 JSON 输出是第一契约</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code>、<code class="docutils literal notranslate"><span class="pre">--verbose</span></code>、<code class="docutils literal notranslate"><span class="pre">--debug</span></code> 仅用于与其他 <code class="docutils literal notranslate"><span class="pre">djx</span></code> 子命令保持 CLI 形态一致，不会改变 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 的输出</p></li>
+</ul>
 </section>
 <section id="dj-agents">
 <h2><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code><a class="headerlink" href="#dj-agents" title="链接到此标题。">#</a></h2>
@@ -782,6 +835,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-apply"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-retrieve"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-dev"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-tool"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-agents"><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">环境变量</a></li>
 </ul>
