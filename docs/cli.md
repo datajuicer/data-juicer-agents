@@ -13,7 +13,7 @@
 Additional entry:
 - `dj-agents`: `data_juicer_agents/session_cli.py`
 
-Current CLI does not include `trace`, `templates`, or `evaluate`.
+The CLI does not include `trace`, `templates`, or `evaluate`.
 
 ## Global Output Levels (`djx`)
 
@@ -68,9 +68,9 @@ Behavior:
 - prints `Execution ID`, `Status`, and generated recipe path
 
 Notes:
-- current CLI does not run a separate `plan_validate` step automatically
-- current CLI does not persist or expose a separate trace query command
-- `--dry-run` still writes the recipe file
+- the CLI does not run a separate `plan_validate` step automatically
+- the CLI does not persist or expose a separate trace query command
+- `--dry-run` also writes the recipe file
 
 ## `djx retrieve`
 
@@ -81,7 +81,7 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 Returns:
 - ranked operator candidates
 - retrieval source, trace, and notes
-- current output payload does not include dataset profile
+- the output payload does not include dataset profile
 
 ## `djx dev`
 
@@ -105,9 +105,9 @@ Default behavior is non-invasive: generate code and guidance, but do not auto-in
 ## `djx tool`
 
 ```bash
-djx tool list [--tag <tag>] [--human]
-djx tool schema <tool-name> [--human]
-djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes] [--human]
+djx tool list [--tag <tag>]
+djx tool schema <tool-name>
+djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes]
 ```
 
 Purpose:
@@ -116,8 +116,7 @@ Purpose:
 - avoid hand-maintaining one bespoke CLI adapter per tool
 
 Default behavior:
-- output is JSON by default for `list`, `schema`, and `run`
-- `--human` switches to best-effort human-readable output for ad hoc debugging
+- output is JSON for `list`, `schema`, and `run`
 - write / execute tools are non-interactive; if a tool declares `confirmation=recommended|required`, you must pass `--yes`
 
 Subcommands:
@@ -143,10 +142,11 @@ djx tool run plan_validate --input-file ./examples/plan_payload.json
 ```
 
 Notes:
-- v1 is intentionally JSON-first; it does not expand tool input fields into per-tool CLI flags
-- the exposed context surface is intentionally small: only `--working-dir` is supported
-- `ToolContext.env` and `runtime_values` are not exposed through CLI in v1
+- the tool interface is JSON-only; it does not expand tool input fields into per-tool CLI flags
+- the exposed context surface is limited to `--working-dir`
+- `ToolContext.env` and `runtime_values` are not exposed through the CLI
 - `tool run` is suitable for machine-to-machine use; stable JSON output is the primary contract
+- `--quiet`, `--verbose`, and `--debug` are accepted for CLI-shape consistency with other `djx` subcommands, but they do not change `djx tool` output
 
 ## `dj-agents`
 

@@ -15,6 +15,23 @@ def test_tool_parser_accepts_nested_commands():
     assert args.tool_name == "inspect_dataset"
 
 
+def test_tool_parser_accepts_global_output_flags_after_subcommand():
+    parser = build_parser()
+    args = parser.parse_args(["tool", "list", "--debug"])
+    assert args.command == "tool"
+    assert args.tool_action == "list"
+    assert args.output_level == "debug"
+
+
+def test_tool_list_accepts_global_output_flags_in_main_path(capsys):
+    code = main(["tool", "list", "--debug"])
+    assert code == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is True
+    assert payload["action"] == "tool_list"
+
+
 def test_tool_list_returns_json_payload(capsys):
     code = main(["tool", "list", "--tag", "plan"])
     assert code == 0
@@ -198,23 +215,3 @@ def test_tool_run_tool_failure_returns_exit_4(tmp_path: Path, capsys):
     payload = json.loads(capsys.readouterr().out)
     assert payload["ok"] is False
     assert payload["error_type"] == "file_not_found"
-
-
-def test_tool_run_human_output_is_not_json(tmp_path: Path, capsys):
-    target = tmp_path / "notes.txt"
-    code = main(
-        [
-            "tool",
-            "run",
-            "write_text_file",
-            "--yes",
-            "--human",
-            "--input-json",
-            json.dumps({"file_path": str(target), "content": "hello"}),
-        ]
-    )
-    assert code == 0
-
-    out = capsys.readouterr().out
-    assert "Tool: write_text_file" in out
-    assert "Status: success" in out

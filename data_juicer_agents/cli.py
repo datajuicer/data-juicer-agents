@@ -157,12 +157,14 @@ def build_parser() -> argparse.ArgumentParser:
     tool = sub.add_parser(
         "tool",
         help="Inspect or execute atomic built-in tools",
+        parents=[output_parent],
     )
     tool_sub = tool.add_subparsers(dest="tool_action", required=True)
 
     tool_list = tool_sub.add_parser(
         "list",
         help="List all registered tools",
+        parents=[output_parent],
     )
     tool_list.add_argument(
         "--tag",
@@ -170,28 +172,20 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help="Optional tag filter; may be repeated",
     )
-    tool_list.add_argument(
-        "--human",
-        action="store_true",
-        help="Print human-readable output instead of JSON",
-    )
     tool_list.set_defaults(handler=run_tool)
 
     tool_schema = tool_sub.add_parser(
         "schema",
         help="Show tool metadata and input schema",
+        parents=[output_parent],
     )
     tool_schema.add_argument("tool_name", type=str, help="Registered tool name")
-    tool_schema.add_argument(
-        "--human",
-        action="store_true",
-        help="Print human-readable output instead of JSON",
-    )
     tool_schema.set_defaults(handler=run_tool)
 
     tool_run = tool_sub.add_parser(
         "run",
         help="Execute a tool with JSON input",
+        parents=[output_parent],
     )
     tool_run.add_argument("tool_name", type=str, help="Registered tool name")
     input_group = tool_run.add_mutually_exclusive_group(required=True)
@@ -214,11 +208,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--yes",
         action="store_true",
         help="Explicitly confirm running write/execute tools",
-    )
-    tool_run.add_argument(
-        "--human",
-        action="store_true",
-        help="Print human-readable output instead of JSON",
     )
     tool_run.set_defaults(handler=run_tool)
 

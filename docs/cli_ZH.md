@@ -13,7 +13,7 @@
 其他入口：
 - `dj-agents`：`data_juicer_agents/session_cli.py`
 
-当前 CLI 不包含 `trace`、`templates`、`evaluate`。
+CLI 不包含 `trace`、`templates`、`evaluate`。
 
 ## 全局输出级别（`djx`）
 
@@ -68,8 +68,8 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 - 输出 `Execution ID`、`Status` 和生成的 recipe 路径
 
 说明：
-- 当前 CLI 不会自动执行独立的 `plan_validate` 步骤
-- 当前 CLI 不提供独立的 trace 查询命令
+- CLI 不会自动执行独立的 `plan_validate` 步骤
+- CLI 不提供独立的 trace 查询命令
 - `--dry-run` 也会生成 recipe 文件
 
 ## `djx retrieve`
@@ -81,7 +81,7 @@ djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector]
 返回：
 - 候选算子排序
 - 检索来源、trace 与备注
-- 当前输出 payload 不包含 dataset profile
+- 输出 payload 不包含 dataset profile
 
 ## `djx dev`
 
@@ -105,9 +105,9 @@ djx dev "<intent>" \
 ## `djx tool`
 
 ```bash
-djx tool list [--tag <tag>] [--human]
-djx tool schema <tool-name> [--human]
-djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes] [--human]
+djx tool list [--tag <tag>]
+djx tool schema <tool-name>
+djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes]
 ```
 
 用途：
@@ -116,8 +116,7 @@ djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--
 - 避免为每个 tool 单独维护一套 CLI 适配层
 
 默认行为：
-- `list`、`schema`、`run` 默认都输出 JSON
-- `--human` 仅用于临时人工调试，不是主要契约
+- `list`、`schema`、`run` 都输出 JSON
 - 写入 / 执行类工具默认非交互；如果工具声明了 `confirmation=recommended|required`，必须显式传 `--yes`
 
 子命令：
@@ -143,10 +142,11 @@ djx tool run plan_validate --input-file ./examples/plan_payload.json
 ```
 
 说明：
-- v1 有意保持 JSON-first，不会把每个工具输入模型字段展开成单独 CLI flags
-- 当前通过 CLI 暴露的上下文面很小，只支持 `--working-dir`
-- `ToolContext.env` 和 `runtime_values` 在 v1 不通过 CLI 暴露
+- 该工具接口只输出 JSON，不会把每个工具输入模型字段展开成单独 CLI flags
+- CLI 暴露的上下文面仅包含 `--working-dir`
+- `ToolContext.env` 和 `runtime_values` 不通过 CLI 暴露
 - `tool run` 的主要设计目标是机器间调用，稳定 JSON 输出是第一契约
+- `--quiet`、`--verbose`、`--debug` 仅用于与其他 `djx` 子命令保持 CLI 形态一致，不会改变 `djx tool` 的输出
 
 ## `dj-agents`
 

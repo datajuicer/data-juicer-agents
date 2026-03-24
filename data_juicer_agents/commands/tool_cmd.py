@@ -54,56 +54,6 @@ def _emit_json(payload: Dict[str, Any]) -> None:
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
-def _emit_human_list(payload: Dict[str, Any]) -> None:
-    print(f"Tools: {payload.get('count', 0)}")
-    for item in payload.get("tools", []):
-        tags = ", ".join(item.get("tags", []))
-        print(
-            f"- {item.get('name')} "
-            f"[{item.get('effects')}, confirmation={item.get('confirmation')}]"
-        )
-        if tags:
-            print(f"  tags: {tags}")
-        if item.get("description"):
-            print(f"  {item.get('description')}")
-
-
-def _emit_human_schema(payload: Dict[str, Any]) -> None:
-    tool = payload.get("tool", {})
-    print(f"Tool: {tool.get('name')}")
-    print(f"Effects: {tool.get('effects')}")
-    print(f"Confirmation: {tool.get('confirmation')}")
-    tags = ", ".join(tool.get("tags", []))
-    if tags:
-        print(f"Tags: {tags}")
-    print("Input Schema:")
-    _emit_json(payload.get("input_schema", {}))
-
-
-def _emit_human_run(payload: Dict[str, Any]) -> None:
-    name = payload.get("tool_name") or payload.get("action") or "tool"
-    status = "success" if payload.get("ok") else "failed"
-    print(f"Tool: {name}")
-    print(f"Status: {status}")
-    if payload.get("message"):
-        print(f"Message: {payload['message']}")
-    _emit_json(payload)
-
-
-def _emit_payload(args: Any, payload: Dict[str, Any]) -> None:
-    if bool(getattr(args, "human", False)):
-        action = str(payload.get("action", "")).strip()
-        if action == "tool_list":
-            _emit_human_list(payload)
-            return
-        if action == "tool_schema":
-            _emit_human_schema(payload)
-            return
-        _emit_human_run(payload)
-        return
-    _emit_json(payload)
-
-
 def _load_input_payload(args: Any) -> Dict[str, Any]:
     raw_json = getattr(args, "input_json", None)
     input_file = getattr(args, "input_file", None)
@@ -123,7 +73,7 @@ def _load_input_payload(args: Any) -> Dict[str, Any]:
 
 
 def _build_tool_context(working_dir: str | None) -> ToolContext:
-    raw = str(working_dir or "./.djx").strip() or "./.djx"
+    raw = str(working_dir or "").strip() or "./.djx"
     resolved = str(Path(raw).expanduser())
     return ToolContext(working_dir=resolved, artifacts_dir=resolved)
 
@@ -246,7 +196,7 @@ def run_tool(args: Any) -> int:
         )
         code = 2
 
-    _emit_payload(args, payload)
+    _emit_json(payload)
     return int(code)
 
 

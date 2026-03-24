@@ -63,7 +63,7 @@ djx apply --plan ./data/demo-plan.yaml --yes --dry-run
 
 Notes:
 - `djx plan` already performs internal operator retrieval before building the final plan.
-- `djx retrieve` is still useful for inspection and debugging.
+- `djx retrieve` is useful for inspection and debugging.
 
 Minimal atomic tool path:
 
@@ -74,7 +74,7 @@ djx tool run list_system_config --input-json '{}'
 ```
 
 Notes:
-- `djx tool` is JSON-first and primarily intended for agent / skill automation.
+- `djx tool` is JSON-only and primarily intended for agent / skill automation.
 - write or execute tools require explicit `--yes`.
 
 ## 5. Session mode (`dj-agents`)
