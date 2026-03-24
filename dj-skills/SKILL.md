@@ -15,16 +15,32 @@ User Request
   ↓
 Parse Intent (what to do with data)
   ↓
-Inspect Dataset (check format, fields, modality)
-  ↓
-Select Operators (see Operator Catalog section)
-  ↓
-Generate YAML Recipe
-  ↓
-Run dj-process --config recipe.yaml
-  ↓
-Verify & Return Results
+Privacy Check ← Does the user indicate data is sensitive/private?
+  │
+  ├── YES (private data) ──→ Switch to Local Model (Ollama)
+  │   │                      • Set DJA_OPENAI_BASE_URL=http://localhost:11434/v1
+  │   │                      • No data leaves the machine
+  │   ↓
+  │   Local Data Probe (inspect with local LLM only)
+  │   ↓
+  │   Select Operators (lexical retrieval, no cloud embeddings)
+  │   ↓
+  │   Generate YAML Recipe (via local model)
+  │
+  ├── NO (normal data) ──→ Inspect Dataset (cloud LLM ok)
+  │   ↓
+  │   Select Operators (LLM/vector retrieval)
+  │   ↓
+  │   Generate YAML Recipe
+  │
+  └──→ (both paths converge)
+       ↓
+       Run dj-process --config recipe.yaml
+       ↓
+       Verify & Return Results
 ```
+
+> **IMPORTANT**: If the user mentions any privacy-related keywords (sensitive, private, confidential, PII, medical, financial, internal, proprietary, etc.), you **MUST** take the left (local) path. Never send private data samples to a cloud API for probing or analysis. See the [Local Model Skills](./local_model_skills.md) for setup instructions.
 
 ---
 
@@ -136,7 +152,7 @@ This section guides you to create a dj-process compatible YAML recipe from a use
 ### Core Flow
 
 ```
-User Intent → Inspect Dataset → Retrieve Operators → Choose Operators → Write YAML → Validate → Save
+User Intent → Privacy Check → [if private: activate local model] → Inspect Dataset → Retrieve Operators → Choose Operators → Write YAML → Validate → Save
 ```
 
 ### Step 1: Parse User Intent
@@ -145,10 +161,76 @@ Identify from the user's request:
 - **Input dataset path** (JSONL file)
 - **Output path** (where to save processed data)
 - **Processing goals** (clean text? remove duplicates? filter quality? etc.)
+- **Data sensitivity** (is the data private, sensitive, or confidential?)
+
+#### Privacy Detection
+
+Scan the user's request for any of these signals:
+- **Explicit keywords**: "sensitive", "private", "confidential", "secret", "internal", "proprietary"
+- **Data types**: "PII", "medical records", "patient data", "financial data", "personal information", "salary", "SSN", "ID card"
+- **Compliance**: "GDPR", "HIPAA", "SOC2", "compliance", "regulated"
+- **Intent signals**: "don't want data to leave", "keep local", "no cloud", "air-gapped", "offline processing"
+
+**If ANY privacy signal is detected** → set `private_mode = True` and proceed to Step 1.5 below.
+**Otherwise** → skip Step 1.5 and proceed directly to Step 2.
+
+### Step 1.5: Activate Local Model (Private Data Only)
+
+> **This step is MANDATORY when the user's data is sensitive.** You must complete it BEFORE inspecting the dataset or sending any data content to an LLM.
+
+1. **Check Ollama is running** and the local model is available:
+
+```python
+import urllib.request
+import json
+
+def check_ollama_ready(model: str = "qwen3.5:0.8b") -> bool:
+    try:
+        req = urllib.request.Request("http://localhost:11434/api/tags")
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read())
+            available = [m["name"] for m in data.get("models", [])]
+        return model in available or any(model in m for m in available)
+    except Exception:
+        return False
+
+assert check_ollama_ready("qwen3.5:0.8b"), (
+    "Ollama is not running or qwen3.5:0.8b is not installed. "
+    "See local_model_skills.md for setup instructions."
+)
+```
+
+2. **Switch to local mode** — redirect ALL LLM calls to localhost:
+
+```python
+import os
+
+os.environ["DJA_OPENAI_BASE_URL"] = "http://localhost:11434/v1"
+os.environ["DASHSCOPE_API_KEY"] = "ollama"
+os.environ["DJA_SESSION_MODEL"] = "qwen3.5:0.8b"
+os.environ["DJA_PLANNER_MODEL"] = "qwen3.5:0.8b"
+os.environ["DJA_LLM_THINKING"] = "false"
+print("✓ Local mode active — all data stays on this machine")
+```
+
+Or via shell:
+```bash
+source ~/.dja_local_env   # see local_model_skills.md for setup
+```
+
+3. **Confirm** to the user that private mode is active and no data will be sent to external APIs.
+
+> **From this point forward**, all steps (Inspect Dataset, Retrieve Operators, Generate Recipe) will use the local model. Data samples, field values, and content are never sent to the cloud.
 
 ### Step 2: Inspect Dataset
 
-Examine the dataset to understand its structure:
+Examine the dataset to understand its structure.
+
+> **⚠️ PRIVATE DATA**: If `private_mode = True` (from Step 1), you MUST have completed Step 1.5 first. All dataset inspection below should use ONLY local tools. **Never** print, log, or send data samples to any cloud API. The local LLM at `localhost:11434` is the only model you may use for content understanding.
+
+#### 2a. Structure Probe (safe for all data — no LLM needed)
+
+This step reads only metadata (field names, record count, field types). No actual content is sent anywhere:
 
 ```python
 import json
@@ -156,12 +238,58 @@ import json
 with open("input.jsonl") as f:
     samples = [json.loads(line) for line in f][:5]
 
-# Show first record structure
-print("Fields:", list(samples[0].keys()))
-print("Sample:", json.dumps(samples[0], indent=2, ensure_ascii=False))
+total_records = sum(1 for _ in open("input.jsonl"))
 
-# Identify text fields (usually "text", "content", "instruction", etc.)
-# Identify image fields (if any URL/path patterns)
+# Structure only — field names and types, NOT content values
+print(f"Total records: {total_records}")
+print(f"Fields: {list(samples[0].keys())}")
+print(f"Field types: {  {k: type(v).__name__ for k, v in samples[0].items()}  }")
+
+# Detect modality from field names (no content inspection)
+field_names = set(samples[0].keys())
+has_text = bool(field_names & {"text", "content", "instruction", "input", "output"})
+has_image = bool(field_names & {"image", "images", "image_url", "img", "img_path"})
+has_audio = bool(field_names & {"audio", "audio_url", "audio_path"})
+print(f"Detected modality: text={has_text}, image={has_image}, audio={has_audio}")
+```
+
+#### 2b. Content Probe (cloud LLM ok for normal data; local LLM ONLY for private data)
+
+If you need to understand content patterns (e.g., language, domain, quality):
+
+```python
+import json
+
+with open("input.jsonl") as f:
+    samples = [json.loads(line) for line in f][:3]
+
+# For PRIVATE data: only show to local model, never cloud
+# The environment was already switched in Step 1.5
+print("Sample (first record):")
+print(json.dumps(samples[0], indent=2, ensure_ascii=False))
+```
+
+For private data, use the local model to analyze content patterns:
+
+```python
+# This call goes to localhost:11434 (Ollama) when in private mode
+from data_juicer_agents.utils.llm_gateway import call_model_json
+
+# The local model analyzes the data — nothing leaves this machine
+probe_result = call_model_json(
+    model_name="qwen3.5:0.8b",
+    prompt=f"""Analyze this dataset sample and return JSON with:
+- "language": detected language
+- "domain": content domain (e.g., medical, financial, general)
+- "text_field": which field contains the main text
+- "avg_length": approximate average text length
+- "quality_notes": any quality issues noticed
+
+Sample:
+{json.dumps(samples[:2], ensure_ascii=False)}""",
+    thinking=False,
+)
+print(f"Local probe result: {probe_result}")
 ```
 
 Key things to determine:
@@ -171,19 +299,25 @@ Key things to determine:
 
 ### Step 3: Retrieve Operator Candidates
 
-Use the `retrieve_operators` tool to find suitable operators based on the user's intent:
+Use the `retrieve_operators` tool to find suitable operators based on the user's intent.
+
+> **⚠️ PRIVATE DATA**: When `private_mode = True`, operator retrieval must NOT use cloud-based embeddings or LLMs. Use `mode: "auto"` which automatically falls back to lexical search when no cloud API key is available, or explicitly pass the intent without including actual data content in the retrieval query.
 
 ```python
 from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
 from data_juicer_agents.core.tool import ToolContext
 
 ctx = ToolContext(working_dir="./.djx")
+
+# For private data: describe the TASK, not the DATA CONTENT
+# Good: "remove duplicate documents and filter short texts"
+# Bad:  "remove duplicates from medical patient records containing SSN..."
 result = RETRIEVE_OPERATORS.execute(
     ctx=ctx,
     raw_input={
         "intent": "remove duplicate documents and filter short texts",
         "top_k": 5,
-        "mode": "auto",
+        "mode": "auto",       # auto falls back to lexical search in local mode
         "dataset_path": "./input.jsonl"
     }
 )
@@ -238,6 +372,11 @@ Based on the retrieval results and user's goals, select operators. Common patter
 
 **Full Pipeline (clean + filter + dedup):**
 - `fix_unicode_mapper` → `clean_html_mapper` → `whitespace_normalization_mapper` → `text_length_filter` → `words_num_filter` → `special_characters_filter` → `document_minhash_deduplicator`
+
+**Semantic / LLM Pipeline (QA generation, tagging, scoring):**
+- `fix_unicode_mapper` → `text_length_filter` → `llm_quality_score_filter` → `generate_qa_from_text_mapper` → `document_deduplicator`
+
+> **⚠️ Semantic Ops + Private Data**: If the pipeline includes **any** semantic/LLM operator (see Operator Catalog → Semantic / LLM Operators), and the data is sensitive, you **MUST** configure each semantic operator to use the local Ollama endpoint (`api_model: "qwen3.5:0.8b"` + `model_params.base_url: "http://localhost:11434/v1"`), or set `OPENAI_BASE_URL=http://localhost:11434/v1` globally. These operators send actual data content to the LLM — without local routing, the content goes to a cloud API.
 
 ### Step 5: Write YAML Recipe
 
@@ -567,6 +706,147 @@ Data-Juicer provides 190+ operators in 8 categories. Below are the most commonly
 | `nested_aggregator` | Hierarchical aggregation |
 | `meta_tags_aggregator` | Aggregate metadata tags |
 
+### Semantic / LLM Operators
+
+These operators call an LLM API to process each sample. They send **actual data content** to the model endpoint. By default they use a cloud API (`OPENAI_BASE_URL`), but they can — and **should**, for private data — be pointed to a local Ollama model.
+
+> **⚠️ PRIVATE DATA**: If the user's data is sensitive, **every** semantic operator in the recipe MUST use the local Ollama endpoint. Otherwise the data content will be sent to a cloud API. Configure each operator with `model_params` pointing to `http://localhost:11434/v1`, or set `OPENAI_BASE_URL` globally.
+
+#### LLM Filters (semantic quality gates)
+
+| Operator | Description | Key Params |
+|---|---|---|
+| `llm_quality_score_filter` | LLM-based quality scoring (1-5 scale) | `api_model`, `min_score`, `dimensions` |
+| `llm_difficulty_score_filter` | LLM-based difficulty evaluation | `api_model`, `min_score`, `dimensions` |
+| `llm_task_relevance_filter` | Relevance to a validation task | `api_model`, `task_description`, `min_score` |
+| `llm_perplexity_filter` | Perplexity via HuggingFace model | `hf_model`, `max_ppl` |
+
+#### Text Generation / Tagging Mappers
+
+| Operator | Description | Key Params |
+|---|---|---|
+| `generate_qa_from_text_mapper` | Generate QA pairs from text | `api_model`, `qa_pair_num` |
+| `generate_qa_from_examples_mapper` | Generate QA from seed examples | `api_model`, `seed_file`, `example_num` |
+| `optimize_qa_mapper` | Optimize existing QA pairs | `api_model` |
+| `text_tagging_by_prompt_mapper` | Tag text via LLM prompt | `hf_model` or `api_model` |
+| `optimize_prompt_mapper` | Optimize prompts from examples | `api_model` |
+| `pair_preference_mapper` | Generate preference pairs | `api_model` |
+| `sentence_augmentation_mapper` | Augment sentences | `hf_model` |
+
+#### Dialog Analysis Mappers
+
+| Operator | Description | Key Params |
+|---|---|---|
+| `dialog_intent_detection_mapper` | Detect user intent in dialog | `api_model` |
+| `dialog_sentiment_detection_mapper` | Detect sentiment in dialog | `api_model` |
+| `dialog_sentiment_intensity_mapper` | Quantify sentiment intensity | `api_model` |
+| `dialog_topic_detection_mapper` | Identify dialog topics | `api_model` |
+
+#### Entity / Relation Extraction Mappers
+
+| Operator | Description | Key Params |
+|---|---|---|
+| `extract_keyword_mapper` | Extract keywords via LLM | `api_model` |
+| `extract_entity_attribute_mapper` | Extract entity attributes | `api_model` |
+| `extract_nickname_mapper` | Identify nickname relationships | `api_model` |
+| `extract_support_text_mapper` | Extract supporting text | `api_model` |
+| `relation_identity_mapper` | Identify entity relationships | `api_model` |
+
+#### Vision-Language / Multimodal Mappers
+
+| Operator | Description | Key Params |
+|---|---|---|
+| `image_tagging_vlm_mapper` | Tag images via VLM | `api_model`, `tag_field_name` |
+| `video_captioning_from_vlm_mapper` | Caption videos via VLM | `api_model`, `enable_vllm` |
+| `mllm_mapper` | Visual QA with multimodal LLM | `api_model` |
+| `image_captioning_from_gpt4v_mapper` | Image captioning via API | `api_model` |
+
+#### Configuring Semantic Operators to Use Local Ollama
+
+All semantic operators use the OpenAI-compatible API protocol. To route them through a local Ollama model, configure `api_model` and `model_params` in the YAML recipe:
+
+**Per-operator configuration (in YAML recipe):**
+
+```yaml
+process:
+  # Semantic ops — all pointed to local Ollama
+  - generate_qa_from_text_mapper:
+      api_model: "qwen3.5:0.8b"
+      model_params:
+        base_url: "http://localhost:11434/v1"
+        api_key: "ollama"
+      sampling_params:
+        temperature: 0.7
+  - llm_quality_score_filter:
+      api_model: "qwen3.5:0.8b"
+      model_params:
+        base_url: "http://localhost:11434/v1"
+        api_key: "ollama"
+      min_score: 3
+  - extract_keyword_mapper:
+      api_model: "qwen3.5:0.8b"
+      model_params:
+        base_url: "http://localhost:11434/v1"
+        api_key: "ollama"
+```
+
+**Global configuration (via environment variables):**
+
+Alternatively, set these environment variables before running `dj-process` so ALL semantic operators default to Ollama:
+
+```bash
+export OPENAI_BASE_URL="http://localhost:11434/v1"
+export OPENAI_API_KEY="ollama"
+```
+
+Then the recipe only needs the model name:
+
+```yaml
+process:
+  - generate_qa_from_text_mapper:
+      api_model: "qwen3.5:0.8b"
+  - llm_quality_score_filter:
+      api_model: "qwen3.5:0.8b"
+      min_score: 3
+```
+
+#### Complete Example: Private Data with Semantic Ops
+
+```yaml
+project_name: private_qa_generation
+dataset_path: ./sensitive_data.jsonl
+export_path: ./sensitive_qa_output.jsonl
+text_keys: [text]
+np: 2
+
+process:
+  # Step 1: Basic cleaning (no LLM, safe for any data)
+  - fix_unicode_mapper: {}
+  - whitespace_normalization_mapper: {}
+  - text_length_filter:
+      min_len: 100
+      max_len: 100000
+
+  # Step 2: LLM-powered ops — all using local Ollama
+  - llm_quality_score_filter:
+      api_model: "qwen3.5:0.8b"
+      model_params:
+        base_url: "http://localhost:11434/v1"
+        api_key: "ollama"
+      min_score: 3
+  - generate_qa_from_text_mapper:
+      api_model: "qwen3.5:0.8b"
+      model_params:
+        base_url: "http://localhost:11434/v1"
+        api_key: "ollama"
+
+  # Step 3: Dedup (no LLM, safe for any data)
+  - document_deduplicator:
+      lowercase: true
+```
+
+> **Note**: Local small models (qwen3.5:0.8b) are less capable than cloud models for complex semantic tasks like QA generation. If quality is critical, consider using a larger local model (`qwen3.5:7b` or `qwen3.5:14b`). See [local_model_skills.md](./local_model_skills.md) for model options.
+
 ### Usage in YAML Recipe
 
 Each operator goes under `process:` as a single-key dict:
@@ -624,7 +904,9 @@ for op in sorted(ops)[:20]:
 | `ModuleNotFoundError` | Missing dependency | Install required extras for the operator |
 | YAML parse error | Malformed recipe | Validate YAML syntax |
 | Timeout | Processing too slow | Reduce data, increase `np`, or sample first |
-| API key error | Missing credentials | Set `DASHSCOPE_API_KEY` or relevant env var |
+| API key error | Missing credentials | Set `DASHSCOPE_API_KEY` or relevant env var; for local mode set `DASHSCOPE_API_KEY=ollama` |
+| Local model not responding | Ollama not running | Start Ollama: `ollama serve`; see [local_model_skills.md](./local_model_skills.md) |
+| `enable_thinking` error in local mode | Local models don't support thinking | Set `DJA_LLM_THINKING=false` |
 
 ### Diagnostic Commands
 
