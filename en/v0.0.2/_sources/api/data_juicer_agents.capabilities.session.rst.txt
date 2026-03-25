@@ -1,0 +1,7 @@
+data_juicer_agents.capabilities.session
+=======================================
+
+.. automodule:: data_juicer_agents.capabilities.session
+   :members:
+   :show-inheritance:
+   :undoc-members:

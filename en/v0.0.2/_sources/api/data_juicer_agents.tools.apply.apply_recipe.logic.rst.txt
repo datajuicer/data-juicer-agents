@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.apply.apply\_recipe.logic module
+===========================================================
+
+.. automodule:: data_juicer_agents.tools.apply.apply_recipe.logic
+   :members:
+   :show-inheritance:
+   :undoc-members:
