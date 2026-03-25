@@ -1,6 +1,6 @@
 ---
 name: data-juicer
-description: "End-to-end data processing skill powered by Data-Juicer. Guides the agent through environment setup, dataset inspection, operator selection, YAML recipe generation, and dj-process execution to clean, filter, deduplicate, and transform datasets autonomously."
+description: "End-to-end data processing skill powered by Data-Juicer. Guides the agent through environment setup, dataset inspection, operator selection, YAML recipe generation, and djx tool execution to clean, filter, deduplicate, and transform datasets autonomously."
 auto_load: true
 ---
 
@@ -35,7 +35,7 @@ Privacy Check ← Does the user indicate data is sensitive/private?
   │
   └──→ (both paths converge)
        ↓
-       Run dj-process --config recipe.yaml
+       Run djx tool run apply_recipe
        ↓
        Verify & Return Results
 ```
@@ -111,6 +111,7 @@ uv pip install data-juicer-agents
 # Check CLI tools are available
 dj-process --help
 dj-analyze --help
+djx --help
 
 # Check Data-Juicer version
 python -c "import data_juicer; print(data_juicer.__version__)"
@@ -130,6 +131,17 @@ Installing `py-data-juicer` provides these command-line tools:
 | `dj-install` | Install operator-specific dependencies |
 | `dj-mcp` | MCP server for tool integrations |
 
+Installing `data-juicer-agents` provides the `djx` CLI:
+
+| Command | Purpose |
+|---------|--------|
+| `djx tool list` | List all available atomic tools |
+| `djx tool schema <tool>` | Get JSON input schema for a tool |
+| `djx tool run <tool> --input-json '{...}'` | Execute an atomic tool with JSON input |
+| `djx --version` | Print installed package version |
+
+> **Agent Tip**: Use `djx tool list` to discover tools, `djx tool schema <tool>` to learn input requirements, and `djx tool run <tool>` to execute. All outputs are structured JSON.
+
 ### Setup Troubleshooting
 
 | Issue | Fix |
@@ -147,7 +159,78 @@ Installing `py-data-juicer` provides these command-line tools:
 
 ## 2. Generate YAML Recipe
 
-This section guides you to create a dj-process compatible YAML recipe from a user's data processing intent.
+This section guides you to create a YAML recipe from a user's data processing intent.
+
+### Recommended Method: djx Tool Chain
+
+For agent workflows, chain atomic tools step-by-step to get full control at every decision point:
+
+```
+djx tool run inspect_dataset   → Understand data
+        ↓
+djx tool run retrieve_operators → Find suitable operators
+        ↓
+(Agent decides operators and params)
+        ↓
+djx tool run build_dataset_spec  → Lock dataset IO
+djx tool run build_process_spec  → Lock operator pipeline
+djx tool run build_system_spec   → Lock system config
+        ↓
+djx tool run assemble_plan       → Assemble plan
+djx tool run plan_validate       → Validate
+djx tool run plan_save           → Persist
+        ↓
+djx tool run apply_recipe        → Execute
+```
+
+#### Step-by-Step Example
+
+```bash
+# 1. Inspect dataset structure
+djx tool run inspect_dataset --input-json '{"dataset_path":"./data/corpus.jsonl","sample_size":5}'
+
+# 2. Retrieve operator candidates
+djx tool run retrieve_operators --input-json '{"intent":"deduplicate and clean text for RAG","top_k":10,"dataset_path":"./data/corpus.jsonl"}'
+
+# 3. Build dataset spec (use inspect_dataset output as dataset_profile)
+djx tool run build_dataset_spec --input-json '{
+  "intent":"deduplicate and clean text for RAG",
+  "dataset_path":"./data/corpus.jsonl",
+  "export_path":"./data/corpus_cleaned.jsonl",
+  "dataset_profile": {"...": "paste inspect_dataset output here"}
+}'
+
+# 4. Build process spec (agent selects operators from retrieval results)
+djx tool run build_process_spec --input-json '{
+  "operators": [
+    {"name":"fix_unicode_mapper","params":{}},
+    {"name":"text_length_filter","params":{"min_len":50,"max_len":100000}},
+    {"name":"document_deduplicator","params":{"lowercase":true}}
+  ]
+}'
+
+# 5. Build system spec
+djx tool run build_system_spec --input-json '{"np":4,"executor_type":"default"}'
+
+# 6. Assemble, validate, and save
+djx tool run assemble_plan --input-json '{
+  "intent":"deduplicate and clean text for RAG",
+  "dataset_spec": {"...": "from step 3"},
+  "process_spec": {"...": "from step 4"},
+  "system_spec": {"...": "from step 5"}
+}'
+djx tool run plan_validate --input-json '{"plan_payload": {"...": "from assemble_plan"}}'
+djx tool run plan_save --yes --input-json '{"plan_payload": {"...": "from assemble_plan"},"output_path":"./plans/my_plan.yaml"}'
+
+# 7. Execute
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/my_plan.yaml","confirm":true}'
+```
+
+> **Note**: Each `djx tool run` returns structured JSON. Feed the output of one step into the next. Use `djx tool schema <tool>` to discover exact input requirements.
+
+### Manual Method: Step-by-Step Recipe Generation
+
+For more control, or when you need to customize specific steps, follow the manual flow below.
 
 ### Core Flow
 
@@ -228,69 +311,15 @@ Examine the dataset to understand its structure.
 
 > **⚠️ PRIVATE DATA**: If `private_mode = True` (from Step 1), you MUST have completed Step 1.5 first. All dataset inspection below should use ONLY local tools. **Never** print, log, or send data samples to any cloud API. The local LLM at `localhost:11434` is the only model you may use for content understanding.
 
-#### 2a. Structure Probe (safe for all data — no LLM needed)
+#### Dataset Inspection
 
-This step reads only metadata (field names, record count, field types). No actual content is sent anywhere:
-
-```python
-import json
-
-with open("input.jsonl") as f:
-    samples = [json.loads(line) for line in f][:5]
-
-total_records = sum(1 for _ in open("input.jsonl"))
-
-# Structure only — field names and types, NOT content values
-print(f"Total records: {total_records}")
-print(f"Fields: {list(samples[0].keys())}")
-print(f"Field types: {  {k: type(v).__name__ for k, v in samples[0].items()}  }")
-
-# Detect modality from field names (no content inspection)
-field_names = set(samples[0].keys())
-has_text = bool(field_names & {"text", "content", "instruction", "input", "output"})
-has_image = bool(field_names & {"image", "images", "image_url", "img", "img_path"})
-has_audio = bool(field_names & {"audio", "audio_url", "audio_path"})
-print(f"Detected modality: text={has_text}, image={has_image}, audio={has_audio}")
+```bash
+djx tool run inspect_dataset --input-json '{"dataset_path":"./input.jsonl","sample_size":5}'
 ```
 
-#### 2b. Content Probe (cloud LLM ok for normal data; local LLM ONLY for private data)
+The output JSON includes detected modality, field names, types, sample statistics, and content samples. Use this output as the `dataset_profile` for `build_dataset_spec`.
 
-If you need to understand content patterns (e.g., language, domain, quality):
-
-```python
-import json
-
-with open("input.jsonl") as f:
-    samples = [json.loads(line) for line in f][:3]
-
-# For PRIVATE data: only show to local model, never cloud
-# The environment was already switched in Step 1.5
-print("Sample (first record):")
-print(json.dumps(samples[0], indent=2, ensure_ascii=False))
-```
-
-For private data, use the local model to analyze content patterns:
-
-```python
-# This call goes to localhost:11434 (Ollama) when in private mode
-from data_juicer_agents.utils.llm_gateway import call_model_json
-
-# The local model analyzes the data — nothing leaves this machine
-probe_result = call_model_json(
-    model_name="qwen3.5:0.8b",
-    prompt=f"""Analyze this dataset sample and return JSON with:
-- "language": detected language
-- "domain": content domain (e.g., medical, financial, general)
-- "text_field": which field contains the main text
-- "avg_length": approximate average text length
-- "quality_notes": any quality issues noticed
-
-Sample:
-{json.dumps(samples[:2], ensure_ascii=False)}""",
-    thinking=False,
-)
-print(f"Local probe result: {probe_result}")
-```
+> **Private data**: If `private_mode = True`, ensure `DJA_OPENAI_BASE_URL` points to localhost before running tools that trigger LLM calls. `inspect_dataset` itself is safe — it only reads file metadata and samples.
 
 Key things to determine:
 - **text_keys**: Which fields contain the main text (e.g., `["text"]`)
@@ -303,59 +332,25 @@ Use the `retrieve_operators` tool to find suitable operators based on the user's
 
 > **⚠️ PRIVATE DATA**: When `private_mode = True`, operator retrieval must NOT use cloud-based embeddings or LLMs. Use `mode: "auto"` which automatically falls back to lexical search when no cloud API key is available, or explicitly pass the intent without including actual data content in the retrieval query.
 
-```python
-from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
-from data_juicer_agents.core.tool import ToolContext
-
-ctx = ToolContext(working_dir="./.djx")
-
-# For private data: describe the TASK, not the DATA CONTENT
-# Good: "remove duplicate documents and filter short texts"
-# Bad:  "remove duplicates from medical patient records containing SSN..."
-result = RETRIEVE_OPERATORS.execute(
-    ctx=ctx,
-    raw_input={
-        "intent": "remove duplicate documents and filter short texts",
-        "top_k": 5,
-        "mode": "auto",       # auto falls back to lexical search in local mode
-        "dataset_path": "./input.jsonl"
-    }
-)
-
-if result.ok:
-    for candidate in result.data.get("payload", {}).get("candidates", []):
-        print(f"  {candidate['operator_name']}: {candidate['description']}")
-        print(f"    Type: {candidate['operator_type']}, Score: {candidate.get('relevance_score', 'N/A')}")
-        if candidate.get('arguments_preview'):
-            print(f"    Params: {', '.join(candidate['arguments_preview'][:3])}")
+```bash
+djx tool run retrieve_operators --input-json '{
+  "intent": "remove duplicate documents and filter short texts",
+  "top_k": 5,
+  "mode": "auto",
+  "dataset_path": "./input.jsonl"
+}'
 ```
 
+> **Private data**: Describe the TASK, not the DATA CONTENT.
+> Good: `"remove duplicate documents and filter short texts"`
+> Bad: `"remove duplicates from medical patient records containing SSN..."`
+
 **Retrieval Modes:**
-- `auto`: Automatically chooses the best retrieval method (LLM or vector-based)
+- `auto`: Automatically chooses the best retrieval method (recommended)
 - `llm`: Uses LLM-based semantic retrieval
 - `vector`: Uses vector similarity search
 
-**Response Structure:**
-```python
-{
-    "ok": True,
-    "intent": "...",
-    "candidate_count": 5,
-    "candidate_names": ["document_deduplicator", "text_length_filter", ...],
-    "payload": {
-        "candidates": [
-            {
-                "rank": 1,
-                "operator_name": "document_deduplicator",
-                "operator_type": "deduplicator",
-                "description": "Exact document deduplication",
-                "relevance_score": 0.95,
-                "arguments_preview": ["lowercase: bool", "ignore_non_character: bool"]
-            }
-        ]
-    }
-}
-```
+The output JSON contains ranked candidates including operator name, type, description, relevance score, and parameter preview.
 
 ### Step 4: Choose Operators
 
@@ -380,7 +375,7 @@ Based on the retrieval results and user's goals, select operators. Common patter
 
 ### Step 5: Write YAML Recipe
 
-**Recipe Format** (this is what `dj-process --config` expects):
+**Recipe Format** (this is what `djx tool run apply_recipe` expects):
 
 ```yaml
 project_name: my_project
@@ -417,44 +412,26 @@ process:
 
 ### Step 6: Validate Recipe
 
-```python
-import yaml
+```bash
+# Validate via tool chain (if you built a plan)
+djx tool run plan_validate --input-json '{"plan_payload": {"...": "your assembled plan"}}'
+```
 
-with open("recipe.yaml") as f:
-    config = yaml.safe_load(f)
-
-# Check required fields
-assert "dataset_path" in config, "Missing dataset_path"
-assert "export_path" in config, "Missing export_path"
-assert "process" in config and len(config["process"]) > 0, "Empty process pipeline"
-
-# Check dataset exists
-import os
-assert os.path.exists(config["dataset_path"]), f"Dataset not found: {config['dataset_path']}"
-
-print("✓ Recipe is valid")
+Or for simple YAML syntax validation:
+```bash
+python -c "import yaml; yaml.safe_load(open('recipe.yaml')); print('YAML OK')"
 ```
 
 ### Step 7: Save Recipe
 
-```python
-import yaml
+```bash
+# Save via plan_save (if you have an assembled plan payload)
+djx tool run plan_save --yes --input-json '{"plan_payload": {"...": "your assembled plan"},"output_path":"./recipe.yaml"}'
+```
 
-recipe = {
-    "project_name": "my_project",
-    "dataset_path": "./input.jsonl",
-    "export_path": "./output.jsonl",
-    "text_keys": ["text"],
-    "np": 4,
-    "process": [
-        {"fix_unicode_mapper": {}},
-        {"whitespace_normalization_mapper": {}},
-        {"text_length_filter": {"min_len": 50, "max_len": 100000}},
-    ]
-}
-
-with open("recipe.yaml", "w") as f:
-    yaml.dump(recipe, f, default_flow_style=False, allow_unicode=True)
+Or write a YAML file directly:
+```bash
+djx tool run write_text_file --yes --input-json '{"file_path":"./recipe.yaml","content":"... your YAML recipe content ..."}'
 ```
 
 ### Complete Examples
@@ -530,29 +507,35 @@ process:
       max_len: 50000
 ```
 
-### Advanced: Using data-juicer-agents API for Operator Retrieval
+### Advanced: Using djx for Operator Retrieval
 
-```python
-from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
-from data_juicer_agents.core.tool import ToolContext
-
-ctx = ToolContext(working_dir="./.djx")
-result = RETRIEVE_OPERATORS.execute(
-    ctx=ctx,
-    raw_input={"intent": "remove duplicate documents", "top_k": 5}
-)
-if result.ok:
-    for op in result.data.get("candidates", []):
-        print(f"  {op['name']}: {op.get('description', '')}")
+```bash
+djx tool run retrieve_operators --input-json '{"intent":"remove duplicate documents","top_k":5}'
 ```
 
 ---
 
 ## 3. Execute Recipe
 
-Run `dj-process` on a generated YAML recipe.
+Execute a saved plan or YAML recipe using `djx tool run apply_recipe`.
 
-### Quick Run
+### Method 1: djx tool run apply_recipe (Recommended)
+
+Execute a saved plan:
+
+```bash
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/my_plan.yaml","confirm":true,"timeout":300}'
+```
+
+Dry run (validate and write recipe, but don't execute):
+
+```bash
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/my_plan.yaml","confirm":true,"dry_run":true}'
+```
+
+### Method 2: Direct dj-process (for manual YAML recipes)
+
+If you manually wrote a YAML recipe (not through the plan chain), run `dj-process` directly:
 
 ```bash
 dj-process --config recipe.yaml
@@ -562,48 +545,27 @@ dj-process --config recipe.yaml
 
 #### 1. Pre-flight Check
 
-```python
-import yaml, os
-
-with open("recipe.yaml") as f:
-    config = yaml.safe_load(f)
-
-# Verify inputs exist
-assert os.path.exists(config["dataset_path"]), f"Missing: {config['dataset_path']}"
-
-# Verify output directory is writable
-out_dir = os.path.dirname(config["export_path"]) or "."
-os.makedirs(out_dir, exist_ok=True)
-
-# Verify dj-process is available
-import shutil
-assert shutil.which("dj-process"), "dj-process not in PATH — run: pip install py-data-juicer"
-
-print("✓ Pre-flight passed")
+```bash
+# Pre-flight: verify dataset exists and tools are available
+djx tool run inspect_dataset --input-json '{"dataset_path":"./input.jsonl","sample_size":1}'
 ```
 
 #### 2. Execute
 
 ```bash
-dj-process --config recipe.yaml
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./recipe.yaml","confirm":true}'
 ```
 
 Monitor stdout for progress. The command exits with code 0 on success.
 
 #### 3. Verify Results
 
-```python
-input_count = sum(1 for _ in open("input.jsonl"))
-output_count = sum(1 for _ in open("output.jsonl"))
-print(f"Input:  {input_count} records")
-print(f"Output: {output_count} records")
-print(f"Removed: {input_count - output_count} ({(input_count - output_count) / input_count * 100:.1f}%)")
+```bash
+# Count records
+wc -l input.jsonl output.jsonl
 
-# Spot-check output quality
-import json
-with open("output.jsonl") as f:
-    sample = json.loads(f.readline())
-print(json.dumps(sample, indent=2, ensure_ascii=False))
+# Spot-check output
+head -1 output.jsonl | python -m json.tool
 ```
 
 ### Exit Code Reference
@@ -615,20 +577,118 @@ print(json.dumps(sample, indent=2, ensure_ascii=False))
 | 124 | Timeout | Reduce data size or increase resources |
 | 130 | Interrupted | Re-run if needed |
 
-### Advanced: Using data-juicer-agents API for Execution
+### Advanced: Using djx for Execution
 
-```python
-from data_juicer_agents.tools.apply import APPLY_RECIPE
-from data_juicer_agents.core.tool import ToolContext
-
-ctx = ToolContext(working_dir="./.djx")
-result = APPLY_RECIPE.execute(
-    ctx=ctx,
-    raw_input={"plan_path": "recipe.yaml", "confirm": True, "timeout": 300}
-)
-print(f"Status: {'Success' if result.ok else 'Failed'}")
-print(result.summary)
+```bash
+djx tool run apply_recipe --yes --input-json '{"plan_path":"recipe.yaml","confirm":true,"timeout":300}'
 ```
+
+---
+
+## 3.5. djx tool Commands
+
+The `djx tool` command directly exposes all registered atomic tools for automation and inspection.
+
+### List Available Tools
+
+```bash
+djx tool list [--tag <tag>]
+```
+
+Example:
+```bash
+djx tool list --tag plan
+```
+
+Returns registered tool metadata: `name`, `tags`, `effects`, `confirmation`, input/output model names.
+
+### Get Tool Schema
+
+```bash
+djx tool schema <tool-name>
+```
+
+Example:
+```bash
+djx tool schema inspect_dataset
+```
+
+Returns tool metadata along with the input model JSON schema.
+
+### Run a Tool
+
+```bash
+djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes]
+```
+
+Examples:
+```bash
+# List system config
+djx tool run list_system_config --input-json '{}'
+
+# Inspect a dataset
+djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo-dataset.jsonl","sample_size":5}'
+
+# Write a file (requires --yes for confirmation)
+djx tool run write_text_file --yes --input-json '{"file_path":"./tmp.txt","content":"hello"}'
+
+# Validate a plan
+djx tool run plan_validate --input-file ./examples/plan_payload.json
+```
+
+Exit codes:
+- `0`: Success
+- `2`: CLI misuse, unknown tool, invalid JSON input, or input model validation failure
+- `3`: Explicit confirmation required but not granted
+- `4`: Tool executed and returned a failure payload
+
+### Available Atomic Tools
+
+| Tool | Purpose | Tags |
+|------|---------|------|
+| `inspect_dataset` | Dataset inspection and schema probing | context |
+| `list_system_config` | List system configuration | context |
+| `retrieve_operators` | Retrieve operator candidates by intent | retrieve |
+| `build_dataset_spec` | Build dataset specification | plan |
+| `build_process_spec` | Build process specification | plan |
+| `build_system_spec` | Build system specification | plan |
+| `validate_dataset_spec` | Validate dataset specification | plan |
+| `validate_process_spec` | Validate process specification | plan |
+| `validate_system_spec` | Validate system specification | plan |
+| `assemble_plan` | Assemble final plan from specs | plan |
+| `plan_validate` | Validate an assembled plan | plan |
+| `plan_save` | Save plan to file | plan |
+| `apply_recipe` | Execute a plan/recipe | apply |
+| `develop_operator` | Generate custom operator scaffold | dev |
+| `view_text_file` | Read text file content | files |
+| `write_text_file` | Write text file | files |
+| `insert_text_file` | Insert content into text file | files |
+| `execute_shell_command` | Execute shell command | process |
+| `execute_python_code` | Execute Python code snippet | process |
+
+---
+
+## 3.6. Custom Operator Development
+
+Generate a custom operator scaffold:
+
+```bash
+djx tool run develop_operator --yes --input-json '{
+  "intent": "filter records by custom domain-specific quality metric",
+  "operator_name": "domain_quality_filter",
+  "output_dir": "./my_operators",
+  "operator_type": "filter",
+  "smoke_check": true
+}'
+```
+
+Output includes:
+- Operator scaffold (Python module)
+- Test scaffold
+- Summary markdown
+- Optional smoke-check result
+
+Default behavior is non-invasive: generates code and guidance but does not auto-install the operator.
 
 ---
 
@@ -792,7 +852,7 @@ process:
 
 **Global configuration (via environment variables):**
 
-Alternatively, set these environment variables before running `dj-process` so ALL semantic operators default to Ollama:
+Alternatively, set these environment variables before running `djx tool run apply_recipe` so ALL semantic operators default to Ollama:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:11434/v1"
@@ -861,32 +921,14 @@ process:
 
 ### Discover Operators via Retrieval
 
-Use the `retrieve_operators` tool to find operators by intent:
-
-```python
-from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
-from data_juicer_agents.core.tool import ToolContext
-
-ctx = ToolContext(working_dir="./.djx")
-result = RETRIEVE_OPERATORS.execute(
-    ctx=ctx,
-    raw_input={"intent": "remove duplicate documents", "top_k": 5}
-)
-if result.ok:
-    for candidate in result.data.get("payload", {}).get("candidates", []):
-        print(f"  {candidate['operator_name']}: {candidate['description']}")
-```
-
-Or list all available operators:
+Use djx to find operators by intent:
 
 ```bash
-python -c "
-from data_juicer_agents.tools.retrieve import get_available_operator_names
-ops = get_available_operator_names()
-print(f'Total operators: {len(ops)}')
-for op in sorted(ops)[:20]:
-    print(f'  - {op}')
-"
+# Find operators by intent
+djx tool run retrieve_operators --input-json '{"intent":"remove duplicate documents","top_k":5}'
+
+# List all available tools
+djx tool list
 ```
 
 ---
@@ -898,6 +940,7 @@ for op in sorted(ops)[:20]:
 | Error | Cause | Fix |
 |---|---|---|
 | `command not found: dj-process` | Not installed or venv not activated | `uv pip install py-data-juicer` + activate venv |
+| `command not found: djx` | data-juicer-agents not installed | `uv pip install data-juicer-agents` |
 | `FileNotFoundError` | Dataset path doesn't exist | Check `dataset_path` in recipe |
 | `PermissionError` | Can't write output | Check directory permissions |
 | `KeyError` on operator | Operator name incorrect | Check Operator Catalog for valid names |
@@ -914,16 +957,20 @@ for op in sorted(ops)[:20]:
 # 1. Check dj-process is installed
 which dj-process
 
-# 2. Validate YAML
+# 2. Check djx is installed
+which djx
+djx --help
+
+# 3. Validate YAML
 python -c "import yaml; yaml.safe_load(open('recipe.yaml')); print('YAML OK')"
 
-# 3. Check dataset is valid JSONL
+# 4. Check dataset is valid JSONL
 head -1 input.jsonl | python -m json.tool
 
-# 4. Count dataset records
+# 5. Count dataset records
 wc -l input.jsonl
 
-# 5. Check operator exists
+# 6. Check operator exists
 python -c "
 from data_juicer.ops import load_ops
 all_ops = load_ops()
@@ -931,9 +978,15 @@ target = 'operator_name'
 found = any(target in ops for ops in all_ops.values())
 print(f'{target}: {\"found\" if found else \"NOT FOUND\"}')"
 
-# 6. Check Python environment
+# 7. Check Python environment
 python --version
 pip list | grep -i "data.juicer"
+
+# 8. List available djx tools
+djx tool list
+
+# 9. Test operator retrieval
+djx tool run retrieve_operators --input-json '{"intent":"filter short text","top_k":3}'
 ```
 
 ### Common Fixes

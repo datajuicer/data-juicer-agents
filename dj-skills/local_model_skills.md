@@ -268,98 +268,25 @@ In the normal workflow, this probing may use a cloud LLM (fast, high quality). B
 
 ### 5.1 Structure Probe (No LLM Needed)
 
-First, extract pure metadata without touching content. This is safe even without a local model:
+First, extract pure metadata without touching content. Use `djx tool run inspect_dataset` which is safe even without a local model:
 
-```python
-import json
-
-def probe_structure(dataset_path: str) -> dict:
-    """Probe dataset structure without reading content. Safe for any data."""
-    with open(dataset_path) as f:
-        samples = [json.loads(line) for line in f][:5]
-
-    total = sum(1 for _ in open(dataset_path))
-    fields = list(samples[0].keys())
-    field_types = {k: type(v).__name__ for k, v in samples[0].items()}
-
-    # Detect modality from field names only
-    field_set = set(fields)
-    modality = {
-        "text": bool(field_set & {"text", "content", "instruction", "input", "output"}),
-        "image": bool(field_set & {"image", "images", "image_url", "img", "img_path"}),
-        "audio": bool(field_set & {"audio", "audio_url", "audio_path"}),
-    }
-
-    # Basic stats without exposing content
-    text_field = next((f for f in ["text", "content", "instruction"] if f in field_set), None)
-    length_stats = None
-    if text_field:
-        lengths = [len(str(s.get(text_field, ""))) for s in samples]
-        length_stats = {
-            "min": min(lengths),
-            "max": max(lengths),
-            "avg": sum(lengths) // len(lengths),
-        }
-
-    return {
-        "total_records": total,
-        "fields": fields,
-        "field_types": field_types,
-        "modality": modality,
-        "text_field_candidate": text_field,
-        "sample_length_stats": length_stats,
-    }
-
-info = probe_structure("./sensitive_data.jsonl")
-print(json.dumps(info, indent=2))
+```bash
+djx tool run inspect_dataset --input-json '{"dataset_path":"./sensitive_data.jsonl","sample_size":5}'
 ```
+
+The output JSON includes field names, types, record count, detected modality, and basic statistics — all without sending content to any LLM.
 
 ### 5.2 Content Probe via Local LLM
 
-When you need deeper understanding (language detection, domain classification, quality assessment), use the local model:
+When you need deeper understanding (language detection, domain classification, quality assessment), use `djx tool run execute_python_code` to run a local probe:
 
-```python
-import json
-from data_juicer_agents.utils.llm_gateway import call_model_json
-
-
-def probe_content_locally(dataset_path: str, model: str = "qwen3.5:0.8b") -> dict:
-    """
-    Probe dataset content using a LOCAL model only.
-    Prerequisite: Ollama is running and local mode env vars are set.
-    """
-    with open(dataset_path) as f:
-        samples = [json.loads(line) for line in f][:3]
-
-    # Send samples to LOCAL model only (localhost:11434)
-    result = call_model_json(
-        model_name=model,
-        prompt=f"""You are a data analyst. Analyze these dataset samples and return a JSON object with:
-{{
-  "language": "detected primary language (e.g., en, zh, ja, mixed)",
-  "domain": "content domain (e.g., medical, financial, legal, general, technical)",
-  "text_field": "which field contains the main text content",
-  "content_type": "what kind of content (articles, QA pairs, logs, records, etc.)",
-  "quality_issues": ["list of observed quality issues"],
-  "recommended_cleaning": ["list of suggested cleaning operations"],
-  "avg_text_length": approximate average character count of main text
-}}
-
-Dataset samples:
-{json.dumps(samples, ensure_ascii=False, indent=2)}""",
-        thinking=False,
-    )
-    return result
-
-
-# Ensure we're in local mode before probing
-assert is_local_mode(), "Switch to local mode first! Call switch_to_local_model()"
-
-probe = probe_content_locally("./sensitive_data.jsonl")
-print(f"Language: {probe.get('language')}")
-print(f"Domain: {probe.get('domain')}")
-print(f"Recommended cleaning: {probe.get('recommended_cleaning')}")
+```bash
+djx tool run execute_python_code --yes --input-json '{
+  "code": "import json\nfrom data_juicer_agents.utils.llm_gateway import call_model_json\n\nwith open(\"./sensitive_data.jsonl\") as f:\n    samples = [json.loads(line) for line in f][:3]\n\nresult = call_model_json(\n    model_name=\"qwen3.5:0.8b\",\n    prompt=f\"\"\"You are a data analyst. Analyze these dataset samples and return a JSON object with:\n{{\"language\": \"detected primary language\",\n\"domain\": \"content domain\",\n\"text_field\": \"which field contains the main text\",\n\"content_type\": \"what kind of content\",\n\"quality_issues\": [\"list of issues\"],\n\"recommended_cleaning\": [\"list of suggestions\"]}}\n\nDataset samples:\n{json.dumps(samples, ensure_ascii=False, indent=2)}\"\"\",\n    thinking=False)\nprint(json.dumps(result, indent=2, ensure_ascii=False))"
+}'
 ```
+
+> **Prerequisite**: Ensure local mode environment variables are set (`source ~/.dja_local_env`) before running. All data stays on this machine via `localhost:11434`.
 
 ### 5.3 Probe-Then-Build Pattern
 
@@ -370,49 +297,26 @@ The full private data workflow follows this pattern:
 2. Content Probe (local LLM)    → understand language, domain, quality
 3. Operator Selection            → choose operators based on probe results
 4. Recipe Generation (local LLM) → generate YAML recipe
-5. Recipe Execution (dj-process) → runs locally, no LLM involved
+5. Recipe Execution (djx)        → runs locally, no LLM involved
 6. Result Verification           → check output quality
 ```
 
 Example combining probes into recipe generation:
 
-```python
-import json
+```bash
+# Step 1: Structure probe via djx
+djx tool run inspect_dataset --input-json '{"dataset_path":"./sensitive_data.jsonl","sample_size":5}'
 
-# Step 1: Structure probe
-structure = probe_structure("./sensitive_data.jsonl")
-print(f"Dataset: {structure['total_records']} records, fields: {structure['fields']}")
+# Step 2: Content probe via local LLM (see section 5.2)
+djx tool run execute_python_code --yes --input-json '{
+  "code": "import json\nfrom data_juicer_agents.utils.llm_gateway import call_model_json\nwith open(\"./sensitive_data.jsonl\") as f:\n    samples = [json.loads(line) for line in f][:3]\nresult = call_model_json(model_name=\"qwen3.5:0.8b\", prompt=f\"Analyze these samples and return JSON with language, domain, text_field, quality_issues: {json.dumps(samples, ensure_ascii=False)}\", thinking=False)\nprint(json.dumps(result, indent=2, ensure_ascii=False))"
+}'
 
-# Step 2: Content probe (local LLM)
-content = probe_content_locally("./sensitive_data.jsonl")
+# Step 3-4: Retrieve operators and build plan
+djx tool run retrieve_operators --input-json '{"intent":"clean and deduplicate text","top_k":5,"mode":"auto"}'
 
-# Step 3-4: Use probe results to generate recipe (local LLM)
-recipe_result = call_model_json(
-    model_name="qwen3.5:0.8b",
-    prompt=f"""Based on this dataset analysis, generate a Data-Juicer YAML recipe as JSON.
-
-Dataset info:
-- Records: {structure['total_records']}
-- Fields: {structure['fields']}
-- Text field: {content.get('text_field', 'text')}
-- Language: {content.get('language', 'unknown')}
-- Domain: {content.get('domain', 'general')}
-- Quality issues: {content.get('quality_issues', [])}
-
-Return JSON with:
-{{
-  "project_name": "a short project name",
-  "text_keys": ["the text field name"],
-  "np": 4,
-  "process": [list of operator dicts like {{"operator_name": {{params}}}}]
-}}
-
-Choose operators from: fix_unicode_mapper, whitespace_normalization_mapper,
-clean_html_mapper, text_length_filter, words_num_filter, document_deduplicator,
-document_minhash_deduplicator, special_characters_filter, language_id_score_filter""",
-    thinking=False,
-)
-print(f"Generated recipe: {json.dumps(recipe_result, indent=2)}")
+# Step 5: Build specs, assemble, validate, save, and execute
+# (chain djx tool run build_dataset_spec → build_process_spec → build_system_spec → assemble_plan → plan_validate → plan_save → apply_recipe)
 ```
 
 ---
@@ -421,38 +325,54 @@ print(f"Generated recipe: {json.dumps(recipe_result, indent=2)}")
 
 ### Typical Usage: Processing Sensitive Data
 
-```python
+```bash
 # 1. Verify local model is ready
-assert check_ollama_ready("qwen3.5:0.8b"), "Start Ollama first!"
+ollama list | grep qwen3.5:0.8b
 
 # 2. Switch to local mode
-switch_to_local_model("qwen3.5:0.8b")
+source ~/.dja_local_env
 
-# 3. Probe the dataset locally (see Section 5 for details)
-structure = probe_structure("./sensitive_data.jsonl")
-content = probe_content_locally("./sensitive_data.jsonl")
-print(f"Probed: {structure['total_records']} records, domain={content.get('domain')}")
+# 3. Inspect the dataset (safe — reads file metadata only)
+djx tool run inspect_dataset --input-json '{"dataset_path":"./sensitive_data.jsonl","sample_size":5}'
 
 # 4. Retrieve operators — auto mode falls back to lexical search locally
-from data_juicer_agents.tools.retrieve import RETRIEVE_OPERATORS
-from data_juicer_agents.core.tool import ToolContext
+# Describe the TASK, not the DATA CONTENT
+djx tool run retrieve_operators --input-json '{
+  "intent": "clean and deduplicate text data",
+  "top_k": 5,
+  "mode": "auto",
+  "dataset_path": "./sensitive_data.jsonl"
+}'
 
-ctx = ToolContext(working_dir="./.djx")
-result = RETRIEVE_OPERATORS.execute(
-    ctx=ctx,
-    raw_input={
-        "intent": "clean and deduplicate text data",  # describe TASK, not DATA content
-        "top_k": 5,
-        "mode": "auto",
-        "dataset_path": "./sensitive_data.jsonl",
-    },
-)
+# 5. Build specs and assemble plan (use outputs from steps 3-4)
+djx tool run build_dataset_spec --input-json '{
+  "intent":"clean and deduplicate text data",
+  "dataset_path":"./sensitive_data.jsonl",
+  "export_path":"./sensitive_cleaned.jsonl",
+  "dataset_profile": {"...": "paste inspect_dataset output here"}
+}'
+djx tool run build_process_spec --input-json '{
+  "operators": [
+    {"name":"fix_unicode_mapper","params":{}},
+    {"name":"text_length_filter","params":{"min_len":50}},
+    {"name":"document_deduplicator","params":{"lowercase":true}}
+  ]
+}'
+djx tool run build_system_spec --input-json '{"np":4,"executor_type":"default"}'
 
-# 5. Generate recipe and process data — everything stays local
-# ...
+# 6. Assemble, validate, save, and execute
+djx tool run assemble_plan --input-json '{
+  "intent":"clean and deduplicate text data",
+  "dataset_spec": {"...": "from step 5"},
+  "process_spec": {"...": "from step 5"},
+  "system_spec": {"...": "from step 5"}
+}'
+djx tool run plan_validate --input-json '{"plan_payload": {"...": "from assemble_plan"}}'
+djx tool run plan_save --yes --input-json '{"plan_payload": {"...": "from assemble_plan"},"output_path":"./plans/sensitive_plan.yaml"}'
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/sensitive_plan.yaml","confirm":true}'
 
-# 6. Switch back to cloud when done with private data (optional)
-switch_to_cloud_model()
+# 7. Switch back to cloud when done with private data (optional)
+source ~/.dja_cloud_env
 ```
 
 ### Using CLI with Local Mode
@@ -461,10 +381,12 @@ switch_to_cloud_model()
 # Activate local mode
 source ~/.dja_local_env
 
-# Now all djx / dj-agents commands use the local model
-# The agent will probe your data locally before generating a recipe
-djx plan --intent "clean and deduplicate text data" --dataset ./private.jsonl --export ./cleaned.jsonl
-dj-process --config recipe.yaml
+# Now all djx commands use the local model
+# Inspect, plan, and execute — everything stays local
+djx tool run inspect_dataset --input-json '{"dataset_path":"./private.jsonl","sample_size":5}'
+djx tool run retrieve_operators --input-json '{"intent":"clean and deduplicate text data","top_k":5,"mode":"auto"}'
+# ... build specs, assemble plan, validate, save ...
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/my_plan.yaml","confirm":true}'
 
 # Verify no external API calls were made (optional)
 # Ollama logs are at: ~/.ollama/logs/server.log

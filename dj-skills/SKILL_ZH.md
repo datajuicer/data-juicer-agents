@@ -1,6 +1,6 @@
 ---
 name: data-juicer
-description: "由 Data-Juicer 驱动的端到端数据处理技能。指导智能体完成环境设置、数据集检查、算子选择、YAML 配方生成和 dj-process 执行，以自主地清洗、过滤、去重和转换数据集。"
+description: "由 Data-Juicer 驱动的端到端数据处理技能。指导智能体完成环境设置、数据集检查、算子选择、YAML 配方生成和 djx tool 执行，以自主地清洗、过滤、去重和转换数据集。"
 auto_load: true
 ---
 
@@ -169,7 +169,7 @@ python -c "import data_juicer_agents; print('data-juicer-agents OK')"
 
 ## 2. 生成 YAML 配方
 
-本节指导您如何根据用户的数据处理意图创建与 dj-process 兼容的 YAML 配方。
+本节指导您如何根据用户的数据处理意图创建 YAML 配方。
 
 ### 推荐方法：djx 工具链
 
@@ -361,7 +361,7 @@ djx tool run retrieve_operators --input-json '{
 
 ### 步骤 5：编写 YAML 配方
 
-**配方格式**（这是 `dj-process --config` 期望的）：
+**配方格式**（这是 `djx tool run apply_recipe` 期望的）：
 
 ```yaml
 project_name: my_project
@@ -497,7 +497,7 @@ process:
 
 ## 3. 执行配方
 
-直接在 YAML 配方上运行 `dj-process`，或在保存的计划上使用 `djx tool run apply_recipe`。
+使用 `djx tool run apply_recipe` 在保存的计划或 YAML 配方上执行。
 
 ### 方法 1：djx tool run apply_recipe（推荐）
 
@@ -513,9 +513,9 @@ djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/my_plan.yaml
 djx tool run apply_recipe --yes --input-json '{"plan_path":"./plans/my_plan.yaml","confirm":true,"dry_run":true}'
 ```
 
-### 方法 2：直接 dj-process（用于手动 YAML 配方）
+### 方法 2：直接 dj-process（仅用于手动 YAML 配方）
 
-如果您手动编写了 YAML 配方（不是通过计划链），直接运行 `dj-process`：
+如果您手动编写了 YAML 配方（不是通过计划链），可以直接运行 `dj-process`：
 
 ```bash
 dj-process --config recipe.yaml
@@ -533,7 +533,7 @@ djx tool run inspect_dataset --input-json '{"dataset_path":"./input.jsonl","samp
 #### 2. 执行
 
 ```bash
-dj-process --config recipe.yaml
+djx tool run apply_recipe --yes --input-json '{"plan_path":"./recipe.yaml","confirm":true}'
 ```
 
 监控 stdout 以查看进度。命令在成功时以退出代码 0 退出。
@@ -826,7 +826,7 @@ process:
 
 **全局配置（通过环境变量）：**
 
-或者，在运行 `dj-process` 之前设置这些环境变量，使所有语义算子默认使用 Ollama：
+或者，在运行 `djx tool run apply_recipe` 之前设置这些环境变量，使所有语义算子默认使用 Ollama：
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:11434/v1"
