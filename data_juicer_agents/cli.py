@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-"""CLI entrypoint for Data-Juicer-Agents v0.1."""
+"""CLI entrypoint for the ``djx`` command."""
 
 from __future__ import annotations
 
 import argparse
 import sys
 
+from data_juicer_agents import __version__
 from data_juicer_agents.commands.apply_cmd import run_apply
 from data_juicer_agents.commands.dev_cmd import run_dev
 from data_juicer_agents.commands.plan_cmd import run_plan
@@ -50,7 +51,12 @@ def _add_output_level_args(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="djx",
-        description="Agentic CLI for Data-Juicer workflows (v0.1)",
+        description="Agentic CLI for Data-Juicer workflows",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     _add_output_level_args(parser, set_default=True)
     output_parent = argparse.ArgumentParser(add_help=False)
