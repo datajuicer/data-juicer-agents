@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data-juicer-agents"
-version = "0.0.1"
+version = "0.0.2"
 description = "A multi-agent data processing system built on AgentScope and Data-Juicer"
 readme = "README.md"
 license = "Apache-2.0"
