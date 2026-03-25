@@ -12,6 +12,7 @@
 
 Additional entry:
 - `dj-agents`: `data_juicer_agents/session_cli.py`
+- `djx --version`: print the installed package version
 
 The CLI does not include `trace`, `templates`, or `evaluate`.
 

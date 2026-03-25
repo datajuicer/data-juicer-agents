@@ -517,13 +517,14 @@
                   
   <h1>data_juicer_agents.cli 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;CLI entrypoint for Data-Juicer-Agents v0.1.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;CLI entrypoint for the ``djx`` command.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.commands.apply_cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_apply</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.commands.dev_cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_dev</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.commands.plan_cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_plan</span>
@@ -570,7 +571,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;djx&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Agentic CLI for Data-Juicer workflows (v0.1)&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Agentic CLI for Data-Juicer workflows&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;%(prog)s </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">_add_output_level_args</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">set_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">output_parent</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
