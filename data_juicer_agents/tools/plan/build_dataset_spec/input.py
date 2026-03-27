@@ -1,10 +1,21 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 
 class BuildDatasetSpecInput(BaseModel):
-    intent: str = Field(description="User intent for the current planning task.")
+    model_config = ConfigDict(extra="allow")  # Allow advanced dataset fields as extra kwargs
+
+    intent: str = Field(
+        description=(
+            "User intent for the current planning task. "
+            "For advanced dataset options (e.g., export_type, export_shard_size, "
+            "export_in_parallel, load_dataset_kwargs, suffixes, image_special_token, etc.), "
+            "call list_dataset_fields first to discover available fields, "
+            "then pass them directly as additional arguments to this tool."
+        )
+    )
     export_path: str = Field(description="Output dataset path.")
     dataset_path: str = Field(
         default="",

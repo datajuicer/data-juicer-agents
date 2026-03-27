@@ -55,8 +55,6 @@ dataset_fields = [
     "video_special_token",
     "eoc_special_token",
     "suffixes",
-    "keep_stats_in_res_ds",
-    "keep_hashes_in_res_ds",
 ]
 
 # System/runtime-related field names (executor, parallelism, caching, etc.)
@@ -119,6 +117,8 @@ system_fields = [
     "use_cache",
     "use_checkpoint",
     "work_dir",
+    "keep_stats_in_res_ds",
+    "keep_hashes_in_res_ds",
 ]
 
 # ---------------------------------------------------------------------------

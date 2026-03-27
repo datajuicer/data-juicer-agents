@@ -22,7 +22,23 @@ def build_dataset_spec(
     audio_key_hint: str = "",
     video_key_hint: str = "",
     image_bytes_key_hint: str = "",
+    **kwargs: Any,
 ) -> Dict[str, Any]:
+    # Validate and collect extra dataset fields from kwargs
+    if kwargs:
+        from data_juicer_agents.utils.dj_config_bridge import dataset_fields as _dataset_fields
+        unknown = [k for k in kwargs if k not in _dataset_fields]
+        if unknown:
+            return {
+                "ok": False,
+                "error_type": "unknown_dataset_field",
+                "message": (
+                    f"Unknown dataset field(s): {unknown}. "
+                    "Call list_dataset_fields to see valid fields."
+                ),
+                "requires": [],
+            }
+
     dataset_path = str(dataset_path or "").strip()
     export_path = str(export_path or "").strip()
     source_count = int(bool(dataset_path)) + int(bool(dataset)) + int(bool(generated_dataset_config))
@@ -79,6 +95,8 @@ def build_dataset_spec(
                 "dataset": dataset,
                 "generated_dataset_config": generated_dataset_config,
                 "export_path": export_path,
+                # Extra dataset fields (export_type, export_shard_size, load_dataset_kwargs, etc.)
+                **kwargs,
             },
             "binding": {
                 "modality": modality,

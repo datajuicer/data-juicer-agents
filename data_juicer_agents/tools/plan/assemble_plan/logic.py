@@ -57,13 +57,20 @@ class PlannerCore:
         """Assemble a DJ-native recipe dict from the three normalized specs."""
         recipe: Dict[str, Any] = {}
 
-        # --- dataset IO fields ---
-        recipe["dataset_path"] = normalized_dataset_spec.io.dataset_path
-        recipe["export_path"] = normalized_dataset_spec.io.export_path
-        if normalized_dataset_spec.io.dataset:
-            recipe["dataset"] = normalized_dataset_spec.io.dataset.to_dict()
-        if normalized_dataset_spec.io.generated_dataset_config:
-            recipe["generated_dataset_config"] = normalized_dataset_spec.io.generated_dataset_config.to_dict()
+        # --- dataset IO fields (including extra fields like export_type, export_shard_size, etc.) ---
+        io_dict = normalized_dataset_spec.io.to_dict()
+        # Always include core path fields
+        recipe["dataset_path"] = io_dict.get("dataset_path", "")
+        recipe["export_path"] = io_dict.get("export_path", "")
+        if io_dict.get("dataset") is not None:
+            recipe["dataset"] = io_dict["dataset"]
+        if io_dict.get("generated_dataset_config") is not None:
+            recipe["generated_dataset_config"] = io_dict["generated_dataset_config"]
+        # Merge any extra dataset fields (export_type, export_shard_size, load_dataset_kwargs, etc.)
+        core_io_keys = {"dataset_path", "export_path", "dataset", "generated_dataset_config"}
+        for k, v in io_dict.items():
+            if k not in core_io_keys and v is not None:
+                recipe[k] = v
 
         # --- dataset binding fields ---
         binding = normalized_dataset_spec.binding

@@ -207,6 +207,8 @@ class DJSessionAgent:
             "Use retrieve_operators before build_process_spec, then pass an explicit operators array with canonical operator names and filled params. build_process_spec will not canonicalize or repair operator names for you. Do not pass only operator names when a concrete threshold, mode, or option is already known.\n"
             "Use build_system_spec to produce the deterministic minimal runtime profile, then pass the full dataset_spec, process_spec, and system_spec objects into assemble_plan.\n"
             "If the default system settings cannot meet user requirements, use list_system_config to discover all available system configuration options before build_system_spec.\n"
+            "If the user needs advanced dataset options, call list_dataset_fields first to discover available parameters and their defaults, "
+            "then pass the relevant fields directly as additional arguments to build_dataset_spec.\n"
             "After assemble_plan, pass the full returned plan object into plan_validate and plan_save. When calling plan_save, also provide an explicit output_path.\n"
             "When calling apply_recipe, always pass an explicit plan_path. apply_recipe executes the plan and does not validate it for you; call plan_validate explicitly beforehand when validation is needed.\n"
             "Never ignore inspect/retrieve results when forming build_dataset_spec or build_process_spec inputs.\n"

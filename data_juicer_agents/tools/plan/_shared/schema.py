@@ -244,11 +244,16 @@ class DatasetIOSpec:
     dataset: Optional[DatasetObjectConfig] = None
     generated_dataset_config: Optional[GeneratedDatasetConfig] = None
     export_path: str = ""
+    # Extra dataset fields storage for advanced options (export_type, export_shard_size,
+    # load_dataset_kwargs, suffixes, image_special_token, etc.).
+    # These are passed via build_dataset_spec kwargs and transparently forwarded to the recipe.
+    _extra_fields: Dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "DatasetIOSpec":
         dataset_raw = data.get("dataset")
         generated_raw = data.get("generated_dataset_config")
+        core_keys = {"dataset_path", "dataset", "generated_dataset_config", "export_path"}
         return cls(
             dataset_path=str(data.get("dataset_path", "")).strip(),
             dataset=DatasetObjectConfig.from_dict(dataset_raw) if isinstance(dataset_raw, dict) else None,
@@ -256,10 +261,11 @@ class DatasetIOSpec:
                 GeneratedDatasetConfig.from_dict(generated_raw) if isinstance(generated_raw, dict) else None
             ),
             export_path=str(data.get("export_path", "")).strip(),
+            _extra_fields={k: v for k, v in data.items() if k not in core_keys},
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        result: Dict[str, Any] = {
             "dataset_path": self.dataset_path,
             "dataset": self.dataset.to_dict() if self.dataset is not None else None,
             "generated_dataset_config": (
@@ -269,6 +275,9 @@ class DatasetIOSpec:
             ),
             "export_path": self.export_path,
         }
+        # Merge extra fields (advanced dataset options) into the output
+        result.update(self._extra_fields)
+        return result
 
 
 @dataclass
