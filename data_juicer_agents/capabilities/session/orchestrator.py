@@ -202,6 +202,7 @@ class DJSessionAgent:
             "inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save.\n"
             "All plan tools require explicit arguments. Do not rely on any hidden session defaults, current draft state, or current context fallback.\n"
             "Use inspect_dataset first, then pass its full dataset_profile output into build_dataset_spec together with explicit intent, dataset_path, and export_path.\n"
+            "For non-trivial dataset sources (e.g., mixed-weight local files, remote S3, data samples), call list_dataset_load_strategies first to discover available loading strategies, then use the 'dataset' field in build_dataset_spec.\n"
             "retrieve_operators does not inspect the dataset for you and does not return dataset_profile. If dataset structure matters, call inspect_dataset explicitly first.\n"
             "Use retrieve_operators before build_process_spec, then pass an explicit operators array with canonical operator names and filled params. build_process_spec will not canonicalize or repair operator names for you. Do not pass only operator names when a concrete threshold, mode, or option is already known.\n"
             "Use build_system_spec to produce the deterministic minimal runtime profile, then pass the full dataset_spec, process_spec, and system_spec objects into assemble_plan.\n"

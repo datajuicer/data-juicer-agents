@@ -25,7 +25,7 @@ class PlannerCore:
         cls,
         *,
         user_intent: str,
-        dataset_path: str,
+        dataset_path: str = "",
         export_path: str,
         custom_operator_paths: Iterable[Any] | None = None,
     ) -> PlanContext:
@@ -39,7 +39,6 @@ class PlannerCore:
             name
             for name, value in {
                 "user_intent": context.user_intent,
-                "dataset_path": context.dataset_path,
                 "export_path": context.export_path,
             }.items()
             if not value
@@ -62,11 +61,9 @@ class PlannerCore:
         recipe["dataset_path"] = normalized_dataset_spec.io.dataset_path
         recipe["export_path"] = normalized_dataset_spec.io.export_path
         if normalized_dataset_spec.io.dataset:
-            recipe["dataset"] = dict(normalized_dataset_spec.io.dataset)
+            recipe["dataset"] = normalized_dataset_spec.io.dataset.to_dict()
         if normalized_dataset_spec.io.generated_dataset_config:
-            recipe["generated_dataset_config"] = dict(
-                normalized_dataset_spec.io.generated_dataset_config
-            )
+            recipe["generated_dataset_config"] = normalized_dataset_spec.io.generated_dataset_config.to_dict()
 
         # --- dataset binding fields ---
         binding = normalized_dataset_spec.binding

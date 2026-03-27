@@ -25,14 +25,10 @@ def normalize_dataset_spec(
         {
             "io": {
                 "dataset_path": str(source.io.dataset_path or "").strip(),
-                "dataset": (
-                    normalize_params(source.io.dataset)
-                    if isinstance(source.io.dataset, dict)
-                    else None
-                ),
+                "dataset": source.io.dataset.to_dict() if source.io.dataset is not None else None,
                 "generated_dataset_config": (
-                    normalize_params(source.io.generated_dataset_config)
-                    if isinstance(source.io.generated_dataset_config, dict)
+                    source.io.generated_dataset_config.to_dict()
+                    if source.io.generated_dataset_config is not None
                     else None
                 ),
                 "export_path": str(source.io.export_path or "").strip(),
@@ -114,14 +110,10 @@ def validate_dataset_spec_payload(
     if source_warning and source_warning not in warnings:
         warnings.append(source_warning)
 
-    if io.dataset and not io.dataset_path:
-        errors.append("dataset source objects are reserved for a later iteration; use dataset_path for now")
-    if io.generated_dataset_config and not io.dataset_path:
+    if source_count == 0:
         errors.append(
-            "generated_dataset_config is reserved for a later iteration; use dataset_path for now"
+            "at least one dataset source is required: dataset_path, dataset, or generated_dataset_config"
         )
-    if not io.dataset_path:
-        errors.append("dataset_path is required in this iteration")
     if not io.export_path:
         errors.append("export_path is required")
 
@@ -164,14 +156,46 @@ def validate_dataset_spec_payload(
             if value and known_keys and value not in known_keys:
                 errors.append(f"{field_name} not found in inspected dataset profile: {value}")
 
-    dataset_cfg = io.dataset or {}
-    if isinstance(dataset_cfg, dict) and isinstance(dataset_cfg.get("configs"), list):
-        types = [item.get("type") for item in dataset_cfg.get("configs", []) if isinstance(item, dict)]
-        normalized_types = {str(item).strip() for item in types if str(item).strip()}
-        if len(normalized_types) > 1:
-            errors.append("mixture of different dataset source types is not supported")
-        if normalized_types == {"remote"} and len(dataset_cfg.get("configs", [])) > 1:
-            errors.append("multiple remote datasets are not supported")
+    if io.dataset:
+        if not io.dataset.configs:
+            errors.append("dataset.configs must be a non-empty list")
+        else:
+            types = [c.type for c in io.dataset.configs]
+            normalized_types = {str(t).strip() for t in types if str(t).strip()}
+            if len(normalized_types) > 1:
+                errors.append("mixture of different dataset source types is not supported")
+            if normalized_types == {"remote"} and len(io.dataset.configs) > 1:
+                errors.append("multiple remote datasets are not supported")
+
+            # Validate against truly implemented strategies
+            try:
+                from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge as _get_bridge
+                _bridge = _get_bridge()
+                _implemented = _bridge.get_implemented_load_strategies()
+                _valid_combos = {(s["type"], s["source"]) for s in _implemented if s.get("source")}
+                _valid_types = {s["type"] for s in _implemented}
+
+                for cfg in io.dataset.configs:
+                    if cfg.source:
+                        combo = (cfg.type, cfg.source)
+                        if combo not in _valid_combos:
+                            _available = [{"type": s["type"], "source": s["source"]} for s in _implemented if s.get("source")]
+                            errors.append(
+                                f"Dataset source type='{cfg.type}', source='{cfg.source}' is not implemented "
+                                f"in the current Data-Juicer installation. "
+                                f"Call list_dataset_load_strategies to see available options: {_available}"
+                            )
+                    elif cfg.type not in _valid_types:
+                        errors.append(
+                            f"Dataset type='{cfg.type}' is not implemented in the current Data-Juicer installation. "
+                            f"Available types: {sorted(_valid_types)}"
+                        )
+            except Exception:
+                pass
+
+    if io.generated_dataset_config:
+        if not io.generated_dataset_config.type:
+            errors.append('generated_dataset_config must have a non-empty "type" field')
 
     # DJ parser validation for dataset fields
     try:
@@ -193,6 +217,10 @@ def validate_dataset_spec_payload(
             dataset_dict["video_key"] = binding.video_key
         if binding.image_bytes_key:
             dataset_dict["image_bytes_key"] = binding.image_bytes_key
+        if io.dataset:
+            dataset_dict["dataset"] = io.dataset.to_dict()
+        if io.generated_dataset_config:
+            dataset_dict["generated_dataset_config"] = io.generated_dataset_config.to_dict()
         if dataset_dict:
             is_valid, dj_errors = bridge.validate(dataset_dict)
             if not is_valid:

@@ -293,9 +293,60 @@ class DJConfigBridge:
             op_name, param_name = dest.split(".", 1)
             if op_name in op_param_map:
                 op_param_map[op_name].add(param_name)
-
         return op_param_map, known_op_names
 
+    def get_implemented_load_strategies(
+        self, executor_type: str = "default"
+    ) -> List[Dict[str, Any]]:
+        """Dynamically probe DataLoadStrategyRegistry to find truly implemented
+        load strategies by inspecting source code for NotImplementedError.
+
+        This avoids hardcoding a whitelist: when the main library fixes a
+        placeholder strategy, the agent automatically discovers it on the next
+        startup with zero manual maintenance.
+
+        Args:
+            executor_type: Filter by executor type ('default', 'ray', or '*' for all).
+
+        Returns:
+            List of dicts with keys: executor_type, type, source,
+            config_validation_rules (required_fields, optional_fields).
+        """
+        import inspect
+
+        try:
+            from data_juicer.core.data.load_strategy import DataLoadStrategyRegistry
+        except ImportError:
+            return []
+
+        implemented: List[Dict[str, Any]] = []
+        for key, strategy_cls in DataLoadStrategyRegistry._strategies.items():
+            # Filter by executor type ('*' means wildcard / match all)
+            if executor_type != "*" and key.executor_type not in (executor_type, "*"):
+                continue
+
+            try:
+                source_code = inspect.getsource(strategy_cls.load_data)
+                # If the method body raises NotImplementedError, it is a placeholder
+                if "raise NotImplementedError" in source_code:
+                    continue
+            except (OSError, TypeError):
+                # Cannot inspect source (e.g. built-in) → skip to be safe
+                continue
+
+            # Extract CONFIG_VALIDATION_RULES if the strategy declares them
+            config_rules = getattr(strategy_cls, "CONFIG_VALIDATION_RULES", {})
+
+            implemented.append(
+                {
+                    "executor_type": key.executor_type,
+                    "type": key.data_type,
+                    "source": key.data_source,
+                    "config_validation_rules": config_rules,
+                }
+            )
+
+        return implemented
 
 # ---------------------------------------------------------------------------
 # Singleton

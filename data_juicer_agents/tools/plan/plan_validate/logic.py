@@ -60,13 +60,18 @@ class PlanValidator:
         errors = validate_plan_schema(plan)
         errors.extend(validate_recipe_with_dj(plan.recipe))
 
-        dataset_path_str = plan.recipe.get("dataset_path")
-        if not dataset_path_str:
-            errors.append("recipe.dataset_path is required")
-        else:
-            dataset_path = Path(dataset_path_str).expanduser()
+        has_dataset_path = bool(plan.recipe.get("dataset_path"))
+        has_dataset = bool(plan.recipe.get("dataset"))
+        has_generated_config = bool(plan.recipe.get("generated_dataset_config"))
+
+        if not (has_dataset_path or has_dataset or has_generated_config):
+            errors.append(
+                "recipe must have at least one dataset source: dataset_path, dataset, or generated_dataset_config"
+            )
+        elif has_dataset_path:
+            dataset_path = Path(str(plan.recipe["dataset_path"])).expanduser()
             if not dataset_path.exists():
-                errors.append(f"dataset_path does not exist: {dataset_path_str}")
+                errors.append(f"dataset_path does not exist: {plan.recipe['dataset_path']}")
 
         export_path_str = plan.recipe.get("export_path")
         if not export_path_str:

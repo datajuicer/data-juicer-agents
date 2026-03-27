@@ -130,23 +130,130 @@ class SystemSpec:
 
 
 @dataclass
+class DatasetSourceConfig:
+    """Single dataset source entry (one item in dataset.configs)."""
+
+    type: str = field(
+        default="local",
+        metadata={"description": "Required str. Strategy type (e.g. 'local'). Must match one of the 'type' values returned by list_dataset_load_strategies."},
+    )
+    path: Optional[str] = field(
+        default=None,
+        metadata={"description": "Optional str. Path to the dataset file or directory (for file-based sources)."},
+    )
+    source: Optional[str] = field(
+        default=None,
+        metadata={"description": "Optional str. Sub-source specifier (e.g. 'file', 's3'). Must match 'source' in the chosen strategy entry."},
+    )
+    weight: Optional[float] = field(
+        default=None,
+        metadata={"description": "Optional float. Sampling weight for this source when mixing multiple sources (default: 1.0)."},
+    )
+    split: Optional[str] = field(
+        default=None,
+        metadata={"description": "Optional str. Dataset split to load (e.g. 'train', 'test', 'validation')."},
+    )
+    _extra_kwargs: Dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DatasetSourceConfig":
+        core_keys = {"type", "path", "source", "weight", "split"}
+        weight_raw = data.get("weight")
+        return cls(
+            type=str(data.get("type", "local") or "local").strip(),
+            path=_coerce_optional_text(data.get("path")),
+            source=_coerce_optional_text(data.get("source")),
+            weight=float(weight_raw) if weight_raw is not None else None,
+            split=_coerce_optional_text(data.get("split")),
+            _extra_kwargs={k: v for k, v in data.items() if k not in core_keys},
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {"type": self.type}
+        if self.path is not None:
+            result["path"] = self.path
+        if self.source is not None:
+            result["source"] = self.source
+        if self.weight is not None:
+            result["weight"] = self.weight
+        if self.split is not None:
+            result["split"] = self.split
+        result.update(self._extra_kwargs)
+        return result
+
+
+@dataclass
+class DatasetObjectConfig:
+    """YAML-style dataset config block (the ``dataset:`` key in a DJ recipe)."""
+
+    configs: List["DatasetSourceConfig"] = field(
+        default_factory=list,
+        metadata={"description": "Required list. One or more source config dicts, each using the DatasetSourceConfig fields."},
+    )
+    max_sample_num: Optional[int] = field(
+        default=None,
+        metadata={"description": "Optional int. Cap the total number of samples loaded across all sources."},
+    )
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DatasetObjectConfig":
+        configs_raw = data.get("configs", [])
+        configs = [
+            DatasetSourceConfig.from_dict(c)
+            for c in configs_raw
+            if isinstance(c, dict)
+        ]
+        max_sample_num_raw = data.get("max_sample_num")
+        return cls(
+            configs=configs,
+            max_sample_num=int(max_sample_num_raw) if max_sample_num_raw is not None else None,
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {"configs": [c.to_dict() for c in self.configs]}
+        if self.max_sample_num is not None:
+            result["max_sample_num"] = self.max_sample_num
+        return result
+
+
+@dataclass
+class GeneratedDatasetConfig:
+    """Config for dynamically generated datasets via Data-Juicer FORMATTERS."""
+
+    type: str = ""
+    _extra_kwargs: Dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "GeneratedDatasetConfig":
+        return cls(
+            type=str(data.get("type", "") or "").strip(),
+            _extra_kwargs={k: v for k, v in data.items() if k != "type"},
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {"type": self.type}
+        result.update(self._extra_kwargs)
+        return result
+
+
+@dataclass
 class DatasetIOSpec:
     """Dataset input/output shape used by the recipe."""
 
     dataset_path: str = ""
-    dataset: Optional[Dict[str, Any]] = None
-    generated_dataset_config: Optional[Dict[str, Any]] = None
+    dataset: Optional[DatasetObjectConfig] = None
+    generated_dataset_config: Optional[GeneratedDatasetConfig] = None
     export_path: str = ""
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "DatasetIOSpec":
-        dataset = data.get("dataset")
-        generated = data.get("generated_dataset_config")
+        dataset_raw = data.get("dataset")
+        generated_raw = data.get("generated_dataset_config")
         return cls(
             dataset_path=str(data.get("dataset_path", "")).strip(),
-            dataset=dict(dataset) if isinstance(dataset, dict) else None,
+            dataset=DatasetObjectConfig.from_dict(dataset_raw) if isinstance(dataset_raw, dict) else None,
             generated_dataset_config=(
-                dict(generated) if isinstance(generated, dict) else None
+                GeneratedDatasetConfig.from_dict(generated_raw) if isinstance(generated_raw, dict) else None
             ),
             export_path=str(data.get("export_path", "")).strip(),
         )
@@ -154,10 +261,10 @@ class DatasetIOSpec:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "dataset_path": self.dataset_path,
-            "dataset": dict(self.dataset) if isinstance(self.dataset, dict) else None,
+            "dataset": self.dataset.to_dict() if self.dataset is not None else None,
             "generated_dataset_config": (
-                dict(self.generated_dataset_config)
-                if isinstance(self.generated_dataset_config, dict)
+                self.generated_dataset_config.to_dict()
+                if self.generated_dataset_config is not None
                 else None
             ),
             "export_path": self.export_path,
@@ -387,7 +494,10 @@ class PlanModel:
 __all__ = [
     "DatasetBindingSpec",
     "DatasetIOSpec",
+    "DatasetObjectConfig",
+    "DatasetSourceConfig",
     "DatasetSpec",
+    "GeneratedDatasetConfig",
     "PlanContext",
     "PlanModel",
     "ProcessOperator",
