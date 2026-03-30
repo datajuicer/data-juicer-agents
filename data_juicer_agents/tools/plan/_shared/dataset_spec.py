@@ -195,24 +195,36 @@ def validate_dataset_spec_payload(
                 from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge as _get_bridge
                 _bridge = _get_bridge()
                 _implemented = _bridge.get_implemented_load_strategies()
-                _valid_combos = {(s["type"], s["source"]) for s in _implemented if s.get("source")}
-                _valid_types = {s["type"] for s in _implemented}
 
-                for cfg in io.dataset.configs:
-                    if cfg.source:
-                        combo = (cfg.type, cfg.source)
-                        if combo not in _valid_combos:
-                            _available = [{"type": s["type"], "source": s["source"]} for s in _implemented if s.get("source")]
+                if not _implemented:
+                    # Strategy discovery returned nothing — Data-Juicer may be
+                    # unavailable or registry introspection failed.  Report a
+                    # single clear error instead of misleading per-entry
+                    # "not implemented" messages.
+                    errors.append(
+                        "Cannot validate dataset load strategies: Data-Juicer strategy "
+                        "discovery returned no results. Ensure Data-Juicer is installed "
+                        "and its load-strategy registry is accessible."
+                    )
+                else:
+                    _valid_combos = {(s["type"], s["source"]) for s in _implemented if s.get("source")}
+                    _valid_types = {s["type"] for s in _implemented}
+
+                    for cfg in io.dataset.configs:
+                        if cfg.source:
+                            combo = (cfg.type, cfg.source)
+                            if combo not in _valid_combos:
+                                _available = [{"type": s["type"], "source": s["source"]} for s in _implemented if s.get("source")]
+                                errors.append(
+                                    f"Dataset source type='{cfg.type}', source='{cfg.source}' is not implemented "
+                                    f"in the current Data-Juicer installation. "
+                                    f"Call list_dataset_load_strategies to see available options: {_available}"
+                                )
+                        elif cfg.type not in _valid_types:
                             errors.append(
-                                f"Dataset source type='{cfg.type}', source='{cfg.source}' is not implemented "
-                                f"in the current Data-Juicer installation. "
-                                f"Call list_dataset_load_strategies to see available options: {_available}"
+                                f"Dataset type='{cfg.type}' is not implemented in the current Data-Juicer installation. "
+                                f"Available types: {sorted(_valid_types)}"
                             )
-                    elif cfg.type not in _valid_types:
-                        errors.append(
-                            f"Dataset type='{cfg.type}' is not implemented in the current Data-Juicer installation. "
-                            f"Available types: {sorted(_valid_types)}"
-                        )
             except Exception:
                 pass
 

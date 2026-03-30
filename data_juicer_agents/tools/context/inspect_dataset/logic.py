@@ -95,15 +95,22 @@ def _load_parquet_records(path: Path, sample_size: int) -> Tuple[List[Dict[str, 
         import pyarrow.parquet as pq
     except ImportError:
         return [], 0
-    table = pq.read_table(str(path))
-    total_rows = table.num_rows
-    sliced = table.slice(0, min(sample_size, total_rows))
-    rows = sliced.to_pydict()
-    # to_pydict returns {col: [values]}, convert to list of dicts
+
+    parquet_file = pq.ParquetFile(str(path))
+    # Read only the first batch of up to sample_size rows instead of
+    # materializing the entire file before slicing.
+    batch_iter = parquet_file.iter_batches(batch_size=sample_size)
+    try:
+        first_batch = next(batch_iter)
+    except StopIteration:
+        return [], 0
+
+    rows = first_batch.to_pydict()
     num_records = len(next(iter(rows.values()))) if rows else 0
-    records: List[Dict[str, Any]] = []
-    for i in range(num_records):
-        records.append({col: values[i] for col, values in rows.items()})
+    records: List[Dict[str, Any]] = [
+        {col: values[i] for col, values in rows.items()}
+        for i in range(num_records)
+    ]
     return records, num_records
 
 
