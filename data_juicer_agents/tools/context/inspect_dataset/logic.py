@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -77,6 +78,34 @@ def _load_json_records(path: Path, sample_size: int) -> Tuple[List[Dict[str, Any
         return [content], 1
     return [], 0
 
+def _load_csv_records(
+    path: Path, sample_size: int, delimiter: str = ","
+) -> Tuple[List[Dict[str, Any]], int]:
+    rows: List[Dict[str, Any]] = []
+    with open(path, "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f, delimiter=delimiter)
+        for row in reader:
+            if len(rows) >= sample_size:
+                break
+            rows.append(dict(row))
+    return rows, len(rows)
+
+def _load_parquet_records(path: Path, sample_size: int) -> Tuple[List[Dict[str, Any]], int]:
+    try:
+        import pyarrow.parquet as pq
+    except ImportError:
+        return [], 0
+    table = pq.read_table(str(path))
+    total_rows = table.num_rows
+    sliced = table.slice(0, min(sample_size, total_rows))
+    rows = sliced.to_pydict()
+    # to_pydict returns {col: [values]}, convert to list of dicts
+    num_records = len(next(iter(rows.values()))) if rows else 0
+    records: List[Dict[str, Any]] = []
+    for i in range(num_records):
+        records.append({col: values[i] for col, values in rows.items()})
+    return records, num_records
+
 
 _UNSUPPORTED_PREFIXES = (
     "hf://",
@@ -103,7 +132,7 @@ def inspect_dataset_schema(dataset_path: str, sample_size: int = 20) -> Dict[str
             "ok": False,
             "error_type": "unsupported_input_source",
             "error": (
-                f"inspect_dataset only supports local file paths (.jsonl / .json). "
+                f"inspect_dataset only supports local file paths. "
                 f"The provided path '{dataset_path}' looks like a remote or non-local source "
                 f"which is not supported. Please download the dataset to a local path first, "
                 f"then call inspect_dataset with the local file path."
@@ -131,8 +160,15 @@ def inspect_dataset_schema(dataset_path: str, sample_size: int = 20) -> Dict[str
     rows: List[Dict[str, Any]]
     scanned: int
 
-    if path.suffix.lower() == ".json":
+    suffix = path.suffix.lower()
+    if suffix == ".json":
         rows, scanned = _load_json_records(path, sample_size=sample_size)
+    elif suffix == ".csv":
+        rows, scanned = _load_csv_records(path, sample_size=sample_size)
+    elif suffix == ".tsv":
+        rows, scanned = _load_csv_records(path, sample_size=sample_size, delimiter="\t")
+    elif suffix == ".parquet":
+        rows, scanned = _load_parquet_records(path, sample_size=sample_size)
     else:
         rows, scanned = _load_jsonl_records(path, sample_size=sample_size)
 

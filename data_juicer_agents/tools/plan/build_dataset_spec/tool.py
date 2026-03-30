@@ -29,6 +29,7 @@ def _build_dataset_spec(_ctx: ToolContext, args: BuildDatasetSpecInput) -> ToolR
         audio_key_hint=args.audio_key_hint,
         video_key_hint=args.video_key_hint,
         image_bytes_key_hint=args.image_bytes_key_hint,
+        **(args.model_extra or {}),
     )
     if result.get("ok"):
         return ToolResult.success(summary=str(result.get("message", "dataset spec built")), data=result)

@@ -13,13 +13,34 @@ from .schema import DatasetBindingSpec, DatasetSpec, _ALLOWED_MODALITIES
 def normalize_dataset_spec(
     dataset_spec: DatasetSpec | Dict[str, Any],
 ) -> DatasetSpec:
-    """Normalize dataset spec: strip strings, deduplicate lists."""
+    """Normalize dataset spec: strip strings, deduplicate lists.
+
+    Performs type coercion on extra dataset fields (export_type,
+    export_shard_size, etc.) via ``coerce_fields`` so that values
+    serialise correctly in recipe YAML, consistent with how
+    ``normalize_system_spec`` handles system fields.
+    """
     if isinstance(dataset_spec, DatasetSpec):
         source = dataset_spec
     elif isinstance(dataset_spec, dict):
         source = DatasetSpec.from_dict(dataset_spec)
     else:
         raise ValueError("dataset_spec must be a dict object")
+
+    # Coerce extra dataset fields to correct types for YAML serialization
+    coerced_extra = dict(source.io._extra_fields)
+    coerce_warnings: list[str] = []
+    try:
+        from data_juicer_agents.utils.dj_config_bridge import coerce_fields
+
+        coerced_extra, coerce_errors = coerce_fields(source.io._extra_fields)
+        if coerce_errors:
+            coerce_warnings = [f"[type coercion] {err}" for err in coerce_errors]
+    except Exception:
+        pass  # bridge unavailable — skip coercion
+
+    existing_warnings = normalize_string_list(source.warnings)
+    existing_warnings.extend(w for w in coerce_warnings if w not in existing_warnings)
 
     return DatasetSpec.from_dict(
         {
@@ -32,6 +53,8 @@ def normalize_dataset_spec(
                     else None
                 ),
                 "export_path": str(source.io.export_path or "").strip(),
+                # Preserve extra dataset fields (export_type, export_shard_size, suffixes, etc.)
+                **coerced_extra,
             },
             "binding": {
                 "modality": str(source.binding.modality or "unknown").strip()
@@ -44,7 +67,7 @@ def normalize_dataset_spec(
                     source.binding.image_bytes_key
                 ),
             },
-            "warnings": normalize_string_list(source.warnings),
+            "warnings": existing_warnings,
         }
     )
 
