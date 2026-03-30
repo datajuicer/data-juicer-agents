@@ -47,7 +47,8 @@ class BuildDatasetSpecInput(BaseModel):
         default=None,
         description=(
             "Config for dynamically generated datasets via Data-Juicer FORMATTERS. "
-            "Must contain a 'type' key matching a registered formatter name."
+            "Must contain a 'type' key matching a registered formatter name. "
+            "Call list_dataset_formatters first to discover available formatters and their parameters."
         ),
     )
     dataset_profile: Dict[str, Any] = Field(
