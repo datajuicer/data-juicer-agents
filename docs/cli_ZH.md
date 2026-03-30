@@ -148,6 +148,8 @@ djx tool run plan_validate --input-file ./examples/plan_payload.json
 - `ToolContext.env` 和 `runtime_values` 不通过 CLI 暴露
 - `tool run` 的主要设计目标是机器间调用，稳定 JSON 输出是第一契约
 - `--quiet`、`--verbose`、`--debug` 仅用于与其他 `djx` 子命令保持 CLI 形态一致，不会改变 `djx tool` 的输出
+- 安装 `data-juicer-agents[harness]` 后可设置 `DJX_TOOL_PROFILE=harness`，将 `djx tool` 限制在 harness 工具组（`apply`、`context`、`plan`）
+- 不在当前 profile 内的工具不会出现在 `list` 中，直接调用会返回结构化 JSON 错误
 
 ## `dj-agents`
 
@@ -177,3 +179,4 @@ dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui|as_st
 - `DJA_PLANNER_MODEL`：`djx plan` 使用的模型
 - `DJA_MODEL_FALLBACKS`：`data_juicer_agents/utils/llm_gateway.py` 使用的逗号分隔模型兜底链
 - `DJA_LLM_THINKING`：控制模型请求中的 `enable_thinking`
+- `DJX_TOOL_PROFILE`：可选工具目录 profile；设为 `harness` 时，`djx tool` 只暴露 harness 工具集

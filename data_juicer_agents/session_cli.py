@@ -10,9 +10,8 @@ import sys
 import threading
 from datetime import datetime
 
-from data_juicer_agents.capabilities.session.orchestrator import DJSessionAgent
 from data_juicer_agents.utils.agentscope_logging import install_thinking_warning_filter
-from data_juicer_agents.utils.terminal_input import TerminalLineReader
+from data_juicer_agents.utils.optional_deps import missing_dependency_message
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -53,11 +52,35 @@ def _wait_for_turn(done: threading.Event, timeout_sec: float = 0.05) -> bool:
     return bool(done.wait(timeout_sec))
 
 
-def _new_line_reader() -> TerminalLineReader:
+def _build_session_agent(**kwargs):
+    try:
+        from data_juicer_agents.capabilities.session.orchestrator import DJSessionAgent
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            missing_dependency_message(
+                "dj-agents",
+                extras=("core",),
+                missing_module=getattr(exc, "name", None),
+            )
+        ) from exc
+    return DJSessionAgent(**kwargs)
+
+
+def _new_line_reader():
+    try:
+        from data_juicer_agents.utils.terminal_input import TerminalLineReader
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            missing_dependency_message(
+                "dj-agents",
+                extras=("core",),
+                missing_module=getattr(exc, "name", None),
+            )
+        ) from exc
     return TerminalLineReader()
 
 
-def _run_turn_with_interrupt(agent: DJSessionAgent, message: str):
+def _run_turn_with_interrupt(agent, message: str):
     result: dict = {}
     error: dict = {}
     done = threading.Event()
@@ -92,16 +115,16 @@ def _run_turn_with_interrupt(agent: DJSessionAgent, message: str):
 
 def _run_plain_session(args: argparse.Namespace) -> int:
     try:
-        agent = DJSessionAgent(
+        agent = _build_session_agent(
             use_llm_router=True,
             dataset_path=args.dataset,
             export_path=args.export,
             verbose=args.verbose,
         )
+        line_reader = _new_line_reader()
     except Exception as exc:
         print(f"Failed to start dj-agents session: {exc}")
         return 2
-    line_reader = _new_line_reader()
     print("DJ session started. Describe your task in natural language. Type `help` or `exit`.")
     print("Press Ctrl+C to interrupt the current turn. Press Ctrl+D to exit the session.")
 
@@ -135,7 +158,7 @@ async def _run_as_studio_session_async(args: argparse.Namespace) -> int:
         studio_url=studio_url,
     )
 
-    session_agent = DJSessionAgent(
+    session_agent = _build_session_agent(
         use_llm_router=True,
         dataset_path=args.dataset,
         export_path=args.export,
@@ -144,7 +167,7 @@ async def _run_as_studio_session_async(args: argparse.Namespace) -> int:
     )
 
     class _StudioShell(AgentBase):
-        def __init__(self, agent: DJSessionAgent, name: str = "dj-agents") -> None:
+        def __init__(self, agent, name: str = "dj-agents") -> None:
             super().__init__()
             self._session_agent = agent
             self.name = name
@@ -202,7 +225,17 @@ def main(argv=None) -> int:
         install_thinking_warning_filter()
         return _run_as_studio_session(args)
 
-    from data_juicer_agents.tui import run_tui_session
+    try:
+        from data_juicer_agents.tui import run_tui_session
+    except ModuleNotFoundError as exc:
+        print(
+            missing_dependency_message(
+                "dj-agents",
+                extras=("core",),
+                missing_module=getattr(exc, "name", None),
+            )
+        )
+        return 2
 
     return run_tui_session(args)
 

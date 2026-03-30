@@ -77,7 +77,7 @@ def test_plain_session_ctrl_c_when_idle_does_not_exit(monkeypatch, capsys):
             raise AssertionError("should not handle message")
 
     monkeypatch.setattr(
-        "data_juicer_agents.session_cli.DJSessionAgent",
+        "data_juicer_agents.session_cli._build_session_agent",
         lambda **_kwargs: _Agent(),
     )
 
@@ -97,6 +97,19 @@ def test_plain_session_ctrl_c_when_idle_does_not_exit(monkeypatch, capsys):
     assert code == 0
     assert "No running task to interrupt" in output
     assert "Session ended." in output
+
+
+def test_plain_session_reports_missing_core_dependency(monkeypatch, capsys):
+    monkeypatch.setattr(
+        "data_juicer_agents.session_cli._build_session_agent",
+        lambda **_kwargs: (_ for _ in ()).throw(RuntimeError("install data-juicer-agents[core]")),
+    )
+    args = build_parser().parse_args(["--ui", "plain"])
+
+    code = _run_plain_session(args)
+
+    assert code == 2
+    assert "install data-juicer-agents[core]" in capsys.readouterr().out
 
 
 def test_run_as_studio_session_calls_agentscope_init_and_stops(monkeypatch):
@@ -132,7 +145,7 @@ def test_run_as_studio_session_calls_agentscope_init_and_stops(monkeypatch):
 
     monkeypatch.setattr("agentscope.init", _fake_init)
     monkeypatch.setattr("agentscope.agent.UserAgent", _UserAgent)
-    monkeypatch.setattr("data_juicer_agents.session_cli.DJSessionAgent", _SessionAgent)
+    monkeypatch.setattr("data_juicer_agents.session_cli._build_session_agent", lambda **kwargs: _SessionAgent(**kwargs))
 
     args = argparse.Namespace(
         dataset="a.jsonl",

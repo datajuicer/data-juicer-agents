@@ -148,6 +148,8 @@ Notes:
 - `ToolContext.env` and `runtime_values` are not exposed through the CLI
 - `tool run` is suitable for machine-to-machine use; stable JSON output is the primary contract
 - `--quiet`, `--verbose`, and `--debug` are accepted for CLI-shape consistency with other `djx` subcommands, but they do not change `djx tool` output
+- set `DJX_TOOL_PROFILE=harness` after installing `data-juicer-agents[harness]` to restrict `djx tool` to the harness groups (`apply`, `context`, `plan`)
+- tools outside the active profile return a structured JSON error instead of being exposed by `list`
 
 ## `dj-agents`
 
@@ -177,3 +179,4 @@ Interrupt:
 - `DJA_PLANNER_MODEL`: model used by `djx plan`
 - `DJA_MODEL_FALLBACKS`: comma-separated fallback models for `data_juicer_agents/utils/llm_gateway.py`
 - `DJA_LLM_THINKING`: toggles `enable_thinking` in model requests
+- `DJX_TOOL_PROFILE`: optional tool-catalog profile; set to `harness` to expose only the harness tool set in `djx tool`

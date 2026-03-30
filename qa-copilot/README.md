@@ -30,7 +30,7 @@ You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [d
 1. Install dependencies
    ```bash
    cd ..
-   uv pip install .[qa]
+   uv pip install '.[copilot]'
    cd qa-copilot
    ```
 

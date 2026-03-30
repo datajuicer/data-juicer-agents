@@ -19,7 +19,9 @@ export DASHSCOPE_API_KEY=your_dashscope_key
 安装依赖项：
 
 ```bash
-uv pip install -r requirements.txt
+cd ..
+uv pip install '.[interecipe]'
+cd interactive_recipe
 ```
 
 【可选】启动copilot服务器（将`../qa-copilot/setup_server.sh`中的`DATA_JUICER_PATH`变量替换为您的data-juicer仓库的绝对路径）：

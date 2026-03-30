@@ -8,11 +8,30 @@
 
 ## 2. 安装
 
+选择一种安装档位：
+
+- `core`：完整 `data_juicer_agents` 命令面
+- `harness`：面向 `djx tool` harness profile 的最小安装
+- `full`：`core` 加上 `copilot` 和 `interecipe`
+
 ```bash
 cd ./data-juicer-agents
 uv venv .venv
 source .venv/bin/activate
-uv pip install -e .
+uv pip install -e '.[core]'
+```
+
+Harness 安装：
+
+```bash
+uv pip install -e '.[harness]'
+export DJX_TOOL_PROFILE=harness
+```
+
+Full 安装：
+
+```bash
+uv pip install -e '.[full]'
 ```
 
 ## 3. 配置模型访问
@@ -76,6 +95,7 @@ djx tool run list_system_config --input-json '{}'
 说明：
 - `djx tool` 默认是 JSON-only，主要服务 agent / skill 自动化调用。
 - 写入或执行类工具需要显式传 `--yes`。
+- `DJX_TOOL_PROFILE=harness` 会把 `djx tool` 限制在 harness 工具集（`apply`、`context`、`plan`）。
 
 ## 5. 会话模式（`dj-agents`）
 
@@ -122,3 +142,8 @@ dj-agents --help
 - `DJA_SESSION_MODEL` 和 `DJA_PLANNER_MODEL`
 - 期望模型兜底时的 `DJA_MODEL_FALLBACKS`
 - 如果服务端不接受 thinking 参数，检查 `DJA_LLM_THINKING`
+
+如果命令提示缺少可选依赖，请安装对应档位：
+- `data-juicer-agents[harness]`：只使用 harness 版 `djx tool`
+- `data-juicer-agents[core]`：完整 `djx` / `dj-agents` 命令集
+- `data-juicer-agents[full]`：`core + copilot + interecipe`

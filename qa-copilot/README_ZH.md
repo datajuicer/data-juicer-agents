@@ -30,7 +30,7 @@ Q&A Copilot 是 Data-Juicer Agents 系统中的智能问答组件，基于 Agent
 1. 安装依赖项
    ```bash
    cd ..
-   uv pip install .[qa]
+   uv pip install '.[copilot]'
    cd qa-copilot
    ```
 

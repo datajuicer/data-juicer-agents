@@ -44,6 +44,23 @@ def test_tool_list_returns_json_payload(capsys):
     assert all("plan" in item["tags"] for item in payload["tools"])
 
 
+def test_tool_list_harness_profile_excludes_non_harness_groups(monkeypatch, capsys):
+    monkeypatch.setenv("DJX_TOOL_PROFILE", "harness")
+
+    code = main(["tool", "list"])
+    assert code == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    names = {item["name"] for item in payload["tools"]}
+    assert payload["profile"] == "harness"
+    assert "inspect_dataset" in names
+    assert "develop_operator" not in names
+    assert "retrieve_operators" not in names
+    assert "write_text_file" not in names
+    assert "execute_shell_command" not in names
+    assert "execute_python_code" not in names
+
+
 def test_tool_schema_returns_input_schema(capsys):
     code = main(["tool", "schema", "inspect_dataset"])
     assert code == 0
@@ -61,6 +78,30 @@ def test_tool_schema_unknown_tool_returns_exit_2(capsys):
     payload = json.loads(capsys.readouterr().out)
     assert payload["ok"] is False
     assert payload["error_type"] == "tool_not_found"
+
+
+def test_tool_schema_harness_profile_rejects_excluded_tool(monkeypatch, capsys):
+    monkeypatch.setenv("DJX_TOOL_PROFILE", "harness")
+
+    code = main(["tool", "schema", "write_text_file"])
+    assert code == 2
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is False
+    assert payload["error_type"] == "tool_not_available_in_profile"
+    assert payload["profile"] == "harness"
+
+
+def test_tool_schema_harness_profile_rejects_dev_tool(monkeypatch, capsys):
+    monkeypatch.setenv("DJX_TOOL_PROFILE", "harness")
+
+    code = main(["tool", "schema", "develop_operator"])
+    assert code == 2
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is False
+    assert payload["error_type"] == "tool_not_available_in_profile"
+    assert payload["profile"] == "harness"
 
 
 def test_tool_run_read_tool_success(tmp_path: Path, capsys):
@@ -82,6 +123,50 @@ def test_tool_run_read_tool_success(tmp_path: Path, capsys):
     assert payload["ok"] is True
     assert payload["action"] == "inspect_dataset"
     assert payload["dataset_path"] == str(dataset)
+
+
+def test_tool_run_harness_profile_blocks_excluded_tool(monkeypatch, tmp_path: Path, capsys):
+    monkeypatch.setenv("DJX_TOOL_PROFILE", "harness")
+    target = tmp_path / "notes.txt"
+
+    code = main(
+        [
+            "tool",
+            "run",
+            "write_text_file",
+            "--yes",
+            "--input-json",
+            json.dumps({"file_path": str(target), "content": "hello"}),
+        ]
+    )
+    assert code == 2
+    assert not target.exists()
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is False
+    assert payload["error_type"] == "tool_not_available_in_profile"
+    assert payload["profile"] == "harness"
+
+
+def test_tool_run_harness_profile_blocks_process_tool(monkeypatch, capsys):
+    monkeypatch.setenv("DJX_TOOL_PROFILE", "harness")
+
+    code = main(
+        [
+            "tool",
+            "run",
+            "execute_shell_command",
+            "--yes",
+            "--input-json",
+            json.dumps({"command": "printf hello", "timeout": 5}),
+        ]
+    )
+    assert code == 2
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is False
+    assert payload["error_type"] == "tool_not_available_in_profile"
+    assert payload["profile"] == "harness"
 
 
 def test_tool_run_write_tool_requires_explicit_confirmation(tmp_path: Path, capsys):
@@ -215,3 +300,14 @@ def test_tool_run_tool_failure_returns_exit_4(tmp_path: Path, capsys):
     payload = json.loads(capsys.readouterr().out)
     assert payload["ok"] is False
     assert payload["error_type"] == "file_not_found"
+
+
+def test_tool_list_invalid_profile_returns_exit_2(monkeypatch, capsys):
+    monkeypatch.setenv("DJX_TOOL_PROFILE", "unknown-profile")
+
+    code = main(["tool", "list"])
+    assert code == 2
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is False
+    assert payload["error_type"] == "invalid_tool_profile"
