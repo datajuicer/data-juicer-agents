@@ -151,6 +151,57 @@ def _profile_unavailable_payload(*, action: str, tool_name: str, profile: str) -
     )
 
 
+def _resolve_tool_spec(
+    *,
+    action: str,
+    tool_name: str,
+    profile: str,
+) -> tuple[ToolSpec | None, tuple[Dict[str, Any], int] | None]:
+    try:
+        spec = get_tool_spec(tool_name, profile=profile)
+    except ToolGroupImportError as exc:
+        return None, _group_import_failure_payload(
+            action=action,
+            exc=exc,
+            tool_name=tool_name,
+        )
+    except KeyError:
+        if tool_is_excluded_from_profile(tool_name, profile):
+            return None, _profile_unavailable_payload(
+                action=action,
+                tool_name=tool_name,
+                profile=profile,
+            )
+        try:
+            _ = get_tool_spec(tool_name)
+        except KeyError:
+            pass
+        except ToolGroupImportError as exc:
+            return None, _group_import_failure_payload(
+                action=action,
+                exc=exc,
+                tool_name=tool_name,
+            )
+        else:
+            if profile != "default":
+                return None, _profile_unavailable_payload(
+                    action=action,
+                    tool_name=tool_name,
+                    profile=profile,
+                )
+        return None, (
+            _error_payload(
+                action=action,
+                message=f"unknown tool: {tool_name}",
+                error_type="tool_not_found",
+                tool_name=tool_name,
+                profile=profile,
+            ),
+            2,
+        )
+    return spec, None
+
+
 def _execute_list(args: Any) -> tuple[Dict[str, Any], int]:
     resolved = _resolve_active_profile()
     if isinstance(resolved[0], dict):
@@ -177,44 +228,14 @@ def _execute_schema(args: Any) -> tuple[Dict[str, Any], int]:
         return resolved  # type: ignore[return-value]
     profile = resolved[0]
     tool_name = str(getattr(args, "tool_name", "") or "").strip()
-    try:
-        spec = get_tool_spec(tool_name, profile=profile)
-    except ToolGroupImportError as exc:
-        return _group_import_failure_payload(action="tool_schema", exc=exc, tool_name=tool_name)
-    except KeyError:
-        if tool_is_excluded_from_profile(tool_name, profile):
-            return _profile_unavailable_payload(
-                action="tool_schema",
-                tool_name=tool_name,
-                profile=profile,
-            )
-        try:
-            _ = get_tool_spec(tool_name)
-        except KeyError:
-            pass
-        except ToolGroupImportError as exc:
-            return _group_import_failure_payload(
-                action="tool_schema",
-                exc=exc,
-                tool_name=tool_name,
-            )
-        else:
-            if profile != "default":
-                return _profile_unavailable_payload(
-                    action="tool_schema",
-                    tool_name=tool_name,
-                    profile=profile,
-                )
-        return (
-            _error_payload(
-                action="tool_schema",
-                message=f"unknown tool: {tool_name}",
-                error_type="tool_not_found",
-                tool_name=tool_name,
-                profile=profile,
-            ),
-            2,
-        )
+    spec, error = _resolve_tool_spec(
+        action="tool_schema",
+        tool_name=tool_name,
+        profile=profile,
+    )
+    if error is not None:
+        return error
+    assert spec is not None
 
     payload = _success_payload(
         action="tool_schema",
@@ -231,44 +252,14 @@ def _execute_run(args: Any) -> tuple[Dict[str, Any], int]:
         return resolved  # type: ignore[return-value]
     profile = resolved[0]
     tool_name = str(getattr(args, "tool_name", "") or "").strip()
-    try:
-        spec = get_tool_spec(tool_name, profile=profile)
-    except ToolGroupImportError as exc:
-        return _group_import_failure_payload(action="tool_run", exc=exc, tool_name=tool_name)
-    except KeyError:
-        if tool_is_excluded_from_profile(tool_name, profile):
-            return _profile_unavailable_payload(
-                action="tool_run",
-                tool_name=tool_name,
-                profile=profile,
-            )
-        try:
-            _ = get_tool_spec(tool_name)
-        except KeyError:
-            pass
-        except ToolGroupImportError as exc:
-            return _group_import_failure_payload(
-                action="tool_run",
-                exc=exc,
-                tool_name=tool_name,
-            )
-        else:
-            if profile != "default":
-                return _profile_unavailable_payload(
-                    action="tool_run",
-                    tool_name=tool_name,
-                    profile=profile,
-                )
-        return (
-            _error_payload(
-                action="tool_run",
-                message=f"unknown tool: {tool_name}",
-                error_type="tool_not_found",
-                tool_name=tool_name,
-                profile=profile,
-            ),
-            2,
-        )
+    spec, error = _resolve_tool_spec(
+        action="tool_run",
+        tool_name=tool_name,
+        profile=profile,
+    )
+    if error is not None:
+        return error
+    assert spec is not None
 
     if spec.confirmation != "none" and not bool(getattr(args, "yes", False)):
         return (

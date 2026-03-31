@@ -275,7 +275,7 @@ def main(argv=None) -> int:
     try:
         handler = _load_handler(str(getattr(args, "handler_name", "") or ""))
     except RuntimeError as exc:
-        print(str(exc))
+        print(str(exc), file=sys.stderr)
         return 2
     return int(handler(args))
 

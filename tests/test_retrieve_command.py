@@ -61,6 +61,7 @@ def test_retrieve_command_missing_core_dependency_reports_install_hint(monkeypat
     code = main(["retrieve", "dedup", "--json"])
     assert code == 2
 
-    output = capsys.readouterr().out
-    assert "djx retrieve requires optional dependencies" in output
-    assert "data-juicer-agents[core]" in output
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "djx retrieve requires optional dependencies" in captured.err
+    assert "data-juicer-agents[core]" in captured.err
