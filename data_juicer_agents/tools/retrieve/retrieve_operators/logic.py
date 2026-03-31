@@ -229,12 +229,39 @@ def _build_candidate_row(
     }
 
 
+_MODALITY_TAG_MAP: Dict[str, List[str]] = {
+    "text": ["text"],
+    "image": ["image"],
+    "multimodal": ["multimodal"],
+    "audio": ["audio"],
+    "video": ["video"],
+}
+
+def _infer_tags_from_dataset(dataset_path: str) -> List[str]:
+    """Probe *dataset_path* and return modality tags inferred from its schema.
+
+    Returns an empty list when the dataset cannot be inspected or the modality
+    is unknown, so the caller can fall back to unfiltered retrieval.
+    """
+    try:
+        from data_juicer_agents.tools.context.inspect_dataset.logic import (
+            inspect_dataset_schema,
+        )
+        result = inspect_dataset_schema(dataset_path=dataset_path, sample_size=20)
+        if not result.get("ok"):
+            return []
+        modality = str(result.get("modality", "")).strip().lower()
+        return list(_MODALITY_TAG_MAP.get(modality, []))
+    except Exception:
+        return []
+
 def retrieve_operator_candidates(
     intent: str,
     top_k: int = 10,
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
+    dataset_path: str | None = None,
 ) -> Dict[str, Any]:
     """Retrieve operators and return a structured payload for CLI/agent usage.
 
@@ -245,7 +272,20 @@ def retrieve_operator_candidates(
         op_type: Optional operator type filter (e.g. "filter", "mapper",
                  "deduplicator"). Propagated to retrieval backends for early
                  filtering.
+        tags: Explicit modality/resource tags for filtering (match-all semantics).
+        dataset_path: Optional dataset path; when provided, the dataset modality
+                      is probed via ``inspect_dataset_schema`` and the inferred
+                      tags are merged with any explicit *tags*.
     """
+    # Infer tags from dataset and merge with explicit tags
+    inferred_tags: List[str] = []
+    if dataset_path:
+        inferred_tags = _infer_tags_from_dataset(dataset_path)
+    merged_tags: List[str] = list(tags or [])
+    for tag in inferred_tags:
+        if tag not in merged_tags:
+            merged_tags.append(tag)
+    tags = merged_tags if merged_tags else None
 
     top_k = int(top_k) if isinstance(top_k, int) or str(top_k).isdigit() else 10
     if top_k <= 0:
@@ -319,8 +359,7 @@ def retrieve_operator_candidates(
             name,
             intent=intent,
             info_map=info_map,
-            retrieval_item=normalized_item_map.get(name)
-            or retrieval_item_map.get(name),
+            retrieval_item=normalized_item_map.get(name),
         )
         for idx, name in enumerate(normalized_names[:top_k], start=1)
     ]

@@ -7,7 +7,7 @@ import json
 from typing import List
 
 from data_juicer_agents.tools.retrieve import retrieve_operator_candidates
-
+from data_juicer_agents.tools.retrieve.retrieve_operators.logic import _infer_tags_from_dataset
 
 # ---------------------------------------------------------------------------
 # Modality → operator tags mapping
@@ -75,20 +75,17 @@ def run_retrieve(args) -> int:
         print("top-k must be > 0")
         return 2
 
-    # --- Collect tags from --tags and --dataset ------------------------------
     tags: List[str] = list(getattr(args, "tags", None) or [])
-    dataset_path = getattr(args, "dataset", None)
-    if dataset_path:
+    dataset_path: str | None = getattr(args, "dataset", None)
+    op_type: str | None = getattr(args, "op_type", None)
+
+    # Print a preview of dataset modality detection for human-readable output
+    if dataset_path and not args.json:
         inferred = _infer_tags_from_dataset(dataset_path)
         if inferred:
             print(f"Detected dataset modality tags: {inferred}")
-            for tag in inferred:
-                if tag not in tags:
-                    tags.append(tag)
         else:
             print(f"Could not infer modality from dataset: {dataset_path}")
-
-    op_type: str | None = getattr(args, "op_type", None)
 
     try:
         payload = retrieve_operator_candidates(
@@ -97,14 +94,12 @@ def run_retrieve(args) -> int:
             mode=args.mode,
             op_type=op_type,
             tags=tags if tags else None,
+            dataset_path=dataset_path,
         )
     except Exception as exc:
         print(f"Retrieve failed: {exc}")
         return 2
 
-    # Attach filter info to payload for JSON output
-    if tags:
-        payload["inferred_tags"] = tags
     if op_type:
         payload["op_type_filter"] = op_type
 

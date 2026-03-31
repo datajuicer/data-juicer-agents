@@ -7,7 +7,7 @@ from data_juicer_agents.cli import main
 
 def test_retrieve_command_json_output(capsys):
     """Real retrieve command with JSON output."""
-    code = main(["retrieve", "deduplicate text", "--json"])
+    code = main(["retrieve", "deduplicate document", "--json"])
     assert code == 0
 
     out = capsys.readouterr().out
