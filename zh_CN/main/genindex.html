@@ -569,10 +569,10 @@
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolArtifact.__init__">__init__() （data_juicer_agents.core.tool.ToolArtifact 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolContext.__init__">__init__() （data_juicer_agents.core.tool.ToolContext 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolRegistry.__init__">__init__() （data_juicer_agents.core.tool.ToolRegistry 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolResult.__init__">__init__() （data_juicer_agents.core.tool.ToolResult 方法）</a>
@@ -606,6 +606,10 @@
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.ProcessSpec.__init__">__init__() （data_juicer_agents.tools.plan.ProcessSpec 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.SystemSpec.__init__">__init__() （data_juicer_agents.tools.plan.SystemSpec 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.__init__">__init__() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrievalStrategy.__init__">__init__() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrievalStrategy 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.__init__">__init__() （data_juicer_agents.utils.dj_config_bridge.DJConfigBridge 方法）</a>
 </li>
@@ -693,6 +697,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.DatasetSpec.binding">binding（data_juicer_agents.tools.plan.DatasetSpec 属性）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever">BM25Retriever（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever 中的类）</a>
+</li>
       <li><a href="api/data_juicer_agents.adapters.agentscope.html#data_juicer_agents.adapters.agentscope.build_agentscope_json_schema">build_agentscope_json_schema()（在 data_juicer_agents.adapters.agentscope 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.adapters.agentscope.tools.html#data_juicer_agents.adapters.agentscope.tools.build_agentscope_json_schema">build_agentscope_json_schema()（在 data_juicer_agents.adapters.agentscope.tools 模块中）</a>
@@ -728,6 +734,8 @@
       <li><a href="api/data_juicer_agents.tools.plan.build_process_spec.html#data_juicer_agents.tools.plan.build_process_spec.build_process_spec">build_process_spec()（在 data_juicer_agents.tools.plan.build_process_spec 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.build_process_spec.logic.html#data_juicer_agents.tools.plan.build_process_spec.logic.build_process_spec">build_process_spec()（在 data_juicer_agents.tools.plan.build_process_spec.logic 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.build_retrieval_item">build_retrieval_item()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.session.toolkit.html#data_juicer_agents.capabilities.session.toolkit.build_session_toolkit">build_session_toolkit()（在 data_juicer_agents.capabilities.session.toolkit 模块中）</a>
 </li>
@@ -1391,8 +1399,6 @@
         <li><a href="api/data_juicer_agents.tools.plan.build_process_spec.html#module-data_juicer_agents.tools.plan.build_process_spec">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     data_juicer_agents.tools.plan.build_process_spec.input
 
@@ -1407,6 +1413,8 @@
         <li><a href="api/data_juicer_agents.tools.plan.build_process_spec.logic.html#module-data_juicer_agents.tools.plan.build_process_spec.logic">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     data_juicer_agents.tools.plan.build_process_spec.tool
 
@@ -1681,6 +1689,41 @@
 </li>
       </ul></li>
       <li>
+    data_juicer_agents.tools.retrieve.retrieve_operators.backend
+
+      <ul>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend">module</a>
+</li>
+      </ul></li>
+      <li>
+    data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend
+
+      <ul>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend">module</a>
+</li>
+      </ul></li>
+      <li>
+    data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache
+
+      <ul>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache">module</a>
+</li>
+      </ul></li>
+      <li>
+    data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder
+
+      <ul>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder">module</a>
+</li>
+      </ul></li>
+      <li>
+    data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever
+
+      <ul>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever">module</a>
+</li>
+      </ul></li>
+      <li>
     data_juicer_agents.tools.retrieve.retrieve_operators.input
 
       <ul>
@@ -1934,6 +1977,8 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.apply.html#data_juicer_agents.tools.apply.ApplyUseCase.execute">execute() （data_juicer_agents.tools.apply.ApplyUseCase 方法）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrievalStrategy.execute">execute() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrievalStrategy 方法）</a>
+</li>
       <li><a href="api/data_juicer_agents.capabilities.dev.html#data_juicer_agents.capabilities.dev.DevUseCase.execute">execute()（data_juicer_agents.capabilities.dev.DevUseCase 静态方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.dev.service.html#data_juicer_agents.capabilities.dev.service.DevUseCase.execute">execute()（data_juicer_agents.capabilities.dev.service.DevUseCase 静态方法）</a>
@@ -2034,12 +2079,16 @@
 </li>
       <li><a href="api/data_juicer_agents.utils.agentscope_logging.html#data_juicer_agents.utils.agentscope_logging.IgnoreThinkingBlockWarningFilter.filter">filter() （data_juicer_agents.utils.agentscope_logging.IgnoreThinkingBlockWarningFilter 方法）</a>
 </li>
-      <li><a href="api/data_juicer_agents.tools.context.list_system_config.input.html#data_juicer_agents.tools.context.list_system_config.input.ListSystemConfigInput.filter_prefix">filter_prefix（data_juicer_agents.tools.context.list_system_config.input.ListSystemConfigInput 属性）</a>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.filter_by_op_type">filter_by_op_type()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder 模块中）</a>
 </li>
-      <li><a href="api/data_juicer_agents.tools.context.list_system_config.html#data_juicer_agents.tools.context.list_system_config.ListSystemConfigInput.filter_prefix">filter_prefix（data_juicer_agents.tools.context.list_system_config.ListSystemConfigInput 属性）</a>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.filter_by_tags">filter_by_tags()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.context.list_system_config.input.html#data_juicer_agents.tools.context.list_system_config.input.ListSystemConfigInput.filter_prefix">filter_prefix（data_juicer_agents.tools.context.list_system_config.input.ListSystemConfigInput 属性）</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data_juicer_agents.tools.context.list_system_config.html#data_juicer_agents.tools.context.list_system_config.ListSystemConfigInput.filter_prefix">filter_prefix（data_juicer_agents.tools.context.list_system_config.ListSystemConfigInput 属性）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.context.html#data_juicer_agents.tools.context.ListSystemConfigInput.filter_prefix">filter_prefix（data_juicer_agents.tools.context.ListSystemConfigInput 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.session.runtime.html#data_juicer_agents.capabilities.session.runtime.SessionToolRuntime.find_saved_plan_path_by_plan_id">find_saved_plan_path_by_plan_id() （data_juicer_agents.capabilities.session.runtime.SessionToolRuntime 方法）</a>
@@ -2118,12 +2167,12 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.files.view_text_file.input.html#data_juicer_agents.tools.files.view_text_file.input.GenericOutput">GenericOutput（data_juicer_agents.tools.files.view_text_file.input 中的类）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.tools.files.write_text_file.html#data_juicer_agents.tools.files.write_text_file.GenericOutput">GenericOutput（data_juicer_agents.tools.files.write_text_file 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.files.write_text_file.input.html#data_juicer_agents.tools.files.write_text_file.input.GenericOutput">GenericOutput（data_juicer_agents.tools.files.write_text_file.input 中的类）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.tools.process.execute_python_code.html#data_juicer_agents.tools.process.execute_python_code.GenericOutput">GenericOutput（data_juicer_agents.tools.process.execute_python_code 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.process.execute_python_code.input.html#data_juicer_agents.tools.process.execute_python_code.input.GenericOutput">GenericOutput（data_juicer_agents.tools.process.execute_python_code.input 中的类）</a>
@@ -2142,6 +2191,8 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.SystemSpec.get">get() （data_juicer_agents.tools.plan.SystemSpec 方法）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get">get() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
+</li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.get_active_tool_profile">get_active_tool_profile()（在 data_juicer_agents.core.tool 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.profiles.html#data_juicer_agents.core.tool.profiles.get_active_tool_profile">get_active_tool_profile()（在 data_juicer_agents.core.tool.profiles 模块中）</a>
@@ -2155,6 +2206,12 @@
       <li><a href="api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_default_config">get_default_config() （data_juicer_agents.utils.dj_config_bridge.DJConfigBridge 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.get_dj_config_bridge">get_dj_config_bridge()（在 data_juicer_agents.utils.dj_config_bridge 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get_hash">get_hash() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_op_catalog">get_op_catalog()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.get_op_catalog">get_op_catalog()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_op_valid_params">get_op_valid_params() （data_juicer_agents.utils.dj_config_bridge.DJConfigBridge 方法）</a>
 </li>
@@ -2222,6 +2279,10 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.context.html#data_juicer_agents.tools.context.ListSystemConfigInput.include_descriptions">include_descriptions（data_juicer_agents.tools.context.ListSystemConfigInput 属性）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_op_catalog">init_op_catalog()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.init_op_catalog">init_op_catalog()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
       <li><a href="api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.contracts.ToolSpec.input_model">input_model（data_juicer_agents.core.tool.contracts.ToolSpec 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolSpec.input_model">input_model（data_juicer_agents.core.tool.ToolSpec 属性）</a>
@@ -2242,14 +2303,14 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.context.html#data_juicer_agents.tools.context.InspectDatasetInput">InspectDatasetInput（data_juicer_agents.tools.context 中的类）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.tools.context.inspect_dataset.html#data_juicer_agents.tools.context.inspect_dataset.InspectDatasetInput">InspectDatasetInput（data_juicer_agents.tools.context.inspect_dataset 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.context.inspect_dataset.input.html#data_juicer_agents.tools.context.inspect_dataset.input.InspectDatasetInput">InspectDatasetInput（data_juicer_agents.tools.context.inspect_dataset.input 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.utils.optional_deps.html#data_juicer_agents.utils.optional_deps.install_command_for_extras">install_command_for_extras()（在 data_juicer_agents.utils.optional_deps 模块中）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.utils.agentscope_logging.html#data_juicer_agents.utils.agentscope_logging.install_thinking_warning_filter">install_thinking_warning_filter()（在 data_juicer_agents.utils.agentscope_logging 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.dev.develop_operator.html#data_juicer_agents.tools.dev.develop_operator.DevelopOperatorInput.intent">intent（data_juicer_agents.tools.dev.develop_operator.DevelopOperatorInput 属性）</a>
@@ -2278,6 +2339,10 @@
 </li>
       <li><a href="api/data_juicer_agents.capabilities.session.html#data_juicer_agents.capabilities.session.SessionReply.interrupted">interrupted（data_juicer_agents.capabilities.session.SessionReply 属性）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate">invalidate() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate_all">invalidate_all() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
+</li>
       <li><a href="api/data_juicer_agents.capabilities.session.runtime.html#data_juicer_agents.capabilities.session.runtime.SessionToolRuntime.invoke_text_tool">invoke_text_tool() （data_juicer_agents.capabilities.session.runtime.SessionToolRuntime 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.session.runtime.html#data_juicer_agents.capabilities.session.runtime.SessionToolRuntime.invoke_tool">invoke_tool() （data_juicer_agents.capabilities.session.runtime.SessionToolRuntime 方法）</a>
@@ -2287,6 +2352,18 @@
       <li><a href="api/data_juicer_agents.adapters.agentscope.tools.html#data_juicer_agents.adapters.agentscope.tools.invoke_tool_spec">invoke_tool_spec()（在 data_juicer_agents.adapters.agentscope.tools 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.DatasetSpec.io">io（data_juicer_agents.tools.plan.DatasetSpec 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever.is_available">is_available() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever.is_available">is_available() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever.is_available">is_available() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend.is_available">is_available() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever.is_available">is_available() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.is_stale">is_stale() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.iter_tool_group_names">iter_tool_group_names()（在 data_juicer_agents.core.tool.catalog 模块中）</a>
 </li>
@@ -2332,10 +2409,10 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.context.list_system_config.logic.html#data_juicer_agents.tools.context.list_system_config.logic.list_system_config">list_system_config()（在 data_juicer_agents.tools.context.list_system_config.logic 模块中）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.list_tool_specs">list_tool_specs()（在 data_juicer_agents.core.tool 模块中）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.core.tool.registry.html#data_juicer_agents.core.tool.registry.list_tool_specs">list_tool_specs()（在 data_juicer_agents.core.tool.registry 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.registry.html#data_juicer_agents.core.tool.registry.ToolRegistry.list_tools">list_tools() （data_juicer_agents.core.tool.registry.ToolRegistry 方法）</a>
@@ -2347,6 +2424,8 @@
       <li><a href="api/data_juicer_agents.tools.context.list_system_config.html#data_juicer_agents.tools.context.list_system_config.ListSystemConfigInput">ListSystemConfigInput（data_juicer_agents.tools.context.list_system_config 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.context.list_system_config.input.html#data_juicer_agents.tools.context.list_system_config.input.ListSystemConfigInput">ListSystemConfigInput（data_juicer_agents.tools.context.list_system_config.input 中的类）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever">LLMRetriever（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.load_all_tool_specs">load_all_tool_specs()（在 data_juicer_agents.core.tool.catalog 模块中）</a>
 </li>
@@ -2786,6 +2865,16 @@
 </li>
         <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.html#module-data_juicer_agents.tools.retrieve.retrieve_operators">data_juicer_agents.tools.retrieve.retrieve_operators</a>
 </li>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend">data_juicer_agents.tools.retrieve.retrieve_operators.backend</a>
+</li>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend">data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend</a>
+</li>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache">data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache</a>
+</li>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder">data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder</a>
+</li>
+        <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever">data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever</a>
+</li>
         <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.input">data_juicer_agents.tools.retrieve.retrieve_operators.input</a>
 </li>
         <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#module-data_juicer_agents.tools.retrieve.retrieve_operators.logic">data_juicer_agents.tools.retrieve.retrieve_operators.logic</a>
@@ -2817,6 +2906,10 @@
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolRegistry.names">names() （data_juicer_agents.core.tool.ToolRegistry 方法）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.names_from_items">names_from_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.names_from_items">names_from_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder 模块中）</a>
+</li>
       <li><a href="api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.contracts.ToolSpec.name">name（data_juicer_agents.core.tool.contracts.ToolSpec 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolSpec.name">name（data_juicer_agents.core.tool.ToolSpec 属性）</a>
@@ -2828,6 +2921,16 @@
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.ProcessOperator.name">name（data_juicer_agents.tools.plan.ProcessOperator 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.ProcessOperatorInput.name">name（data_juicer_agents.tools.plan.ProcessOperatorInput 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever.name">name（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever.name">name（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever.name">name（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend.name">name（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever.name">name（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.capabilities.apply.service.ApplyResult.new_id">new_id()（data_juicer_agents.capabilities.apply.service.ApplyResult 静态方法）</a>
 </li>
@@ -2841,14 +2944,14 @@
 </li>
       <li><a href="api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.capabilities.apply.service.ApplyResult.next_actions">next_actions（data_juicer_agents.capabilities.apply.service.ApplyResult 属性）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.contracts.ToolResult.next_actions">next_actions（data_juicer_agents.core.tool.contracts.ToolResult 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolResult.next_actions">next_actions（data_juicer_agents.core.tool.ToolResult 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.apply.apply_recipe.html#data_juicer_agents.tools.apply.apply_recipe.ApplyResult.next_actions">next_actions（data_juicer_agents.tools.apply.apply_recipe.ApplyResult 属性）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.apply_recipe.logic.ApplyResult.next_actions">next_actions（data_juicer_agents.tools.apply.apply_recipe.logic.ApplyResult 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.apply.html#data_juicer_agents.tools.apply.ApplyResult.next_actions">next_actions（data_juicer_agents.tools.apply.ApplyResult 属性）</a>
@@ -2931,16 +3034,22 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.retrieve_operators.input.GenericOutput.ok">ok（data_juicer_agents.tools.retrieve.retrieve_operators.input.GenericOutput 属性）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.retrieve_operators.input.RetrieveOperatorsInput.op_type">op_type（data_juicer_agents.tools.retrieve.retrieve_operators.input.RetrieveOperatorsInput 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput.op_type">op_type（data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput.op_type">op_type（data_juicer_agents.tools.retrieve.RetrieveOperatorsInput 属性）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.PlanModel.operator_names">operator_names（data_juicer_agents.tools.plan.PlanModel 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.dev.develop_operator.html#data_juicer_agents.tools.dev.develop_operator.DevelopOperatorInput.operator_name">operator_name（data_juicer_agents.tools.dev.develop_operator.DevelopOperatorInput 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.dev.develop_operator.input.html#data_juicer_agents.tools.dev.develop_operator.input.DevelopOperatorInput.operator_name">operator_name（data_juicer_agents.tools.dev.develop_operator.input.DevelopOperatorInput 属性）</a>
 </li>
-      <li><a href="api/data_juicer_agents.tools.dev.develop_operator.scaffold.html#data_juicer_agents.tools.dev.develop_operator.scaffold.ScaffoldResult.operator_name">operator_name（data_juicer_agents.tools.dev.develop_operator.scaffold.ScaffoldResult 属性）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data_juicer_agents.tools.dev.develop_operator.scaffold.html#data_juicer_agents.tools.dev.develop_operator.scaffold.ScaffoldResult.operator_name">operator_name（data_juicer_agents.tools.dev.develop_operator.scaffold.ScaffoldResult 属性）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.dev.develop_operator.html#data_juicer_agents.tools.dev.develop_operator.ScaffoldResult.operator_name">operator_name（data_juicer_agents.tools.dev.develop_operator.ScaffoldResult 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.dev.html#data_juicer_agents.tools.dev.ScaffoldResult.operator_name">operator_name（data_juicer_agents.tools.dev.ScaffoldResult 属性）</a>
@@ -3133,6 +3242,12 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.PlanModel.recipe">recipe（data_juicer_agents.tools.plan.PlanModel 属性）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_op_catalog">refresh_op_catalog()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.refresh_op_catalog">refresh_op_catalog()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever">RegexRetriever（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever 中的类）</a>
+</li>
       <li><a href="api/data_juicer_agents.core.tool.registry.html#data_juicer_agents.core.tool.registry.ToolRegistry.register">register() （data_juicer_agents.core.tool.registry.ToolRegistry 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolRegistry.register">register() （data_juicer_agents.core.tool.ToolRegistry 方法）</a>
@@ -3151,19 +3266,59 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.operator_registry.html#data_juicer_agents.tools.retrieve.retrieve_operators.operator_registry.resolve_operator_name">resolve_operator_name()（在 data_juicer_agents.tools.retrieve.retrieve_operators.operator_registry 模块中）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager">RetrievalCacheManager（data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache 中的类）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrievalStrategy">RetrievalStrategy（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever 中的类）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever.retrieve_items">retrieve_items() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.BM25Retriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever.retrieve_items">retrieve_items() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.LLMRetriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever.retrieve_items">retrieve_items() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RegexRetriever 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend.retrieve_items">retrieve_items() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend 方法）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever.retrieve_items">retrieve_items() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever 方法）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operator_candidates">retrieve_operator_candidates()（在 data_juicer_agents.tools.retrieve 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.retrieve_operators.retrieve_operator_candidates">retrieve_operator_candidates()（在 data_juicer_agents.tools.retrieve.retrieve_operators 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators.logic.retrieve_operator_candidates">retrieve_operator_candidates()（在 data_juicer_agents.tools.retrieve.retrieve_operators.logic 模块中）</a>
 </li>
-      <li><a href="api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput">RetrieveOperatorsInput（data_juicer_agents.tools.retrieve 中的类）</a>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops">retrieve_ops()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.retrieve_ops">retrieve_ops()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_bm25_items">retrieve_ops_bm25_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.retrieve_ops_bm25_items">retrieve_ops_bm25_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items">retrieve_ops_lm_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.retrieve_ops_lm_items">retrieve_ops_lm_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_regex_items">retrieve_ops_regex_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.retrieve_ops_regex_items">retrieve_ops_regex_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector_items">retrieve_ops_vector_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.retrieve_ops_vector_items">retrieve_ops_vector_items()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta">retrieve_ops_with_meta()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend.retrieve_ops_with_meta">retrieve_ops_with_meta()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.backend 模块中）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput">RetrieveOperatorsInput（data_juicer_agents.tools.retrieve 中的类）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput">RetrieveOperatorsInput（data_juicer_agents.tools.retrieve.retrieve_operators 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.retrieve_operators.input.RetrieveOperatorsInput">RetrieveOperatorsInput（data_juicer_agents.tools.retrieve.retrieve_operators.input 中的类）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.RetrieverBackend">RetrieverBackend（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.capabilities.apply.service.ApplyResult.retry_level">retry_level（data_juicer_agents.capabilities.apply.service.ApplyResult 属性）</a>
 </li>
@@ -3233,6 +3388,8 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.SystemSpec.set">set() （data_juicer_agents.tools.plan.SystemSpec 方法）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.set">set() （data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager 方法）</a>
+</li>
       <li><a href="api/data_juicer_agents.capabilities.session.runtime.html#data_juicer_agents.capabilities.session.runtime.short_log">short_log()（在 data_juicer_agents.capabilities.session.runtime 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.utils.runtime_helpers.html#data_juicer_agents.utils.runtime_helpers.short_log">short_log()（在 data_juicer_agents.utils.runtime_helpers 模块中）</a>
@@ -3247,10 +3404,10 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.apply_recipe.logic.ApplyResult.start_time">start_time（data_juicer_agents.tools.apply.apply_recipe.logic.ApplyResult 属性）</a>
 </li>
-      <li><a href="api/data_juicer_agents.tools.apply.html#data_juicer_agents.tools.apply.ApplyResult.start_time">start_time（data_juicer_agents.tools.apply.ApplyResult 属性）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data_juicer_agents.tools.apply.html#data_juicer_agents.tools.apply.ApplyResult.start_time">start_time（data_juicer_agents.tools.apply.ApplyResult 属性）</a>
+</li>
       <li><a href="api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.capabilities.apply.service.ApplyResult.status">status（data_juicer_agents.capabilities.apply.service.ApplyResult 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.apply.apply_recipe.html#data_juicer_agents.tools.apply.apply_recipe.ApplyResult.status">status（data_juicer_agents.tools.apply.apply_recipe.ApplyResult 属性）</a>
@@ -3305,6 +3462,12 @@
 </li>
       <li><a href="api/data_juicer_agents.core.tool.html#data_juicer_agents.core.tool.ToolSpec.tags">tags（data_juicer_agents.core.tool.ToolSpec 属性）</a>
 </li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.retrieve_operators.input.RetrieveOperatorsInput.tags">tags（data_juicer_agents.tools.retrieve.retrieve_operators.input.RetrieveOperatorsInput 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput.tags">tags（data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput.tags">tags（data_juicer_agents.tools.retrieve.RetrieveOperatorsInput 属性）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.plan.build_dataset_spec.html#data_juicer_agents.tools.plan.build_dataset_spec.BuildDatasetSpecInput.text_keys_hint">text_keys_hint（data_juicer_agents.tools.plan.build_dataset_spec.BuildDatasetSpecInput 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.build_dataset_spec.input.html#data_juicer_agents.tools.plan.build_dataset_spec.input.BuildDatasetSpecInput.text_keys_hint">text_keys_hint（data_juicer_agents.tools.plan.build_dataset_spec.input.BuildDatasetSpecInput 属性）</a>
@@ -3357,10 +3520,10 @@
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.DatasetSpec.to_dict">to_dict() （data_juicer_agents.tools.plan.DatasetSpec 方法）</a>
 </li>
-      <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.PlanModel.to_dict">to_dict() （data_juicer_agents.tools.plan.PlanModel 方法）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.PlanModel.to_dict">to_dict() （data_juicer_agents.tools.plan.PlanModel 方法）</a>
+</li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.ProcessSpec.to_dict">to_dict() （data_juicer_agents.tools.plan.ProcessSpec 方法）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.SystemSpec.to_dict">to_dict() （data_juicer_agents.tools.plan.SystemSpec 方法）</a>
@@ -3414,6 +3577,8 @@
       <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput.top_k">top_k（data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput 属性）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput.top_k">top_k（data_juicer_agents.tools.retrieve.RetrieveOperatorsInput 属性）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder.trace_step">trace_step()（在 data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder 模块中）</a>
 </li>
       <li><a href="api/data_juicer_agents.capabilities.session.runtime.html#data_juicer_agents.capabilities.session.runtime.truncate_text">truncate_text()（在 data_juicer_agents.capabilities.session.runtime 模块中）</a>
 </li>
@@ -3494,6 +3659,8 @@
       <li><a href="api/data_juicer_agents.tools.plan.validate_system_spec.html#data_juicer_agents.tools.plan.validate_system_spec.ValidateSystemSpecInput">ValidateSystemSpecInput（data_juicer_agents.tools.plan.validate_system_spec 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.validate_system_spec.input.html#data_juicer_agents.tools.plan.validate_system_spec.input.ValidateSystemSpecInput">ValidateSystemSpecInput（data_juicer_agents.tools.plan.validate_system_spec.input 中的类）</a>
+</li>
+      <li><a href="api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.html#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever.VectorRetriever">VectorRetriever（data_juicer_agents.tools.retrieve.retrieve_operators.backend.retriever 中的类）</a>
 </li>
       <li><a href="api/data_juicer_agents.tools.plan.build_dataset_spec.html#data_juicer_agents.tools.plan.build_dataset_spec.BuildDatasetSpecInput.video_key_hint">video_key_hint（data_juicer_agents.tools.plan.build_dataset_spec.BuildDatasetSpecInput 属性）</a>
 </li>

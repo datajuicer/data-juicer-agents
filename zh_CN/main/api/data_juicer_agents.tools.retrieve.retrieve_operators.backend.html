@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>data_juicer_agents.tools.retrieve.retrieve_operators.backend module &#8212; Data Juicer Agents</title>
+    <title>data_juicer_agents.tools.retrieve.retrieve_operators.backend &#8212; Data Juicer Agents</title>
   
   
   
@@ -514,7 +514,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.retrieve.retrieve_operators.backend module</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.retrieve.retrieve_operators.backend</span></li>
   </ul>
 </nav>
 </div>
@@ -531,8 +531,110 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-agents-tools-retrieve-retrieve-operators-backend-module">
-<h1>data_juicer_agents.tools.retrieve.retrieve_operators.backend module<a class="headerlink" href="#data-juicer-agents-tools-retrieve-retrieve-operators-backend-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer_agents.tools.retrieve.retrieve_operators.backend">
+<span id="data-juicer-agents-tools-retrieve-retrieve-operators-backend"></span><h1>data_juicer_agents.tools.retrieve.retrieve_operators.backend<a class="headerlink" href="#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend" title="链接到此标题。">#</a></h1>
+<p>Operator retrieval backend package.</p>
+<p>This package contains the backend modules for operator retrieval:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">backend</span></code>      – thin coordination layer and public API</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cache</span></code>        – thread-safe cache manager</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">catalog</span></code>      – operator catalog initialization</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retriever</span></code>    – retrieval backend abstraction and strategy manager</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">result_builder</span></code> – shared helpers for building result/trace dicts</p></li>
+</ul>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_op_catalog">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">get_op_catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#get_op_catalog"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_op_catalog" title="链接到此定义。">#</a></dt>
+<dd><p>Return current op_catalog (lifecycle-aware).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_op_catalog">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">init_op_catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#init_op_catalog"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_op_catalog" title="链接到此定义。">#</a></dt>
+<dd><p>Initialize op_catalog at agent startup.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.names_from_items">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">names_from_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/result_builder.html#names_from_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.names_from_items" title="链接到此定义。">#</a></dt>
+<dd><p>Extract non-empty tool names from a list of retrieval items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items</strong> -- List of retrieval item dicts, each with a <code class="docutils literal notranslate"><span class="pre">tool_name</span></code> key.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of stripped, non-empty tool names. Empty strings and missing
+keys are silently skipped.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_op_catalog">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">refresh_op_catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#refresh_op_catalog"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_op_catalog" title="链接到此定义。">#</a></dt>
+<dd><p>Refresh op_catalog during agent runtime (for manual updates).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#retrieve_ops"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops" title="链接到此定义。">#</a></dt>
+<dd><p>Tool retrieval – returns list of tool names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_query</strong> -- User query string.</p></li>
+<li><p><strong>limit</strong> -- Maximum number of tools to retrieve.</p></li>
+<li><p><strong>mode</strong> -- Retrieval mode – &quot;llm&quot;, &quot;vector&quot;, &quot;bm25&quot;, &quot;regex&quot;, or &quot;auto&quot;.</p></li>
+<li><p><strong>op_type</strong> -- Optional operator type filter.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_bm25_items">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_bm25_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#retrieve_ops_bm25_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_bm25_items" title="链接到此定义。">#</a></dt>
+<dd><p>Thin wrapper: BM25 retrieval – returns list of item dicts.</p>
+<p>Note: synchronous wrapper around the async backend for backward compat.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_lm_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#retrieve_ops_lm_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items" title="链接到此定义。">#</a></dt>
+<dd><p>Thin wrapper: delegates to LLMRetriever.retrieve_items.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_regex_items">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_regex_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#retrieve_ops_regex_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_regex_items" title="链接到此定义。">#</a></dt>
+<dd><p>Thin wrapper: regex retrieval – returns list of item dicts.</p>
+<p>Note: synchronous wrapper around the async backend for backward compat.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector_items">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_vector_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#retrieve_ops_vector_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector_items" title="链接到此定义。">#</a></dt>
+<dd><p>Thin wrapper: vector retrieval – returns list of tool names.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_with_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/backend.html#retrieve_ops_with_meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta" title="链接到此定义。">#</a></dt>
+<dd><p>Tool retrieval with source/trace metadata.</p>
+<p>Delegates entirely to RetrievalStrategy.execute().</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_query</strong> -- User query string.</p></li>
+<li><p><strong>limit</strong> -- Maximum number of tools to retrieve.</p></li>
+<li><p><strong>mode</strong> -- Retrieval mode – &quot;llm&quot;, &quot;vector&quot;, &quot;bm25&quot;, &quot;regex&quot;, or &quot;auto&quot;.</p></li>
+<li><p><strong>op_type</strong> -- Optional operator type filter (e.g. &quot;filter&quot;, &quot;mapper&quot;).</p></li>
+<li><p><strong>tags</strong> -- List of tags to match.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -555,6 +657,27 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_op_catalog"><code class="docutils literal notranslate"><span class="pre">get_op_catalog()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_op_catalog"><code class="docutils literal notranslate"><span class="pre">init_op_catalog()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.names_from_items"><code class="docutils literal notranslate"><span class="pre">names_from_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_op_catalog"><code class="docutils literal notranslate"><span class="pre">refresh_op_catalog()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops"><code class="docutils literal notranslate"><span class="pre">retrieve_ops()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_bm25_items"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_bm25_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_lm_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_regex_items"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_regex_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector_items"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_vector_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta()</span></code></a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

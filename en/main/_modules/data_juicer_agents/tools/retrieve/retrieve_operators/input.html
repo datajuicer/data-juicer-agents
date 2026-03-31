@@ -534,17 +534,56 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 
 
 <div class="viewcode-block" id="RetrieveOperatorsInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RetrieveOperatorsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Natural-language retrieval intent.&quot;</span><span class="p">)</span>
+    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Retrieval query. For natural-language modes (auto, llm, vector, bm25), &quot;</span>
+            <span class="s2">&quot;provide a plain-text description of the desired operators. &quot;</span>
+            <span class="s2">&quot;For regex mode, provide a regular expression pattern to match operator names.&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of operator candidates to return.&quot;</span><span class="p">)</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Retrieval mode: auto, llm, or vector.&quot;</span><span class="p">)</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional dataset path used as explicit retrieval context.&quot;</span><span class="p">)</span></div>
-
+    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;llm&quot;</span><span class="p">,</span> <span class="s2">&quot;vector&quot;</span><span class="p">,</span> <span class="s2">&quot;bm25&quot;</span><span class="p">,</span> <span class="s2">&quot;regex&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Retrieval mode. &quot;</span>
+            <span class="s2">&quot;&#39;auto&#39;: tries llm → vector → bm25 with automatic fallback. &quot;</span>
+            <span class="s2">&quot;&#39;llm&#39;: semantic ranking via LLM (most accurate, requires API key, slower). &quot;</span>
+            <span class="s2">&quot;&#39;vector&#39;: FAISS vector similarity (requires API key, fast after index built). &quot;</span>
+            <span class="s2">&quot;&#39;bm25&#39;: BM25 keyword matching (no API key needed, fast). &quot;</span>
+            <span class="s2">&quot;&#39;regex&#39;: regex pattern matching on operator names (no API key needed, fastest).&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Optional operator type filter (e.g. &#39;filter&#39;, &#39;mapper&#39;, &#39;deduplicator&#39;, &quot;</span>
+            <span class="s2">&quot;&#39;selector&#39;, &#39;grouper&#39;, &#39;aggregator&#39;, &#39;pipeline&#39;). When provided, only operators of &quot;</span>
+            <span class="s2">&quot;the specified type are considered during retrieval.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Modality/resource tags to filter operators &quot;</span>
+            <span class="s2">&quot;(e.g. &#39;text&#39;, &#39;image&#39;, &#39;multimodal&#39;, &#39;audio&#39;, &#39;video&#39;, &#39;cpu&#39;, &#39;gpu&#39;, &#39;api&#39;). &quot;</span>
+            <span class="s2">&quot;Only operators whose tag set contains ALL of the specified tags are returned (match-all semantics).&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Optional dataset file path. When provided, the dataset modality is probed &quot;</span>
+            <span class="s2">&quot;via inspect_dataset_schema and the inferred tags are merged with any explicit tags.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GenericOutput">

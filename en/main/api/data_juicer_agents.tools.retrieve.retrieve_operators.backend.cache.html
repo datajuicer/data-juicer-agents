@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>data_juicer_agents.tools.retrieve.retrieve_operators.catalog module &#8212; Data Juicer Agents</title>
+    <title>data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache module &#8212; Data Juicer Agents</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -233,7 +233,7 @@
         
           
           
-          <a href="../../../en/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+          <a href="../../../en/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
              class="dropdown-item active"
              role="menuitem"
              aria-current="true">
@@ -242,7 +242,7 @@
         
           
           
-          <a href="../../../zh_CN/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+          <a href="../../../zh_CN/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
              class="dropdown-item "
              role="menuitem"
              >
@@ -268,14 +268,14 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../main/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+        <a href="../../main/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
            class="dropdown-item active"
            role="menuitem"
            aria-current="true">
           main
         </a>
         
-        <a href="../../v0.0.2/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+        <a href="../../v0.0.2/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
            class="dropdown-item "
            role="menuitem"
            >
@@ -419,7 +419,7 @@
         
           
           
-          <a href="../../../en/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+          <a href="../../../en/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
              class="dropdown-item active"
              role="menuitem"
              aria-current="true">
@@ -428,7 +428,7 @@
         
           
           
-          <a href="../../../zh_CN/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+          <a href="../../../zh_CN/main/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
              class="dropdown-item "
              role="menuitem"
              >
@@ -454,14 +454,14 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../main/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+        <a href="../../main/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
            class="dropdown-item active"
            role="menuitem"
            aria-current="true">
           main
         </a>
         
-        <a href="../../v0.0.2/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.html"
+        <a href="../../v0.0.2/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.html"
            class="dropdown-item "
            role="menuitem"
            >
@@ -513,7 +513,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.retrieve.retrieve_operators.catalog module</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache module</span></li>
   </ul>
 </nav>
 </div>
@@ -530,8 +530,61 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-agents-tools-retrieve-retrieve-operators-catalog-module">
-<h1>data_juicer_agents.tools.retrieve.retrieve_operators.catalog module<a class="headerlink" href="#data-juicer-agents-tools-retrieve-retrieve-operators-catalog-module" title="Link to this heading">#</a></h1>
+  <section id="module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache">
+<span id="data-juicer-agents-tools-retrieve-retrieve-operators-backend-cache-module"></span><h1>data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache module<a class="headerlink" href="#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache" title="Link to this heading">#</a></h1>
+<p>Thread-safe cache manager for retrieval backends.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.</span></span><span class="sig-name descname"><span class="pre">RetrievalCacheManager</span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Thread-safe cache for retrieval backends.</p>
+<p>Replaces the scattered module-level global variables previously used in
+backend.py (<code class="docutils literal notranslate"><span class="pre">_cached_vector_store</span></code>, <code class="docutils literal notranslate"><span class="pre">_cached_tools_info</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_cached_content_hash</span></code>, <code class="docutils literal notranslate"><span class="pre">_cached_op_searcher</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_global_op_catalog</span></code>).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get" title="Link to this definition">#</a></dt>
+<dd><p>Return the cached value for <em>key</em>, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if absent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hash</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.set" title="Link to this definition">#</a></dt>
+<dd><p>Store <em>value</em> under <em>key</em>, optionally recording <em>content_hash</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get_hash">
+<span class="sig-name descname"><span class="pre">get_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.get_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get_hash" title="Link to this definition">#</a></dt>
+<dd><p>Return the content hash recorded for <em>key</em>, or empty string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate">
+<span class="sig-name descname"><span class="pre">invalidate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.invalidate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate" title="Link to this definition">#</a></dt>
+<dd><p>Remove a single cache entry and its associated hash.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate_all">
+<span class="sig-name descname"><span class="pre">invalidate_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.invalidate_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate_all" title="Link to this definition">#</a></dt>
+<dd><p>Clear all cached values and hashes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.is_stale">
+<span class="sig-name descname"><span class="pre">is_stale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hash</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend/cache.html#RetrievalCacheManager.is_stale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.is_stale" title="Link to this definition">#</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> when the stored hash for <em>key</em> differs from <em>content_hash</em>.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -556,10 +609,31 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.__init__"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.set"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.get_hash"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.get_hash()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.invalidate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.invalidate_all"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.invalidate_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.RetrievalCacheManager.is_stale"><code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager.is_stale()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/data_juicer_agents.tools.retrieve.retrieve_operators.catalog.rst.txt"
+      <li><a href="../_sources/api/data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

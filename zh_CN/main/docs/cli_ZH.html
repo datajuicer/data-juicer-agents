@@ -683,14 +683,32 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </section>
 <section id="djx-retrieve">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code><a class="headerlink" href="#djx-retrieve" title="链接到此标题。">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;op_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--tags<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="p">|</span>bm25<span class="p">|</span>regex<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
 </pre></div>
 </div>
+<p>关键参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>：可选数据集路径；提供后，CLI 会通过 <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> 探测数据集模态（text / image / multimodal / audio / video），并将其转换为算子标签用于过滤</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code>：按算子类型过滤（如 <code class="docutils literal notranslate"><span class="pre">filter</span></code>、<code class="docutils literal notranslate"><span class="pre">mapper</span></code>、<code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tags</span></code>：按算子标签过滤（如 <code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">image</span></code>、<code class="docutils literal notranslate"><span class="pre">multimodal</span></code>）；可与 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> 组合使用（标签会合并）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-k</span></code>：最大候选数量（默认 10）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mode</span></code>：检索后端选择</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--json</span></code>：以 JSON 格式输出完整 payload，而非人类可读摘要</p></li>
+</ul>
 <p>返回：</p>
 <ul class="simple">
 <li><p>候选算子排序</p></li>
 <li><p>检索来源、trace 与备注</p></li>
-<li><p>输出 payload 不包含 dataset profile</p></li>
+<li><p>当提供 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> 且成功检测到模态时，payload 中包含 <code class="docutils literal notranslate"><span class="pre">inferred_tags</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> 顺序为 <code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">-&gt;</span> <span class="pre">vector</span> <span class="pre">-&gt;</span> <span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code>（无 API Key 时为 <code class="docutils literal notranslate"><span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code>）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regex</span></code> 使用 Python 正则表达式匹配算子名称、描述和参数字段（独立模式，不参与 auto fallback 链）</p></li>
+</ul>
+<p>基于数据集的过滤：</p>
+<ul class="simple">
+<li><p>当提供 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> 时，CLI 调用 <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> 检测数据集模态</p></li>
+<li><p>检测到的模态会映射为算子标签（如 <code class="docutils literal notranslate"><span class="pre">image</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;image&quot;]</span></code>，<code class="docutils literal notranslate"><span class="pre">multimodal</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;multimodal&quot;]</span></code>）</p></li>
+<li><p>这些标签会传递给检索后端，后端据此过滤算子目录，仅返回标签匹配的算子</p></li>
+<li><p>如果模态检测失败，检索将不带标签过滤继续执行</p></li>
 </ul>
 </section>
 <section id="djx-dev">

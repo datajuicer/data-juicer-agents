@@ -679,14 +679,32 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </section>
 <section id="djx-retrieve">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code><a class="headerlink" href="#djx-retrieve" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;op_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--tags<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="p">|</span>bm25<span class="p">|</span>regex<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
 </pre></div>
 </div>
+<p>Key options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>: optional dataset path; when provided, the CLI probes the dataset with <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> to infer modality (text / image / multimodal / audio / video) and converts it into operator tags for filtering</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code>: filter by operator type (e.g. <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tags</span></code>: filter by operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">image</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code>); can be combined with <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> (tags are merged)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-k</span></code>: maximum number of candidates (default: 10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mode</span></code>: retrieval backend selection</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--json</span></code>: output the full payload as JSON instead of human-readable summary</p></li>
+</ul>
 <p>Returns:</p>
 <ul class="simple">
 <li><p>ranked operator candidates</p></li>
 <li><p>retrieval source, trace, and notes</p></li>
-<li><p>the output payload does not include dataset profile</p></li>
+<li><p>when <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> is provided and modality is detected, the payload includes <code class="docutils literal notranslate"><span class="pre">inferred_tags</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> uses <code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">-&gt;</span> <span class="pre">vector</span> <span class="pre">-&gt;</span> <span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code> (without API key: <code class="docutils literal notranslate"><span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regex</span></code> uses Python regex pattern matching against operator name, description, and parameter fields (standalone mode, not part of auto fallback)</p></li>
+</ul>
+<p>Dataset-aware filtering:</p>
+<ul class="simple">
+<li><p>when <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> is provided, the CLI calls <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> to detect the dataset modality</p></li>
+<li><p>the detected modality is mapped to operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">image</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;image&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;multimodal&quot;]</span></code>)</p></li>
+<li><p>these tags are passed to the retrieval backends, which filter the operator catalog so that only operators tagged with matching modalities are returned</p></li>
+<li><p>if modality detection fails, retrieval proceeds without tag filtering</p></li>
 </ul>
 </section>
 <section id="djx-dev">

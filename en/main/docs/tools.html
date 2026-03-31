@@ -649,12 +649,23 @@
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve/registry.py</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{input.py,logic.py,tool.py}</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/operator_registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/backend/</span></code> (sub-package):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">backend.py</span></code>: public API (<code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieve_ops</span></code>, <code class="docutils literal notranslate"><span class="pre">get_op_catalog</span></code>, etc.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cache.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager</span></code> singleton for vector store, tools info, and catalog caching</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">catalog.py</span></code>: operator catalog builder (collects <code class="docutils literal notranslate"><span class="pre">class_name</span></code>, <code class="docutils literal notranslate"><span class="pre">class_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">class_type</span></code>, <code class="docutils literal notranslate"><span class="pre">class_tags</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">result_builder.py</span></code>: <code class="docutils literal notranslate"><span class="pre">build_retrieval_item</span></code>, <code class="docutils literal notranslate"><span class="pre">filter_by_op_type</span></code>, <code class="docutils literal notranslate"><span class="pre">filter_by_tags</span></code>, <code class="docutils literal notranslate"><span class="pre">names_from_items</span></code>, <code class="docutils literal notranslate"><span class="pre">trace_step</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retriever.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrieverBackend</span></code> ABC and concrete backends (<code class="docutils literal notranslate"><span class="pre">LLMRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">VectorRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">BM25Retriever</span></code>, <code class="docutils literal notranslate"><span class="pre">RegexRetriever</span></code>)</p></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p>Main responsibilities:</p>
 <ul>
 <li><p>operator retrieval entrypoints for the main package</p></li>
+<li><p>multi-backend retrieval strategy with automatic fallback (<code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">→</span> <span class="pre">vector</span> <span class="pre">→</span> <span class="pre">bm25</span></code>)</p></li>
+<li><p>operator type filtering (<code class="docutils literal notranslate"><span class="pre">filter_by_op_type</span></code>) and tag-based filtering (<code class="docutils literal notranslate"><span class="pre">filter_by_tags</span></code>)</p></li>
 <li><p>canonical operator-name resolution</p></li>
 <li><p>installed-operator lookup</p></li>
 </ul>

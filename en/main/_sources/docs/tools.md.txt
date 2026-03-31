@@ -68,9 +68,17 @@ Package-level `__init__.py` files re-export stable helpers, and some groups keep
 - Files:
   - `retrieve/registry.py`
   - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
-  - `retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}`
+  - `retrieve/retrieve_operators/operator_registry.py`
+  - `retrieve/retrieve_operators/backend/` (sub-package):
+    - `backend.py`: public API (`retrieve_ops_with_meta`, `retrieve_ops`, `get_op_catalog`, etc.)
+    - `cache.py`: `RetrievalCacheManager` singleton for vector store, tools info, and catalog caching
+    - `catalog.py`: operator catalog builder (collects `class_name`, `class_desc`, `class_type`, `class_tags`)
+    - `result_builder.py`: `build_retrieval_item`, `filter_by_op_type`, `filter_by_tags`, `names_from_items`, `trace_step`
+    - `retriever.py`: `RetrieverBackend` ABC and concrete backends (`LLMRetriever`, `VectorRetriever`, `BM25Retriever`, `RegexRetriever`)
 - Main responsibilities:
   - operator retrieval entrypoints for the main package
+  - multi-backend retrieval strategy with automatic fallback (`llm → vector → bm25`)
+  - operator type filtering (`filter_by_op_type`) and tag-based filtering (`filter_by_tags`)
   - canonical operator-name resolution
   - installed-operator lookup
 
