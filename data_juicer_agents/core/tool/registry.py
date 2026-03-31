@@ -5,9 +5,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import lru_cache
-from typing import Dict, Iterable, List, Sequence
+from typing import Dict, List, Sequence, Tuple
 
 from .contracts import ToolSpec
+from .profiles import groups_for_tool_profile
 
 
 @dataclass
@@ -43,22 +44,46 @@ class ToolRegistry:
         return list(self._tools.keys())
 
 
-@lru_cache(maxsize=1)
-def build_default_tool_registry() -> ToolRegistry:
-    from data_juicer_agents.core.tool.catalog import ALL_TOOL_SPECS
+def _registry_cache_key(
+    *,
+    profile: str | None = None,
+    groups: Sequence[str] | None = None,
+) -> Tuple[str, ...] | None:
+    if groups is not None:
+        normalized = tuple(str(item or "").strip() for item in groups if str(item or "").strip())
+        return normalized
+    return groups_for_tool_profile(profile)
 
+
+@lru_cache(maxsize=None)
+def _build_registry_cached(group_names: Tuple[str, ...] | None) -> ToolRegistry:
+    from data_juicer_agents.core.tool.catalog import load_tool_specs
+
+    specs = load_tool_specs(group_names)
     registry = ToolRegistry()
-    for spec in ALL_TOOL_SPECS:
+    for spec in specs:
         registry.register(spec)
     return registry
 
 
-def get_tool_spec(name: str) -> ToolSpec:
-    return build_default_tool_registry().get(name)
+def build_default_tool_registry(
+    *,
+    profile: str | None = None,
+    groups: Sequence[str] | None = None,
+) -> ToolRegistry:
+    return _build_registry_cached(_registry_cache_key(profile=profile, groups=groups))
 
 
-def list_tool_specs(*, tags: Sequence[str] | None = None) -> List[ToolSpec]:
-    return build_default_tool_registry().list(tags=tags)
+def get_tool_spec(name: str, *, profile: str | None = None) -> ToolSpec:
+    return build_default_tool_registry(profile=profile).get(name)
+
+
+def list_tool_specs(
+    *,
+    tags: Sequence[str] | None = None,
+    profile: str | None = None,
+) -> List[ToolSpec]:
+    return build_default_tool_registry(profile=profile).list(tags=tags)
 
 
 __all__ = [
