@@ -141,4 +141,4 @@ data/202*/
 data/log/
 data/monitor/
 plans/
-data_juicer_agents/tools/retrieve/retrieve_operators/vector_index_cache/
+data_juicer_agents/tools/retrieve/retrieve_operators/backend/vector_index_cache/

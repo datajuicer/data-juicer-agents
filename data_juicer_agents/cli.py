@@ -110,7 +110,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     retrieve.add_argument(
         "--mode",
-        choices=["auto", "llm", "vector"],
+        choices=["auto", "llm", "vector", "bm25", "regex"],
         default="auto",
         help="Retrieval backend mode",
     )
@@ -118,6 +118,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--dataset",
         default=None,
         help="Optional dataset path for schema/modality probing",
+    )
+    retrieve.add_argument(
+        "--type",
+        dest="op_type",
+        default=None,
+        help="Filter by operator type (e.g. filter, mapper, deduplicator)",
+    )
+    retrieve.add_argument(
+        "--tags",
+        nargs="*",
+        default=None,
+        help="Filter by operator tags (e.g. text image multimodal)",
     )
     retrieve.add_argument(
         "--json",

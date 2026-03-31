@@ -76,13 +76,29 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ## `djx retrieve`
 
 ```bash
-djx retrieve "<intent>" [--dataset <path>] [--top-k 10] [--mode auto|llm|vector] [--json]
+djx retrieve "<intent>" [--dataset <path>] [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|vector|bm25|regex] [--json]
 ```
+
+关键参数：
+- `--dataset`：可选数据集路径；提供后，CLI 会通过 `inspect_dataset_schema` 探测数据集模态（text / image / multimodal / audio / video），并将其转换为算子标签用于过滤
+- `--type`：按算子类型过滤（如 `filter`、`mapper`、`deduplicator`）
+- `--tags`：按算子标签过滤（如 `text`、`image`、`multimodal`）；可与 `--dataset` 组合使用（标签会合并）
+- `--top-k`：最大候选数量（默认 10）
+- `--mode`：检索后端选择
+- `--json`：以 JSON 格式输出完整 payload，而非人类可读摘要
 
 返回：
 - 候选算子排序
 - 检索来源、trace 与备注
-- 输出 payload 不包含 dataset profile
+- 当提供 `--dataset` 且成功检测到模态时，payload 中包含 `inferred_tags`
+- `auto` 顺序为 `llm -> vector -> bm25 -> lexical`（无 API Key 时为 `bm25 -> lexical`）
+- `regex` 使用 Python 正则表达式匹配算子名称、描述和参数字段（独立模式，不参与 auto fallback 链）
+
+基于数据集的过滤：
+- 当提供 `--dataset` 时，CLI 调用 `inspect_dataset_schema` 检测数据集模态
+- 检测到的模态会映射为算子标签（如 `image` → `["image"]`，`multimodal` → `["multimodal"]`）
+- 这些标签会传递给检索后端，后端据此过滤算子目录，仅返回标签匹配的算子
+- 如果模态检测失败，检索将不带标签过滤继续执行
 
 ## `djx dev`
 
