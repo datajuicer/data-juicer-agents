@@ -7,36 +7,6 @@ import json
 from typing import List
 
 from data_juicer_agents.tools.retrieve import retrieve_operator_candidates
-from data_juicer_agents.tools.retrieve.retrieve_operators.logic import _infer_tags_from_dataset
-
-# ---------------------------------------------------------------------------
-# Modality → operator tags mapping
-# ---------------------------------------------------------------------------
-
-_MODALITY_TAG_MAP: dict[str, List[str]] = {
-    "text": ["text"],
-    "image": ["image"],
-    "multimodal": ["multimodal"],
-    "audio": ["audio"],
-    "video": ["video"],
-}
-
-
-def _infer_tags_from_dataset(dataset_path: str) -> List[str]:
-    """Probe *dataset_path* with ``inspect_dataset_schema`` and return modality tags.
-
-    Returns an empty list when the dataset cannot be inspected or the modality
-    is unknown, so the caller can fall back to unfiltered retrieval.
-    """
-    from data_juicer_agents.tools.context.inspect_dataset.logic import (
-        inspect_dataset_schema,
-    )
-
-    result = inspect_dataset_schema(dataset_path=dataset_path, sample_size=20)
-    if not result.get("ok"):
-        return []
-    modality = str(result.get("modality", "")).strip().lower()
-    return list(_MODALITY_TAG_MAP.get(modality, []))
 
 
 def _print_human_readable(payload: dict) -> None:
@@ -78,14 +48,6 @@ def run_retrieve(args) -> int:
     tags: List[str] = list(getattr(args, "tags", None) or [])
     dataset_path: str | None = getattr(args, "dataset", None)
     op_type: str | None = getattr(args, "op_type", None)
-
-    # Print a preview of dataset modality detection for human-readable output
-    if dataset_path and not args.json:
-        inferred = _infer_tags_from_dataset(dataset_path)
-        if inferred:
-            print(f"Detected dataset modality tags: {inferred}")
-        else:
-            print(f"Could not infer modality from dataset: {dataset_path}")
 
     try:
         payload = retrieve_operator_candidates(
