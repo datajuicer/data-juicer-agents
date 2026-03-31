@@ -86,7 +86,7 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
     retrieved = invoke_tool_spec(
         registry.get("retrieve_operators"),
         ctx=ctx,
-        raw_kwargs={"intent": "filter rows longer than 1500 characters"},
+        raw_kwargs={"intent": "text length filter"},
     )
     assert retrieved["ok"] is True
     assert "text_length_filter" in [c["operator_name"] for c in retrieved["candidates"]]
