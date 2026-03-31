@@ -8,7 +8,6 @@ from importlib import import_module
 import sys
 
 from data_juicer_agents import __version__
-from data_juicer_agents.commands.tool_cmd import run_tool
 from data_juicer_agents.utils.optional_deps import missing_dependency_message
 
 
