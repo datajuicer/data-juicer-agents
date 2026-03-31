@@ -18,7 +18,9 @@ export DASHSCOPE_API_KEY=your_dashscope_key
 
 Install dependencies:
 ```bash
-uv pip install -r requirements.txt
+cd ..
+uv pip install '.[interecipe]'
+cd interactive_recipe
 ```
 
 [Optional] Start the copilot server (replace the `DATA_JUICER_PATH` variable in `../qa-copilot/setup_server.sh` with the absolute path to your data-juicer repository):

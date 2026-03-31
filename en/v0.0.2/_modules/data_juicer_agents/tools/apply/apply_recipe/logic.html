@@ -595,7 +595,7 @@
 
 
 <div class="viewcode-block" id="ApplyResult">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.ApplyResult">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyResult">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApplyResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execution summary for one plan apply run.&quot;&quot;&quot;</span>
@@ -616,14 +616,14 @@
     <span class="n">next_actions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ApplyResult.new_id">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.ApplyResult.new_id">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyResult.new_id">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">new_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;exec_</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 <div class="viewcode-block" id="ApplyResult.to_dict">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.ApplyResult.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyResult.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;execution_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_id</span><span class="p">,</span>
@@ -646,7 +646,7 @@
 
 
 <div class="viewcode-block" id="ApplyUseCase">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.ApplyUseCase">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyUseCase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApplyUseCase</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute validated plans and return execution summaries.&quot;&quot;&quot;</span>
 
@@ -725,7 +725,7 @@
         <span class="k">return</span> <span class="n">recipe_path</span>
 
 <div class="viewcode-block" id="ApplyUseCase.execute">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.capabilities.apply.service.html#data_juicer_agents.ApplyUseCase.execute">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyUseCase.execute">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plan_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>

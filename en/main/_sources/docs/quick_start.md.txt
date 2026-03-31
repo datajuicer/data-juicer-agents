@@ -8,11 +8,30 @@
 
 ## 2. Install
 
+Choose one installation profile:
+
+- `core`: full `data_juicer_agents` command surface
+- `harness`: minimal install for the `djx tool` harness profile
+- `full`: `core` plus `copilot` and `interecipe`
+
 ```bash
 cd ./data-juicer-agents
 uv venv .venv
 source .venv/bin/activate
-uv pip install -e .
+uv pip install -e '.[core]'
+```
+
+Harness install:
+
+```bash
+uv pip install -e '.[harness]'
+export DJX_TOOL_PROFILE=harness
+```
+
+Full install:
+
+```bash
+uv pip install -e '.[full]'
 ```
 
 ## 3. Configure model access
@@ -76,6 +95,7 @@ djx tool run list_system_config --input-json '{}'
 Notes:
 - `djx tool` is JSON-only and primarily intended for agent / skill automation.
 - write or execute tools require explicit `--yes`.
+- `DJX_TOOL_PROFILE=harness` limits `djx tool` to the harness tool set (`apply`, `context`, `plan`).
 
 ## 5. Session mode (`dj-agents`)
 
@@ -122,3 +142,8 @@ If planning or session startup fails with API/model errors, verify:
 - `DJA_SESSION_MODEL` and `DJA_PLANNER_MODEL`
 - `DJA_MODEL_FALLBACKS` when you expect model fallback
 - `DJA_LLM_THINKING` if your provider rejects the thinking flag
+
+If a command reports missing optional dependencies, install the matching profile:
+- `data-juicer-agents[harness]` for harness-only `djx tool` usage
+- `data-juicer-agents[core]` for the full `djx` / `dj-agents` command set
+- `data-juicer-agents[full]` for `core + copilot + interecipe`

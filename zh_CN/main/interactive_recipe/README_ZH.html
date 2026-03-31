@@ -591,7 +591,9 @@
 </pre></div>
 </div>
 <p>安装依赖项：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>..
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;.[interecipe]&#39;</span>
+<span class="nb">cd</span><span class="w"> </span>interactive_recipe
 </pre></div>
 </div>
 <p>【可选】启动copilot服务器（将<code class="docutils literal notranslate"><span class="pre">../qa-copilot/setup_server.sh</span></code>中的<code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code>变量替换为您的data-juicer仓库的绝对路径）：</p>

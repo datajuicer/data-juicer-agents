@@ -755,6 +755,8 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p><code class="docutils literal notranslate"><span class="pre">ToolContext.env</span></code> and <code class="docutils literal notranslate"><span class="pre">runtime_values</span></code> are not exposed through the CLI</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tool</span> <span class="pre">run</span></code> is suitable for machine-to-machine use; stable JSON output is the primary contract</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code>, <code class="docutils literal notranslate"><span class="pre">--verbose</span></code>, and <code class="docutils literal notranslate"><span class="pre">--debug</span></code> are accepted for CLI-shape consistency with other <code class="docutils literal notranslate"><span class="pre">djx</span></code> subcommands, but they do not change <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> output</p></li>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code> after installing <code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> to restrict <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> to the harness groups (<code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">context</span></code>, <code class="docutils literal notranslate"><span class="pre">plan</span></code>)</p></li>
+<li><p>tools outside the active profile return a structured JSON error instead of being exposed by <code class="docutils literal notranslate"><span class="pre">list</span></code></p></li>
 </ul>
 </section>
 <section id="dj-agents">
@@ -789,6 +791,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code>: model used by <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code>: comma-separated fallback models for <code class="docutils literal notranslate"><span class="pre">data_juicer_agents/utils/llm_gateway.py</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code>: toggles <code class="docutils literal notranslate"><span class="pre">enable_thinking</span></code> in model requests</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE</span></code>: optional tool-catalog profile; set to <code class="docutils literal notranslate"><span class="pre">harness</span></code> to expose only the harness tool set in <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code></p></li>
 </ul>
 </section>
 </section>

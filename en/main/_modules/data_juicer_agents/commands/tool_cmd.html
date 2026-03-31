@@ -540,7 +540,16 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolContext</span><span class="p">,</span> <span class="n">ToolSpec</span><span class="p">,</span> <span class="n">get_tool_spec</span><span class="p">,</span> <span class="n">list_tool_specs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ToolContext</span><span class="p">,</span>
+    <span class="n">ToolSpec</span><span class="p">,</span>
+    <span class="n">get_active_tool_profile</span><span class="p">,</span>
+    <span class="n">get_tool_spec</span><span class="p">,</span>
+    <span class="n">list_tool_specs</span><span class="p">,</span>
+    <span class="n">tool_is_excluded_from_profile</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolGroupImportError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.optional_deps</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_command_for_extras</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_tool_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">ToolSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -609,35 +618,159 @@
     <span class="k">return</span> <span class="n">ToolContext</span><span class="p">(</span><span class="n">working_dir</span><span class="o">=</span><span class="n">resolved</span><span class="p">,</span> <span class="n">artifacts_dir</span><span class="o">=</span><span class="n">resolved</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_active_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">get_active_tool_profile</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">_error_payload</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;invalid_tool_profile&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">profile</span><span class="p">,</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_install_hint_for_group_import</span><span class="p">(</span><span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;apply&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="s2">&quot;plan&quot;</span><span class="p">,</span> <span class="s2">&quot;process&quot;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">install_command_for_extras</span><span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">install_command_for_extras</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_group_import_failure_payload</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">exc</span><span class="p">:</span> <span class="n">ToolGroupImportError</span><span class="p">,</span>
+    <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;tool group &#39;</span><span class="si">{</span><span class="n">exc</span><span class="o">.</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&#39; requires optional dependencies that are not installed. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Install them with: </span><span class="si">{</span><span class="n">_install_hint_for_group_import</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">group_name</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">missing_module</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; Missing module: </span><span class="si">{</span><span class="n">exc</span><span class="o">.</span><span class="n">missing_module</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_error_payload</span><span class="p">(</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;missing_optional_dependency&quot;</span><span class="p">,</span>
+            <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="n">exc</span><span class="o">.</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">missing_module</span><span class="o">=</span><span class="n">exc</span><span class="o">.</span><span class="n">missing_module</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_profile_unavailable_payload</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">profile</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;tool &#39;</span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">&#39; is not available in the &#39;</span><span class="si">{</span><span class="n">profile</span><span class="si">}</span><span class="s2">&#39; tool profile. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Install </span><span class="si">{</span><span class="n">install_command_for_extras</span><span class="p">(</span><span class="s1">&#39;core&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> and unset DJX_TOOL_PROFILE &quot;</span>
+        <span class="s2">&quot;to access the full tool catalog.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_error_payload</span><span class="p">(</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_not_available_in_profile&quot;</span><span class="p">,</span>
+            <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+            <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_tool_spec</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">profile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ToolSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">get_tool_spec</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ToolGroupImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_group_import_failure_payload</span><span class="p">(</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">exc</span><span class="o">=</span><span class="n">exc</span><span class="p">,</span>
+            <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tool_is_excluded_from_profile</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_profile_unavailable_payload</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+                <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">get_tool_spec</span><span class="p">(</span><span class="n">tool_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="n">ToolGroupImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_group_import_failure_payload</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">exc</span><span class="o">=</span><span class="n">exc</span><span class="p">,</span>
+                <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">profile</span> <span class="o">!=</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_profile_unavailable_payload</span><span class="p">(</span>
+                    <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                    <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+                    <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">_error_payload</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_not_found&quot;</span><span class="p">,</span>
+                <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+                <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">spec</span><span class="p">,</span> <span class="kc">None</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_list</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_active_profile</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resolved</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">resolved</span>  <span class="c1"># type: ignore[return-value]</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">resolved</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="n">list_tool_specs</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">list_tool_specs</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ToolGroupImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_group_import_failure_payload</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_list&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="o">=</span><span class="n">exc</span><span class="p">)</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="n">_success_payload</span><span class="p">(</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_list&quot;</span><span class="p">,</span>
         <span class="n">count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">),</span>
         <span class="n">filter_tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+        <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
         <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">_tool_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span><span class="p">,</span> <span class="mi">0</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_schema</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_active_profile</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resolved</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">resolved</span>  <span class="c1"># type: ignore[return-value]</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">resolved</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">get_tool_spec</span><span class="p">(</span><span class="n">tool_name</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">_error_payload</span><span class="p">(</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_schema&quot;</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_not_found&quot;</span><span class="p">,</span>
-                <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
-            <span class="p">),</span>
-            <span class="mi">2</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="n">spec</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">_resolve_tool_spec</span><span class="p">(</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_schema&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+        <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">error</span>
+    <span class="k">assert</span> <span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="n">payload</span> <span class="o">=</span> <span class="n">_success_payload</span><span class="p">(</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_schema&quot;</span><span class="p">,</span>
+        <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
         <span class="n">tool</span><span class="o">=</span><span class="n">_tool_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">),</span>
         <span class="n">input_schema</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">input_model</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">(),</span>
     <span class="p">)</span>
@@ -645,19 +778,19 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_run</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_active_profile</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resolved</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">resolved</span>  <span class="c1"># type: ignore[return-value]</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">resolved</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">get_tool_spec</span><span class="p">(</span><span class="n">tool_name</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">_error_payload</span><span class="p">(</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_run&quot;</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_not_found&quot;</span><span class="p">,</span>
-                <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
-            <span class="p">),</span>
-            <span class="mi">2</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="n">spec</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">_resolve_tool_spec</span><span class="p">(</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_run&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
+        <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">error</span>
+    <span class="k">assert</span> <span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -671,6 +804,7 @@
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">confirmation</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">,</span>
                 <span class="n">effects</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">,</span>
+                <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">3</span><span class="p">,</span>
         <span class="p">)</span>
@@ -684,6 +818,7 @@
                 <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
                 <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;invalid_input&quot;</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
@@ -699,11 +834,13 @@
                 <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;input_validation_failed&quot;</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">validation_errors</span><span class="o">=</span><span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">(),</span>
+                <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">payload</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">to_payload</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;profile&quot;</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;effects&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">)</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;confirmation&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">)</span>
@@ -712,7 +849,7 @@
 
 
 <div class="viewcode-block" id="run_tool">
-<a class="viewcode-back" href="../../../api/data_juicer_agents.commands.tool_cmd.html#data_juicer_agents.commands.run_tool">[docs]</a>
+<a class="viewcode-back" href="../../../api/data_juicer_agents.commands.tool_cmd.html#data_juicer_agents.commands.tool_cmd.run_tool">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_tool</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">action</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_action&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>

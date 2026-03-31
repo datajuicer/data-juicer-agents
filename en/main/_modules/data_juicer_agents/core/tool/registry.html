@@ -536,9 +536,10 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">groups_for_tool_profile</span>
 
 
 <div class="viewcode-block" id="ToolRegistry">
@@ -592,30 +593,54 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_registry_cache_key</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">normalized</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">groups</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">normalized</span>
+    <span class="k">return</span> <span class="n">groups_for_tool_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_registry_cached</span><span class="p">(</span><span class="n">group_names</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolRegistry</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_tool_specs</span>
+
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">load_tool_specs</span><span class="p">(</span><span class="n">group_names</span><span class="p">)</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">ToolRegistry</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">:</span>
+        <span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">registry</span>
+
+
 <div class="viewcode-block" id="build_default_tool_registry">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.registry.html#data_juicer_agents.core.tool.build_default_tool_registry">[docs]</a>
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">build_default_tool_registry</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ToolRegistry</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_TOOL_SPECS</span>
-
-    <span class="n">registry</span> <span class="o">=</span> <span class="n">ToolRegistry</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">ALL_TOOL_SPECS</span><span class="p">:</span>
-        <span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">registry</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_default_tool_registry</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolRegistry</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_build_registry_cached</span><span class="p">(</span><span class="n">_registry_cache_key</span><span class="p">(</span><span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="get_tool_spec">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.registry.html#data_juicer_agents.core.tool.get_tool_spec">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_tool_spec</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolSpec</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">build_default_tool_registry</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tool_spec</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolSpec</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">build_default_tool_registry</span><span class="p">(</span><span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="list_tool_specs">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.registry.html#data_juicer_agents.core.tool.list_tool_specs">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">list_tool_specs</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">build_default_tool_registry</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_tool_specs</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">build_default_tool_registry</span><span class="p">(</span><span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span></div>
 
 
 

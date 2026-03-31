@@ -759,6 +759,8 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p><code class="docutils literal notranslate"><span class="pre">ToolContext.env</span></code> 和 <code class="docutils literal notranslate"><span class="pre">runtime_values</span></code> 不通过 CLI 暴露</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tool</span> <span class="pre">run</span></code> 的主要设计目标是机器间调用，稳定 JSON 输出是第一契约</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code>、<code class="docutils literal notranslate"><span class="pre">--verbose</span></code>、<code class="docutils literal notranslate"><span class="pre">--debug</span></code> 仅用于与其他 <code class="docutils literal notranslate"><span class="pre">djx</span></code> 子命令保持 CLI 形态一致，不会改变 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 的输出</p></li>
+<li><p>安装 <code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> 后可设置 <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code>，将 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 限制在 harness 工具组（<code class="docutils literal notranslate"><span class="pre">apply</span></code>、<code class="docutils literal notranslate"><span class="pre">context</span></code>、<code class="docutils literal notranslate"><span class="pre">plan</span></code>）</p></li>
+<li><p>不在当前 profile 内的工具不会出现在 <code class="docutils literal notranslate"><span class="pre">list</span></code> 中，直接调用会返回结构化 JSON 错误</p></li>
 </ul>
 </section>
 <section id="dj-agents">
@@ -793,6 +795,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code>：<code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code> 使用的模型</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code>：<code class="docutils literal notranslate"><span class="pre">data_juicer_agents/utils/llm_gateway.py</span></code> 使用的逗号分隔模型兜底链</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code>：控制模型请求中的 <code class="docutils literal notranslate"><span class="pre">enable_thinking</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE</span></code>：可选工具目录 profile；设为 <code class="docutils literal notranslate"><span class="pre">harness</span></code> 时，<code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 只暴露 harness 工具集</p></li>
 </ul>
 </section>
 </section>

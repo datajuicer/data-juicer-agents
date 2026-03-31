@@ -588,10 +588,25 @@
 </section>
 <section id="id3">
 <h2>2. 安装<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<p>选择一种安装档位：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">core</span></code>：完整 <code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code> 命令面</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">harness</span></code>：面向 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> harness profile 的最小安装</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code>：<code class="docutils literal notranslate"><span class="pre">core</span></code> 加上 <code class="docutils literal notranslate"><span class="pre">copilot</span></code> 和 <code class="docutils literal notranslate"><span class="pre">interecipe</span></code></p></li>
+</ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>./data-juicer-agents
 uv<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[core]&#39;</span>
+</pre></div>
+</div>
+<p>Harness 安装：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[harness]&#39;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
+</pre></div>
+</div>
+<p>Full 安装：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[full]&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -648,6 +663,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 默认是 JSON-only，主要服务 agent / skill 自动化调用。</p></li>
 <li><p>写入或执行类工具需要显式传 <code class="docutils literal notranslate"><span class="pre">--yes</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code> 会把 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 限制在 harness 工具集（<code class="docutils literal notranslate"><span class="pre">apply</span></code>、<code class="docutils literal notranslate"><span class="pre">context</span></code>、<code class="docutils literal notranslate"><span class="pre">plan</span></code>）。</p></li>
 </ul>
 </section>
 <section id="dj-agents">
@@ -692,6 +708,12 @@ dj-agents<span class="w"> </span>--help
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_SESSION_MODEL</span></code> 和 <code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code></p></li>
 <li><p>期望模型兜底时的 <code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code></p></li>
 <li><p>如果服务端不接受 thinking 参数，检查 <code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code></p></li>
+</ul>
+<p>如果命令提示缺少可选依赖，请安装对应档位：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code>：只使用 harness 版 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents[core]</span></code>：完整 <code class="docutils literal notranslate"><span class="pre">djx</span></code> / <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> 命令集</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents[full]</span></code>：<code class="docutils literal notranslate"><span class="pre">core</span> <span class="pre">+</span> <span class="pre">copilot</span> <span class="pre">+</span> <span class="pre">interecipe</span></code></p></li>
 </ul>
 </section>
 </section>

@@ -588,7 +588,9 @@ and transparent manner.</p>
 </pre></div>
 </div>
 <p>Install dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>..
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;.[interecipe]&#39;</span>
+<span class="nb">cd</span><span class="w"> </span>interactive_recipe
 </pre></div>
 </div>
 <p>[Optional] Start the copilot server (replace the <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_PATH</span></code> variable in <code class="docutils literal notranslate"><span class="pre">../qa-copilot/setup_server.sh</span></code> with the absolute path to your data-juicer repository):</p>

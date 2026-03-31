@@ -531,75 +531,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-data_juicer_agents.tui.noise_filter">
-<span id="data-juicer-agents-tui-noise-filter-module"></span><h1>data_juicer_agents.tui.noise_filter module<a class="headerlink" href="#module-data_juicer_agents.tui.noise_filter" title="链接到此标题。">#</a></h1>
-<p>TUI-specific stderr/warning noise suppression.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.install_tui_warning_filters">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tui.noise_filter.</span></span><span class="sig-name descname"><span class="pre">install_tui_warning_filters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#install_tui_warning_filters"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.install_tui_warning_filters" title="链接到此定义。">#</a></dt>
-<dd><p>Install warning filters for known non-actionable runtime noise.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.sanitize_reasoning_text">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tui.noise_filter.</span></span><span class="sig-name descname"><span class="pre">sanitize_reasoning_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#sanitize_reasoning_text"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.sanitize_reasoning_text" title="链接到此定义。">#</a></dt>
-<dd><p>Pass through reasoning text without reflective-summary filtering.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tui.noise_filter.</span></span><span class="sig-name descname"><span class="pre">FilteredStderr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patterns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#FilteredStderr"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr" title="链接到此定义。">#</a></dt>
-<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">TextIOBase</span></code></p>
-<p>Stream wrapper that drops known noise lines and forwards others.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patterns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#FilteredStderr.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.__init__" title="链接到此定义。">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#FilteredStderr.write"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.write" title="链接到此定义。">#</a></dt>
-<dd><p>Write string to stream.
-Returns the number of characters written (which is always equal to
-the length of the string).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr.flush">
-<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#FilteredStderr.flush"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.flush" title="链接到此定义。">#</a></dt>
-<dd><p>Flush write buffers, if applicable.</p>
-<p>This is not implemented for read-only and non-blocking streams.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr.isatty">
-<span class="sig-name descname"><span class="pre">isatty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#FilteredStderr.isatty"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.isatty" title="链接到此定义。">#</a></dt>
-<dd><p>Return whether this is an 'interactive' stream.</p>
-<p>Return False if it can't be determined.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr.fileno">
-<span class="sig-name descname"><span class="pre">fileno</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#FilteredStderr.fileno"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.fileno" title="链接到此定义。">#</a></dt>
-<dd><p>Returns underlying file descriptor if one exists.</p>
-<p>OSError is raised if the IO object does not use a file descriptor.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.FilteredStderr.encoding">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">encoding</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.encoding" title="链接到此定义。">#</a></dt>
-<dd><p>Encoding of the text stream.</p>
-<p>Subclasses should override.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tui.noise_filter.suppress_tui_noise_stderr">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tui.noise_filter.</span></span><span class="sig-name descname"><span class="pre">suppress_tui_noise_stderr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tui/noise_filter.html#suppress_tui_noise_stderr"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tui.noise_filter.suppress_tui_noise_stderr" title="链接到此定义。">#</a></dt>
-<dd><p>Context manager to suppress known third-party stderr noise in TUI.</p>
-</dd></dl>
-
+  <section id="data-juicer-agents-tui-noise-filter-module">
+<h1>data_juicer_agents.tui.noise_filter module<a class="headerlink" href="#data-juicer-agents-tui-noise-filter-module" title="链接到此标题。">#</a></h1>
 </section>
 
 
@@ -622,29 +555,6 @@ the length of the string).</p>
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> 当前页面
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.install_tui_warning_filters"><code class="docutils literal notranslate"><span class="pre">install_tui_warning_filters()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.sanitize_reasoning_text"><code class="docutils literal notranslate"><span class="pre">sanitize_reasoning_text()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr"><code class="docutils literal notranslate"><span class="pre">FilteredStderr</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.__init__"><code class="docutils literal notranslate"><span class="pre">FilteredStderr.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.write"><code class="docutils literal notranslate"><span class="pre">FilteredStderr.write()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.flush"><code class="docutils literal notranslate"><span class="pre">FilteredStderr.flush()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.isatty"><code class="docutils literal notranslate"><span class="pre">FilteredStderr.isatty()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.fileno"><code class="docutils literal notranslate"><span class="pre">FilteredStderr.fileno()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.FilteredStderr.encoding"><code class="docutils literal notranslate"><span class="pre">FilteredStderr.encoding</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tui.noise_filter.suppress_tui_noise_stderr"><code class="docutils literal notranslate"><span class="pre">suppress_tui_noise_stderr()</span></code></a></li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

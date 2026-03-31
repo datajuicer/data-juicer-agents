@@ -531,71 +531,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-data_juicer_agents.tools.retrieve.retrieve_operators.backend">
-<span id="data-juicer-agents-tools-retrieve-retrieve-operators-backend-module"></span><h1>data_juicer_agents.tools.retrieve.retrieve_operators.backend module<a class="headerlink" href="#module-data_juicer_agents.tools.retrieve.retrieve_operators.backend" title="链接到此标题。">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_dj_func_info">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">init_dj_func_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#init_dj_func_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_dj_func_info" title="链接到此定义。">#</a></dt>
-<dd><p>Initialize dj_func_info at agent startup</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_dj_func_info">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">refresh_dj_func_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#refresh_dj_func_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_dj_func_info" title="链接到此定义。">#</a></dt>
-<dd><p>Refresh dj_func_info during agent runtime (for manual updates)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_dj_func_info">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">get_dj_func_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#get_dj_func_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_dj_func_info" title="链接到此定义。">#</a></dt>
-<dd><p>Get current dj_func_info (lifecycle-aware)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_lm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#retrieve_ops_lm"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm" title="链接到此定义。">#</a></dt>
-<dd><p>Tool retrieval using language model - returns list of tool names</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_lm_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#retrieve_ops_lm_items"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items" title="链接到此定义。">#</a></dt>
-<dd><p>Tool retrieval using language model - returns validated tool metadata.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector">
-<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#retrieve_ops_vector"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector" title="链接到此定义。">#</a></dt>
-<dd><p>Tool retrieval using vector search with smart caching - returns list of tool names</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops_with_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#retrieve_ops_with_meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta" title="链接到此定义。">#</a></dt>
-<dd><p>Tool retrieval with source/trace metadata.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.retrieve.retrieve_operators.backend.</span></span><span class="sig-name descname"><span class="pre">retrieve_ops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/retrieve/retrieve_operators/backend.html#retrieve_ops"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops" title="链接到此定义。">#</a></dt>
-<dd><p>Tool retrieval with configurable mode</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>user_query</strong> -- User query string</p></li>
-<li><p><strong>limit</strong> -- Maximum number of tools to retrieve</p></li>
-<li><p><strong>mode</strong> -- Retrieval mode - &quot;llm&quot;, &quot;vector&quot;, or &quot;auto&quot; (default: &quot;auto&quot;)
-- &quot;llm&quot;: Use language model only
-- &quot;vector&quot;: Use vector search only
-- &quot;auto&quot;: Try LLM first, fallback to vector search on failure</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of tool names</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="data-juicer-agents-tools-retrieve-retrieve-operators-backend-module">
+<h1>data_juicer_agents.tools.retrieve.retrieve_operators.backend module<a class="headerlink" href="#data-juicer-agents-tools-retrieve-retrieve-operators-backend-module" title="链接到此标题。">#</a></h1>
 </section>
 
 
@@ -618,25 +555,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> 当前页面
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.init_dj_func_info"><code class="docutils literal notranslate"><span class="pre">init_dj_func_info()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.refresh_dj_func_info"><code class="docutils literal notranslate"><span class="pre">refresh_dj_func_info()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.get_dj_func_info"><code class="docutils literal notranslate"><span class="pre">get_dj_func_info()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_lm()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_lm_items"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_lm_items()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_vector"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_vector()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops_with_meta"><code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.retrieve.retrieve_operators.backend.retrieve_ops"><code class="docutils literal notranslate"><span class="pre">retrieve_ops()</span></code></a></li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

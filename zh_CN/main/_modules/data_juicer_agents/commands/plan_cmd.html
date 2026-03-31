@@ -561,7 +561,7 @@
 
 
 <div class="viewcode-block" id="execute_plan">
-<a class="viewcode-back" href="../../../api/data_juicer_agents.commands.plan_cmd.html#data_juicer_agents.commands.execute_plan">[文档]</a>
+<a class="viewcode-back" href="../../../api/data_juicer_agents.commands.plan_cmd.html#data_juicer_agents.commands.plan_cmd.execute_plan">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">execute_plan</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="n">export_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;export&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -623,7 +623,7 @@
 
 
 <div class="viewcode-block" id="run_plan">
-<a class="viewcode-back" href="../../../api/data_juicer_agents.commands.plan_cmd.html#data_juicer_agents.commands.run_plan">[文档]</a>
+<a class="viewcode-back" href="../../../api/data_juicer_agents.commands.plan_cmd.html#data_juicer_agents.commands.plan_cmd.run_plan">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_plan</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">execute_plan</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>

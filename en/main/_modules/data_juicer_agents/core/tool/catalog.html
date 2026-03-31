@@ -537,7 +537,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pkgutil</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolSpec</span>
 
@@ -545,6 +546,25 @@
 <span class="n">_TOOLS_PACKAGE</span> <span class="o">=</span> <span class="s2">&quot;data_juicer_agents.tools&quot;</span>
 <span class="n">_TOOLS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;tools&quot;</span>
 <span class="n">_SKIP_PACKAGES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;__pycache__&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="ToolGroupImportError">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.ToolGroupImportError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ToolGroupImportError</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a tool group cannot be imported because optional deps are missing.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ToolGroupImportError.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.ToolGroupImportError.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cause</span><span class="p">:</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">group_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_module</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">cause</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="kc">None</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;failed to import tool group &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; (missing module: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">missing_module</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_module</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="iter_tool_group_names">
@@ -577,7 +597,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no registry.py or definition.py for tool group: </span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ToolGroupImportError</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
     <span class="n">specs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;TOOL_SPECS&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">specs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not define TOOL_SPECS&quot;</span><span class="p">)</span>
@@ -587,25 +610,55 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_group_names</span><span class="p">(</span><span class="n">groups</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ALL_TOOL_GROUPS</span>
+
+    <span class="n">expected</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ALL_TOOL_GROUPS</span><span class="p">)</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">group_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown tool group: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">normalized</span><span class="p">:</span>
+            <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_tool_specs_cached</span><span class="p">(</span><span class="n">group_names</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="n">all_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="n">group_names</span><span class="p">:</span>
+        <span class="n">all_specs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_tool_specs_for_group</span><span class="p">(</span><span class="n">group_name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">all_specs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_tool_specs">
+<a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.load_tool_specs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_tool_specs</span><span class="p">(</span><span class="n">groups</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]:</span>
+    <span class="n">group_names</span> <span class="o">=</span> <span class="n">_normalize_group_names</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_load_tool_specs_cached</span><span class="p">(</span><span class="n">group_names</span><span class="p">))</span></div>
+
+
+
 <div class="viewcode-block" id="load_all_tool_specs">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.load_all_tool_specs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_all_tool_specs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]:</span>
-    <span class="n">all_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="n">iter_tool_group_names</span><span class="p">():</span>
-        <span class="n">all_specs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_tool_specs_for_group</span><span class="p">(</span><span class="n">group_name</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">all_specs</span></div>
+    <span class="k">return</span> <span class="n">load_tool_specs</span><span class="p">()</span></div>
 
 
 
 <span class="n">ALL_TOOL_GROUPS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">iter_tool_group_names</span><span class="p">())</span>
-<span class="n">ALL_TOOL_SPECS</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_all_tool_specs</span><span class="p">()</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ALL_TOOL_GROUPS&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ALL_TOOL_SPECS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ToolGroupImportError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;iter_tool_group_names&quot;</span><span class="p">,</span>
     <span class="s2">&quot;load_all_tool_specs&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;load_tool_specs&quot;</span><span class="p">,</span>
     <span class="s2">&quot;load_tool_specs_for_group&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>

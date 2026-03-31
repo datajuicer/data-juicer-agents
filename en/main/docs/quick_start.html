@@ -584,10 +584,25 @@
 </section>
 <section id="install">
 <h2>2. Install<a class="headerlink" href="#install" title="Link to this heading">#</a></h2>
+<p>Choose one installation profile:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">core</span></code>: full <code class="docutils literal notranslate"><span class="pre">data_juicer_agents</span></code> command surface</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">harness</span></code>: minimal install for the <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> harness profile</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code>: <code class="docutils literal notranslate"><span class="pre">core</span></code> plus <code class="docutils literal notranslate"><span class="pre">copilot</span></code> and <code class="docutils literal notranslate"><span class="pre">interecipe</span></code></p></li>
+</ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>./data-juicer-agents
 uv<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[core]&#39;</span>
+</pre></div>
+</div>
+<p>Harness install:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[harness]&#39;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
+</pre></div>
+</div>
+<p>Full install:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[full]&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -644,6 +659,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> is JSON-only and primarily intended for agent / skill automation.</p></li>
 <li><p>write or execute tools require explicit <code class="docutils literal notranslate"><span class="pre">--yes</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code> limits <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> to the harness tool set (<code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">context</span></code>, <code class="docutils literal notranslate"><span class="pre">plan</span></code>).</p></li>
 </ul>
 </section>
 <section id="session-mode-dj-agents">
@@ -688,6 +704,12 @@ dj-agents<span class="w"> </span>--help
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_SESSION_MODEL</span></code> and <code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_MODEL_FALLBACKS</span></code> when you expect model fallback</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code> if your provider rejects the thinking flag</p></li>
+</ul>
+<p>If a command reports missing optional dependencies, install the matching profile:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> for harness-only <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> usage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents[core]</span></code> for the full <code class="docutils literal notranslate"><span class="pre">djx</span></code> / <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> command set</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents[full]</span></code> for <code class="docutils literal notranslate"><span class="pre">core</span> <span class="pre">+</span> <span class="pre">copilot</span> <span class="pre">+</span> <span class="pre">interecipe</span></code></p></li>
 </ul>
 </section>
 </section>

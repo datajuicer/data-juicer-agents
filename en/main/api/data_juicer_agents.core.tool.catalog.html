@@ -533,6 +533,18 @@
   <section id="module-data_juicer_agents.core.tool.catalog">
 <span id="data-juicer-agents-core-tool-catalog-module"></span><h1>data_juicer_agents.core.tool.catalog module<a class="headerlink" href="#module-data_juicer_agents.core.tool.catalog" title="Link to this heading">#</a></h1>
 <p>Discovery-based catalog of built-in tool specifications.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="data_juicer_agents.core.tool.catalog.ToolGroupImportError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.core.tool.catalog.</span></span><span class="sig-name descname"><span class="pre">ToolGroupImportError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleNotFoundError</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/core/tool/catalog.html#ToolGroupImportError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.core.tool.catalog.ToolGroupImportError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImportError</span></code></p>
+<p>Raised when a tool group cannot be imported because optional deps are missing.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer_agents.core.tool.catalog.ToolGroupImportError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleNotFoundError</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/core/tool/catalog.html#ToolGroupImportError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.core.tool.catalog.ToolGroupImportError.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.core.tool.catalog.iter_tool_group_names">
 <span class="sig-prename descclassname"><span class="pre">data_juicer_agents.core.tool.catalog.</span></span><span class="sig-name descname"><span class="pre">iter_tool_group_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/core/tool/catalog.html#iter_tool_group_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.core.tool.catalog.iter_tool_group_names" title="Link to this definition">#</a></dt>
@@ -541,6 +553,11 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer_agents.core.tool.catalog.load_all_tool_specs">
 <span class="sig-prename descclassname"><span class="pre">data_juicer_agents.core.tool.catalog.</span></span><span class="sig-name descname"><span class="pre">load_all_tool_specs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.contracts.ToolSpec" title="data_juicer_agents.core.tool.contracts.ToolSpec"><span class="pre">ToolSpec</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/core/tool/catalog.html#load_all_tool_specs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.core.tool.catalog.load_all_tool_specs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.core.tool.catalog.load_tool_specs">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.core.tool.catalog.</span></span><span class="sig-name descname"><span class="pre">load_tool_specs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.contracts.ToolSpec" title="data_juicer_agents.core.tool.contracts.ToolSpec"><span class="pre">ToolSpec</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/core/tool/catalog.html#load_tool_specs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer_agents.core.tool.catalog.load_tool_specs" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -579,8 +596,13 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.core.tool.catalog.ToolGroupImportError"><code class="docutils literal notranslate"><span class="pre">ToolGroupImportError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.core.tool.catalog.ToolGroupImportError.__init__"><code class="docutils literal notranslate"><span class="pre">ToolGroupImportError.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.core.tool.catalog.iter_tool_group_names"><code class="docutils literal notranslate"><span class="pre">iter_tool_group_names()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.core.tool.catalog.load_all_tool_specs"><code class="docutils literal notranslate"><span class="pre">load_all_tool_specs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.core.tool.catalog.load_tool_specs"><code class="docutils literal notranslate"><span class="pre">load_tool_specs()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.core.tool.catalog.load_tool_specs_for_group"><code class="docutils literal notranslate"><span class="pre">load_tool_specs_for_group()</span></code></a></li>
 </ul>
   </nav></div>
