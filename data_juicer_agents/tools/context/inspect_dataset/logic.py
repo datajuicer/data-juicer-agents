@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -77,9 +78,87 @@ def _load_json_records(path: Path, sample_size: int) -> Tuple[List[Dict[str, Any
         return [content], 1
     return [], 0
 
+def _load_csv_records(
+    path: Path, sample_size: int, delimiter: str = ","
+) -> Tuple[List[Dict[str, Any]], int]:
+    rows: List[Dict[str, Any]] = []
+    try:
+        with open(path, "r", encoding="utf-8", newline="") as f:
+            reader = csv.DictReader(f, delimiter=delimiter)
+            # Check if headers are present
+            if reader.fieldnames is None:
+                return [], 0
+            for row in reader:
+                if len(rows) >= sample_size:
+                    break
+                # Filter out None values that occur when rows have fewer fields than headers
+                cleaned_row = {k: v for k, v in row.items() if v is not None}
+                rows.append(cleaned_row)
+    except (UnicodeDecodeError, csv.Error, IOError) as e:
+        return [], 0
+    return rows, len(rows)
+
+def _load_parquet_records(path: Path, sample_size: int) -> Tuple[List[Dict[str, Any]], int]:
+    try:
+        import pyarrow.parquet as pq
+    except ImportError:
+        return [], 0
+
+    parquet_file = pq.ParquetFile(str(path))
+    # Read only the first batch of up to sample_size rows instead of
+    # materializing the entire file before slicing.
+    batch_iter = parquet_file.iter_batches(batch_size=sample_size)
+    try:
+        first_batch = next(batch_iter)
+    except StopIteration:
+        return [], 0
+
+    rows = first_batch.to_pydict()
+    num_records = len(next(iter(rows.values()))) if rows else 0
+    records: List[Dict[str, Any]] = [
+        {col: values[i] for col, values in rows.items()}
+        for i in range(num_records)
+    ]
+    return records, num_records
+
+
+_UNSUPPORTED_PREFIXES = (
+    "hf://",
+    "huggingface://",
+    "s3://",
+    "gs://",
+    "az://",
+    "hdfs://",
+    "http://",
+    "https://",
+)
+
+
+def _looks_like_unsupported_source(dataset_path: str) -> bool:
+    lower = dataset_path.strip().lower()
+    return any(lower.startswith(prefix) for prefix in _UNSUPPORTED_PREFIXES)
+
 
 def inspect_dataset_schema(dataset_path: str, sample_size: int = 20) -> Dict[str, Any]:
     """Inspect a small sample of a dataset and infer keys/modality for planning."""
+
+    if _looks_like_unsupported_source(dataset_path):
+        return {
+            "ok": False,
+            "error_type": "unsupported_input_source",
+            "error": (
+                f"inspect_dataset only supports local file paths. "
+                f"The provided path '{dataset_path}' looks like a remote or non-local source "
+                f"which is not supported. Please download the dataset to a local path first, "
+                f"then call inspect_dataset with the local file path."
+            ),
+            "message": (
+                f"inspect_dataset does not support remote or non-local input sources. "
+                f"'{dataset_path}' appears to be a URL or cloud storage path. "
+                f"Download it locally and retry."
+            ),
+            "dataset_path": dataset_path,
+        }
 
     path = Path(dataset_path)
     if not path.exists():
@@ -96,8 +175,15 @@ def inspect_dataset_schema(dataset_path: str, sample_size: int = 20) -> Dict[str
     rows: List[Dict[str, Any]]
     scanned: int
 
-    if path.suffix.lower() == ".json":
+    suffix = path.suffix.lower()
+    if suffix == ".json":
         rows, scanned = _load_json_records(path, sample_size=sample_size)
+    elif suffix == ".csv":
+        rows, scanned = _load_csv_records(path, sample_size=sample_size)
+    elif suffix == ".tsv":
+        rows, scanned = _load_csv_records(path, sample_size=sample_size, delimiter="\t")
+    elif suffix == ".parquet":
+        rows, scanned = _load_parquet_records(path, sample_size=sample_size)
     else:
         rows, scanned = _load_jsonl_records(path, sample_size=sample_size)
 
@@ -105,8 +191,18 @@ def inspect_dataset_schema(dataset_path: str, sample_size: int = 20) -> Dict[str
         return {
             "ok": False,
             "error_type": "inspect_failed",
-            "error": "No valid object records found in sample",
-            "message": "No valid object records found in sample",
+            "error": (
+                f"Failed to load any valid records from the dataset. "
+                f"This could be due to: (1) file format/encoding issues, "
+                f"(2) malformed data structure, or (3) empty dataset. "
+                f"Scanned {scanned} lines but found no valid dict records."
+            ),
+            "message": (
+                f"Could not extract valid records from '{dataset_path}'. "
+                f"Try inspecting the file manually with shell commands like: "
+                f"'head -n 3 {dataset_path}' or 'cat {dataset_path} | head -n 3' "
+                f"to verify the file format and content structure."
+            ),
             "dataset_path": dataset_path,
             "sampled_records": 0,
             "scanned_lines": scanned,

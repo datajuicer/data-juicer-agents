@@ -8,9 +8,12 @@ from .._shared.normalize import normalize_string_list
 from .._shared.schema import DatasetSpec
 
 
-def build_dataset_spec(    *,
+def build_dataset_spec(
+    *,
     user_intent: str,
-    dataset_path: str,
+    dataset_path: str = "",
+    dataset: Dict[str, Any] | None = None,
+    generated_dataset_config: Dict[str, Any] | None = None,
     export_path: str,
     dataset_profile: Dict[str, Any] | None = None,
     modality_hint: str = "",
@@ -19,15 +22,32 @@ def build_dataset_spec(    *,
     audio_key_hint: str = "",
     video_key_hint: str = "",
     image_bytes_key_hint: str = "",
+    **kwargs: Any,
 ) -> Dict[str, Any]:
+    # Validate and collect extra dataset fields from kwargs
+    if kwargs:
+        from data_juicer_agents.utils.dj_config_bridge import dataset_fields as _dataset_fields
+        unknown = [k for k in kwargs if k not in _dataset_fields]
+        if unknown:
+            return {
+                "ok": False,
+                "error_type": "unknown_dataset_field",
+                "message": (
+                    f"Unknown dataset field(s): {unknown}. "
+                    "Call list_dataset_fields to see valid fields."
+                ),
+                "requires": [],
+            }
+
     dataset_path = str(dataset_path or "").strip()
     export_path = str(export_path or "").strip()
-    if not dataset_path:
+    source_count = int(bool(dataset_path)) + int(bool(dataset)) + int(bool(generated_dataset_config))
+    if source_count == 0:
         return {
             "ok": False,
             "error_type": "missing_required",
-            "message": "dataset_path is required for build_dataset_spec",
-            "requires": ["dataset_path"],
+            "message": "at least one dataset source is required: dataset_path, dataset, or generated_dataset_config",
+            "requires": ["dataset_path", "dataset", "generated_dataset_config"],
         }
     if not export_path:
         return {
@@ -72,7 +92,11 @@ def build_dataset_spec(    *,
         {
             "io": {
                 "dataset_path": dataset_path,
+                "dataset": dataset,
+                "generated_dataset_config": generated_dataset_config,
                 "export_path": export_path,
+                # Extra dataset fields (export_type, export_shard_size, load_dataset_kwargs, etc.)
+                **kwargs,
             },
             "binding": {
                 "modality": modality,

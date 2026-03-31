@@ -19,6 +19,8 @@ def _build_dataset_spec(_ctx: ToolContext, args: BuildDatasetSpecInput) -> ToolR
     result = build_dataset_spec(
         user_intent=args.intent,
         dataset_path=args.dataset_path,
+        dataset=args.dataset,
+        generated_dataset_config=args.generated_dataset_config,
         export_path=args.export_path,
         dataset_profile=args.dataset_profile,
         modality_hint=args.modality_hint,
@@ -27,6 +29,7 @@ def _build_dataset_spec(_ctx: ToolContext, args: BuildDatasetSpecInput) -> ToolR
         audio_key_hint=args.audio_key_hint,
         video_key_hint=args.video_key_hint,
         image_bytes_key_hint=args.image_bytes_key_hint,
+        **(args.model_extra or {}),
     )
     if result.get("ok"):
         return ToolResult.success(summary=str(result.get("message", "dataset spec built")), data=result)
@@ -37,12 +40,18 @@ def _build_dataset_spec(_ctx: ToolContext, args: BuildDatasetSpecInput) -> ToolR
         data=result,
     )
 
-
 BUILD_DATASET_SPEC = ToolSpec(
     name="build_dataset_spec",
     description=(
-        "Build a deterministic dataset spec from an explicit user intent, dataset_path, export_path, "
-        "and the dataset_profile returned by inspect_dataset."
+        "Build a deterministic dataset spec from an explicit user intent and export_path. "
+        "Accepts dataset_path (shortcut for a single local file), dataset (YAML-style complex config "
+        "for mixed sources/weights/max_sample_num), or generated_dataset_config (dynamic formatter config). "
+        "For advanced dataset options (e.g., export_type, export_shard_size, export_in_parallel, "
+        "load_dataset_kwargs, suffixes, modality special tokens), call list_dataset_fields first to "
+        "discover available parameters and their defaults. "
+        "For non-trivial dataset sources, call list_dataset_load_strategies first to discover "
+        "available types/sources. For dynamic dataset generation, call list_dataset_formatters first "
+        "to discover available formatter names and their parameters."
     ),
     input_model=BuildDatasetSpecInput,
     output_model=GenericOutput,
