@@ -21,12 +21,12 @@ def get_available_operator_names() -> Set[str]:
 
     try:
         from .backend import (
-            get_dj_func_info,
-            init_dj_func_info,
+            get_op_catalog,
+            init_op_catalog,
         )
 
-        init_dj_func_info()
-        info = get_dj_func_info()
+        init_op_catalog()
+        info = get_op_catalog()
         return {
             str(item.get("class_name", "")).strip()
             for item in info

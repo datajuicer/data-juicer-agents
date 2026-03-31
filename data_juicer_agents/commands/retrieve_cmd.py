@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+from typing import List
 
 from data_juicer_agents.tools.retrieve import retrieve_operator_candidates
 
@@ -14,6 +15,10 @@ def _print_human_readable(payload: dict) -> None:
     print(f"Mode: {payload.get('mode', '')}")
     print(f"Source: {payload.get('retrieval_source', '')}")
     print(f"Candidates: {payload.get('candidate_count', 0)}")
+
+    inferred_tags = payload.get("inferred_tags")
+    if inferred_tags:
+        print(f"Dataset modality tags: {inferred_tags}")
 
     candidates = payload.get("candidates", [])
     if not candidates:
@@ -40,16 +45,25 @@ def run_retrieve(args) -> int:
         print("top-k must be > 0")
         return 2
 
+    tags: List[str] = list(getattr(args, "tags", None) or [])
+    dataset_path: str | None = getattr(args, "dataset", None)
+    op_type: str | None = getattr(args, "op_type", None)
+
     try:
         payload = retrieve_operator_candidates(
             intent=args.intent,
             top_k=top_k,
             mode=args.mode,
-            dataset_path=args.dataset,
+            op_type=op_type,
+            tags=tags if tags else None,
+            dataset_path=dataset_path,
         )
     except Exception as exc:
         print(f"Retrieve failed: {exc}")
         return 2
+
+    if op_type:
+        payload["op_type_filter"] = op_type
 
     if args.json:
         print(json.dumps(payload, ensure_ascii=False, indent=2))

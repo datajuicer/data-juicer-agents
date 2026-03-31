@@ -68,7 +68,7 @@ class PlanOrchestrator:
             intent=user_intent,
             top_k=top_k,
             mode=mode,
-            dataset_path=dataset_path,
+            dataset_path=dataset_path or None,
         )
 
     def generate_plan(

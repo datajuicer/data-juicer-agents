@@ -6,12 +6,14 @@ searcher = OPSearcher(include_formatter=False)
 
 all_ops = searcher.search()
 
-dj_func_info = []
+op_catalog = []
 for i, op in enumerate(all_ops):
     class_entry = {
         "index": i,
         "class_name": op["name"],
         "class_desc": op["desc"],
+        "class_type": op.get("type", ""),
+        "class_tags": list(op.get("tags", [])),
     }
     param_desc = op["param_desc"]
     param_desc_map = {}
@@ -36,4 +38,4 @@ for i, op in enumerate(all_ops):
             else:
                 args += f"        {param_name} ({param.annotation})\n"
     class_entry["arguments"] = args
-    dj_func_info.append(class_entry)
+    op_catalog.append(class_entry)

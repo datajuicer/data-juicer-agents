@@ -68,9 +68,17 @@
 - 文件：
   - `retrieve/registry.py`
   - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
-  - `retrieve/retrieve_operators/{backend.py,operator_registry.py,catalog.py}`
+  - `retrieve/retrieve_operators/operator_registry.py`
+  - `retrieve/retrieve_operators/backend/`（子包）：
+    - `backend.py`：公共 API（`retrieve_ops_with_meta`、`retrieve_ops`、`get_op_catalog` 等）
+    - `cache.py`：`RetrievalCacheManager` 单例，管理向量索引、工具信息和算子目录的缓存
+    - `catalog.py`：算子目录构建器（采集 `class_name`、`class_desc`、`class_type`、`class_tags`）
+    - `result_builder.py`：`build_retrieval_item`、`filter_by_op_type`、`filter_by_tags`、`names_from_items`、`trace_step`
+    - `retriever.py`：`RetrieverBackend` 抽象基类及具体后端（`LLMRetriever`、`VectorRetriever`、`BM25Retriever`、`RegexRetriever`）
 - 主要职责：
   - 主包的算子检索入口
+  - 多后端检索策略与自动 fallback（`llm → vector → bm25`）
+  - 算子类型过滤（`filter_by_op_type`）和标签过滤（`filter_by_tags`）
   - 算子名称归一化
   - 已安装算子查询
 

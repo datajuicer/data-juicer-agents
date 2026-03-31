@@ -66,7 +66,7 @@ def test_build_process_spec_is_deterministic_with_explicit_operators(tmp_path: P
     ]
 
 
-def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path: Path, monkeypatch):
+def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path: Path):
     dataset = tmp_path / "data.jsonl"
     dataset.write_text('{"text": "hello world"}\n', encoding="utf-8")
     export_path = tmp_path / "out" / "result.jsonl"
@@ -76,23 +76,6 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
     registry = build_default_tool_registry()
     ctx = ToolContext(working_dir=str(tmp_path), artifacts_dir=str(tmp_path / ".djx"))
 
-    monkeypatch.setattr(
-        "data_juicer_agents.tools.retrieve.retrieve_operators.tool.retrieve_operator_candidates",
-        lambda **_kwargs: {
-            "ok": True,
-            "retrieval_source": "llm",
-            "candidate_count": 1,
-            "candidates": [
-                {
-                    "operator_name": "text_length_filter",
-                    "description": "Filter rows by text length.",
-                    "operator_type": "filter",
-                    "arguments_preview": ["max_len (int): maximum text length to keep."],
-                }
-            ],
-            "notes": [],
-        },
-    )
     inspected = invoke_tool_spec(
         registry.get("inspect_dataset"),
         ctx=ctx,
@@ -103,10 +86,10 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
     retrieved = invoke_tool_spec(
         registry.get("retrieve_operators"),
         ctx=ctx,
-        raw_kwargs={"intent": "filter rows longer than 1500 characters", "dataset_path": str(dataset)},
+        raw_kwargs={"intent": "text length filter"},
     )
     assert retrieved["ok"] is True
-    assert retrieved["candidate_names"] == ["text_length_filter"]
+    assert "text_length_filter" in [c["operator_name"] for c in retrieved["candidates"]]
 
     dataset_spec = invoke_tool_spec(
         registry.get("build_dataset_spec"),

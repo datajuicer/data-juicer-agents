@@ -22,12 +22,17 @@ def _retrieve_operators(_ctx: ToolContext, args: RetrieveOperatorsInput) -> Tool
             },
         )
 
+    parsed_tags = [t.strip() for t in (args.tags or []) if t.strip()] or None
+    dataset_path = (args.dataset_path.strip() if getattr(args, "dataset_path", None) else None) or None
+
     try:
         payload = retrieve_operator_candidates(
             intent=args.intent.strip(),
             top_k=max(to_int(args.top_k, 10), 1),
             mode=(args.mode.strip() or "auto"),
-            dataset_path=(args.dataset_path.strip() or None),
+            op_type=(args.op_type.strip() or None),
+            tags=parsed_tags,
+            dataset_path=dataset_path,
         )
     except Exception as exc:
         return ToolResult.failure(
@@ -40,17 +45,7 @@ def _retrieve_operators(_ctx: ToolContext, args: RetrieveOperatorsInput) -> Tool
             },
         )
 
-    candidate_names = extract_candidate_names(payload)
-    result_payload = {
-        "ok": True,
-        "intent": args.intent.strip(),
-        "dataset_path": args.dataset_path.strip(),
-        "candidate_count": len(candidate_names),
-        "candidate_names": candidate_names,
-        "payload": payload,
-        "message": "retrieved operator candidates",
-    }
-    return ToolResult.success(summary="retrieved operator candidates", data=result_payload)
+    return ToolResult.success(summary="retrieved operator candidates", data=payload)
 
 
 RETRIEVE_OPERATORS = ToolSpec(
