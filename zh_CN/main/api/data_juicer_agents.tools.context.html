@@ -557,6 +557,56 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFieldsInput">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.context.</span></span><span class="sig-name descname"><span class="pre">ListDatasetFieldsInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_descriptions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/context/list_dataset_fields/input.html#ListDatasetFieldsInput"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Input for list_dataset_fields.</p>
+<p>This tool lists all dataset-related configuration fields recognized by
+Data-Juicer, including their types, default values, and descriptions.
+Use this before build_dataset_spec to discover advanced dataset options
+such as export_type, export_shard_size, load_dataset_kwargs, suffixes,
+or modality special tokens.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFieldsInput.filter_prefix">
+<span class="sig-name descname"><span class="pre">filter_prefix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput.filter_prefix" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFieldsInput.include_descriptions">
+<span class="sig-name descname"><span class="pre">include_descriptions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput.include_descriptions" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFieldsInput.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput.model_config" title="链接到此定义。">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFormattersInput">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.context.</span></span><span class="sig-name descname"><span class="pre">ListDatasetFormattersInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_ray</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/context/list_dataset_formatters/input.html#ListDatasetFormattersInput"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFormattersInput" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Input for list_dataset_formatters.</p>
+<p>Discovers which dataset formatters (dynamic data generators) are available
+in the current Data-Juicer installation. Use this BEFORE build_dataset_spec
+when you need to configure the generated_dataset_config field for dynamic
+dataset generation (e.g., EmptyFormatter for creating empty datasets).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFormattersInput.include_ray">
+<span class="sig-name descname"><span class="pre">include_ray</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFormattersInput.include_ray" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListDatasetFormattersInput.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#data_juicer_agents.tools.context.ListDatasetFormattersInput.model_config" title="链接到此定义。">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="data_juicer_agents.tools.context.ListSystemConfigInput">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.context.</span></span><span class="sig-name descname"><span class="pre">ListSystemConfigInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_descriptions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer_agents/tools/context/list_system_config/input.html#ListSystemConfigInput"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.context.ListSystemConfigInput" title="链接到此定义。">#</a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
@@ -586,6 +636,42 @@ Use this before build_system_spec to discover available configuration options.</
 <dt class="sig sig-object py" id="data_juicer_agents.tools.context.inspect_dataset_schema">
 <span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.context.</span></span><span class="sig-name descname"><span class="pre">inspect_dataset_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/context/inspect_dataset/logic.html#inspect_dataset_schema"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.context.inspect_dataset_schema" title="链接到此定义。">#</a></dt>
 <dd><p>Inspect a small sample of a dataset and infer keys/modality for planning.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.list_dataset_fields">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.context.</span></span><span class="sig-name descname"><span class="pre">list_dataset_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_descriptions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/context/list_dataset_fields/logic.html#list_dataset_fields"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.context.list_dataset_fields" title="链接到此定义。">#</a></dt>
+<dd><p>List dataset-related configuration fields from Data-Juicer.</p>
+<p>This function lists all available dataset configuration parameters
+from Data-Juicer, including their types, default values, and descriptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filter_prefix</strong> -- Optional filter to show only parameters matching this prefix</p></li>
+<li><p><strong>include_descriptions</strong> -- Whether to include parameter descriptions</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict containing configuration information and available parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer_agents.tools.context.list_dataset_formatters">
+<span class="sig-prename descclassname"><span class="pre">data_juicer_agents.tools.context.</span></span><span class="sig-name descname"><span class="pre">list_dataset_formatters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_ray</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer_agents/tools/context/list_dataset_formatters/logic.html#list_dataset_formatters"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer_agents.tools.context.list_dataset_formatters" title="链接到此定义。">#</a></dt>
+<dd><p>List available dataset formatters from Data-Juicer.</p>
+<p>Discovers which dataset formatters (dynamic data generators) are registered
+in the current Data-Juicer installation by comparing OPSearcher results
+with and without formatter inclusion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>include_ray</strong> -- Whether to include Ray-specific formatters.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict with 'formatters' list and metadata.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -644,6 +730,17 @@ from Data-Juicer, including their types, default values, and descriptions.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.InspectDatasetInput.model_config"><code class="docutils literal notranslate"><span class="pre">InspectDatasetInput.model_config</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput"><code class="docutils literal notranslate"><span class="pre">ListDatasetFieldsInput</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput.filter_prefix"><code class="docutils literal notranslate"><span class="pre">ListDatasetFieldsInput.filter_prefix</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput.include_descriptions"><code class="docutils literal notranslate"><span class="pre">ListDatasetFieldsInput.include_descriptions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFieldsInput.model_config"><code class="docutils literal notranslate"><span class="pre">ListDatasetFieldsInput.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFormattersInput"><code class="docutils literal notranslate"><span class="pre">ListDatasetFormattersInput</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFormattersInput.include_ray"><code class="docutils literal notranslate"><span class="pre">ListDatasetFormattersInput.include_ray</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListDatasetFormattersInput.model_config"><code class="docutils literal notranslate"><span class="pre">ListDatasetFormattersInput.model_config</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListSystemConfigInput"><code class="docutils literal notranslate"><span class="pre">ListSystemConfigInput</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListSystemConfigInput.filter_prefix"><code class="docutils literal notranslate"><span class="pre">ListSystemConfigInput.filter_prefix</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.ListSystemConfigInput.include_descriptions"><code class="docutils literal notranslate"><span class="pre">ListSystemConfigInput.include_descriptions</span></code></a></li>
@@ -651,6 +748,8 @@ from Data-Juicer, including their types, default values, and descriptions.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.inspect_dataset_schema"><code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.list_dataset_fields"><code class="docutils literal notranslate"><span class="pre">list_dataset_fields()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.list_dataset_formatters"><code class="docutils literal notranslate"><span class="pre">list_dataset_formatters()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer_agents.tools.context.list_system_config"><code class="docutils literal notranslate"><span class="pre">list_system_config()</span></code></a></li>
 </ul>
   </nav></div>

@@ -787,7 +787,7 @@
         <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="retrieve_operator_candidates">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.retrieve_operator_candidates">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.retrieve_operator_candidates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -920,7 +920,7 @@
 
 
 <div class="viewcode-block" id="extract_candidate_names">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.extract_candidate_names">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.extract_candidate_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_candidate_names</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]:</span>

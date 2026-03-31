@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.context.list\_dataset\_fields.logic module
+=====================================================================
+
+.. automodule:: data_juicer_agents.tools.context.list_dataset_fields.logic
+   :members:
+   :show-inheritance:
+   :undoc-members:

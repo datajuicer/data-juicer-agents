@@ -587,8 +587,6 @@
     <span class="s2">&quot;video_special_token&quot;</span><span class="p">,</span>
     <span class="s2">&quot;eoc_special_token&quot;</span><span class="p">,</span>
     <span class="s2">&quot;suffixes&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;keep_stats_in_res_ds&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;keep_hashes_in_res_ds&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># System/runtime-related field names (executor, parallelism, caching, etc.)</span>
@@ -651,6 +649,8 @@
     <span class="s2">&quot;use_cache&quot;</span><span class="p">,</span>
     <span class="s2">&quot;use_checkpoint&quot;</span><span class="p">,</span>
     <span class="s2">&quot;work_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;keep_stats_in_res_ds&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;keep_hashes_in_res_ds&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -853,10 +853,64 @@
             <span class="n">op_name</span><span class="p">,</span> <span class="n">param_name</span> <span class="o">=</span> <span class="n">dest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">op_name</span> <span class="ow">in</span> <span class="n">op_param_map</span><span class="p">:</span>
                 <span class="n">op_param_map</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">op_param_map</span><span class="p">,</span> <span class="n">known_op_names</span></div>
-</div>
 
+
+<div class="viewcode-block" id="DJConfigBridge.get_implemented_load_strategies">
+<a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_implemented_load_strategies">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_implemented_load_strategies</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">executor_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dynamically probe DataLoadStrategyRegistry to find truly implemented</span>
+<span class="sd">        load strategies by inspecting source code for NotImplementedError.</span>
+
+<span class="sd">        This avoids hardcoding a whitelist: when the main library fixes a</span>
+<span class="sd">        placeholder strategy, the agent automatically discovers it on the next</span>
+<span class="sd">        startup with zero manual maintenance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            executor_type: Filter by executor type (&#39;default&#39;, &#39;ray&#39;, or &#39;*&#39; for all).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of dicts with keys: executor_type, type, source,</span>
+<span class="sd">            config_validation_rules (required_fields, optional_fields).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.load_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoadStrategyRegistry</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">implemented</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">strategy_cls</span> <span class="ow">in</span> <span class="n">DataLoadStrategyRegistry</span><span class="o">.</span><span class="n">_strategies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Filter by executor type (&#39;*&#39; means wildcard / match all)</span>
+            <span class="k">if</span> <span class="n">executor_type</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="ow">and</span> <span class="n">key</span><span class="o">.</span><span class="n">executor_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">executor_type</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">source_code</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">strategy_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">)</span>
+                <span class="c1"># If the method body raises NotImplementedError, it is a placeholder</span>
+                <span class="k">if</span> <span class="s2">&quot;raise NotImplementedError&quot;</span> <span class="ow">in</span> <span class="n">source_code</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="c1"># Cannot inspect source (e.g. built-in) → skip to be safe</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Extract CONFIG_VALIDATION_RULES if the strategy declares them</span>
+            <span class="n">config_rules</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">strategy_cls</span><span class="p">,</span> <span class="s2">&quot;CONFIG_VALIDATION_RULES&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="n">implemented</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">executor_type</span><span class="p">,</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
+                    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">data_source</span><span class="p">,</span>
+                    <span class="s2">&quot;config_validation_rules&quot;</span><span class="p">:</span> <span class="n">config_rules</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">implemented</span></div>
+</div>
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>

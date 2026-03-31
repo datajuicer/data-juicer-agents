@@ -545,7 +545,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">normalize_dataset_spec</span><span class="p">(</span>
     <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">DatasetSpec</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetSpec</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize dataset spec: strip strings, deduplicate lists.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize dataset spec: strip strings, deduplicate lists.</span>
+
+<span class="sd">    Performs type coercion on extra dataset fields (export_type,</span>
+<span class="sd">    export_shard_size, etc.) via ``coerce_fields`` so that values</span>
+<span class="sd">    serialise correctly in recipe YAML, consistent with how</span>
+<span class="sd">    ``normalize_system_spec`` handles system fields.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">,</span> <span class="n">DatasetSpec</span><span class="p">):</span>
         <span class="n">source</span> <span class="o">=</span> <span class="n">dataset_spec</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -553,21 +559,34 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dataset_spec must be a dict object&quot;</span><span class="p">)</span>
 
+    <span class="c1"># Coerce extra dataset fields to correct types for YAML serialization</span>
+    <span class="n">coerced_extra</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">)</span>
+    <span class="n">coerce_warnings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">coerce_fields</span>
+
+        <span class="n">coerced_extra</span><span class="p">,</span> <span class="n">coerce_errors</span> <span class="o">=</span> <span class="n">coerce_fields</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">coerce_errors</span><span class="p">:</span>
+            <span class="n">coerce_warnings</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;[type coercion] </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">coerce_errors</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># bridge unavailable — skip coercion</span>
+
+    <span class="n">existing_warnings</span> <span class="o">=</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span>
+    <span class="n">existing_warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">coerce_warnings</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_warnings</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">DatasetSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
         <span class="p">{</span>
             <span class="s2">&quot;io&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">dataset_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-                <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="n">normalize_params</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">),</span>
+                <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="n">normalize_params</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                    <span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                     <span class="k">else</span> <span class="kc">None</span>
                 <span class="p">),</span>
                 <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">export_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="c1"># Preserve extra dataset fields (export_type, export_shard_size, suffixes, etc.)</span>
+                <span class="o">**</span><span class="n">coerced_extra</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;binding&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;modality&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">modality</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -580,7 +599,7 @@
                     <span class="n">source</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">image_bytes_key</span>
                 <span class="p">),</span>
             <span class="p">},</span>
-            <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">warnings</span><span class="p">),</span>
+            <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">existing_warnings</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -628,7 +647,7 @@
 
 
 <div class="viewcode-block" id="validate_dataset_spec_payload">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.validate_dataset_spec_payload">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.validate_dataset_spec.logic.html#data_juicer_agents.tools.plan.validate_dataset_spec.logic.validate_dataset_spec_payload">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_dataset_spec_payload</span><span class="p">(</span>
     <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">DatasetSpec</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
@@ -648,14 +667,10 @@
     <span class="k">if</span> <span class="n">source_warning</span> <span class="ow">and</span> <span class="n">source_warning</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_warning</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;dataset source objects are reserved for a later iteration; use dataset_path for now&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">source_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="s2">&quot;generated_dataset_config is reserved for a later iteration; use dataset_path for now&quot;</span>
+            <span class="s2">&quot;at least one dataset source is required: dataset_path, dataset, or generated_dataset_config&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;dataset_path is required in this iteration&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">io</span><span class="o">.</span><span class="n">export_path</span><span class="p">:</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;export_path is required&quot;</span><span class="p">)</span>
 
@@ -698,14 +713,58 @@
             <span class="k">if</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">known_keys</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_keys</span><span class="p">:</span>
                 <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> not found in inspected dataset profile: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">dataset_cfg</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">or</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_cfg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)]</span>
-        <span class="n">normalized_types</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">types</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()}</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mixture of different dataset source types is not supported&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">normalized_types</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;remote&quot;</span><span class="p">}</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="p">[]))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;multiple remote datasets are not supported&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;dataset.configs must be a non-empty list&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">configs</span><span class="p">]</span>
+            <span class="n">normalized_types</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()}</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mixture of different dataset source types is not supported&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">normalized_types</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;remote&quot;</span><span class="p">}</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">configs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;multiple remote datasets are not supported&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Validate against truly implemented strategies</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dj_config_bridge</span> <span class="k">as</span> <span class="n">_get_bridge</span>
+                <span class="n">_bridge</span> <span class="o">=</span> <span class="n">_get_bridge</span><span class="p">()</span>
+                <span class="n">_implemented</span> <span class="o">=</span> <span class="n">_bridge</span><span class="o">.</span><span class="n">get_implemented_load_strategies</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">_implemented</span><span class="p">:</span>
+                    <span class="c1"># Strategy discovery returned nothing — Data-Juicer may be</span>
+                    <span class="c1"># unavailable or registry introspection failed.  Report a</span>
+                    <span class="c1"># single clear error instead of misleading per-entry</span>
+                    <span class="c1"># &quot;not implemented&quot; messages.</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="s2">&quot;Cannot validate dataset load strategies: Data-Juicer strategy &quot;</span>
+                        <span class="s2">&quot;discovery returned no results. Ensure Data-Juicer is installed &quot;</span>
+                        <span class="s2">&quot;and its load-strategy registry is accessible.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_valid_combos</span> <span class="o">=</span> <span class="p">{(</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">_implemented</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">)}</span>
+                    <span class="n">_valid_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">_implemented</span><span class="p">}</span>
+
+                    <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">source</span><span class="p">:</span>
+                            <span class="n">combo</span> <span class="o">=</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">combo</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_valid_combos</span><span class="p">:</span>
+                                <span class="n">_available</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">_implemented</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">)]</span>
+                                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Dataset source type=&#39;</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;, source=&#39;</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; is not implemented &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;in the current Data-Juicer installation. &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Call list_dataset_load_strategies to see available options: </span><span class="si">{</span><span class="n">_available</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_valid_types</span><span class="p">:</span>
+                            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Dataset type=&#39;</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39; is not implemented in the current Data-Juicer installation. &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;Available types: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_valid_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;generated_dataset_config must have a non-empty &quot;type&quot; field&#39;</span><span class="p">)</span>
 
     <span class="c1"># DJ parser validation for dataset fields</span>
     <span class="k">try</span><span class="p">:</span>
@@ -727,6 +786,14 @@
             <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;video_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">binding</span><span class="o">.</span><span class="n">video_key</span>
         <span class="k">if</span> <span class="n">binding</span><span class="o">.</span><span class="n">image_bytes_key</span><span class="p">:</span>
             <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;image_bytes_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">binding</span><span class="o">.</span><span class="n">image_bytes_key</span>
+        <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="p">:</span>
+            <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="p">:</span>
+            <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">generated_dataset_config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="c1"># Merge extra dataset fields (export_type, export_shard_size, suffixes, etc.)</span>
+        <span class="c1"># so that the DJ parser can validate them as well.</span>
+        <span class="k">if</span> <span class="n">io</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">:</span>
+            <span class="n">dataset_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dataset_dict</span><span class="p">:</span>
             <span class="n">is_valid</span><span class="p">,</span> <span class="n">dj_errors</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>

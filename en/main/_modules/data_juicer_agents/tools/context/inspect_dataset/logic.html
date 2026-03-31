@@ -534,6 +534,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
@@ -608,11 +609,89 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">content</span><span class="p">],</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="p">[],</span> <span class="mi">0</span>
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_csv_records</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span>
+            <span class="c1"># Check if headers are present</span>
+            <span class="k">if</span> <span class="n">reader</span><span class="o">.</span><span class="n">fieldnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[],</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">sample_size</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="c1"># Filter out None values that occur when rows have fewer fields than headers</span>
+                <span class="n">cleaned_row</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+                <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_row</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">UnicodeDecodeError</span><span class="p">,</span> <span class="n">csv</span><span class="o">.</span><span class="n">Error</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">rows</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_parquet_records</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.parquet</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="mi">0</span>
+
+    <span class="n">parquet_file</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">ParquetFile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="c1"># Read only the first batch of up to sample_size rows instead of</span>
+    <span class="c1"># materializing the entire file before slicing.</span>
+    <span class="n">batch_iter</span> <span class="o">=</span> <span class="n">parquet_file</span><span class="o">.</span><span class="n">iter_batches</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">first_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">batch_iter</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="mi">0</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">first_batch</span><span class="o">.</span><span class="n">to_pydict</span><span class="p">()</span>
+    <span class="n">num_records</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span> <span class="k">if</span> <span class="n">rows</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_records</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">records</span><span class="p">,</span> <span class="n">num_records</span>
+
+
+<span class="n">_UNSUPPORTED_PREFIXES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;hf://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;huggingface://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s3://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gs://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;az://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hdfs://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_looks_like_unsupported_source</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">dataset_path</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">_UNSUPPORTED_PREFIXES</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="inspect_dataset_schema">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.inspect_dataset.logic.html#data_juicer_agents.tools.context.inspect_dataset_schema">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">inspect_dataset_schema</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inspect a small sample of a dataset and infer keys/modality for planning.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">_looks_like_unsupported_source</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;unsupported_input_source&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;inspect_dataset only supports local file paths. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The provided path &#39;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39; looks like a remote or non-local source &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;which is not supported. Please download the dataset to a local path first, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;then call inspect_dataset with the local file path.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;inspect_dataset does not support remote or non-local input sources. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39; appears to be a URL or cloud storage path. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Download it locally and retry.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+        <span class="p">}</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -629,8 +708,15 @@
     <span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
     <span class="n">scanned</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span><span class="p">:</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span><span class="p">:</span>
         <span class="n">rows</span><span class="p">,</span> <span class="n">scanned</span> <span class="o">=</span> <span class="n">_load_json_records</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.csv&quot;</span><span class="p">:</span>
+        <span class="n">rows</span><span class="p">,</span> <span class="n">scanned</span> <span class="o">=</span> <span class="n">_load_csv_records</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.tsv&quot;</span><span class="p">:</span>
+        <span class="n">rows</span><span class="p">,</span> <span class="n">scanned</span> <span class="o">=</span> <span class="n">_load_csv_records</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">:</span>
+        <span class="n">rows</span><span class="p">,</span> <span class="n">scanned</span> <span class="o">=</span> <span class="n">_load_parquet_records</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">rows</span><span class="p">,</span> <span class="n">scanned</span> <span class="o">=</span> <span class="n">_load_jsonl_records</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">)</span>
 
@@ -638,8 +724,18 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;inspect_failed&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No valid object records found in sample&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No valid object records found in sample&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to load any valid records from the dataset. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;This could be due to: (1) file format/encoding issues, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(2) malformed data structure, or (3) empty dataset. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Scanned </span><span class="si">{</span><span class="n">scanned</span><span class="si">}</span><span class="s2"> lines but found no valid dict records.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not extract valid records from &#39;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Try inspecting the file manually with shell commands like: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;head -n 3 </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39; or &#39;cat </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2"> | head -n 3&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;to verify the file format and content structure.&quot;</span>
+            <span class="p">),</span>
             <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
             <span class="s2">&quot;sampled_records&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">&quot;scanned_lines&quot;</span><span class="p">:</span> <span class="n">scanned</span><span class="p">,</span>

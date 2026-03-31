@@ -542,7 +542,7 @@
 
 
 <div class="viewcode-block" id="validate_plan_schema">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.validate_plan_schema">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.plan_validate.logic.html#data_juicer_agents.tools.plan.plan_validate.validate_plan_schema">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_plan_schema</span><span class="p">(</span><span class="n">plan</span><span class="p">:</span> <span class="n">PlanModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">plan_id</span><span class="p">:</span>
@@ -588,24 +588,29 @@
     <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="PlanValidator">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.PlanValidator">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.plan_validate.logic.html#data_juicer_agents.tools.plan.plan_validate.PlanValidator">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlanValidator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate plan schema and local filesystem preconditions.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PlanValidator.validate">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.PlanValidator.validate">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.plan_validate.logic.html#data_juicer_agents.tools.plan.plan_validate.PlanValidator.validate">[文档]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">plan</span><span class="p">:</span> <span class="n">PlanModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="n">errors</span> <span class="o">=</span> <span class="n">validate_plan_schema</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validate_recipe_with_dj</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">))</span>
 
-        <span class="n">dataset_path_str</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_path_str</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;recipe.dataset_path is required&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dataset_path_str</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+        <span class="n">has_dataset_path</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">))</span>
+        <span class="n">has_dataset</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset&quot;</span><span class="p">))</span>
+        <span class="n">has_generated_config</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_dataset_path</span> <span class="ow">or</span> <span class="n">has_dataset</span> <span class="ow">or</span> <span class="n">has_generated_config</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">&quot;recipe must have at least one dataset source: dataset_path, dataset, or generated_dataset_config&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">has_dataset_path</span><span class="p">:</span>
+            <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">dataset_path_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">[</span><span class="s1">&#39;dataset_path&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">export_path_str</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path_str</span><span class="p">:</span>
@@ -627,7 +632,7 @@
 
 
 <div class="viewcode-block" id="plan_validate">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.plan_validate">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.plan_validate.logic.html#data_juicer_agents.tools.plan.plan_validate.plan_validate">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plan_validate</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">plan_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">plan</span> <span class="o">=</span> <span class="n">PlanModel</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">)</span>

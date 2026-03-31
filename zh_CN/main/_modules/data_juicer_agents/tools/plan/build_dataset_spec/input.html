@@ -530,23 +530,63 @@
                 <article class="bd-article">
                   
   <h1>data_juicer_agents.tools.plan.build_dataset_spec.input 源代码</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Input models for build_dataset_spec.&quot;&quot;&quot;</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">field_validator</span>
 
 
 <div class="viewcode-block" id="BuildDatasetSpecInput">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.html#data_juicer_agents.tools.plan.BuildDatasetSpecInput">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.build_dataset_spec.input.html#data_juicer_agents.tools.plan.BuildDatasetSpecInput">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BuildDatasetSpecInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;User intent for the current planning task.&quot;</span><span class="p">)</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Input dataset path.&quot;</span><span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">)</span>  <span class="c1"># Allow advanced dataset fields as extra kwargs</span>
+
+    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;User intent for the current planning task. &quot;</span>
+            <span class="s2">&quot;For advanced dataset options (e.g., export_type, export_shard_size, &quot;</span>
+            <span class="s2">&quot;export_in_parallel, load_dataset_kwargs, suffixes, image_special_token, etc.), &quot;</span>
+            <span class="s2">&quot;call list_dataset_fields first to discover available fields, &quot;</span>
+            <span class="s2">&quot;then pass them directly as additional arguments to this tool.&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Output dataset path.&quot;</span><span class="p">)</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Shortcut for a single local file or directory. &quot;</span>
+            <span class="s2">&quot;For advanced configs (mixed sources, per-source weights, max_sample_num), &quot;</span>
+            <span class="s2">&quot;use the &#39;dataset&#39; field instead.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;YAML-style complex dataset config. Use this for multi-source mixing, &quot;</span>
+            <span class="s2">&quot;per-source weights, or limiting max_sample_num. &quot;</span>
+            <span class="s2">&quot;Call list_dataset_load_strategies first to discover available types/sources and their extra fields. &quot;</span>
+            <span class="s2">&quot;Top-level keys: &#39;configs&#39; (required list), &#39;max_sample_num&#39; (optional int). &quot;</span>
+            <span class="s2">&quot;Each entry in &#39;configs&#39; supports: &quot;</span>
+            <span class="s2">&quot;&#39;type&#39; (required str, e.g. &#39;local&#39;), &quot;</span>
+            <span class="s2">&quot;&#39;path&#39; (str, path to file/dir), &quot;</span>
+            <span class="s2">&quot;&#39;source&#39; (str, sub-source specifier, e.g. &#39;file&#39;/&#39;s3&#39;), &quot;</span>
+            <span class="s2">&quot;&#39;weight&#39; (float, sampling weight), &quot;</span>
+            <span class="s2">&quot;&#39;split&#39; (str, dataset split), &quot;</span>
+            <span class="s2">&quot;plus any strategy-specific extra fields from list_dataset_load_strategies. &quot;</span>
+            <span class="s1">&#39;Example: {&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/a.jsonl&quot;, &quot;weight&quot;: 0.7}, &#39;</span>
+            <span class="s1">&#39;{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/b.jsonl&quot;, &quot;weight&quot;: 0.3}], &quot;max_sample_num&quot;: 50000}&#39;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">generated_dataset_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Config for dynamically generated datasets via Data-Juicer FORMATTERS. &quot;</span>
+            <span class="s2">&quot;Must contain a &#39;type&#39; key matching a registered formatter name. &quot;</span>
+            <span class="s2">&quot;Call list_dataset_formatters first to discover available formatters and their parameters.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
     <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dataset inspection payload returned by inspect_dataset.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">modality_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional explicit modality override.&quot;</span><span class="p">)</span>
@@ -554,7 +594,20 @@
     <span class="n">image_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional image key override.&quot;</span><span class="p">)</span>
     <span class="n">audio_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional audio key override.&quot;</span><span class="p">)</span>
     <span class="n">video_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional video key override.&quot;</span><span class="p">)</span>
-    <span class="n">image_bytes_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional image-bytes key override.&quot;</span><span class="p">)</span></div>
+    <span class="n">image_bytes_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional image-bytes key override.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_json_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow LLMs to pass JSON strings instead of dicts.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parsed</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">parsed</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">v</span></div>
 
 </pre></div>
 
