@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from importlib import import_module as real_import_module
 import json
 
 from data_juicer_agents.cli import main
@@ -31,3 +32,19 @@ def test_retrieve_command_accepts_bm25_mode(capsys):
     assert data["ok"] is True
     assert data["retrieval_source"] == "bm25"
     assert data["candidate_count"] >= 1
+
+def test_retrieve_command_missing_core_dependency_reports_install_hint(monkeypatch, capsys):
+    def _fake_import_module(name, package=None):
+        if name == "data_juicer_agents.commands.retrieve_cmd":
+            raise ModuleNotFoundError(name="langchain_community")
+        return real_import_module(name, package)
+
+    monkeypatch.setattr("data_juicer_agents.cli.import_module", _fake_import_module)
+
+    code = main(["retrieve", "dedup", "--json"])
+    assert code == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "djx retrieve requires optional dependencies" in captured.err
+    assert "data-juicer-agents[core]" in captured.err

@@ -6,7 +6,8 @@ from __future__ import annotations
 from importlib import import_module
 from pathlib import Path
 import pkgutil
-from typing import Iterable, List, Sequence, Tuple
+from functools import lru_cache
+from typing import List, Sequence, Tuple
 
 from data_juicer_agents.core.tool.contracts import ToolSpec
 
@@ -14,6 +15,19 @@ from data_juicer_agents.core.tool.contracts import ToolSpec
 _TOOLS_PACKAGE = "data_juicer_agents.tools"
 _TOOLS_DIR = Path(__file__).resolve().parents[2] / "tools"
 _SKIP_PACKAGES = {"__pycache__"}
+
+
+class ToolGroupImportError(ImportError):
+    """Raised when a tool group cannot be imported because optional deps are missing."""
+
+    def __init__(self, group_name: str, cause: ModuleNotFoundError) -> None:
+        self.group_name = str(group_name)
+        self.missing_module = str(getattr(cause, "name", "") or "").strip() or None
+        message = (
+            f"failed to import tool group '{self.group_name}'"
+            + (f" (missing module: {self.missing_module})" if self.missing_module else "")
+        )
+        super().__init__(message)
 
 
 def iter_tool_group_names() -> List[str]:
@@ -41,7 +55,10 @@ def load_tool_specs_for_group(group_name: str) -> List[ToolSpec]:
     else:
         raise FileNotFoundError(f"no registry.py or definition.py for tool group: {group_name}")
 
-    module = import_module(module_name)
+    try:
+        module = import_module(module_name)
+    except ModuleNotFoundError as exc:
+        raise ToolGroupImportError(group_name, exc) from exc
     specs = getattr(module, "TOOL_SPECS", None)
     if specs is None:
         raise AttributeError(f"{module.__name__} does not define TOOL_SPECS")
@@ -50,21 +67,48 @@ def load_tool_specs_for_group(group_name: str) -> List[ToolSpec]:
     return [spec for spec in specs if isinstance(spec, ToolSpec)]
 
 
-def load_all_tool_specs() -> List[ToolSpec]:
+def _normalize_group_names(groups: Sequence[str] | None) -> Tuple[str, ...]:
+    if groups is None:
+        return ALL_TOOL_GROUPS
+
+    expected = set(ALL_TOOL_GROUPS)
+    normalized = []
+    for group_name in groups:
+        value = str(group_name or "").strip()
+        if not value:
+            continue
+        if value not in expected:
+            raise KeyError(f"unknown tool group: {value}")
+        if value not in normalized:
+            normalized.append(value)
+    return tuple(normalized)
+
+
+@lru_cache(maxsize=None)
+def _load_tool_specs_cached(group_names: Tuple[str, ...]) -> Tuple[ToolSpec, ...]:
     all_specs: List[ToolSpec] = []
-    for group_name in iter_tool_group_names():
+    for group_name in group_names:
         all_specs.extend(load_tool_specs_for_group(group_name))
-    return all_specs
+    return tuple(all_specs)
+
+
+def load_tool_specs(groups: Sequence[str] | None = None) -> List[ToolSpec]:
+    group_names = _normalize_group_names(groups)
+    return list(_load_tool_specs_cached(group_names))
+
+
+def load_all_tool_specs() -> List[ToolSpec]:
+    return load_tool_specs()
 
 
 ALL_TOOL_GROUPS: Tuple[str, ...] = tuple(iter_tool_group_names())
-ALL_TOOL_SPECS: List[ToolSpec] = load_all_tool_specs()
 
 
 __all__ = [
     "ALL_TOOL_GROUPS",
-    "ALL_TOOL_SPECS",
+    "ToolGroupImportError",
     "iter_tool_group_names",
     "load_all_tool_specs",
+    "load_tool_specs",
     "load_tool_specs_for_group",
 ]

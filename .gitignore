@@ -142,3 +142,4 @@ data/log/
 data/monitor/
 plans/
 data_juicer_agents/tools/retrieve/retrieve_operators/backend/vector_index_cache/
+skills/data-juicer-agents-harness/agents/

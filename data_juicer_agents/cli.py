@@ -4,14 +4,45 @@
 from __future__ import annotations
 
 import argparse
+from importlib import import_module
 import sys
 
 from data_juicer_agents import __version__
-from data_juicer_agents.commands.apply_cmd import run_apply
-from data_juicer_agents.commands.dev_cmd import run_dev
-from data_juicer_agents.commands.plan_cmd import run_plan
-from data_juicer_agents.commands.retrieve_cmd import run_retrieve
-from data_juicer_agents.commands.tool_cmd import run_tool
+from data_juicer_agents.utils.optional_deps import missing_dependency_message
+
+
+_COMMAND_HANDLER_SPECS = {
+    "plan": {
+        "module": "data_juicer_agents.commands.plan_cmd",
+        "handler": "run_plan",
+        "feature": "djx plan",
+        "extras": ("harness", "core"),
+    },
+    "apply": {
+        "module": "data_juicer_agents.commands.apply_cmd",
+        "handler": "run_apply",
+        "feature": "djx apply",
+        "extras": ("harness", "core"),
+    },
+    "retrieve": {
+        "module": "data_juicer_agents.commands.retrieve_cmd",
+        "handler": "run_retrieve",
+        "feature": "djx retrieve",
+        "extras": ("core",),
+    },
+    "dev": {
+        "module": "data_juicer_agents.commands.dev_cmd",
+        "handler": "run_dev",
+        "feature": "djx dev",
+        "extras": ("harness", "core"),
+    },
+    "tool": {
+        "module": "data_juicer_agents.commands.tool_cmd",
+        "handler": "run_tool",
+        "feature": "djx tool",
+        "extras": ("harness", "core"),
+    },
+}
 
 
 def _add_output_level_args(
@@ -78,7 +109,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Optional custom operator directories/files for validation/execution",
     )
-    plan.set_defaults(handler=run_plan)
+    plan.set_defaults(handler_name="plan")
 
     apply_cmd = sub.add_parser(
         "apply",
@@ -94,7 +125,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=300,
         help="Execution timeout in seconds",
     )
-    apply_cmd.set_defaults(handler=run_apply)
+    apply_cmd.set_defaults(handler_name="apply")
 
     retrieve = sub.add_parser(
         "retrieve",
@@ -136,7 +167,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print machine-readable JSON payload",
     )
-    retrieve.set_defaults(handler=run_retrieve)
+    retrieve.set_defaults(handler_name="retrieve")
 
     dev = sub.add_parser(
         "dev",
@@ -170,7 +201,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Run an optional local dj-process smoke check using custom_operator_paths",
     )
-    dev.set_defaults(handler=run_dev)
+    dev.set_defaults(handler_name="dev")
 
     tool = sub.add_parser(
         "tool",
@@ -190,7 +221,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help="Optional tag filter; may be repeated",
     )
-    tool_list.set_defaults(handler=run_tool)
+    tool_list.set_defaults(handler_name="tool")
 
     tool_schema = tool_sub.add_parser(
         "schema",
@@ -198,7 +229,7 @@ def build_parser() -> argparse.ArgumentParser:
         parents=[output_parent],
     )
     tool_schema.add_argument("tool_name", type=str, help="Registered tool name")
-    tool_schema.set_defaults(handler=run_tool)
+    tool_schema.set_defaults(handler_name="tool")
 
     tool_run = tool_sub.add_parser(
         "run",
@@ -227,15 +258,38 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Explicitly confirm running write/execute tools",
     )
-    tool_run.set_defaults(handler=run_tool)
+    tool_run.set_defaults(handler_name="tool")
 
     return parser
+
+
+def _load_handler(handler_name: str):
+    spec = _COMMAND_HANDLER_SPECS.get(str(handler_name or "").strip())
+    if spec is None:
+        raise KeyError(f"unknown command handler: {handler_name}")
+
+    try:
+        module = import_module(str(spec["module"]))
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            missing_dependency_message(
+                str(spec["feature"]),
+                extras=tuple(spec["extras"]),
+                missing_module=getattr(exc, "name", None),
+            )
+        ) from exc
+    return getattr(module, str(spec["handler"]))
 
 
 def main(argv=None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    return int(args.handler(args))
+    try:
+        handler = _load_handler(str(getattr(args, "handler_name", "") or ""))
+    except RuntimeError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    return int(handler(args))
 
 
 if __name__ == "__main__":
