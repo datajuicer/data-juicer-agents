@@ -112,10 +112,16 @@ These tools run entirely locally:
 
 ### Local Operator Retrieval
 
-Use `mode=vector` to avoid LLM calls:
+`retrieve_operators` runs entirely locally — no API key, no cloud calls:
 
 ```bash
-djx tool run retrieve_operators --input-json '{"intent": "<goal>", "top_k": 5, "mode": "vector"}'
+djx tool run retrieve_operators --input-json '{"intent": "<goal>", "top_k": 5}'
+```
+
+After selecting a candidate, use `get_operator_info` to inspect its parameter schema:
+
+```bash
+djx tool run get_operator_info --input-json '{"operator_name": "<operator_name>"}'
 ```
 
 ### Semantic Operators Using Local Models
@@ -134,7 +140,7 @@ Operator parameters come from `retrieve_operators` output. If parameters are unc
 | `model not found` | Pull the model: `ollama pull <model>` |
 | Port conflict (11434 in use) | Use a different port: `OLLAMA_HOST=0.0.0.0:11435 ollama serve &`, then update `DJA_OPENAI_BASE_URL` |
 | `DJA_LLM_THINKING=true` error | Set to `false` for all local models |
-| `auto` mode 401 fallback | Explicitly use `mode=vector` |
+| `auto` mode 401 fallback | Use `retrieve_operators` (already local, no API needed) |
 
 ---
 
@@ -147,10 +153,12 @@ ollama list
 curl http://localhost:11434/v1/models
 ```
 
-### 2. Use mode=vector to Guarantee Local Execution
+### 2. retrieve_operators Is Already Local
+
+No need to specify a special mode — `retrieve_operators` runs entirely locally by default:
 
 ```bash
-djx tool run retrieve_operators --input-json '{"intent": "...", "mode": "vector"}'
+djx tool run retrieve_operators --input-json '{"intent": "...", "mode": "auto"}'
 ```
 
 ### 3. Never Send Private Data to the Cloud
@@ -190,8 +198,8 @@ curl http://localhost:11434/v1/models
 # 5. Inspect dataset
 djx tool run inspect_dataset --input-json '{"dataset_path": "/data/sensitive.jsonl", "sample_size": 50}'
 
-# 6. Retrieve operators locally
-djx tool run retrieve_operators --input-json '{"intent": "clean and filter sensitive data", "mode": "vector"}'
+# 6. Retrieve operators locally (already local, no mode=vector needed)
+djx tool run retrieve_operators --input-json '{"intent": "clean and filter sensitive data", "top_k": 10}'
 
 # 7. Continue with main flow...
 ```
@@ -204,5 +212,5 @@ djx tool run retrieve_operators --input-json '{"intent": "clean and filter sensi
 |----------|--------------|
 | Configure API Key (cloud) | djx_auth |
 | Configure local models | **djx_local_model (this skill)** |
-| Local operator retrieval | djx_retrieve (mode=vector) |
+| Local operator retrieval | djx_retrieve (retrieve_operators, already local) |
 | Main flow | data-juicer |

@@ -1,19 +1,30 @@
 ---
 name: djx_retrieve
 description: >-
-  Data-Juicer operator retrieval reference: retrieve_operators modes, intent writing, result interpretation.
-  Trigger keywords: retrieve_operators, search operators, find operator,
-  which operator, intent, retrieval, LLM mode, vector mode.
+  Data-Juicer operator retrieval reference: retrieve_operators (local), retrieve_operators_api (API), get_operator_info, list_operator_catalog.
+  Trigger keywords: retrieve_operators, retrieve_operators_api, search operators, find operator,
+  which operator, intent, retrieval, bm25, regex, LLM mode, vector mode, operator info, operator catalog.
   Use when searching for suitable operators, unsure which operator to use, or retrieve errors occur.
   Related skills: data-juicer (main flow), djx_auth (authentication), djx_local_model (local mode).
 allowed-tools: Bash, Read
-argument-hint: '"<intent>"'
+argument-hint: "<intent>"
 user-invocable: true
 ---
 
 # Data-Juicer Skills: Retrieve (Operator Retrieval)
 
-> **Main flow**: See the `data-juicer` skill. This skill provides detailed reference for retrieve_operators.
+> **Main flow**: See the `data-juicer` skill. This skill provides detailed reference for operator retrieval tools.
+
+---
+
+## Tool Overview
+
+| Tool | Surface | Modes | Use Case |
+|------|---------|-------|----------|
+| `retrieve_operators` | Harness (default) | `auto`, `bm25`, `regex` | Local retrieval, no API needed |
+| `retrieve_operators_api` | Full (not in harness) | `auto`, `llm`, `vector` | API-backed semantic retrieval |
+| `get_operator_info` | Harness | — | Inspect one operator's parameter schema |
+| `list_operator_catalog` | Harness | — | Browse full operator catalog (fallback) |
 
 ---
 
@@ -21,8 +32,8 @@ user-invocable: true
 
 | Condition | Requirement | Verification Command |
 |-----------|-------------|---------------------|
-| **LLM mode** | `DASHSCOPE_API_KEY` is set | `echo $DASHSCOPE_API_KEY` |
-| **Vector mode** | No API Key needed | Runs locally |
+| **retrieve_operators** (local) | No API key needed | Runs locally |
+| **retrieve_operators_api** (API) | `DASHSCOPE_API_KEY` is set | `echo $DASHSCOPE_API_KEY` |
 
 ---
 
@@ -31,7 +42,8 @@ user-invocable: true
 | Concept | Description |
 |---------|-------------|
 | **intent** | Natural language description of the processing goal, used to retrieve matching operators |
-| **mode** | Retrieval mode: `auto`, `llm`, `vector` |
+| **mode (local)** | `retrieve_operators` modes: `auto` (routes to bm25/regex), `bm25`, `regex` |
+| **mode (API)** | `retrieve_operators_api` modes: `auto` (tries llm→vector), `llm`, `vector` |
 | **top_k** | Maximum number of candidates to return |
 | **operator** | Data processing unit containing name, type, description, params |
 
@@ -40,21 +52,61 @@ user-invocable: true
 ## Command Format
 
 ```bash
+# Local retrieval (harness default)
 djx tool run retrieve_operators --input-json '{"intent": "<description>", "top_k": 15}'
+
+# API-backed retrieval (full surface only, not in harness)
+djx tool run retrieve_operators_api --input-json '{"intent": "<description>", "top_k": 15}'
+
+# Inspect one operator's parameter schema
+djx tool run get_operator_info --input-json '{"operator_name": "<operator_name>"}'
+
+# Browse operator catalog (fallback)
+djx tool run list_operator_catalog --input-json '{"include_parameters": false}'
 ```
 
-> **Must use `djx tool run retrieve_operators --input-json '{...}'`**. Do not use `djx retrieve_operators`, `djx retrieve`, or other formats.
+> **Must use `djx tool run <tool_name> --input-json '{...}'`**. Do not use `djx retrieve_operators`, `djx retrieve`, or other formats.
 
 ---
 
-## Input Schema
+## Input Schemas
+
+### retrieve_operators (local)
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `intent` | str | Yes | — | Natural language description of the processing goal |
+| `intent` | str | Yes | — | Natural language description, or regex pattern for `regex` mode |
+| `top_k` | int | No | 10 | Maximum number of candidates to return |
+| `mode` | str | No | `auto` | `auto`, `bm25`, `regex` |
+| `op_type` | str | No | — | Type filter: `mapper`, `filter`, `deduplicator`, etc. |
+| `tags` | list | No | `[]` | Modality/resource tags (`text`, `image`, etc.), match-all semantics |
+| `dataset_path` | str | No | — | Dataset path for automatic modality detection |
+
+### retrieve_operators_api (API)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `intent` | str | Yes | — | Plain-text description of the desired operators |
 | `top_k` | int | No | 10 | Maximum number of candidates to return |
 | `mode` | str | No | `auto` | `auto`, `llm`, `vector` |
-| `dataset_path` | str | No | — | Dataset path for modality-aware retrieval |
+| `op_type` | str | No | — | Type filter: `mapper`, `filter`, `deduplicator`, etc. |
+| `tags` | list | No | `[]` | Modality/resource tags, match-all semantics |
+| `dataset_path` | str | No | — | Dataset path for automatic modality detection |
+
+### get_operator_info
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `operator_name` | str | Yes | — | Canonical or approximate operator name to inspect |
+
+### list_operator_catalog
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `op_type` | str | No | — | Type filter |
+| `tags` | list | No | `[]` | Tag filter, match-all semantics |
+| `include_parameters` | bool | No | `false` | Include full parameter schemas (heavy, use cautiously) |
+| `limit` | int | No | 0 | Max operators to return (0 = all) |
 
 > **The field name is `intent`, not `query`**. Using `query` will cause `input_validation_failed`.
 
@@ -62,22 +114,31 @@ djx tool run retrieve_operators --input-json '{"intent": "<description>", "top_k
 
 ## Retrieval Mode Comparison
 
+### retrieve_operators (local modes)
+
 | Mode | Requires API | Behavior | Use Case |
 |------|-------------|----------|----------|
-| `auto` | Yes (LLM) | LLM first, vector fallback | **Default recommended**, highest accuracy |
-| `llm` | Yes | LLM-only semantic retrieval | Highest semantic relevance |
-| `vector` | No (local) | Vector embedding similarity | Private data, offline environments, no API |
+| `auto` | No | Routes to `regex` for regex-like queries, otherwise `bm25` | **Default recommended** |
+| `bm25` | No | BM25 keyword matching | Deterministic keyword search |
+| `regex` | No | Regex pattern matching on operator names | When operator naming pattern is known |
+
+### retrieve_operators_api (API modes)
+
+| Mode | Requires API | Behavior | Use Case |
+|------|-------------|----------|----------|
+| `auto` | Yes | Tries `llm` first, falls back to `vector` | Highest accuracy when API available |
+| `llm` | Yes | LLM semantic ranking | Best semantic relevance |
+| `vector` | Yes | FAISS vector similarity | Semantic search without LLM ranking |
 
 **Mode selection decision**:
 
 ```
-Do you have an API Key?
-├─ Yes → Use auto (default)
-└─ No → Use vector
-
-Is the data private?
-├─ Yes → Use vector (no cloud sending)
-└─ No → Use auto
+In harness mode?
+├─ Yes → Use retrieve_operators (local, mode=auto)
+└─ No (full surface) →
+    Do you have an API Key?
+    ├─ Yes → Use retrieve_operators_api (mode=auto)
+    └─ No → Use retrieve_operators (mode=auto, already local)
 ```
 
 ---
@@ -167,7 +228,7 @@ djx tool run retrieve_operators --input-json '{"intent": "remove HTML tags, norm
 ]
 ```
 
-> **This is all the information you will get**. No other tool can provide more operator details. Do not try to use `djx tool schema` for operators (it only supports the 8 djx tools).
+> **After selecting a candidate**, call `get_operator_info` to inspect its full parameter schema before filling `build_process_spec`. Do not guess parameter names from operator names alone.
 
 ---
 
@@ -175,10 +236,10 @@ djx tool run retrieve_operators --input-json '{"intent": "remove HTML tags, norm
 
 | Scenario | Solution |
 |----------|----------|
-| `401 Unauthorized` | Verify `DASHSCOPE_API_KEY` is correct |
-| Empty results | Retry with a broader intent |
+| `401 Unauthorized` | API key issue; use `retrieve_operators` (local) instead, or verify `DASHSCOPE_API_KEY` |
+| Empty results | Retry with a broader intent, or use `list_operator_catalog` as fallback |
 | `input_validation_failed` | Use `intent` instead of `query` |
-| `auto` mode 401 | Explicitly use `mode=vector` |
+| `invalid local retrieval mode` | `retrieve_operators` only accepts `auto`, `bm25`, `regex`; for `llm`/`vector`, use `retrieve_operators_api` |
 | Operator results are not ideal | Use a more specific description in retrieval, e.g., `normalize all whitespace including internal spaces` instead of just `normalize whitespace` |
 
 ---
@@ -234,10 +295,18 @@ djx tool run retrieve_operators --input-json '{"intent": "clean HTML", "top_k": 
 {"name": "clean_html_mapper", ...}  # From retrieval results
 ```
 
-### 3. Use vector Mode for Private Data
+### 3. Local Retrieval Needs No API Key
+
+`retrieve_operators` runs entirely locally. No cloud calls, no API key needed:
 
 ```bash
-djx tool run retrieve_operators --input-json '{"intent": "...", "mode": "vector"}'
+djx tool run retrieve_operators --input-json '{"intent": "...", "mode": "auto"}'
+```
+
+For API-backed semantic retrieval (outside harness), use `retrieve_operators_api`:
+
+```bash
+djx tool run retrieve_operators_api --input-json '{"intent": "...", "mode": "vector"}'
 ```
 
 ---
@@ -256,27 +325,44 @@ Operators prefixed with `ray_` require a running Ray cluster. Use alternatives i
 ## Typical Usage
 
 ```bash
-# Standard retrieval - describe all requirements at once
+# Standard local retrieval - describe all requirements at once
 djx tool run retrieve_operators --input-json '{
   "intent": "remove HTML tags, normalize whitespace, fix unicode encoding, filter text shorter than 50 characters, deduplicate documents",
   "top_k": 15
 }'
 
-# Private data (local vector mode)
-djx tool run retrieve_operators --input-json '{"intent": "clean HTML, normalize whitespace, deduplicate", "mode": "vector"}'
+# Regex mode - when operator naming pattern is known
+djx tool run retrieve_operators --input-json '{"intent": ".*dedup.*", "mode": "regex"}'
 
-# More results
-djx tool run retrieve_operators --input-json '{"intent": "...", "top_k": 20}'
+# BM25 mode - deterministic keyword matching
+djx tool run retrieve_operators --input-json '{"intent": "filter images by resolution", "mode": "bm25"}'
+
+# Inspect a specific operator's parameters
+djx tool run get_operator_info --input-json '{"operator_name": "text_length_filter"}'
+
+# Browse catalog (fallback when retrieval is insufficient)
+djx tool run list_operator_catalog --input-json '{"op_type": "filter", "include_parameters": false, "limit": 20}'
 
 # Combined with dataset modality
 djx tool run retrieve_operators --input-json '{"intent": "filter images", "dataset_path": "/data/images.jsonl"}'
 
-# Complex cleaning task
-djx tool run retrieve_operators --input-json '{
-  "intent": "clean HTML artifacts, normalize all whitespace including internal spaces, fix malformed unicode characters, filter by text length minimum 100 characters, deduplicate exact and near-duplicate documents",
+# API-backed retrieval (full surface only, requires API key)
+djx tool run retrieve_operators_api --input-json '{
+  "intent": "clean HTML artifacts, normalize all whitespace, deduplicate documents",
   "top_k": 20
 }'
 ```
+
+---
+
+## Recommended Retrieval Pattern
+
+1. Use `retrieve_operators` with `mode="auto"` for ordinary natural-language operator discovery.
+2. Use `mode="bm25"` when you want deterministic keyword retrieval.
+3. Use `mode="regex"` when the operator naming pattern is already known.
+4. If `retrieve_operators` does not return valid candidates, call `list_operator_catalog` as a fallback.
+5. Use `list_operator_catalog` cautiously: `include_parameters=true` is heavy. Prefer filtered calls (`op_type`, `tags`, `limit`).
+6. After selecting a candidate, call `get_operator_info` before filling `build_process_spec`.
 
 ---
 

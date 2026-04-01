@@ -198,9 +198,9 @@ djx tool run inspect_dataset --input-json '{"dataset_path": "/data/processed/art
 
 ### Key Configuration
 
-1. **Use vector mode for operator retrieval**
+1. **Use local retrieval for operators** (already local, no API needed)
 ```bash
-djx tool run retrieve_operators --input-json '{"intent": "...", "top_k": 15, "mode": "vector"}'
+djx tool run retrieve_operators --input-json '{"intent": "...", "top_k": 15}'
 ```
 
 2. **Configure local Ollama** (see djx_local_model for details)
@@ -400,7 +400,7 @@ The output of `retrieve_operators` is **already complete**, containing operator 
 | Execution timeout | Insufficient timeout | Increase timeout value (use 1800s+ for large datasets) |
 | `dj-process not found` | py-data-juicer not installed | `uv pip install py-data-juicer` |
 | OOM | Insufficient memory | Reduce parallelism in system_spec |
-| `401 Unauthorized` (retrieve) | Invalid or expired API Key | Check `DASHSCOPE_API_KEY`, or use `mode=vector` |
+| `401 Unauthorized` (retrieve) | Invalid or expired API Key | Use `retrieve_operators` (local, no API needed), or check `DASHSCOPE_API_KEY` for API retrieval |
 | Empty operator results | Intent too narrow or unclear | Use a broader intent |
 | `input_validation_failed` | Wrong parameter name | Check: `intent` (not query), `output_path` (not path) |
 | Operator not found | Name was guessed | Must select from `retrieve_operators` output |
