@@ -17,13 +17,13 @@ Current surfaces:
 | --- | --- | --- |
 | `djx` | engineer-facing CLI | `data_juicer_agents/cli.py` |
 | `dj-agents` | conversational session interface | `data_juicer_agents/session_cli.py` |
-| skills（coming soon） | packaged orchestration for other agents | not implemented |
+| skills | packaged orchestration for other agents | available |
 
 The current architectural intent is:
 
 - `djx` remains the explicit engineer workflow surface
 - `dj-agents` orchestrates lower-level tools through AgentScope
-- skills（coming soon） should build on stable atomic tools, not on shell-text parsing
+- skills should build on stable atomic tools, not on shell-text parsing
 
 ## Current Layer Model
 
@@ -37,7 +37,7 @@ The current architectural intent is:
 Dependency direction:
 
 ```text
-CLI / session / skills（coming soon）
+CLI / session / skills
     -> capabilities
     -> tools
     -> runtime adapters / backend implementations
@@ -59,7 +59,7 @@ The package is easiest to reason about when each layer keeps a narrow role.
 
 Boundary rule:
 
-- if behavior should be reusable across `djx`, `dj-agents`, and skills（coming soon）, it belongs in the tool layer
+- if behavior should be reusable across `djx`, `dj-agents`, and skills, it belongs in the tool layer
 - if behavior defines a user-facing workflow or multi-step orchestration, it belongs in capabilities or surface adapters
 - if behavior only exists to bind the core system to a specific runtime, it belongs in adapters
 
@@ -69,7 +69,7 @@ The same package is exposed through different surfaces on purpose.
 
 - `djx` exposes explicit engineer-facing operations with stable command boundaries
 - `dj-agents` exposes natural-language orchestration over the same capability and tool layers
-- skills（coming soon） should reuse the same atomic contracts instead of introducing shell-oriented wrappers
+- skills should reuse the same atomic contracts instead of introducing shell-oriented wrappers
 
 That means the architectural goal is not to make every surface look the same. The goal is to let different surfaces share one internal capability stack without duplicating domain logic.
 

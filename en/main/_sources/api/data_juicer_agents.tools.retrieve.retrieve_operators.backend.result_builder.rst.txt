@@ -1,7 +1,0 @@
-data\_juicer\_agents.tools.retrieve.retrieve\_operators.backend.result\_builder module
-======================================================================================
-
-.. automodule:: data_juicer_agents.tools.retrieve.retrieve_operators.backend.result_builder
-   :members:
-   :show-inheritance:
-   :undoc-members:

@@ -80,6 +80,7 @@ The usual flow is:
 
 The tool groups map to that flow:
 - `context`: inspect the input dataset and discover available system settings before planning
+- `retrieve`: retrieve built-in operators locally and inspect their parameter schema
 - `plan`: build, validate, assemble, and save the plan components that define the pipeline
 - `apply`: execute a saved plan against the dataset
 
@@ -94,8 +95,23 @@ Stay within these groups in harness mode.
 ### `context`
 - `inspect_dataset`: inspect a dataset path and return schema, sampling, and profile information for planning.
   - Example: `djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo.jsonl","sample_size":20}'`
+- `list_dataset_fields`: list supported dataset-spec fields and their defaults.
+  - Example: `djx tool run list_dataset_fields --input-json '{}'`
+- `list_dataset_formatters`: list available dataset formatter names.
+  - Example: `djx tool run list_dataset_formatters --input-json '{}'`
+- `list_dataset_load_strategies`: list available dataset loading strategies.
+  - Example: `djx tool run list_dataset_load_strategies --input-json '{}'`
 - `list_system_config`: list supported system configuration fields and available runtime options.
   - Example: `djx tool run list_system_config --input-json '{}'`
+
+### `retrieve`
+- `retrieve_operators`: retrieve candidate operators with local retrieval (`auto`, `bm25`, `regex`).
+  - Example: `djx tool run retrieve_operators --input-json '{"intent":"filter long text","mode":"bm25"}'`
+- `list_operator_catalog`: list the local built-in operator catalog with descriptions, types, tags, and optional parameter schemas.
+  - Example: `djx tool run list_operator_catalog --input-json '{"include_parameters":false}'`
+  - Use this as a fallback only when targeted retrieval is insufficient. It can load a large amount of operator context, especially with `include_parameters=true`, so use it cautiously.
+- `get_operator_info`: inspect one operator and return structured parameter/schema information.
+  - Example: `djx tool run get_operator_info --input-json '{"operator_name":"text_length_filter"}'`
 
 ### `plan`
 - `build_dataset_spec`: build a normalized dataset spec from dataset context and target input/output paths.
@@ -119,13 +135,25 @@ Stay within these groups in harness mode.
 
 ## Operator Discovery and Authoring
 
-When the user request implies a concrete data-processing operator, first check the official Data-Juicer operator catalog:
+In harness mode, operator discovery is local-first. When the user request implies a concrete data-processing operator, use:
+
+- `retrieve_operators` for local retrieval without extra API calls
+- `list_operator_catalog` when targeted retrieval is insufficient and broader local operator context is needed
+- `get_operator_info` to inspect the canonical operator and its parameter schema
+
+Recommended pattern:
+1. Use `retrieve_operators` with `mode="auto"` for ordinary natural-language operator discovery.
+2. Use `mode="bm25"` when you want deterministic keyword retrieval.
+3. Use `mode="regex"` when the request or current context already suggests an operator naming pattern. This mode is often useful for agentic exploration when the likely operator family is known.
+4. If `retrieve_operators` does not return valid candidates, call `list_operator_catalog` as a fallback and let the agent reason over the broader local operator catalog to identify likely operators.
+5. Use `list_operator_catalog` cautiously: it may load a large amount of context, and `include_parameters=true` is especially heavy. Prefer filtered calls (`op_type`, `tags`, `limit`) whenever possible.
+6. After selecting a candidate, call `get_operator_info` before filling `build_process_spec`.
+
+Use these tools to map the user goal to canonical built-in operators before filling `build_process_spec`. Do not guess parameter names from operator names alone when `get_operator_info` can provide the schema directly.
+
+Only if the tool output is insufficient or the existing operator catalog does not cover the requested behavior, refer to:
 
 - [Operators.md](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md)
-
-Use it to map the user goal to canonical built-in operators before filling `build_process_spec`.
-
-If the existing operator catalog does not cover the requested behavior, refer to the official developer guide:
 
 - [DeveloperGuide.md](https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md)
 
@@ -135,6 +163,7 @@ Use that guide to design or scaffold a custom operator implementation outside th
 
 - Prefer `djx tool list` when you need to confirm what is available in the current environment.
 - Use `djx tool schema` before first use of an unfamiliar tool.
+- Do not assume non-harness tools are available. In `DJX_TOOL_PROFILE=harness`, rely on `djx tool list` and stay within the surfaced tool set.
 - Prefer `--input-file` for large payloads instead of long inline JSON strings.
 - Treat JSON output as the contract; do not parse human-oriented text.
 - Summarize the user goal, the chosen `djx tool` sequence, and the concrete commands used.

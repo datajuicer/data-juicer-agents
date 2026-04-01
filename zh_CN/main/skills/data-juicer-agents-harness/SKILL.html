@@ -601,6 +601,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <p>The tool groups map to that flow:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">context</span></code>: inspect the input dataset and discover available system settings before planning</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve</span></code>: retrieve built-in operators locally and inspect their parameter schema</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plan</span></code>: build, validate, assemble, and save the plan components that define the pipeline</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">apply</span></code>: execute a saved plan against the dataset</p></li>
 </ul>
@@ -626,9 +627,45 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">inspect_dataset</span> <span class="pre">--input-json</span> <span class="pre">'{&quot;dataset_path&quot;:&quot;./data/demo.jsonl&quot;,&quot;sample_size&quot;:20}'</span></code></p></li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_fields</span></code>: list supported dataset-spec fields and their defaults.</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_dataset_fields</span> <span class="pre">--input-json</span> <span class="pre">'{}'</span></code></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_formatters</span></code>: list available dataset formatter names.</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_dataset_formatters</span> <span class="pre">--input-json</span> <span class="pre">'{}'</span></code></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_load_strategies</span></code>: list available dataset loading strategies.</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_dataset_load_strategies</span> <span class="pre">--input-json</span> <span class="pre">'{}'</span></code></p></li>
+</ul>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">list_system_config</span></code>: list supported system configuration fields and available runtime options.</p>
 <ul>
 <li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_system_config</span> <span class="pre">--input-json</span> <span class="pre">'{}'</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="retrieve">
+<h3><code class="docutils literal notranslate"><span class="pre">retrieve</span></code><a class="headerlink" href="#retrieve" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code>: retrieve candidate operators with local retrieval (<code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code>).</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">retrieve_operators</span> <span class="pre">--input-json</span> <span class="pre">'{&quot;intent&quot;:&quot;filter</span> <span class="pre">long</span> <span class="pre">text&quot;,&quot;mode&quot;:&quot;bm25&quot;}'</span></code></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code>: list the local built-in operator catalog with descriptions, types, tags, and optional parameter schemas.</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_operator_catalog</span> <span class="pre">--input-json</span> <span class="pre">'{&quot;include_parameters&quot;:false}'</span></code></p></li>
+<li><p>Use this as a fallback only when targeted retrieval is insufficient. It can load a large amount of operator context, especially with <code class="docutils literal notranslate"><span class="pre">include_parameters=true</span></code>, so use it cautiously.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code>: inspect one operator and return structured parameter/schema information.</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">get_operator_info</span> <span class="pre">--input-json</span> <span class="pre">'{&quot;operator_name&quot;:&quot;text_length_filter&quot;}'</span></code></p></li>
 </ul>
 </li>
 </ul>
@@ -686,13 +723,25 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 </section>
 <section id="operator-discovery-and-authoring">
 <h2>Operator Discovery and Authoring<a class="headerlink" href="#operator-discovery-and-authoring" title="链接到此标题。">#</a></h2>
-<p>When the user request implies a concrete data-processing operator, first check the official Data-Juicer operator catalog:</p>
+<p>In harness mode, operator discovery is local-first. When the user request implies a concrete data-processing operator, use:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> for local retrieval without extra API calls</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code> when targeted retrieval is insufficient and broader local operator context is needed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> to inspect the canonical operator and its parameter schema</p></li>
+</ul>
+<p>Recommended pattern:</p>
+<ol class="arabic simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> with <code class="docutils literal notranslate"><span class="pre">mode=&quot;auto&quot;</span></code> for ordinary natural-language operator discovery.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">mode=&quot;bm25&quot;</span></code> when you want deterministic keyword retrieval.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">mode=&quot;regex&quot;</span></code> when the request or current context already suggests an operator naming pattern. This mode is often useful for agentic exploration when the likely operator family is known.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> does not return valid candidates, call <code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code> as a fallback and let the agent reason over the broader local operator catalog to identify likely operators.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code> cautiously: it may load a large amount of context, and <code class="docutils literal notranslate"><span class="pre">include_parameters=true</span></code> is especially heavy. Prefer filtered calls (<code class="docutils literal notranslate"><span class="pre">op_type</span></code>, <code class="docutils literal notranslate"><span class="pre">tags</span></code>, <code class="docutils literal notranslate"><span class="pre">limit</span></code>) whenever possible.</p></li>
+<li><p>After selecting a candidate, call <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> before filling <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>.</p></li>
+</ol>
+<p>Use these tools to map the user goal to canonical built-in operators before filling <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>. Do not guess parameter names from operator names alone when <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> can provide the schema directly.</p>
+<p>Only if the tool output is insufficient or the existing operator catalog does not cover the requested behavior, refer to:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Operators.md</a></p></li>
-</ul>
-<p>Use it to map the user goal to canonical built-in operators before filling <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>.</p>
-<p>If the existing operator catalog does not cover the requested behavior, refer to the official developer guide:</p>
-<ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md">DeveloperGuide.md</a></p></li>
 </ul>
 <p>Use that guide to design or scaffold a custom operator implementation outside the harness flow when built-in operators are not sufficient.</p>
@@ -702,6 +751,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <ul class="simple">
 <li><p>Prefer <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">list</span></code> when you need to confirm what is available in the current environment.</p></li>
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">schema</span></code> before first use of an unfamiliar tool.</p></li>
+<li><p>Do not assume non-harness tools are available. In <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code>, rely on <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">list</span></code> and stay within the surfaced tool set.</p></li>
 <li><p>Prefer <code class="docutils literal notranslate"><span class="pre">--input-file</span></code> for large payloads instead of long inline JSON strings.</p></li>
 <li><p>Treat JSON output as the contract; do not parse human-oriented text.</p></li>
 <li><p>Summarize the user goal, the chosen <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> sequence, and the concrete commands used.</p></li>
@@ -746,6 +796,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-tools">Supported Tools</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apply"><code class="docutils literal notranslate"><span class="pre">apply</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#context"><code class="docutils literal notranslate"><span class="pre">context</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve"><code class="docutils literal notranslate"><span class="pre">retrieve</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plan"><code class="docutils literal notranslate"><span class="pre">plan</span></code></a></li>
 </ul>
 </li>

@@ -540,23 +540,21 @@
 
 
 <div class="viewcode-block" id="RetrieveOperatorsInput">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.retrieve_operators.RetrieveOperatorsInput">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RetrieveOperatorsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Retrieval query. For natural-language modes (auto, llm, vector, bm25), &quot;</span>
+            <span class="s2">&quot;Retrieval query. For natural-language modes (auto, bm25), &quot;</span>
             <span class="s2">&quot;provide a plain-text description of the desired operators. &quot;</span>
             <span class="s2">&quot;For regex mode, provide a regular expression pattern to match operator names.&quot;</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of operator candidates to return.&quot;</span><span class="p">)</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;llm&quot;</span><span class="p">,</span> <span class="s2">&quot;vector&quot;</span><span class="p">,</span> <span class="s2">&quot;bm25&quot;</span><span class="p">,</span> <span class="s2">&quot;regex&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;bm25&quot;</span><span class="p">,</span> <span class="s2">&quot;regex&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;Retrieval mode. &quot;</span>
-            <span class="s2">&quot;&#39;auto&#39;: tries llm → vector → bm25 with automatic fallback. &quot;</span>
-            <span class="s2">&quot;&#39;llm&#39;: semantic ranking via LLM (most accurate, requires API key, slower). &quot;</span>
-            <span class="s2">&quot;&#39;vector&#39;: FAISS vector similarity (requires API key, fast after index built). &quot;</span>
+            <span class="s2">&quot;&#39;auto&#39;: local-only automatic routing (regex for regex-like queries, otherwise bm25). &quot;</span>
             <span class="s2">&quot;&#39;bm25&#39;: BM25 keyword matching (no API key needed, fast). &quot;</span>
             <span class="s2">&quot;&#39;regex&#39;: regex pattern matching on operator names (no API key needed, fastest).&quot;</span>
         <span class="p">),</span>
@@ -587,7 +585,7 @@
 
 
 <div class="viewcode-block" id="GenericOutput">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.html#data_juicer_agents.tools.retrieve.GenericOutput">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.retrieve_operators.GenericOutput">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GenericOutput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
 

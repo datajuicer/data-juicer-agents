@@ -17,13 +17,13 @@
 | --- | --- | --- |
 | `djx` | 工程师使用的 CLI | `data_juicer_agents/cli.py` |
 | `dj-agents` | 会话式编排入口 | `data_juicer_agents/session_cli.py` |
-| skills（coming soon） | 面向其他 agent 的打包能力 | 尚未实现 |
+| skills | 面向其他 agent 的打包能力 | 已可用 |
 
 当前架构意图是：
 
 - `djx` 继续作为显式、工程师导向的工作流入口
 - `dj-agents` 通过 AgentScope 编排更底层的工具
-- skills（coming soon）未来应建立在稳定的 atomic tools 上，而不是建立在 shell 文本解析之上
+- skills 未来应建立在稳定的 atomic tools 上，而不是建立在 shell 文本解析之上
 
 ## 当前分层模型
 
@@ -37,7 +37,7 @@
 依赖方向：
 
 ```text
-CLI / session / skills（coming soon）
+CLI / session / skills
     -> capabilities
     -> tools
     -> runtime adapters / backend implementations
@@ -59,7 +59,7 @@ CLI / session / skills（coming soon）
 
 边界规则：
 
-- 如果某个行为应被 `djx`、`dj-agents` 和 skills（coming soon）共同复用，它应进入 tool 层
+- 如果某个行为应被 `djx`、`dj-agents` 和 skills 共同复用，它应进入 tool 层
 - 如果某个行为定义的是面向用户的工作流或多步编排，它应进入 capabilities 或 surface adapters
 - 如果某个行为只是把核心系统接入特定 runtime，它应进入 adapters
 
@@ -69,7 +69,7 @@ CLI / session / skills（coming soon）
 
 - `djx` 暴露显式、工程师导向的操作入口，保持稳定的命令边界
 - `dj-agents` 在同一套 capability 和 tool 底座上提供自然语言会话式编排
-- skills（coming soon）未来也应复用同一套原子契约，而不是引入面向 shell 的特例包装
+- skills 未来也应复用同一套原子契约，而不是引入面向 shell 的特例包装
 
 这意味着，架构目标不是让所有入口长得一样，而是让不同入口共享同一套内部能力栈，而不复制领域逻辑。
 

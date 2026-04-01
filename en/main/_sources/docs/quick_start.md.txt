@@ -95,7 +95,7 @@ djx tool run list_system_config --input-json '{}'
 Notes:
 - `djx tool` is JSON-only and primarily intended for agent / skill automation.
 - write or execute tools require explicit `--yes`.
-- `DJX_TOOL_PROFILE=harness` limits `djx tool` to the harness tool set (`apply`, `context`, `plan`).
+- `DJX_TOOL_PROFILE=harness` limits `djx tool` to the harness tool set (`apply`, `context`, `retrieve`, `plan`).
 
 ## 5. Session mode (`dj-agents`)
 
@@ -123,6 +123,7 @@ Notes:
 - In session mode, press `Ctrl+C` to interrupt the current turn and `Ctrl+D` to exit.
 - In `as_studio` mode, start [AgentScope Studio](https://github.com/agentscope-ai/agentscope-studio) separately before launching `dj-agents`.
 - The session agent usually plans with `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`.
+- For operator-level discovery and schema lookup, prefer `retrieve_operators` / `retrieve_operators_api`, then `get_operator_info`.
 
 ## 6. Basic sanity checks
 

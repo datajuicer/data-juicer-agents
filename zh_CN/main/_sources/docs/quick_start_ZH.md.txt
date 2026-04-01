@@ -95,7 +95,7 @@ djx tool run list_system_config --input-json '{}'
 说明：
 - `djx tool` 默认是 JSON-only，主要服务 agent / skill 自动化调用。
 - 写入或执行类工具需要显式传 `--yes`。
-- `DJX_TOOL_PROFILE=harness` 会把 `djx tool` 限制在 harness 工具集（`apply`、`context`、`plan`）。
+- `DJX_TOOL_PROFILE=harness` 会把 `djx tool` 限制在 harness 工具集（`apply`、`context`、`retrieve`、`plan`）。
 
 ## 5. 会话模式（`dj-agents`）
 
@@ -123,6 +123,7 @@ dj-agents --ui as_studio --studio-url http://localhost:3000 --dataset ./data/dem
 - 会话中按 `Ctrl+C` 可中断当前轮，按 `Ctrl+D` 退出。
 - `as_studio` 模式需要先单独启动 [AgentScope Studio](https://github.com/agentscope-ai/agentscope-studio)。
 - 会话内常见 planning 链路是 `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`。
+- 如需做算子级发现和 schema 查看，优先使用 `retrieve_operators` / `retrieve_operators_api`，再用 `get_operator_info`。
 
 ## 6. 最小检查
 

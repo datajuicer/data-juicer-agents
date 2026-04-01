@@ -593,7 +593,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/plan_cmd.py</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></p></td>
-<td><p>校验已保存的 plan，并执行或 dry-run <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></td>
+<td><p>读取已保存的 plan，物化 recipe，并执行或 dry-run <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/apply_cmd.py</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></p></td>
@@ -645,7 +645,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>执行行为：</p>
 <ol class="arabic simple">
-<li><p>内部先根据 intent 和可选数据集画像做算子检索</p></li>
+<li><p>内部先根据 intent 和可选数据集模态信号做算子检索</p></li>
 <li><p>根据数据集 IO 和画像信息构建确定性的 dataset spec</p></li>
 <li><p>调用模型只生成 process spec 所需的 operator list</p></li>
 <li><p>依次构建 process spec、system spec，并 assemble 为最终 plan</p></li>
@@ -688,7 +688,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </div>
 <p>关键参数：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>：可选数据集路径；提供后，CLI 会通过 <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> 探测数据集模态（text / image / multimodal / audio / video），并将其转换为算子标签用于过滤</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>：可选数据集路径；提供后，CLI 会通过 retrieval 层内的数据集探测逻辑识别数据集模态（text / image / multimodal / audio / video），并将其转换为算子标签用于过滤</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code>：按算子类型过滤（如 <code class="docutils literal notranslate"><span class="pre">filter</span></code>、<code class="docutils literal notranslate"><span class="pre">mapper</span></code>、<code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tags</span></code>：按算子标签过滤（如 <code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">image</span></code>、<code class="docutils literal notranslate"><span class="pre">multimodal</span></code>）；可与 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> 组合使用（标签会合并）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--top-k</span></code>：最大候选数量（默认 10）</p></li>
@@ -705,7 +705,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>基于数据集的过滤：</p>
 <ul class="simple">
-<li><p>当提供 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> 时，CLI 调用 <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> 检测数据集模态</p></li>
+<li><p>当提供 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> 时，CLI 会在 retrieval 层内部运行数据集探测逻辑来识别数据集模态</p></li>
 <li><p>检测到的模态会映射为算子标签（如 <code class="docutils literal notranslate"><span class="pre">image</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;image&quot;]</span></code>，<code class="docutils literal notranslate"><span class="pre">multimodal</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;multimodal&quot;]</span></code>）</p></li>
 <li><p>这些标签会传递给检索后端，后端据此过滤算子目录，仅返回标签匹配的算子</p></li>
 <li><p>如果模态检测失败，检索将不带标签过滤继续执行</p></li>
@@ -777,7 +777,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p><code class="docutils literal notranslate"><span class="pre">ToolContext.env</span></code> 和 <code class="docutils literal notranslate"><span class="pre">runtime_values</span></code> 不通过 CLI 暴露</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tool</span> <span class="pre">run</span></code> 的主要设计目标是机器间调用，稳定 JSON 输出是第一契约</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code>、<code class="docutils literal notranslate"><span class="pre">--verbose</span></code>、<code class="docutils literal notranslate"><span class="pre">--debug</span></code> 仅用于与其他 <code class="docutils literal notranslate"><span class="pre">djx</span></code> 子命令保持 CLI 形态一致，不会改变 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 的输出</p></li>
-<li><p>安装 <code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> 后可设置 <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code>，将 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 限制在 harness 工具组（<code class="docutils literal notranslate"><span class="pre">apply</span></code>、<code class="docutils literal notranslate"><span class="pre">context</span></code>、<code class="docutils literal notranslate"><span class="pre">plan</span></code>）</p></li>
+<li><p>安装 <code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> 后可设置 <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code>，将 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 限制在 harness 工具组（<code class="docutils literal notranslate"><span class="pre">apply</span></code>、<code class="docutils literal notranslate"><span class="pre">context</span></code>、<code class="docutils literal notranslate"><span class="pre">retrieve</span></code>、<code class="docutils literal notranslate"><span class="pre">plan</span></code>）</p></li>
 <li><p>不在当前 profile 内的工具不会出现在 <code class="docutils literal notranslate"><span class="pre">list</span></code> 中，直接调用会返回结构化 JSON 错误</p></li>
 </ul>
 </section>
@@ -795,6 +795,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <p>常见内部 planning 链路：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code></p></li>
+<li><p>如需做算子发现和 schema 查看，优先使用 <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> / <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>，再用 <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code>。</p></li>
 </ul>
 <p>中断方式：</p>
 <ul class="simple">

@@ -5,7 +5,7 @@
 | Command | Purpose | Source |
 |---|---|---|
 | `djx plan` | Generate a plan YAML from intent, retrieval evidence, staged specs, and an LLM-generated operator list | `data_juicer_agents/commands/plan_cmd.py` |
-| `djx apply` | Validate a saved plan and execute or dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
+| `djx apply` | Load a saved plan, materialize a recipe, and execute or dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
 | `djx retrieve` | Retrieve candidate operators by intent | `data_juicer_agents/commands/retrieve_cmd.py` |
 | `djx dev` | Generate a non-invasive custom operator scaffold | `data_juicer_agents/commands/dev_cmd.py` |
 | `djx tool` | Inspect or execute any registered atomic tool through a generic JSON-first wrapper | `data_juicer_agents/commands/tool_cmd.py` |
@@ -42,7 +42,7 @@ Key options:
 - `--custom-operator-paths`: custom operator dirs/files used for validation and later execution
 
 Behavior:
-1. internally retrieves operator candidates from the intent and optional dataset profile
+1. internally retrieves operator candidates from the intent and optional dataset-derived modality signals
 2. builds a deterministic dataset spec from dataset IO and profile signals
 3. calls the model once to generate only the operator list for the process spec
 4. builds the process spec, builds the system spec, and assembles the final plan
@@ -80,7 +80,7 @@ djx retrieve "<intent>" [--dataset <path>] [--type <op_type>] [--tags <tag> ...]
 ```
 
 Key options:
-- `--dataset`: optional dataset path; when provided, the CLI probes the dataset with `inspect_dataset_schema` to infer modality (text / image / multimodal / audio / video) and converts it into operator tags for filtering
+- `--dataset`: optional dataset path; when provided, the CLI probes the dataset through the retrieval layer's dataset inspection logic to infer modality (text / image / multimodal / audio / video) and converts it into operator tags for filtering
 - `--type`: filter by operator type (e.g. `filter`, `mapper`, `deduplicator`)
 - `--tags`: filter by operator tags (e.g. `text`, `image`, `multimodal`); can be combined with `--dataset` (tags are merged)
 - `--top-k`: maximum number of candidates (default: 10)
@@ -95,7 +95,7 @@ Returns:
 - `regex` uses Python regex pattern matching against operator name, description, and parameter fields (standalone mode, not part of auto fallback)
 
 Dataset-aware filtering:
-- when `--dataset` is provided, the CLI calls `inspect_dataset_schema` to detect the dataset modality
+- when `--dataset` is provided, the CLI runs dataset inspection logic inside the retrieval layer to detect the dataset modality
 - the detected modality is mapped to operator tags (e.g. `image` → `["image"]`, `multimodal` → `["multimodal"]`)
 - these tags are passed to the retrieval backends, which filter the operator catalog so that only operators tagged with matching modalities are returned
 - if modality detection fails, retrieval proceeds without tag filtering
@@ -164,7 +164,7 @@ Notes:
 - `ToolContext.env` and `runtime_values` are not exposed through the CLI
 - `tool run` is suitable for machine-to-machine use; stable JSON output is the primary contract
 - `--quiet`, `--verbose`, and `--debug` are accepted for CLI-shape consistency with other `djx` subcommands, but they do not change `djx tool` output
-- set `DJX_TOOL_PROFILE=harness` after installing `data-juicer-agents[harness]` to restrict `djx tool` to the harness groups (`apply`, `context`, `plan`)
+- set `DJX_TOOL_PROFILE=harness` after installing `data-juicer-agents[harness]` to restrict `djx tool` to the harness groups (`apply`, `context`, `retrieve`, `plan`)
 - tools outside the active profile return a structured JSON error instead of being exposed by `list`
 
 ## `dj-agents`
@@ -180,6 +180,7 @@ Behavior:
 
 Typical internal planning chain:
 - `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`
+- For operator discovery and schema lookup, prefer `retrieve_operators` / `retrieve_operators_api`, then `get_operator_info`.
 
 Interrupt:
 - plain mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits

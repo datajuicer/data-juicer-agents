@@ -589,7 +589,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/plan_cmd.py</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></p></td>
-<td><p>Validate a saved plan and execute or dry-run <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></td>
+<td><p>Load a saved plan, materialize a recipe, and execute or dry-run <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/commands/apply_cmd.py</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></p></td>
@@ -641,7 +641,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>Behavior:</p>
 <ol class="arabic simple">
-<li><p>internally retrieves operator candidates from the intent and optional dataset profile</p></li>
+<li><p>internally retrieves operator candidates from the intent and optional dataset-derived modality signals</p></li>
 <li><p>builds a deterministic dataset spec from dataset IO and profile signals</p></li>
 <li><p>calls the model once to generate only the operator list for the process spec</p></li>
 <li><p>builds the process spec, builds the system spec, and assembles the final plan</p></li>
@@ -684,7 +684,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </div>
 <p>Key options:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>: optional dataset path; when provided, the CLI probes the dataset with <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> to infer modality (text / image / multimodal / audio / video) and converts it into operator tags for filtering</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>: optional dataset path; when provided, the CLI probes the dataset through the retrieval layer’s dataset inspection logic to infer modality (text / image / multimodal / audio / video) and converts it into operator tags for filtering</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code>: filter by operator type (e.g. <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tags</span></code>: filter by operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">image</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code>); can be combined with <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> (tags are merged)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--top-k</span></code>: maximum number of candidates (default: 10)</p></li>
@@ -701,7 +701,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </ul>
 <p>Dataset-aware filtering:</p>
 <ul class="simple">
-<li><p>when <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> is provided, the CLI calls <code class="docutils literal notranslate"><span class="pre">inspect_dataset_schema</span></code> to detect the dataset modality</p></li>
+<li><p>when <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> is provided, the CLI runs dataset inspection logic inside the retrieval layer to detect the dataset modality</p></li>
 <li><p>the detected modality is mapped to operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">image</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;image&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;multimodal&quot;]</span></code>)</p></li>
 <li><p>these tags are passed to the retrieval backends, which filter the operator catalog so that only operators tagged with matching modalities are returned</p></li>
 <li><p>if modality detection fails, retrieval proceeds without tag filtering</p></li>
@@ -773,7 +773,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <li><p><code class="docutils literal notranslate"><span class="pre">ToolContext.env</span></code> and <code class="docutils literal notranslate"><span class="pre">runtime_values</span></code> are not exposed through the CLI</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tool</span> <span class="pre">run</span></code> is suitable for machine-to-machine use; stable JSON output is the primary contract</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code>, <code class="docutils literal notranslate"><span class="pre">--verbose</span></code>, and <code class="docutils literal notranslate"><span class="pre">--debug</span></code> are accepted for CLI-shape consistency with other <code class="docutils literal notranslate"><span class="pre">djx</span></code> subcommands, but they do not change <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> output</p></li>
-<li><p>set <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code> after installing <code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> to restrict <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> to the harness groups (<code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">context</span></code>, <code class="docutils literal notranslate"><span class="pre">plan</span></code>)</p></li>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">DJX_TOOL_PROFILE=harness</span></code> after installing <code class="docutils literal notranslate"><span class="pre">data-juicer-agents[harness]</span></code> to restrict <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> to the harness groups (<code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">context</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>, <code class="docutils literal notranslate"><span class="pre">plan</span></code>)</p></li>
 <li><p>tools outside the active profile return a structured JSON error instead of being exposed by <code class="docutils literal notranslate"><span class="pre">list</span></code></p></li>
 </ul>
 </section>
@@ -791,6 +791,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <p>Typical internal planning chain:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span> <span class="pre">-&gt;</span> <span class="pre">retrieve_operators</span> <span class="pre">-&gt;</span> <span class="pre">build_dataset_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_process_spec</span> <span class="pre">-&gt;</span> <span class="pre">build_system_spec</span> <span class="pre">-&gt;</span> <span class="pre">assemble_plan</span> <span class="pre">-&gt;</span> <span class="pre">plan_validate</span> <span class="pre">-&gt;</span> <span class="pre">plan_save</span></code></p></li>
+<li><p>For operator discovery and schema lookup, prefer <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> / <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>, then <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code>.</p></li>
 </ul>
 <p>Interrupt:</p>
 <ul class="simple">

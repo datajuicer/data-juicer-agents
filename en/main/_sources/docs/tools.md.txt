@@ -10,7 +10,7 @@ It serves three consumers:
 
 - CLI and command surfaces
 - the AgentScope-backed `dj-agents` session
-- future external skill packaging
+- skills
 
 The key rule is:
 
@@ -59,28 +59,46 @@ Package-level `__init__.py` files re-export stable helpers, and some groups keep
 - Files:
   - `context/registry.py`
   - `context/inspect_dataset/{input.py,logic.py,tool.py}`
+  - `context/list_system_config/{input.py,logic.py,tool.py}`
+  - `context/list_dataset_fields/{input.py,logic.py,tool.py}`
+  - `context/list_dataset_formatters/{input.py,logic.py,tool.py}`
+  - `context/list_dataset_load_strategies/{input.py,logic.py,tool.py}`
 - Main responsibilities:
   - dataset inspection
-  - dataset schema probing
+  - system and dataset configuration discovery
+  - dataset field / formatter / load-strategy enumeration
 
 ### `tools/retrieve`
 
 - Files:
   - `retrieve/registry.py`
-  - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
-  - `retrieve/retrieve_operators/operator_registry.py`
-  - `retrieve/retrieve_operators/backend/` (sub-package):
-    - `backend.py`: public API (`retrieve_ops_with_meta`, `retrieve_ops`, `get_op_catalog`, etc.)
-    - `cache.py`: `RetrievalCacheManager` singleton for vector store, tools info, and catalog caching
+  - `retrieve/_shared/logic.py`
+  - `retrieve/_shared/operator_registry.py`
+  - `retrieve/_shared/backend/` (sub-package):
+    - `backend.py`: shared retrieval entrypoints (`retrieve_ops_with_meta`, `retrieve_ops`, `get_op_catalog`, etc.)
+    - `cache.py`: `RetrievalCacheManager` for vector store, tool info, and catalog caching
     - `catalog.py`: operator catalog builder (collects `class_name`, `class_desc`, `class_type`, `class_tags`)
-    - `result_builder.py`: `build_retrieval_item`, `filter_by_op_type`, `filter_by_tags`, `names_from_items`, `trace_step`
+    - `result_builder.py`: shared retrieval result shaping helpers and `trace_step`
     - `retriever.py`: `RetrieverBackend` ABC and concrete backends (`LLMRetriever`, `VectorRetriever`, `BM25Retriever`, `RegexRetriever`)
+  - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
+  - `retrieve/retrieve_operators_api/{input.py,logic.py,tool.py}`
+  - `retrieve/get_operator_info/{input.py,logic.py,tool.py}`
+  - `retrieve/list_operator_catalog/{input.py,logic.py,tool.py}`
 - Main responsibilities:
   - operator retrieval entrypoints for the main package
-  - multi-backend retrieval strategy with automatic fallback (`llm → vector → bm25`)
-  - operator type filtering (`filter_by_op_type`) and tag-based filtering (`filter_by_tags`)
+  - split local vs API-backed retrieval surfaces
+  - shared multi-backend retrieval logic and catalog caching
+  - operator type and tag filtering
   - canonical operator-name resolution
   - installed-operator lookup
+  - operator detail lookup and full catalog listing
+
+Tool split:
+
+- `retrieve_operators`: local retrieval surface (`auto|bm25|regex`)
+- `retrieve_operators_api`: API-backed retrieval surface (`auto|llm|vector`)
+- `get_operator_info`: resolve one operator and return its schema/details
+- `list_operator_catalog`: list the current operator catalog with optional filtering
 
 ### `tools/plan`
 
@@ -174,8 +192,15 @@ The session toolkit currently uses the default registry directly and orders tool
 
 The default registry currently exposes these tools to the session runtime:
 
+- `list_dataset_fields`
+- `list_dataset_formatters`
+- `list_dataset_load_strategies`
+- `list_system_config`
 - `inspect_dataset`
+- `get_operator_info`
+- `list_operator_catalog`
 - `retrieve_operators`
+- `retrieve_operators_api`
 - `build_dataset_spec`
 - `build_process_spec`
 - `build_system_spec`
@@ -202,4 +227,4 @@ These tools stay generic. Session orchestration must call them with explicit arg
 - `adapters/agentscope/*` adapts tools to AgentScope transport/schema
 - `capabilities/session/*` orchestrates tools conversationally without changing tool semantics
 
-This is the internal shape that future atomic CLI and skill packaging should build on.
+This is the internal shape that future atomic CLI and skills should build on.

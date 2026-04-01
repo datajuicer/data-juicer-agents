@@ -1,7 +1,0 @@
-data\_juicer\_agents.tools.retrieve.retrieve\_operators.backend.cache module
-============================================================================
-
-.. automodule:: data_juicer_agents.tools.retrieve.retrieve_operators.backend.cache
-   :members:
-   :show-inheritance:
-   :undoc-members:

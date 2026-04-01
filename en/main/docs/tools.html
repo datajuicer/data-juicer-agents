@@ -582,7 +582,7 @@
 <ul class="simple">
 <li><p>CLI and command surfaces</p></li>
 <li><p>the AgentScope-backed <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> session</p></li>
-<li><p>future external skill packaging</p></li>
+<li><p>skills</p></li>
 </ul>
 <p>The key rule is:</p>
 <ul class="simple">
@@ -632,12 +632,17 @@
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">context/registry.py</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">context/inspect_dataset/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/list_system_config/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/list_dataset_fields/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/list_dataset_formatters/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context/list_dataset_load_strategies/{input.py,logic.py,tool.py}</span></code></p></li>
 </ul>
 </li>
 <li><p>Main responsibilities:</p>
 <ul>
 <li><p>dataset inspection</p></li>
-<li><p>dataset schema probing</p></li>
+<li><p>system and dataset configuration discovery</p></li>
+<li><p>dataset field / formatter / load-strategy enumeration</p></li>
 </ul>
 </li>
 </ul>
@@ -648,28 +653,41 @@
 <li><p>Files:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve/registry.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{input.py,logic.py,tool.py}</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/operator_registry.py</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/backend/</span></code> (sub-package):</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/_shared/logic.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/_shared/operator_registry.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/_shared/backend/</span></code> (sub-package):</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">backend.py</span></code>: public API (<code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieve_ops</span></code>, <code class="docutils literal notranslate"><span class="pre">get_op_catalog</span></code>, etc.)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cache.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager</span></code> singleton for vector store, tools info, and catalog caching</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backend.py</span></code>: shared retrieval entrypoints (<code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieve_ops</span></code>, <code class="docutils literal notranslate"><span class="pre">get_op_catalog</span></code>, etc.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cache.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager</span></code> for vector store, tool info, and catalog caching</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">catalog.py</span></code>: operator catalog builder (collects <code class="docutils literal notranslate"><span class="pre">class_name</span></code>, <code class="docutils literal notranslate"><span class="pre">class_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">class_type</span></code>, <code class="docutils literal notranslate"><span class="pre">class_tags</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">result_builder.py</span></code>: <code class="docutils literal notranslate"><span class="pre">build_retrieval_item</span></code>, <code class="docutils literal notranslate"><span class="pre">filter_by_op_type</span></code>, <code class="docutils literal notranslate"><span class="pre">filter_by_tags</span></code>, <code class="docutils literal notranslate"><span class="pre">names_from_items</span></code>, <code class="docutils literal notranslate"><span class="pre">trace_step</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">result_builder.py</span></code>: shared retrieval result shaping helpers and <code class="docutils literal notranslate"><span class="pre">trace_step</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retriever.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrieverBackend</span></code> ABC and concrete backends (<code class="docutils literal notranslate"><span class="pre">LLMRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">VectorRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">BM25Retriever</span></code>, <code class="docutils literal notranslate"><span class="pre">RegexRetriever</span></code>)</p></li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators_api/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/get_operator_info/{input.py,logic.py,tool.py}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve/list_operator_catalog/{input.py,logic.py,tool.py}</span></code></p></li>
 </ul>
 </li>
 <li><p>Main responsibilities:</p>
 <ul>
 <li><p>operator retrieval entrypoints for the main package</p></li>
-<li><p>multi-backend retrieval strategy with automatic fallback (<code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">→</span> <span class="pre">vector</span> <span class="pre">→</span> <span class="pre">bm25</span></code>)</p></li>
-<li><p>operator type filtering (<code class="docutils literal notranslate"><span class="pre">filter_by_op_type</span></code>) and tag-based filtering (<code class="docutils literal notranslate"><span class="pre">filter_by_tags</span></code>)</p></li>
+<li><p>split local vs API-backed retrieval surfaces</p></li>
+<li><p>shared multi-backend retrieval logic and catalog caching</p></li>
+<li><p>operator type and tag filtering</p></li>
 <li><p>canonical operator-name resolution</p></li>
 <li><p>installed-operator lookup</p></li>
+<li><p>operator detail lookup and full catalog listing</p></li>
 </ul>
 </li>
+</ul>
+<p>Tool split:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code>: local retrieval surface (<code class="docutils literal notranslate"><span class="pre">auto|bm25|regex</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>: API-backed retrieval surface (<code class="docutils literal notranslate"><span class="pre">auto|llm|vector</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code>: resolve one operator and return its schema/details</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code>: list the current operator catalog with optional filtering</p></li>
 </ul>
 </section>
 <section id="tools-plan">
@@ -809,8 +827,15 @@
 <h2>6. Current Session Tool Set<a class="headerlink" href="#current-session-tool-set" title="Link to this heading">#</a></h2>
 <p>The default registry currently exposes these tools to the session runtime:</p>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_fields</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_formatters</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_load_strategies</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_system_config</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code></p></li>
@@ -838,7 +863,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">adapters/agentscope/*</span></code> adapts tools to AgentScope transport/schema</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">capabilities/session/*</span></code> orchestrates tools conversationally without changing tool semantics</p></li>
 </ul>
-<p>This is the internal shape that future atomic CLI and skill packaging should build on.</p>
+<p>This is the internal shape that future atomic CLI and skills should build on.</p>
 </section>
 </section>
 

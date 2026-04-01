@@ -601,9 +601,9 @@
 <td><p>conversational session interface</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">data_juicer_agents/session_cli.py</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>skills（coming soon）</p></td>
+<tr class="row-even"><td><p>skills</p></td>
 <td><p>packaged orchestration for other agents</p></td>
-<td><p>not implemented</p></td>
+<td><p>available</p></td>
 </tr>
 </tbody>
 </table>
@@ -612,7 +612,7 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">djx</span></code> remains the explicit engineer workflow surface</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> orchestrates lower-level tools through AgentScope</p></li>
-<li><p>skills（coming soon） should build on stable atomic tools, not on shell-text parsing</p></li>
+<li><p>skills should build on stable atomic tools, not on shell-text parsing</p></li>
 </ul>
 </section>
 <section id="current-layer-model">
@@ -645,7 +645,7 @@
 </table>
 </div>
 <p>Dependency direction:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CLI / session / skills（coming soon）
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CLI / session / skills
     -&gt; capabilities
     -&gt; tools
     -&gt; runtime adapters / backend implementations
@@ -668,7 +668,7 @@
 </ul>
 <p>Boundary rule:</p>
 <ul class="simple">
-<li><p>if behavior should be reusable across <code class="docutils literal notranslate"><span class="pre">djx</span></code>, <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>, and skills（coming soon）, it belongs in the tool layer</p></li>
+<li><p>if behavior should be reusable across <code class="docutils literal notranslate"><span class="pre">djx</span></code>, <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>, and skills, it belongs in the tool layer</p></li>
 <li><p>if behavior defines a user-facing workflow or multi-step orchestration, it belongs in capabilities or surface adapters</p></li>
 <li><p>if behavior only exists to bind the core system to a specific runtime, it belongs in adapters</p></li>
 </ul>
@@ -679,7 +679,7 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">djx</span></code> exposes explicit engineer-facing operations with stable command boundaries</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> exposes natural-language orchestration over the same capability and tool layers</p></li>
-<li><p>skills（coming soon） should reuse the same atomic contracts instead of introducing shell-oriented wrappers</p></li>
+<li><p>skills should reuse the same atomic contracts instead of introducing shell-oriented wrappers</p></li>
 </ul>
 <p>That means the architectural goal is not to make every surface look the same. The goal is to let different surfaces share one internal capability stack without duplicating domain logic.</p>
 </section>
