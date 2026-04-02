@@ -533,11 +533,15 @@
 <span class="sd">&quot;&quot;&quot;Shared system-spec helpers for plan tools.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.normalize</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_string_list</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemSpec</span>
+
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">normalize_system_spec</span><span class="p">(</span>
@@ -580,7 +584,8 @@
         <span class="n">coerce_errors</span> <span class="o">=</span> <span class="n">extra_errors</span> <span class="o">+</span> <span class="n">core_errors</span>
         <span class="k">if</span> <span class="n">coerce_errors</span><span class="p">:</span>
             <span class="n">spec</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[type coercion] </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">coerce_errors</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;coerce_fields failed: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
         <span class="k">pass</span>  <span class="c1"># bridge unavailable — skip coercion</span>
 
     <span class="c1"># --- Auto-corrections (mirrors DJ init_setup_from_cfg) ----------------</span>
@@ -648,7 +653,8 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
             <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dj_errors</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;DJ validation failed: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
         <span class="k">pass</span>
 
     <span class="c1"># --- Semantic validation (mirrors DJ init_setup_from_cfg) -------------</span>
@@ -668,7 +674,8 @@
                         <span class="sa">f</span><span class="s2">&quot;fusion_strategy &#39;</span><span class="si">{</span><span class="n">fusion_strategy</span><span class="si">}</span><span class="s2">&#39; is not supported; &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">FUSION_STRATEGIES</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;FUSION_STRATEGIES check failed: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                 <span class="k">pass</span>  <span class="c1"># DJ unavailable — skip check</span>
 
     <span class="c1"># work_dir: {job_id} placeholder must be the last path component</span>
