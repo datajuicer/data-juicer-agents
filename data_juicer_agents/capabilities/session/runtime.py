@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -24,6 +25,8 @@ from data_juicer_agents.utils.runtime_helpers import (
     to_text_response,
     truncate_text,
 )
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -73,7 +76,8 @@ class SessionToolRuntime:
         event.update(payload)
         try:
             self._event_callback(event)
-        except Exception:
+        except Exception as exc:
+            _logger.debug("event_callback failed: %s", exc)
             return
 
     def invoke_tool(
@@ -216,7 +220,8 @@ class SessionToolRuntime:
     def load_plan_dict(self, plan_path: str) -> Optional[Dict[str, Any]]:
         try:
             data = yaml.safe_load(Path(plan_path).expanduser().read_text(encoding="utf-8"))
-        except Exception:
+        except Exception as exc:
+            _logger.debug("load_plan_dict failed for %s: %s", plan_path, exc)
             return None
         return data if isinstance(data, dict) else None
 
@@ -226,7 +231,8 @@ class SessionToolRuntime:
             return None
         try:
             return PlanModel.from_dict(data)
-        except Exception:
+        except Exception as exc:
+            _logger.debug("load_plan_model failed for %s: %s", plan_path, exc)
             return None
 
     @staticmethod
@@ -270,7 +276,8 @@ class SessionToolRuntime:
             return None
         try:
             return PlanModel.from_dict(payload)
-        except Exception:
+        except Exception as exc:
+            _logger.debug("current_draft_plan_model failed: %s", exc)
             return None
 
 

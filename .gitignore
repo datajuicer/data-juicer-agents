@@ -95,6 +95,9 @@ __pypackages__/
 # VS Code
 .vscode/
 
+# Claude AI
+.claude/
+
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid

@@ -6,6 +6,7 @@ from __future__ import annotations
 import asyncio
 import concurrent.futures
 import json
+import logging
 import os
 import threading
 from copy import deepcopy
@@ -15,6 +16,8 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from data_juicer_agents.capabilities.session.runtime import SessionState, SessionToolRuntime
 from data_juicer_agents.capabilities.session.toolkit import build_session_toolkit
+
+_logger = logging.getLogger(__name__)
 
 _SESSION_MODEL = "qwen3-max-2026-01-23"
 
@@ -157,11 +160,14 @@ class DJSessionAgent:
     def request_interrupt(self) -> bool:
         if self._react_agent is None:
             return False
+        loop: asyncio.AbstractEventLoop | None = None
         with self._interrupt_lock:
+            if not self._active_react_inflight:
+                return False
             loop = self._active_react_loop
-            inflight = self._active_react_inflight
-        if not inflight or loop is None or loop.is_closed():
-            return False
+            if loop is None or loop.is_closed():
+                return False
+        # Now perform interrupt outside the lock to avoid blocking other threads
         try:
             fut = asyncio.run_coroutine_threadsafe(self._react_agent.interrupt(), loop)
             try:
@@ -184,8 +190,9 @@ class DJSessionAgent:
         event.update(payload)
         try:
             self._event_callback(event)
-        except Exception:
+        except Exception as exc:
             # Event callbacks are observational and must not break agent flow.
+            _logger.debug("event_callback failed: %s", exc)
             return
 
     def _session_sys_prompt(self) -> str:
@@ -363,7 +370,8 @@ class DJSessionAgent:
 
         try:
             blocks = list(output.get_content_blocks())
-        except Exception:
+        except Exception as exc:
+            _logger.debug("get_content_blocks failed: %s", exc)
             blocks = []
 
         for block in blocks:
@@ -442,18 +450,21 @@ class DJSessionAgent:
         text = ""
         try:
             text = str(reply_msg.get_text_content() or "")
-        except Exception:
+        except Exception as exc:
+            _logger.debug("get_text_content failed: %s", exc)
             text = ""
         if not text:
             try:
                 content = getattr(reply_msg, "content", None)
                 text = _coerce_block_text(content)
-            except Exception:
+            except Exception as exc:
+                _logger.debug("coerce content failed: %s", exc)
                 text = ""
         if not text:
             try:
                 blocks = reply_msg.get_content_blocks()
-            except Exception:
+            except Exception as exc:
+                _logger.debug("get_content_blocks failed: %s", exc)
                 blocks = []
             text_parts: List[str] = []
             for block in blocks:
@@ -484,7 +495,8 @@ class DJSessionAgent:
                 if not value:
                     continue
                 thinking_parts.append(value)
-        except Exception:
+        except Exception as exc:
+            _logger.debug("extract thinking failed: %s", exc)
             pass
 
         thinking = "\n\n".join(part for part in thinking_parts if part).strip()

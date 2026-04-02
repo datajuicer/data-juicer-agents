@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 import os
 import shlex
 import signal
@@ -20,6 +21,24 @@ import yaml
 
 
 _DEFAULT_PLANNER_MODEL = os.environ.get("DJA_PLANNER_MODEL", "qwen3-max-2026-01-23")
+
+_logger = logging.getLogger(__name__)
+
+
+def _terminate_process_gracefully(proc: subprocess.Popen) -> None:
+    """Terminate a subprocess gracefully with fallback to SIGKILL."""
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+    except Exception:
+        with contextlib.suppress(Exception):
+            proc.terminate()
+    with contextlib.suppress(Exception):
+        proc.wait(timeout=2)
+    if proc.poll() is None:
+        with contextlib.suppress(Exception):
+            os.killpg(proc.pid, signal.SIGKILL)
+        with contextlib.suppress(Exception):
+            proc.kill()
 
 
 def _classify_error(returncode: int, stderr: str) -> tuple[str, str, List[str]]:
@@ -206,9 +225,11 @@ class ApplyUseCase:
                 stdout = "dry-run: command not executed"
                 stderr = ""
         else:
-            stdout_f = tempfile.TemporaryFile(mode="w+")
-            stderr_f = tempfile.TemporaryFile(mode="w+")
+            returncode, stdout, stderr = 1, "", ""
+            stdout_f, stderr_f, proc = None, None, None
             try:
+                stdout_f = tempfile.TemporaryFile(mode="w+")
+                stderr_f = tempfile.TemporaryFile(mode="w+")
                 proc = subprocess.Popen(
                     command_args,
                     shell=False,
@@ -233,36 +254,14 @@ class ApplyUseCase:
                     time.sleep(0.1)
 
                 if interrupted:
-                    try:
-                        os.killpg(proc.pid, signal.SIGTERM)
-                    except Exception:
-                        with contextlib.suppress(Exception):
-                            proc.terminate()
-                    with contextlib.suppress(Exception):
-                        proc.wait(timeout=2)
-                    if proc.poll() is None:
-                        with contextlib.suppress(Exception):
-                            os.killpg(proc.pid, signal.SIGKILL)
-                        with contextlib.suppress(Exception):
-                            proc.kill()
+                    _terminate_process_gracefully(proc)
                     returncode = 130
                     stdout_f.seek(0)
                     stderr_f.seek(0)
                     stdout = stdout_f.read()
                     stderr = (stderr_f.read().rstrip("\n") + "\nInterrupted by user.").strip()
                 elif timed_out:
-                    try:
-                        os.killpg(proc.pid, signal.SIGTERM)
-                    except Exception:
-                        with contextlib.suppress(Exception):
-                            proc.terminate()
-                    with contextlib.suppress(Exception):
-                        proc.wait(timeout=2)
-                    if proc.poll() is None:
-                        with contextlib.suppress(Exception):
-                            os.killpg(proc.pid, signal.SIGKILL)
-                        with contextlib.suppress(Exception):
-                            proc.kill()
+                    _terminate_process_gracefully(proc)
                     returncode = 124
                     stdout_f.seek(0)
                     stderr_f.seek(0)
@@ -275,13 +274,24 @@ class ApplyUseCase:
                     stderr_f.seek(0)
                     stdout = stdout_f.read()
                     stderr = stderr_f.read()
-            except subprocess.TimeoutExpired as exc:
-                returncode = 124
-                stdout = str(exc.stdout or "")
-                stderr = str(exc.stderr or "") + f"\nTimeout after {timeout_seconds}s"
+            except Exception as exc:
+                _logger.debug("Subprocess execution failed: %s", exc)
+                if proc is not None:
+                    _terminate_process_gracefully(proc)
+                returncode = 1
+                stdout = ""
+                stderr = f"Execution failed: {exc}"
             finally:
-                stdout_f.close()
-                stderr_f.close()
+                try:
+                    if stdout_f is not None:
+                        stdout_f.close()
+                except Exception:
+                    pass
+                try:
+                    if stderr_f is not None:
+                        stderr_f.close()
+                except Exception:
+                    pass
 
         end_dt = datetime.now(timezone.utc)
         duration = (end_dt - start_dt).total_seconds()
