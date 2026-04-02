@@ -954,7 +954,7 @@
     <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="retrieve_operator_candidates">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators.retrieve_operator_candidates">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.retrieve_operator_candidates">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -1003,7 +1003,7 @@
 
 
 <div class="viewcode-block" id="retrieve_operator_candidates_local">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators.retrieve_operator_candidates_local">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.retrieve_operator_candidates_local">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates_local</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -1048,7 +1048,7 @@
 
 
 <div class="viewcode-block" id="retrieve_operator_candidates_api">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators.retrieve_operator_candidates_api">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.retrieve_operator_candidates_api">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates_api</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -1156,7 +1156,7 @@
 
 
 <div class="viewcode-block" id="list_operator_catalog">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.list_operator_catalog.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators.list_operator_catalog">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.list_operator_catalog.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.list_operator_catalog">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_operator_catalog</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1232,7 +1232,7 @@
 
 
 <div class="viewcode-block" id="get_operator_info">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.get_operator_info.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators.get_operator_info">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.get_operator_info.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.get_operator_info">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_info</span><span class="p">(</span><span class="n">operator_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">raw_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">operator_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_name</span><span class="p">:</span>
@@ -1292,7 +1292,7 @@
 
 
 <div class="viewcode-block" id="extract_candidate_names">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators.extract_candidate_names">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.extract_candidate_names">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_candidate_names</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]:</span>

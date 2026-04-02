@@ -1,0 +1,1399 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer Data Processing Harness &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Data Processing Harness</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-data-processing-harness">
+<h1>Data-Juicer Data Processing Harness<a class="headerlink" href="#data-juicer-data-processing-harness" title="链接到此标题。">#</a></h1>
+<p>Clean, filter, deduplicate, and transform JSONL/JSON datasets via the <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> CLI.</p>
+<blockquote>
+<div><p><strong>Data-Juicer Agents</strong>: If not yet installed, visit <a class="reference external" href="https://github.com/data-juicer/data-juicer-agents">data-juicer-agents</a> for installation instructions.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Requirement</p></th>
+<th class="head"><p>Verification Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Installation</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data-juicer-agents</span></code> installed</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">list</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Authentication</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> set (LLM mode)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">$DASHSCOPE_API_KEY</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Data Format</strong></p></td>
+<td><p>JSONL/JSON, UTF-8 encoded</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">head</span> <span class="pre">-n</span> <span class="pre">1</span> <span class="pre">dataset.jsonl</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Python</strong></p></td>
+<td><p>3.10, 3.11, or 3.12</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">--version</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Conditions not met?</strong></p>
+<ul class="simple">
+<li><p>Installation issues → See <strong>djx_install</strong> skill</p></li>
+<li><p>Authentication issues → See <strong>djx_auth</strong> skill</p></li>
+<li><p>Private data → See <strong>djx_local_model</strong> skill (use local models)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="core-concepts">
+<h2>Core Concepts<a class="headerlink" href="#core-concepts" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concept</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Source / How to Determine</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>dataset_path</strong></p></td>
+<td><p>Input dataset path</p></td>
+<td><p>Provided by user; AskUserQuestion if not specified</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>export_path</strong></p></td>
+<td><p>Output dataset path</p></td>
+<td><p>Default: <code class="docutils literal notranslate"><span class="pre">&lt;input_dir&gt;/processed/&lt;name&gt;.jsonl</span></code>; can ask user</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>operator</strong></p></td>
+<td><p>Data processing unit (mapper/filter/deduplicator)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output; never guess</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>plan</strong></p></td>
+<td><p>Processing plan YAML file</p></td>
+<td><p>Generated by <code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code> → <code class="docutils literal notranslate"><span class="pre">plan_save</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>recipe</strong></p></td>
+<td><p>Executable processing configuration</p></td>
+<td><p>Loaded and executed by <code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>dataset_profile</strong></p></td>
+<td><p>Dataset metadata (fields, statistics, samples)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code> output</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="when-to-use-this-skill">
+<h2>When to Use This Skill<a class="headerlink" href="#when-to-use-this-skill" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Task</p></th>
+<th class="head"><p>Use Data-Juicer?</p></th>
+<th class="head"><p>Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clean HTML/markup</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>Filter by length/quality/language</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Deduplicate (exact/approximate)</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>Field transformation/mapping</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Count dataset lines</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wc</span> <span class="pre">-l</span> <span class="pre">&lt;file&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>View first few records</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">head</span> <span class="pre">-n</span> <span class="pre">5</span> <span class="pre">&lt;file&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Merge multiple JSONL files</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">f1.jsonl</span> <span class="pre">f2.jsonl</span> <span class="pre">&gt;</span> <span class="pre">merged.jsonl</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Simple field extraction</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">jq</span> <span class="pre">'.field'</span> <span class="pre">file.jsonl</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Quick decision</strong>: If the task requires operators (filters, mappers, deduplicators) → use Data-Juicer; if it's a simple shell operation → use shell directly.</p>
+</section>
+<hr class="docutils" />
+<section id="available-tools">
+<h2>Available Tools<a class="headerlink" href="#available-tools" title="链接到此标题。">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">list</span></code> shows all available tools — <strong>8 in total</strong>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Function</p></th>
+<th class="head"><p>Detailed Reference</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code></p></td>
+<td><p>Analyze dataset (fields, statistics, samples)</p></td>
+<td><p>djx_context</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code></p></td>
+<td><p>Search for suitable operators</p></td>
+<td><p>djx_retrieve</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></td>
+<td><p>Create dataset specification</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code></p></td>
+<td><p>Create operator pipeline specification</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code></p></td>
+<td><p>Create system specification</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code></p></td>
+<td><p>Combine specs into a complete plan</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plan_save</span></code></p></td>
+<td><p>Save plan to YAML</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></td>
+<td><p>Execute the plan</p></td>
+<td><p>djx_apply</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>View any tool's schema:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>&lt;tool_name&gt;
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note</strong>: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">schema</span></code> only works for the 8 tools listed above. It does <strong>not</strong> work for operator names (e.g., <code class="docutils literal notranslate"><span class="pre">clean_html_mapper</span></code>). Operator parameters come from <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="skill-responsibilities">
+<h2>Skill Responsibilities<a class="headerlink" href="#skill-responsibilities" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Skill to Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Installation / environment verification</p></td>
+<td><p><strong>djx_install</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Configure API Key / model</p></td>
+<td><p><strong>djx_auth</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Process private data (no cloud sending)</p></td>
+<td><p><strong>djx_local_model</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>View dataset structure / fields</p></td>
+<td><p><strong>djx_context</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Search for operators</p></td>
+<td><p><strong>djx_retrieve</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Build plan / spec with detailed parameters</p></td>
+<td><p><strong>djx_plan</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Execute recipe / timeout / retry</p></td>
+<td><p><strong>djx_apply</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Develop custom operators</p></td>
+<td><p><strong>djx_dev</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Execute shell / Python code</p></td>
+<td><p><strong>djx_process</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="scenario-1-clean-and-filter-a-dataset">
+<h2>Scenario 1: Clean and Filter a Dataset<a class="headerlink" href="#scenario-1-clean-and-filter-a-dataset" title="链接到此标题。">#</a></h2>
+<p><strong>User intent</strong>: Remove HTML, normalize whitespace, fix encoding, filter short text, deduplicate</p>
+<section id="step-flow">
+<h3>Step Flow<a class="headerlink" href="#step-flow" title="链接到此标题。">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>inspect_dataset → retrieve_operators → build specs → assemble plan → apply_recipe → verify
+</pre></div>
+</div>
+</section>
+<section id="step-1-inspect-the-dataset">
+<h3>Step 1: Inspect the Dataset<a class="headerlink" href="#step-1-inspect-the-dataset" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-retrieve-all-needed-operators-at-once">
+<h3>Step 2: Retrieve All Needed Operators at Once<a class="headerlink" href="#step-2-retrieve-all-needed-operators-at-once" title="链接到此标题。">#</a></h3>
+<p><strong>Key</strong>: Combine all requirements into a single intent; do not retrieve in multiple calls.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;remove HTML tags, normalize whitespace, fix unicode encoding, filter text shorter than 100 characters, deduplicate documents&quot;,</span>
+<span class="s1">  &quot;top_k&quot;: 15</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+<p>Select needed operators from the output:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">clean_html_mapper</span></code> - Remove HTML</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">whitespace_normalization_mapper</span></code> - Normalize whitespace</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fix_unicode_mapper</span></code> - Fix encoding</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">text_length_filter</span></code> - Filter short text</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">document_deduplicator</span></code> - Deduplicate</p></li>
+</ul>
+</section>
+<section id="steps-3-9-build-specs-and-execute">
+<h3>Steps 3-9: Build Specs and Execute<a class="headerlink" href="#steps-3-9-build-specs-and-execute" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 3: Build dataset spec</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;clean HTML, normalize whitespace, fix unicode, filter short, deduplicate&quot;,</span>
+<span class="s1">  &quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;,</span>
+<span class="s1">  &quot;export_path&quot;: &quot;/data/processed/articles.jsonl&quot;,</span>
+<span class="s1">  &quot;dataset_profile&quot;: &lt;STEP_1_OUTPUT&gt;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 4: Build process spec (each operator must have params)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;operators&quot;: [</span>
+<span class="s1">    {&quot;name&quot;: &quot;clean_html_mapper&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;whitespace_normalization_mapper&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;fix_unicode_mapper&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;text_length_filter&quot;, &quot;params&quot;: {&quot;min_len&quot;: 100}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;document_deduplicator&quot;, &quot;params&quot;: {}}</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 5: Build system spec</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+
+<span class="c1"># Step 6: Assemble plan (intent is required)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>assemble_plan<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;clean HTML, normalize whitespace, fix unicode, filter short, deduplicate&quot;,</span>
+<span class="s1">  &quot;dataset_spec&quot;: &lt;STEP_3_OUTPUT&gt;,</span>
+<span class="s1">  &quot;process_spec&quot;: &lt;STEP_4_OUTPUT&gt;,</span>
+<span class="s1">  &quot;system_spec&quot;: &lt;STEP_5_OUTPUT&gt;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 7: Save plan (note the parameter names)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;plan_payload&quot;: &lt;STEP_6_OUTPUT&gt;,</span>
+<span class="s1">  &quot;output_path&quot;: &quot;.djx/plans/clean_filter_dedup.yaml&quot;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 8: Execute (both --yes and confirm:true are required)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;.djx/plans/clean_filter_dedup.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+
+<span class="c1"># Step 9: Verify</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/processed/articles.jsonl&quot;, &quot;sample_size&quot;: 10}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="scenario-2-processing-sensitive-private-data">
+<h2>Scenario 2: Processing Sensitive / Private Data<a class="headerlink" href="#scenario-2-processing-sensitive-private-data" title="链接到此标题。">#</a></h2>
+<p><strong>User intent</strong>: Data must not be sent to cloud APIs</p>
+<section id="key-configuration">
+<h3>Key Configuration<a class="headerlink" href="#key-configuration" title="链接到此标题。">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Use local retrieval for operators</strong> (already local, no API needed)</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;top_k&quot;: 15}&#39;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Configure local Ollama</strong> (see djx_local_model for details)</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;http://localhost:11434/v1&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;ollama&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Verify local mode</strong></p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ollama<span class="w"> </span>list
+curl<span class="w"> </span>http://localhost:11434/v1/models
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="scenario-3-developing-custom-operators">
+<h2>Scenario 3: Developing Custom Operators<a class="headerlink" href="#scenario-3-developing-custom-operators" title="链接到此标题。">#</a></h2>
+<p><strong>User intent</strong>: Existing operators don't meet requirements; need custom ones</p>
+<section id="pre-check">
+<h3>Pre-check<a class="headerlink" href="#pre-check" title="链接到此标题。">#</a></h3>
+<p>First search to confirm no existing operator meets the need:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;describe the functionality you need&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="development-flow">
+<h3>Development Flow<a class="headerlink" href="#development-flow" title="链接到此标题。">#</a></h3>
+<p>See <strong>djx_dev</strong> skill for details.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate scaffold</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;extract email addresses and mask them&quot;,</span>
+<span class="s1">  &quot;operator_name&quot;: &quot;email_mask_mapper&quot;,</span>
+<span class="s1">  &quot;output_dir&quot;: &quot;./custom_operators&quot;,</span>
+<span class="s1">  &quot;smoke_check&quot;: true</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Integrate into pipeline</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="parameter-quick-reference">
+<h2>Parameter Quick Reference<a class="headerlink" href="#parameter-quick-reference" title="链接到此标题。">#</a></h2>
+<section id="common-parameter-pitfalls">
+<h3>Common Parameter Pitfalls<a class="headerlink" href="#common-parameter-pitfalls" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Error-Prone Parameter</p></th>
+<th class="head"><p>Correct Usage</p></th>
+<th class="head"><p>Wrong Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></td>
+<td><p>dataset_path</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dataset_path&quot;:</span> <span class="pre">&quot;/path/to/data.jsonl&quot;</span></code></p></td>
+<td><p><s><code class="docutils literal notranslate"><span class="pre">&quot;input_path&quot;</span></code></s></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></td>
+<td><p>export_path</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;export_path&quot;:</span> <span class="pre">&quot;/path/to/output.jsonl&quot;</span></code></p></td>
+<td><p><s><code class="docutils literal notranslate"><span class="pre">&quot;output_path&quot;</span></code></s></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code></p></td>
+<td><p>operator params</p></td>
+<td><p>Each operator must have <code class="docutils literal notranslate"><span class="pre">&quot;params&quot;:</span> <span class="pre">{}</span></code></p></td>
+<td><p>Omitting params</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">text_length_filter</span></code></p></td>
+<td><p>min_len</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{&quot;min_len&quot;:</span> <span class="pre">50}</span></code></p></td>
+<td><p><s><code class="docutils literal notranslate"><span class="pre">{&quot;min_length&quot;:</span> <span class="pre">50}</span></code></s></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code></p></td>
+<td><p>No intent needed</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;intent&quot;:</span> <span class="pre">&quot;...&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code></p></td>
+<td><p>intent required</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;intent&quot;:</span> <span class="pre">&quot;clean</span> <span class="pre">text&quot;</span></code></p></td>
+<td><p>Omitting intent</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plan_save</span></code></p></td>
+<td><p>plan_payload</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;plan_payload&quot;:</span> <span class="pre">&lt;full</span> <span class="pre">plan</span> <span class="pre">object&gt;</span></code></p></td>
+<td><p><s><code class="docutils literal notranslate"><span class="pre">&quot;plan_id&quot;</span></code></s></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plan_save</span></code></p></td>
+<td><p>output_path</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;output_path&quot;:</span> <span class="pre">&quot;plan.yaml&quot;</span></code></p></td>
+<td><p><s><code class="docutils literal notranslate"><span class="pre">&quot;path&quot;</span></code></s></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></td>
+<td><p>--yes + confirm</p></td>
+<td><p>Both are required</p></td>
+<td><p>Passing only one</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="command-templates">
+<h3>Command Templates<a class="headerlink" href="#command-templates" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect_dataset</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;&lt;INPUT&gt;&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+
+<span class="c1"># retrieve_operators - describe all requirements at once</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;remove HTML, normalize whitespace, fix unicode, filter short text, deduplicate&quot;, &quot;top_k&quot;: 15}&#39;</span>
+
+<span class="c1"># build_dataset_spec</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;&lt;GOAL&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_path&quot;: &quot;&lt;INPUT&gt;&quot;,</span>
+<span class="s1">  &quot;export_path&quot;: &quot;&lt;OUTPUT&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_profile&quot;: &lt;INSPECT_OUTPUT&gt;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># build_process_spec - each operator must have params</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;operators&quot;: [</span>
+<span class="s1">    {&quot;name&quot;: &quot;&lt;MAPPER&gt;&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;&lt;FILTER&gt;&quot;, &quot;params&quot;: {&quot;min_len&quot;: 50}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;&lt;DEDUP&gt;&quot;, &quot;params&quot;: {}}</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># build_system_spec - pass empty object</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+
+<span class="c1"># assemble_plan - intent is required</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>assemble_plan<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;&lt;GOAL&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_spec&quot;: &lt;DATASET_SPEC&gt;,</span>
+<span class="s1">  &quot;process_spec&quot;: &lt;PROCESS_SPEC&gt;,</span>
+<span class="s1">  &quot;system_spec&quot;: &lt;SYSTEM_SPEC&gt;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># plan_save - note: plan_payload and output_path</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;plan_payload&quot;: &lt;ASSEMBLE_OUTPUT&gt;,</span>
+<span class="s1">  &quot;output_path&quot;: &quot;&lt;PLAN.yaml&gt;&quot;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># apply_recipe - both --yes and confirm:true are required</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;&lt;PLAN.yaml&gt;&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="must-read-pitfalls">
+<h2>Must-Read Pitfalls<a class="headerlink" href="#must-read-pitfalls" title="链接到此标题。">#</a></h2>
+<section id="operator-names-must-come-from-retrieve-operators">
+<h3>1. Operator Names Must Come from retrieve_operators<a class="headerlink" href="#operator-names-must-come-from-retrieve-operators" title="链接到此标题。">#</a></h3>
+<p><strong>Wrong</strong>: Guessing or memorizing operator names</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operators&quot;:[{&quot;name&quot;:&quot;clean_html&quot;,...}]}&#39;</span>
+<span class="c1"># → operator &quot;clean_html&quot; not found</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong>: Retrieve first, then select from output</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;:&quot;clean HTML&quot;,&quot;top_k&quot;:5}&#39;</span>
+<span class="c1"># → output contains clean_html_mapper</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operators&quot;:[{&quot;name&quot;:&quot;clean_html_mapper&quot;,...}]}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="apply-recipe-requires-both-yes-and-confirm-true">
+<h3>2. apply_recipe Requires Both --yes and confirm:true<a class="headerlink" href="#apply-recipe-requires-both-yes-and-confirm-true" title="链接到此标题。">#</a></h3>
+<p><strong>Wrong</strong>: Passing only one</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;confirm&quot;: true}&#39;</span>
+<span class="c1"># → confirmation_required (exit 3)</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong>: Pass both</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="ray-prefixed-operators-require-a-ray-cluster">
+<h3>3. ray_ Prefixed Operators Require a Ray Cluster<a class="headerlink" href="#ray-prefixed-operators-require-a-ray-cluster" title="链接到此标题。">#</a></h3>
+<p><strong>Avoid</strong> (single-machine environment)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;ray_bts_minhash_deduplicator&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span>
+</pre></div>
+</div>
+<p><strong>Use alternatives</strong> (single-machine friendly)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;document_minhash_deduplicator&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span>
+<span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;document_deduplicator&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span><span class="w">  </span><span class="c1"># Exact deduplication</span>
+</pre></div>
+</div>
+</section>
+<section id="plan-save-parameter-is-output-path-not-path">
+<h3>4. plan_save Parameter Is output_path, Not path<a class="headerlink" href="#plan-save-parameter-is-output-path-not-path" title="链接到此标题。">#</a></h3>
+<p><strong>Wrong</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_payload&quot;: ..., &quot;path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_payload&quot;: ..., &quot;output_path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieve-operators-parameter-is-intent-not-query">
+<h3>5. retrieve_operators Parameter Is intent, Not query<a class="headerlink" href="#retrieve-operators-parameter-is-intent-not-query" title="链接到此标题。">#</a></h3>
+<p><strong>Wrong</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;: &quot;clean HTML&quot;}&#39;</span>
+<span class="c1"># → input_validation_failed</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="do-not-re-read-previous-output-to-find-more-details">
+<h3>6. Do Not Re-read Previous Output to &quot;Find More Details&quot;<a class="headerlink" href="#do-not-re-read-previous-output-to-find-more-details" title="链接到此标题。">#</a></h3>
+<p>The output of <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> is <strong>already complete</strong>, containing operator name, type, description, and params.</p>
+<p><strong>Wrong behavior</strong>: Repeatedly reading, re-querying, or trying to use <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">schema</span></code> for operators</p>
+<p><strong>Correct approach</strong>: When params are uncertain, use <code class="docutils literal notranslate"><span class="pre">{}</span></code> to let the operator use default values</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="error-recovery">
+<h2>Error Recovery<a class="headerlink" href="#error-recovery" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Scenario</p></th>
+<th class="head"><p>Diagnosis</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">confirmation_required</span></code> (exit 3)</p></td>
+<td><p>Missing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> flag</p></td>
+<td><p>Add <code class="docutils literal notranslate"><span class="pre">--yes</span></code> to the command</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">confirm=false</span></code> no response</p></td>
+<td><p>Missing <code class="docutils literal notranslate"><span class="pre">confirm:</span> <span class="pre">true</span></code></p></td>
+<td><p>Set <code class="docutils literal notranslate"><span class="pre">&quot;confirm&quot;:</span> <span class="pre">true</span></code> in JSON</p></td>
+</tr>
+<tr class="row-even"><td><p>Execution timeout</p></td>
+<td><p>Insufficient timeout</p></td>
+<td><p>Increase timeout value (use 1800s+ for large datasets)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dj-process</span> <span class="pre">not</span> <span class="pre">found</span></code></p></td>
+<td><p>py-data-juicer not installed</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">py-data-juicer</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>OOM</p></td>
+<td><p>Insufficient memory</p></td>
+<td><p>Reduce parallelism in system_spec</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">401</span> <span class="pre">Unauthorized</span></code> (retrieve)</p></td>
+<td><p>Invalid or expired API Key</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> (local, no API needed), or check <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> for API retrieval</p></td>
+</tr>
+<tr class="row-even"><td><p>Empty operator results</p></td>
+<td><p>Intent too narrow or unclear</p></td>
+<td><p>Use a broader intent</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_validation_failed</span></code></p></td>
+<td><p>Wrong parameter name</p></td>
+<td><p>Check: <code class="docutils literal notranslate"><span class="pre">intent</span></code> (not query), <code class="docutils literal notranslate"><span class="pre">output_path</span></code> (not path)</p></td>
+</tr>
+<tr class="row-even"><td><p>Operator not found</p></td>
+<td><p>Name was guessed</p></td>
+<td><p>Must select from <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>General recovery steps</strong>:</p>
+<ol class="arabic simple">
+<li><p>Read the error message carefully — most errors clearly state the problem</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">schema</span> <span class="pre">&lt;tool_name&gt;</span></code> to verify input format</p></li>
+<li><p>Fix the specific input and retry <strong>once</strong></p></li>
+<li><p>If the same step fails <strong>2 times, stop</strong> and report the error — do not retry indefinitely</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="permissions-environment-requirements">
+<h2>Permissions &amp; Environment Requirements<a class="headerlink" href="#permissions-environment-requirements" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Dependency</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> (llm/auto mode)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></td>
+<td><p>Cloud LLM</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> (vector mode)</p></td>
+<td><p>Local faiss</p></td>
+<td><p>No API needed</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">py-data-juicer&gt;=1.4.0</span></code></p></td>
+<td><p>Core processing engine</p></td>
+</tr>
+<tr class="row-odd"><td><p>LLM-based operators</p></td>
+<td><p>Model endpoint configuration</p></td>
+<td><p>e.g., language detection, quality scoring</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="budget-limits">
+<h2>Budget &amp; Limits<a class="headerlink" href="#budget-limits" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Limit</p></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Total tool calls</p></td>
+<td><p>≤ 30</p></td>
+<td><p>Cost control</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> calls</p></td>
+<td><p>≤ 2</p></td>
+<td><p>Avoid excessive retrieval</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code> calls</p></td>
+<td><p>≤ 1</p></td>
+<td><p>Idempotent operation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code> attempts</p></td>
+<td><p>≤ 2</p></td>
+<td><p>Diagnose after failure instead of retrying</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="complete-example">
+<h2>Complete Example<a class="headerlink" href="#complete-example" title="链接到此标题。">#</a></h2>
+<p><strong>User request</strong>: &quot;Clean this dataset <code class="docutils literal notranslate"><span class="pre">/data/articles.jsonl</span></code> — remove HTML tags, normalize whitespace, fix encoding, filter entries with fewer than 100 characters, deduplicate.&quot;</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+<span class="c1"># → dataset_profile</span>
+
+<span class="c1"># Step 2: Retrieve all needed operators at once</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;remove HTML tags, normalize whitespace, fix unicode encoding, filter text shorter than 100 characters, deduplicate documents&quot;,</span>
+<span class="s1">  &quot;top_k&quot;: 15</span>
+<span class="s1">}&#39;</span>
+<span class="c1"># → clean_html_mapper, whitespace_normalization_mapper, fix_unicode_mapper, text_length_filter, document_deduplicator</span>
+
+<span class="c1"># Step 3</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;clean HTML, normalize whitespace, fix unicode, filter short, deduplicate&quot;,</span>
+<span class="s1">  &quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;,</span>
+<span class="s1">  &quot;export_path&quot;: &quot;/data/processed/articles.jsonl&quot;,</span>
+<span class="s1">  &quot;dataset_profile&quot;: &lt;STEP_1_OUTPUT&gt;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 4</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;operators&quot;: [</span>
+<span class="s1">    {&quot;name&quot;: &quot;clean_html_mapper&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;whitespace_normalization_mapper&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;fix_unicode_mapper&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;text_length_filter&quot;, &quot;params&quot;: {&quot;min_len&quot;: 100}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;document_deduplicator&quot;, &quot;params&quot;: {}}</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 5</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+
+<span class="c1"># Step 6</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>assemble_plan<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;clean HTML, normalize whitespace, fix unicode, filter short, deduplicate&quot;,</span>
+<span class="s1">  &quot;dataset_spec&quot;: &lt;STEP_3_OUTPUT&gt;,</span>
+<span class="s1">  &quot;process_spec&quot;: &lt;STEP_4_OUTPUT&gt;,</span>
+<span class="s1">  &quot;system_spec&quot;: &lt;STEP_5_OUTPUT&gt;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 7</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;plan_payload&quot;: &lt;STEP_6_OUTPUT&gt;,</span>
+<span class="s1">  &quot;output_path&quot;: &quot;.djx/plans/clean_filter_dedup.yaml&quot;</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 8</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;.djx/plans/clean_filter_dedup.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+
+<span class="c1"># Step 9</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/processed/articles.jsonl&quot;, &quot;sample_size&quot;: 10}&#39;</span>
+<span class="c1"># Compare: input count vs output count, spot-check quality</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-concepts">Core Concepts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-this-skill">When to Use This Skill</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-tools">Available Tools</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#skill-responsibilities">Skill Responsibilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-1-clean-and-filter-a-dataset">Scenario 1: Clean and Filter a Dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-flow">Step Flow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-inspect-the-dataset">Step 1: Inspect the Dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-retrieve-all-needed-operators-at-once">Step 2: Retrieve All Needed Operators at Once</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-3-9-build-specs-and-execute">Steps 3-9: Build Specs and Execute</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-2-processing-sensitive-private-data">Scenario 2: Processing Sensitive / Private Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-configuration">Key Configuration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-3-developing-custom-operators">Scenario 3: Developing Custom Operators</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-check">Pre-check</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#development-flow">Development Flow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-quick-reference">Parameter Quick Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-parameter-pitfalls">Common Parameter Pitfalls</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-templates">Command Templates</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#must-read-pitfalls">Must-Read Pitfalls</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operator-names-must-come-from-retrieve-operators">1. Operator Names Must Come from retrieve_operators</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-recipe-requires-both-yes-and-confirm-true">2. apply_recipe Requires Both --yes and confirm:true</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ray-prefixed-operators-require-a-ray-cluster">3. ray_ Prefixed Operators Require a Ray Cluster</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plan-save-parameter-is-output-path-not-path">4. plan_save Parameter Is output_path, Not path</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-operators-parameter-is-intent-not-query">5. retrieve_operators Parameter Is intent, Not query</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#do-not-re-read-previous-output-to-find-more-details">6. Do Not Re-read Previous Output to "Find More Details"</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-recovery">Error Recovery</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#permissions-environment-requirements">Permissions &amp; Environment Requirements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#budget-limits">Budget &amp; Limits</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example">Complete Example</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/skills/data-juicer-agents-harness-copaw-version/data-juicer/SKILL.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

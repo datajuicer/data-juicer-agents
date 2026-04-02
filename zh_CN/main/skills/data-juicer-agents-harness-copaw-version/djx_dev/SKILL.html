@@ -1,0 +1,963 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer Skills: Dev (Custom Operator Development) &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Skills: Dev (Custom Operator Development)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-skills-dev-custom-operator-development">
+<h1>Data-Juicer Skills: Dev (Custom Operator Development)<a class="headerlink" href="#data-juicer-skills-dev-custom-operator-development" title="链接到此标题。">#</a></h1>
+<p>Develop custom Data-Juicer operators — when existing operators don't meet your needs.</p>
+<hr class="docutils" />
+<section id="core-rule-use-djx-tool-only">
+<h2>Core Rule: Use djx tool Only<a class="headerlink" href="#core-rule-use-djx-tool-only" title="链接到此标题。">#</a></h2>
+<p><strong>You must only use the <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> CLI</strong>. Do not use the session or cap modules.</p>
+</section>
+<hr class="docutils" />
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Requirement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Confirm no existing operator</strong></p></td>
+<td><p>Run <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> first</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Python development skills</strong></p></td>
+<td><p>Understanding of Python and Data-Juicer operator mechanism</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="pre-development-check">
+<h2>Pre-Development Check<a class="headerlink" href="#pre-development-check" title="链接到此标题。">#</a></h2>
+<p><strong>Always confirm no existing operator meets the need first</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;describe the functionality you need&quot;}&#39;</span>
+</pre></div>
+</div>
+<p>Only develop a custom operator if the search results truly cannot satisfy the requirement.</p>
+</section>
+<hr class="docutils" />
+<section id="core-tool-develop-operator">
+<h2>Core Tool: develop_operator<a class="headerlink" href="#core-tool-develop-operator" title="链接到此标题。">#</a></h2>
+<p>Generates an operator scaffold (mapper or filter) based on a natural language intent.</p>
+<section id="input-schema">
+<h3>Input Schema<a class="headerlink" href="#input-schema" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intent</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+<td><p>Operator functionality description (natural language)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">operator_name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+<td><p>Operator name in snake_case format</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_dir</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+<td><p>Output directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">operator_type</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mapper</span></code> or <code class="docutils literal notranslate"><span class="pre">filter</span></code> (can be inferred)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">from_retrieve</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p>Path to JSON file from <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">smoke_check</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>No</p></td>
+<td><p>false</p></td>
+<td><p>Run basic validation after generation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="command">
+<h3>Command<a class="headerlink" href="#command" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;extract email addresses and mask them&quot;,</span>
+<span class="s1">  &quot;operator_name&quot;: &quot;email_mask_mapper&quot;,</span>
+<span class="s1">  &quot;output_dir&quot;: &quot;./custom_operators&quot;,</span>
+<span class="s1">  &quot;smoke_check&quot;: true</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="output-structure">
+<h2>Output Structure<a class="headerlink" href="#output-structure" title="链接到此标题。">#</a></h2>
+<p>The tool generates three files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>output_dir/
+├── &lt;operator_name&gt;.py         # Operator implementation
+├── test_&lt;operator_name&gt;.py    # Test scaffold
+└── summary.md                  # Design notes and usage instructions
+</pre></div>
+</div>
+<section id="generated-operator-characteristics">
+<h3>Generated Operator Characteristics<a class="headerlink" href="#generated-operator-characteristics" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>Inherits from <code class="docutils literal notranslate"><span class="pre">Filter</span></code> or <code class="docutils literal notranslate"><span class="pre">Mapper</span></code> base class</p></li>
+<li><p>Uses <code class="docutils literal notranslate"><span class="pre">&#64;OPERATORS.register_module('&lt;operator_name&gt;')</span></code> decorator</p></li>
+<li><p>Contains placeholder logic that needs custom implementation</p></li>
+</ul>
+<blockquote>
+<div><p><strong>The scaffold is a starting point</strong> — review and customize the implementation logic.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="naming-conventions">
+<h2>Naming Conventions<a class="headerlink" href="#naming-conventions" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Rule</p></th>
+<th class="head"><p>Pattern</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Use snake_case</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">my_custom_filter</span></code></p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Include type suffix</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_filter</span></code>, <code class="docutils literal notranslate"><span class="pre">_mapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">email_mask_mapper</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Descriptive naming</p></td>
+<td><p>Name reflects functionality</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">phone_sanitizer_filter</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="pipeline-integration">
+<h2>Pipeline Integration<a class="headerlink" href="#pipeline-integration" title="链接到此标题。">#</a></h2>
+<section id="generate-operator-scaffold">
+<h3>1. Generate Operator Scaffold<a class="headerlink" href="#generate-operator-scaffold" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{...}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="customize-implementation">
+<h3>2. Customize Implementation<a class="headerlink" href="#customize-implementation" title="链接到此标题。">#</a></h3>
+<p>Edit the generated <code class="docutils literal notranslate"><span class="pre">.py</span></code> file to implement the specific logic.</p>
+</section>
+<section id="test">
+<h3>3. Test<a class="headerlink" href="#test" title="链接到此标题。">#</a></h3>
+<p>Run tests independently:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>test_email_mask_mapper.py
+</pre></div>
+</div>
+</section>
+<section id="integrate-into-pipeline">
+<h3>4. Integrate into Pipeline<a class="headerlink" href="#integrate-into-pipeline" title="链接到此标题。">#</a></h3>
+<p>Pass the custom operator path in <code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+</pre></div>
+</div>
+<p>Use the operator in <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;operators&quot;: [</span>
+<span class="s1">    {&quot;name&quot;: &quot;email_mask_mapper&quot;, &quot;params&quot;: {}}</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>The operator must be importable from the specified path</strong> and registered with <code class="docutils literal notranslate"><span class="pre">&#64;OPERATORS.register_module</span></code>.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="complete-development-flow">
+<h2>Complete Development Flow<a class="headerlink" href="#complete-development-flow" title="链接到此标题。">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Confirm no existing operator meets the need</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;email masking&quot;}&#39;</span>
+<span class="c1"># Results don&#39;t satisfy the requirement</span>
+
+<span class="c1"># Step 2: Generate scaffold</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;extract email addresses from text and mask them&quot;,</span>
+<span class="s1">  &quot;operator_name&quot;: &quot;email_mask_mapper&quot;,</span>
+<span class="s1">  &quot;output_dir&quot;: &quot;./custom_operators&quot;,</span>
+<span class="s1">  &quot;smoke_check&quot;: true</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Step 3: Review generated files</span>
+cat<span class="w"> </span>./custom_operators/email_mask_mapper.py
+
+<span class="c1"># Step 4: Customize implementation</span>
+<span class="c1"># Edit the .py file...</span>
+
+<span class="c1"># Step 5: Test</span>
+pytest<span class="w"> </span>./custom_operators/test_email_mask_mapper.py
+
+<span class="c1"># Step 6: Integrate into pipeline</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+
+<span class="c1"># Step 7: Use in process_spec</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;operators&quot;: [{&quot;name&quot;: &quot;email_mask_mapper&quot;, &quot;params&quot;: {}}]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">smoke_check</span></code> fails</p></td>
+<td><p>Check the error — fix syntax or import issues in generated code</p></td>
+</tr>
+<tr class="row-odd"><td><p>Operator name conflict</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> to check and avoid naming conflicts</p></td>
+</tr>
+<tr class="row-even"><td><p>Runtime import error</p></td>
+<td><p>Ensure operator directory is in <code class="docutils literal notranslate"><span class="pre">custom_operator_paths</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">from_retrieve</span></code> JSON invalid</p></td>
+<td><p>Verify the file path and content come from <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="must-read-pitfalls">
+<h2>Must-Read Pitfalls<a class="headerlink" href="#must-read-pitfalls" title="链接到此标题。">#</a></h2>
+<section id="search-before-developing">
+<h3>1. Search Before Developing<a class="headerlink" href="#search-before-developing" title="链接到此标题。">#</a></h3>
+<p>Do not skip the <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> step. An existing operator may already meet the need.</p>
+</section>
+<section id="custom-implementation-is-required">
+<h3>2. Custom Implementation Is Required<a class="headerlink" href="#custom-implementation-is-required" title="链接到此标题。">#</a></h3>
+<p>The scaffold only generates the framework; the specific logic must be implemented by you.</p>
+</section>
+<section id="registration-name-must-match">
+<h3>3. Registration Name Must Match<a class="headerlink" href="#registration-name-must-match" title="链接到此标题。">#</a></h3>
+<p>The name in <code class="docutils literal notranslate"><span class="pre">&#64;OPERATORS.register_module('&lt;name&gt;')</span></code> must match the name used in <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>.</p>
+</section>
+<section id="path-configuration-must-be-correct">
+<h3>4. Path Configuration Must Be Correct<a class="headerlink" href="#path-configuration-must-be-correct" title="链接到此标题。">#</a></h3>
+<p>Ensure <code class="docutils literal notranslate"><span class="pre">custom_operator_paths</span></code> points to the directory containing the operator <code class="docutils literal notranslate"><span class="pre">.py</span></code> files.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="skill-responsibilities">
+<h2>Skill Responsibilities<a class="headerlink" href="#skill-responsibilities" title="链接到此标题。">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Skill to Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Search for existing operators</p></td>
+<td><p>djx_retrieve</p></td>
+</tr>
+<tr class="row-odd"><td><p>Develop custom operators</p></td>
+<td><p><strong>djx_dev (this skill)</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Integrate into pipeline</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+<tr class="row-odd"><td><p>Main flow</p></td>
+<td><p>data-juicer</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-rule-use-djx-tool-only">Core Rule: Use djx tool Only</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-development-check">Pre-Development Check</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-tool-develop-operator">Core Tool: develop_operator</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-schema">Input Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command">Command</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output-structure">Output Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generated-operator-characteristics">Generated Operator Characteristics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naming-conventions">Naming Conventions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-integration">Pipeline Integration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-operator-scaffold">1. Generate Operator Scaffold</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#customize-implementation">2. Customize Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test">3. Test</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integrate-into-pipeline">4. Integrate into Pipeline</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-development-flow">Complete Development Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#must-read-pitfalls">Must-Read Pitfalls</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#search-before-developing">1. Search Before Developing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-implementation-is-required">2. Custom Implementation Is Required</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#registration-name-must-match">3. Registration Name Must Match</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#path-configuration-must-be-correct">4. Path Configuration Must Be Correct</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#skill-responsibilities">Skill Responsibilities</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/skills/data-juicer-agents-harness-copaw-version/djx_dev/SKILL.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

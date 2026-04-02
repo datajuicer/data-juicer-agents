@@ -1,0 +1,1393 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer Skills: Retrieve (Operator Retrieval) &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Skills: Retrieve (Operator Retrieval)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-skills-retrieve-operator-retrieval">
+<h1>Data-Juicer Skills: Retrieve (Operator Retrieval)<a class="headerlink" href="#data-juicer-skills-retrieve-operator-retrieval" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p><strong>Main flow</strong>: See the <code class="docutils literal notranslate"><span class="pre">data-juicer</span></code> skill. This skill provides detailed reference for operator retrieval tools.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="tool-overview">
+<h2>Tool Overview<a class="headerlink" href="#tool-overview" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Surface</p></th>
+<th class="head"><p>Modes</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code></p></td>
+<td><p>Harness (default)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code></p></td>
+<td><p>Local retrieval, no API needed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></td>
+<td><p>Full (not in harness)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">llm</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p>API-backed semantic retrieval</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code></p></td>
+<td><p>Harness</p></td>
+<td><p>—</p></td>
+<td><p>Inspect one operator’s parameter schema</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code></p></td>
+<td><p>Harness</p></td>
+<td><p>—</p></td>
+<td><p>Browse full operator catalog (fallback)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Requirement</p></th>
+<th class="head"><p>Verification Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>retrieve_operators</strong> (local)</p></td>
+<td><p>No API key needed</p></td>
+<td><p>Runs locally</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>retrieve_operators_api</strong> (API)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> is set</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">$DASHSCOPE_API_KEY</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="core-concepts">
+<h2>Core Concepts<a class="headerlink" href="#core-concepts" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concept</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>intent</strong></p></td>
+<td><p>Natural language description of the processing goal, used to retrieve matching operators</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>mode (local)</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> modes: <code class="docutils literal notranslate"><span class="pre">auto</span></code> (routes to bm25/regex), <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>mode (API)</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code> modes: <code class="docutils literal notranslate"><span class="pre">auto</span></code> (tries llm→vector), <code class="docutils literal notranslate"><span class="pre">llm</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>top_k</strong></p></td>
+<td><p>Maximum number of candidates to return</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>operator</strong></p></td>
+<td><p>Data processing unit containing name, type, description, params</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="command-format">
+<h2>Command Format<a class="headerlink" href="#command-format" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Local retrieval (harness default)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;&lt;description&gt;&quot;, &quot;top_k&quot;: 15}&#39;</span>
+
+<span class="c1"># API-backed retrieval (full surface only, not in harness)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;&lt;description&gt;&quot;, &quot;top_k&quot;: 15}&#39;</span>
+
+<span class="c1"># Inspect one operator&#39;s parameter schema</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operator_name&quot;: &quot;&lt;operator_name&gt;&quot;}&#39;</span>
+
+<span class="c1"># Browse operator catalog (fallback)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;include_parameters&quot;: false}&#39;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Must use <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">&lt;tool_name&gt;</span> <span class="pre">--input-json</span> <span class="pre">'{...}'</span></code></strong>. Do not use <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve_operators</span></code>, <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code>, or other formats.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="input-schemas">
+<h2>Input Schemas<a class="headerlink" href="#input-schemas" title="Link to this heading">#</a></h2>
+<section id="retrieve-operators-local">
+<h3>retrieve_operators (local)<a class="headerlink" href="#retrieve-operators-local" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intent</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+<td><p>Natural language description, or regex pattern for <code class="docutils literal notranslate"><span class="pre">regex</span></code> mode</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">top_k</span></code></p></td>
+<td><p>int</p></td>
+<td><p>No</p></td>
+<td><p>10</p></td>
+<td><p>Maximum number of candidates to return</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p>Type filter: <code class="docutils literal notranslate"><span class="pre">mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>list</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Modality/resource tags (<code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">image</span></code>, etc.), match-all semantics</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p>Dataset path for automatic modality detection</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="retrieve-operators-api-api">
+<h3>retrieve_operators_api (API)<a class="headerlink" href="#retrieve-operators-api-api" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intent</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+<td><p>Plain-text description of the desired operators</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">top_k</span></code></p></td>
+<td><p>int</p></td>
+<td><p>No</p></td>
+<td><p>10</p></td>
+<td><p>Maximum number of candidates to return</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">llm</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p>Type filter: <code class="docutils literal notranslate"><span class="pre">mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>list</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Modality/resource tags, match-all semantics</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p>Dataset path for automatic modality detection</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="get-operator-info">
+<h3>get_operator_info<a class="headerlink" href="#get-operator-info" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">operator_name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>—</p></td>
+<td><p>Canonical or approximate operator name to inspect</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="list-operator-catalog">
+<h3>list_operator_catalog<a class="headerlink" href="#list-operator-catalog" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code></p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+<td><p>—</p></td>
+<td><p>Type filter</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>list</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Tag filter, match-all semantics</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">include_parameters</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>Include full parameter schemas (heavy, use cautiously)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">limit</span></code></p></td>
+<td><p>int</p></td>
+<td><p>No</p></td>
+<td><p>0</p></td>
+<td><p>Max operators to return (0 = all)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>The field name is <code class="docutils literal notranslate"><span class="pre">intent</span></code>, not <code class="docutils literal notranslate"><span class="pre">query</span></code></strong>. Using <code class="docutils literal notranslate"><span class="pre">query</span></code> will cause <code class="docutils literal notranslate"><span class="pre">input_validation_failed</span></code>.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="retrieval-mode-comparison">
+<h2>Retrieval Mode Comparison<a class="headerlink" href="#retrieval-mode-comparison" title="Link to this heading">#</a></h2>
+<section id="retrieve-operators-local-modes">
+<h3>retrieve_operators (local modes)<a class="headerlink" href="#retrieve-operators-local-modes" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Requires API</p></th>
+<th class="head"><p>Behavior</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Routes to <code class="docutils literal notranslate"><span class="pre">regex</span></code> for regex-like queries, otherwise <code class="docutils literal notranslate"><span class="pre">bm25</span></code></p></td>
+<td><p><strong>Default recommended</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bm25</span></code></p></td>
+<td><p>No</p></td>
+<td><p>BM25 keyword matching</p></td>
+<td><p>Deterministic keyword search</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">regex</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Regex pattern matching on operator names</p></td>
+<td><p>When operator naming pattern is known</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="retrieve-operators-api-api-modes">
+<h3>retrieve_operators_api (API modes)<a class="headerlink" href="#retrieve-operators-api-api-modes" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Requires API</p></th>
+<th class="head"><p>Behavior</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Tries <code class="docutils literal notranslate"><span class="pre">llm</span></code> first, falls back to <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p>Highest accuracy when API available</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">llm</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>LLM semantic ranking</p></td>
+<td><p>Best semantic relevance</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>FAISS vector similarity</p></td>
+<td><p>Semantic search without LLM ranking</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Mode selection decision</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>In harness mode?
+├─ Yes → Use retrieve_operators (local, mode=auto)
+└─ No (full surface) →
+    Do you have an API Key?
+    ├─ Yes → Use retrieve_operators_api (mode=auto)
+    └─ No → Use retrieve_operators (mode=auto, already local)
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="intent-writing-guide">
+<h2>Intent Writing Guide<a class="headerlink" href="#intent-writing-guide" title="Link to this heading">#</a></h2>
+<section id="key-rule-describe-all-requirements-at-once">
+<h3>Key Rule: Describe All Requirements at Once<a class="headerlink" href="#key-rule-describe-all-requirements-at-once" title="Link to this heading">#</a></h3>
+<p><strong>Do not</strong> retrieve operators for different functionalities in multiple calls. Combine all requirements into a single intent:</p>
+<p><strong>Wrong</strong>: Multiple retrievals</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1st call</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;}&#39;</span>
+<span class="c1"># 2nd call</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;filter short text&quot;}&#39;</span>
+<span class="c1"># 3rd call</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;deduplicate&quot;}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong>: One retrieval covering all requirements</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;remove HTML tags, normalize whitespace, fix unicode encoding, filter short text under 50 characters, deduplicate documents&quot;, &quot;top_k&quot;: 15}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="good-intents">
+<h3>Good Intents<a class="headerlink" href="#good-intents" title="Link to this heading">#</a></h3>
+<p><strong>Describe data processing goals</strong>, not specific operator names:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>User Need</p></th>
+<th class="head"><p>Intent</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clean HTML, normalize whitespace, deduplicate</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;remove</span> <span class="pre">HTML</span> <span class="pre">tags,</span> <span class="pre">normalize</span> <span class="pre">whitespace,</span> <span class="pre">deduplicate</span> <span class="pre">near-identical</span> <span class="pre">documents&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Clean text, fix encoding, filter, deduplicate</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;remove</span> <span class="pre">HTML</span> <span class="pre">artifacts,</span> <span class="pre">normalize</span> <span class="pre">whitespace,</span> <span class="pre">fix</span> <span class="pre">unicode</span> <span class="pre">encoding,</span> <span class="pre">filter</span> <span class="pre">text</span> <span class="pre">shorter</span> <span class="pre">than</span> <span class="pre">50</span> <span class="pre">characters,</span> <span class="pre">deduplicate</span> <span class="pre">exact</span> <span class="pre">duplicates&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Filter low-quality images</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;filter</span> <span class="pre">low-quality</span> <span class="pre">images</span> <span class="pre">by</span> <span class="pre">resolution&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fix encoding, clean emails, filter by language</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;fix</span> <span class="pre">unicode</span> <span class="pre">encoding,</span> <span class="pre">remove</span> <span class="pre">email</span> <span class="pre">addresses,</span> <span class="pre">filter</span> <span class="pre">by</span> <span class="pre">language&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Mask sensitive data</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mask</span> <span class="pre">or</span> <span class="pre">remove</span> <span class="pre">sensitive</span> <span class="pre">information</span> <span class="pre">like</span> <span class="pre">phone</span> <span class="pre">numbers</span> <span class="pre">and</span> <span class="pre">emails&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bad-intents">
+<h3>Bad Intents<a class="headerlink" href="#bad-intents" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bad Intent</p></th>
+<th class="head"><p>Problem</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;use</span> <span class="pre">fix_unicode_mapper&quot;</span></code></p></td>
+<td><p>Do not specify operator names — defeats the purpose of retrieval</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;clean</span> <span class="pre">the</span> <span class="pre">SSN</span> <span class="pre">records:</span> <span class="pre">123-45-6789...&quot;</span></code></p></td>
+<td><p>Do not include actual data content</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;filter&quot;</span></code></p></td>
+<td><p>Too vague to match</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;clean</span> <span class="pre">HTML&quot;</span></code> then <code class="docutils literal notranslate"><span class="pre">&quot;normalize</span> <span class="pre">whitespace&quot;</span></code></p></td>
+<td><p>Multiple retrievals — inefficient and may miss related operators</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="common-functionality-keywords">
+<h3>Common Functionality Keywords<a class="headerlink" href="#common-functionality-keywords" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Functionality</p></th>
+<th class="head"><p>Intent Keywords</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>HTML cleaning</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">remove</span> <span class="pre">HTML</span> <span class="pre">tags</span></code>, <code class="docutils literal notranslate"><span class="pre">clean</span> <span class="pre">HTML</span> <span class="pre">artifacts</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Whitespace normalization</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">normalize</span> <span class="pre">whitespace</span></code>, <code class="docutils literal notranslate"><span class="pre">collapse</span> <span class="pre">multiple</span> <span class="pre">spaces</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Unicode fix</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fix</span> <span class="pre">unicode</span> <span class="pre">encoding</span></code>, <code class="docutils literal notranslate"><span class="pre">fix</span> <span class="pre">malformed</span> <span class="pre">unicode</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Length filtering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">text</span> <span class="pre">shorter</span> <span class="pre">than</span> <span class="pre">N</span> <span class="pre">characters</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">by</span> <span class="pre">text</span> <span class="pre">length</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Deduplication</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">deduplicate</span> <span class="pre">documents</span></code>, <code class="docutils literal notranslate"><span class="pre">remove</span> <span class="pre">duplicates</span></code>, <code class="docutils literal notranslate"><span class="pre">exact</span> <span class="pre">deduplication</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Language filtering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">by</span> <span class="pre">language</span></code>, <code class="docutils literal notranslate"><span class="pre">keep</span> <span class="pre">only</span> <span class="pre">English</span> <span class="pre">text</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Quality filtering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">low</span> <span class="pre">quality</span> <span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">remove</span> <span class="pre">nonsense</span> <span class="pre">text</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="result-interpretation">
+<h2>Result Interpretation<a class="headerlink" href="#result-interpretation" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> returns a list of operators, each containing:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>Operator name — <strong>this is the only value usable in build_process_spec</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">type</span></code></p></td>
+<td><p>Type: <code class="docutils literal notranslate"><span class="pre">mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicator</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>Functionality description</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p>Parameter definitions including field names, types, default values</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example output</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;clean_html_mapper&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mapper&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Remove HTML tags from text fields&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">}}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text_length_filter&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;filter&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Filter text by length&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;min_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;max_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>After selecting a candidate</strong>, call <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> to inspect its full parameter schema before filling <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>. Do not guess parameter names from operator names alone.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">401</span> <span class="pre">Unauthorized</span></code></p></td>
+<td><p>API key issue; use <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> (local) instead, or verify <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Empty results</p></td>
+<td><p>Retry with a broader intent, or use <code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code> as fallback</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input_validation_failed</span></code></p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">intent</span></code> instead of <code class="docutils literal notranslate"><span class="pre">query</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">invalid</span> <span class="pre">local</span> <span class="pre">retrieval</span> <span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> only accepts <code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code>; for <code class="docutils literal notranslate"><span class="pre">llm</span></code>/<code class="docutils literal notranslate"><span class="pre">vector</span></code>, use <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Operator results are not ideal</p></td>
+<td><p>Use a more specific description in retrieval, e.g., <code class="docutils literal notranslate"><span class="pre">normalize</span> <span class="pre">all</span> <span class="pre">whitespace</span> <span class="pre">including</span> <span class="pre">internal</span> <span class="pre">spaces</span></code> instead of just <code class="docutils literal notranslate"><span class="pre">normalize</span> <span class="pre">whitespace</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="retrieval-result-validation">
+<h2>Retrieval Result Validation<a class="headerlink" href="#retrieval-result-validation" title="Link to this heading">#</a></h2>
+<p>After retrieving operators, check if they meet requirements:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Requirement</p></th>
+<th class="head"><p>Possible Operators</p></th>
+<th class="head"><p>Validation Points</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>HTML cleaning</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clean_html_mapper</span></code></p></td>
+<td><p>Does it clean both tags and entities</p></td>
+</tr>
+<tr class="row-odd"><td><p>Whitespace normalization</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">whitespace_normalization_mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">fix_unicode_mapper</span></code></p></td>
+<td><p>Does it handle internal multiple spaces</p></td>
+</tr>
+<tr class="row-even"><td><p>Unicode fix</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fix_unicode_mapper</span></code></p></td>
+<td><p>Does it handle various encoding issues</p></td>
+</tr>
+<tr class="row-odd"><td><p>Length filtering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">text_length_filter</span></code></p></td>
+<td><p>Parameter is <code class="docutils literal notranslate"><span class="pre">min_len</span></code>, not <code class="docutils literal notranslate"><span class="pre">min_length</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Deduplication</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">document_deduplicator</span></code>, <code class="docutils literal notranslate"><span class="pre">document_minhash_deduplicator</span></code></p></td>
+<td><p>Exact vs approximate dedup</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>Tip</strong>: If an operator doesn’t perform as expected, you may need to:</p>
+<ol class="arabic simple">
+<li><p>Re-retrieve with a more specific intent</p></li>
+<li><p>Combine multiple operators (e.g., <code class="docutils literal notranslate"><span class="pre">whitespace_normalization_mapper</span></code> + <code class="docutils literal notranslate"><span class="pre">fix_unicode_mapper</span></code>)</p></li>
+<li><p>Check if operator parameters are set correctly</p></li>
+</ol>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="must-read-pitfalls">
+<h2>Must-Read Pitfalls<a class="headerlink" href="#must-read-pitfalls" title="Link to this heading">#</a></h2>
+<section id="parameter-name-is-intent-not-query">
+<h3>1. Parameter Name Is intent, Not query<a class="headerlink" href="#parameter-name-is-intent-not-query" title="Link to this heading">#</a></h3>
+<p><strong>Wrong</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;: &quot;clean HTML&quot;}&#39;</span>
+<span class="c1"># → input_validation_failed</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="do-not-guess-operator-names">
+<h3>2. Do Not Guess Operator Names<a class="headerlink" href="#do-not-guess-operator-names" title="Link to this heading">#</a></h3>
+<p>Retrieval results are the <strong>only source</strong>. Do not use operators from memory or guessing.</p>
+<p><strong>Wrong</strong>: Making up names</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;html_cleaner&quot;</span>,<span class="w"> </span>...<span class="o">}</span><span class="w">  </span><span class="c1"># Does not exist!</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong>: Select from retrieval results</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Retrieve first</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;, &quot;top_k&quot;: 5}&#39;</span>
+<span class="c1"># Select name from output</span>
+<span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;clean_html_mapper&quot;</span>,<span class="w"> </span>...<span class="o">}</span><span class="w">  </span><span class="c1"># From retrieval results</span>
+</pre></div>
+</div>
+</section>
+<section id="local-retrieval-needs-no-api-key">
+<h3>3. Local Retrieval Needs No API Key<a class="headerlink" href="#local-retrieval-needs-no-api-key" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> runs entirely locally. No cloud calls, no API key needed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;auto&quot;}&#39;</span>
+</pre></div>
+</div>
+<p>For API-backed semantic retrieval (outside harness), use <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;vector&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="ray-prefixed-operator-warning">
+<h2>Ray-Prefixed Operator Warning<a class="headerlink" href="#ray-prefixed-operator-warning" title="Link to this heading">#</a></h2>
+<p>Operators prefixed with <code class="docutils literal notranslate"><span class="pre">ray_</span></code> require a running Ray cluster. Use alternatives in single-machine environments:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Ray Operator</p></th>
+<th class="head"><p>Single-Machine Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ray_bts_minhash_deduplicator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">document_minhash_deduplicator</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ray_*</span></code></p></td>
+<td><p>Find non-ray versions or implement your own</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="typical-usage">
+<h2>Typical Usage<a class="headerlink" href="#typical-usage" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Standard local retrieval - describe all requirements at once</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;remove HTML tags, normalize whitespace, fix unicode encoding, filter text shorter than 50 characters, deduplicate documents&quot;,</span>
+<span class="s1">  &quot;top_k&quot;: 15</span>
+<span class="s1">}&#39;</span>
+
+<span class="c1"># Regex mode - when operator naming pattern is known</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;.*dedup.*&quot;, &quot;mode&quot;: &quot;regex&quot;}&#39;</span>
+
+<span class="c1"># BM25 mode - deterministic keyword matching</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;filter images by resolution&quot;, &quot;mode&quot;: &quot;bm25&quot;}&#39;</span>
+
+<span class="c1"># Inspect a specific operator&#39;s parameters</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operator_name&quot;: &quot;text_length_filter&quot;}&#39;</span>
+
+<span class="c1"># Browse catalog (fallback when retrieval is insufficient)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;op_type&quot;: &quot;filter&quot;, &quot;include_parameters&quot;: false, &quot;limit&quot;: 20}&#39;</span>
+
+<span class="c1"># Combined with dataset modality</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;filter images&quot;, &quot;dataset_path&quot;: &quot;/data/images.jsonl&quot;}&#39;</span>
+
+<span class="c1"># API-backed retrieval (full surface only, requires API key)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;clean HTML artifacts, normalize all whitespace, deduplicate documents&quot;,</span>
+<span class="s1">  &quot;top_k&quot;: 20</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="recommended-retrieval-pattern">
+<h2>Recommended Retrieval Pattern<a class="headerlink" href="#recommended-retrieval-pattern" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> with <code class="docutils literal notranslate"><span class="pre">mode=&quot;auto&quot;</span></code> for ordinary natural-language operator discovery.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">mode=&quot;bm25&quot;</span></code> when you want deterministic keyword retrieval.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">mode=&quot;regex&quot;</span></code> when the operator naming pattern is already known.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> does not return valid candidates, call <code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code> as a fallback.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code> cautiously: <code class="docutils literal notranslate"><span class="pre">include_parameters=true</span></code> is heavy. Prefer filtered calls (<code class="docutils literal notranslate"><span class="pre">op_type</span></code>, <code class="docutils literal notranslate"><span class="pre">tags</span></code>, <code class="docutils literal notranslate"><span class="pre">limit</span></code>).</p></li>
+<li><p>After selecting a candidate, call <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> before filling <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>.</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="skill-responsibilities">
+<h2>Skill Responsibilities<a class="headerlink" href="#skill-responsibilities" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Skill to Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Main flow</p></td>
+<td><p>data-juicer</p></td>
+</tr>
+<tr class="row-odd"><td><p>Search for operators</p></td>
+<td><p><strong>djx_retrieve (this skill)</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Authentication configuration</p></td>
+<td><p>djx_auth</p></td>
+</tr>
+<tr class="row-odd"><td><p>Local models</p></td>
+<td><p>djx_local_model</p></td>
+</tr>
+<tr class="row-even"><td><p>Build plan</p></td>
+<td><p>djx_plan</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-overview">Tool Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-concepts">Core Concepts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#command-format">Command Format</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input-schemas">Input Schemas</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-operators-local">retrieve_operators (local)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-operators-api-api">retrieve_operators_api (API)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-operator-info">get_operator_info</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#list-operator-catalog">list_operator_catalog</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieval-mode-comparison">Retrieval Mode Comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-operators-local-modes">retrieve_operators (local modes)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-operators-api-api-modes">retrieve_operators_api (API modes)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intent-writing-guide">Intent Writing Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-rule-describe-all-requirements-at-once">Key Rule: Describe All Requirements at Once</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#good-intents">Good Intents</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bad-intents">Bad Intents</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-functionality-keywords">Common Functionality Keywords</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-interpretation">Result Interpretation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieval-result-validation">Retrieval Result Validation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#must-read-pitfalls">Must-Read Pitfalls</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-name-is-intent-not-query">1. Parameter Name Is intent, Not query</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#do-not-guess-operator-names">2. Do Not Guess Operator Names</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local-retrieval-needs-no-api-key">3. Local Retrieval Needs No API Key</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ray-prefixed-operator-warning">Ray-Prefixed Operator Warning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-usage">Typical Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-retrieval-pattern">Recommended Retrieval Pattern</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#skill-responsibilities">Skill Responsibilities</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/skills/data-juicer-agents-harness-copaw-version/djx_retrieve/SKILL.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

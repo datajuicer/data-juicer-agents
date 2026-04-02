@@ -1,0 +1,1115 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer Skills: Plan (Plan Building) &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Skills: Plan (Plan Building)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-skills-plan-plan-building">
+<h1>Data-Juicer Skills: Plan (Plan Building)<a class="headerlink" href="#data-juicer-skills-plan-plan-building" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p><strong>Main flow</strong>: See the <code class="docutils literal notranslate"><span class="pre">data-juicer</span></code> skill. This skill provides detailed schemas for plan building tools.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Source</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>dataset_profile</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code> output</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>operators list</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>input/output paths</strong></p></td>
+<td><p>User-specified or default rules</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="core-concepts">
+<h2>Core Concepts<a class="headerlink" href="#core-concepts" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concept</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>dataset_spec</strong></p></td>
+<td><p>Dataset specification: input/output paths, field mapping, modality info</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>process_spec</strong></p></td>
+<td><p>Process specification: operator list and their parameters</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>system_spec</strong></p></td>
+<td><p>System specification: parallelism, custom operator paths</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>plan</strong></p></td>
+<td><p>Complete processing plan, assembled from the three specs above</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="data-flow">
+<h2>Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>inspect_dataset ─────────────────────────────────┐
+                                                  │
+retrieve_operators ──────────────────────────────┐│
+                                                 ││
+build_dataset_spec ◄─────────────────────────────┤│
+        │                                        ││
+        ▼                                        ││
+build_process_spec ◄─────────────────────────────┘│
+        │                                         │
+        ▼                                         │
+build_system_spec                                 │
+        │                                         │
+        ▼                                         │
+assemble_plan ◄───────────────────────────────────┘
+        │
+        ▼
+plan_save ──→ plan.yaml
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="build-dataset-spec">
+<h2>1. build_dataset_spec<a class="headerlink" href="#build-dataset-spec" title="Link to this heading">#</a></h2>
+<p>Build the dataset specification.</p>
+<section id="input-schema">
+<h3>Input Schema<a class="headerlink" href="#input-schema" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intent</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>Processing intent description</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>Input dataset path</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">export_path</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>Output dataset path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_profile</span></code></p></td>
+<td><p>dict</p></td>
+<td><p>Yes</p></td>
+<td><p>Complete output from <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="optional-hint-fields">
+<h3>Optional Hint Fields<a class="headerlink" href="#optional-hint-fields" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">modality_hint</span></code></p></td>
+<td><p>Data modality: text, image, audio, video, multimodal</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">text_keys_hint</span></code></p></td>
+<td><p>List of text field names</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">image_key_hint</span></code></p></td>
+<td><p>Image field name</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">audio_key_hint</span></code></p></td>
+<td><p>Audio field name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">video_key_hint</span></code></p></td>
+<td><p>Video field name</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="command">
+<h3>Command<a class="headerlink" href="#command" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;&lt;PROCESSING_GOAL&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_path&quot;: &quot;&lt;INPUT_PATH&gt;&quot;,</span>
+<span class="s1">  &quot;export_path&quot;: &quot;&lt;OUTPUT_PATH&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_profile&quot;: &lt;PASTE_FULL_INSPECT_OUTPUT&gt;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="build-process-spec">
+<h2>2. build_process_spec<a class="headerlink" href="#build-process-spec" title="Link to this heading">#</a></h2>
+<p>Build the process specification, defining the operator pipeline.</p>
+<section id="id1">
+<h3>Input Schema<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">operators</span></code></p></td>
+<td><p>list</p></td>
+<td><p>Yes</p></td>
+<td><p>Operator configuration list</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="operator-configuration-format">
+<h3>Operator Configuration Format<a class="headerlink" href="#operator-configuration-format" title="Link to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;OPERATOR_NAME&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
+</pre></div>
+</div>
+</section>
+<section id="ordering-rules">
+<h3>Ordering Rules<a class="headerlink" href="#ordering-rules" title="Link to this heading">#</a></h3>
+<p>Operators <strong>must</strong> be ordered as follows:</p>
+<ol class="arabic simple">
+<li><p><strong>Mappers</strong> — Transform data</p></li>
+<li><p><strong>Filters</strong> — Filter data</p></li>
+<li><p><strong>Deduplicators</strong> — Remove duplicates</p></li>
+</ol>
+</section>
+<section id="id2">
+<h3>Command<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;operators&quot;: [</span>
+<span class="s1">    {&quot;name&quot;: &quot;&lt;MAPPER&gt;&quot;, &quot;params&quot;: {}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;&lt;FILTER&gt;&quot;, &quot;params&quot;: {&quot;min_len&quot;: 100}},</span>
+<span class="s1">    {&quot;name&quot;: &quot;&lt;DEDUP&gt;&quot;, &quot;params&quot;: {}}</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="parameter-handling">
+<h3>Parameter Handling<a class="headerlink" href="#parameter-handling" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Parameters are clear</p></td>
+<td><p>Use specific values: <code class="docutils literal notranslate"><span class="pre">{&quot;min_len&quot;:</span> <span class="pre">100}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameters are uncertain</p></td>
+<td><p>Use empty object: <code class="docutils literal notranslate"><span class="pre">{}</span></code> (applies defaults)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="build-system-spec">
+<h2>3. build_system_spec<a class="headerlink" href="#build-system-spec" title="Link to this heading">#</a></h2>
+<p>Build the system specification, configuring the execution environment.</p>
+<section id="id3">
+<h3>Input Schema<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">custom_operator_paths</span></code></p></td>
+<td><p>list</p></td>
+<td><p>No</p></td>
+<td><p>List of custom operator directory paths</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id4">
+<h3>Command<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Most cases use empty input</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+
+<span class="c1"># With custom operators</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="assemble-plan">
+<h2>4. assemble_plan<a class="headerlink" href="#assemble-plan" title="Link to this heading">#</a></h2>
+<p>Assemble the complete plan.</p>
+<section id="id5">
+<h3>Input Schema<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intent</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>Processing intent</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_spec</span></code></p></td>
+<td><p>dict</p></td>
+<td><p>Yes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code> output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">process_spec</span></code></p></td>
+<td><p>dict</p></td>
+<td><p>Yes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code> output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">system_spec</span></code></p></td>
+<td><p>dict</p></td>
+<td><p>Yes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code> output</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id6">
+<h3>Command<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>assemble_plan<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;intent&quot;: &quot;&lt;PROCESSING_GOAL&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_spec&quot;: &lt;DATASET_SPEC&gt;,</span>
+<span class="s1">  &quot;process_spec&quot;: &lt;PROCESS_SPEC&gt;,</span>
+<span class="s1">  &quot;system_spec&quot;: &lt;SYSTEM_SPEC&gt;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="plan-save">
+<h2>5. plan_save<a class="headerlink" href="#plan-save" title="Link to this heading">#</a></h2>
+<p>Save the plan to a YAML file.</p>
+<section id="id7">
+<h3>Input Schema<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plan_payload</span></code></p></td>
+<td><p>dict</p></td>
+<td><p>Yes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assemble_plan</span></code> output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">output_path</span></code></p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+<td><p>Output YAML file path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>The parameter name is <code class="docutils literal notranslate"><span class="pre">output_path</span></code>, not <code class="docutils literal notranslate"><span class="pre">path</span></code></strong>. The <code class="docutils literal notranslate"><span class="pre">--yes</span></code> flag is required.</p>
+</div></blockquote>
+</section>
+<section id="id8">
+<h3>Command<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;plan_payload&quot;: &lt;PLAN_PAYLOAD&gt;,</span>
+<span class="s1">  &quot;output_path&quot;: &quot;.djx/plans/my_plan.yaml&quot;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="must-read-pitfalls">
+<h2>Must-Read Pitfalls<a class="headerlink" href="#must-read-pitfalls" title="Link to this heading">#</a></h2>
+<section id="plan-save-parameter-is-output-path">
+<h3>1. plan_save Parameter Is output_path<a class="headerlink" href="#plan-save-parameter-is-output-path" title="Link to this heading">#</a></h3>
+<p><strong>Wrong</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_payload&quot;: ..., &quot;path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Correct</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_payload&quot;: ..., &quot;output_path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="operator-names-must-come-from-retrieve-operators">
+<h3>2. Operator Names Must Come from retrieve_operators<a class="headerlink" href="#operator-names-must-come-from-retrieve-operators" title="Link to this heading">#</a></h3>
+<p>Do not guess or use operator names from memory.</p>
+</section>
+<section id="operators-must-be-ordered-by-type">
+<h3>3. Operators Must Be Ordered by Type<a class="headerlink" href="#operators-must-be-ordered-by-type" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correct order: Mapper → Filter → Deduplicator</span>
+<span class="o">[</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;clean_html_mapper&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span>,<span class="w">      </span><span class="c1"># Mapper</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;text_length_filter&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{</span>...<span class="o">}}</span>,<span class="w">  </span><span class="c1"># Filter</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;document_deduplicator&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span><span class="w">   </span><span class="c1"># Deduplicator</span>
+<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="dataset-profile-must-be-the-complete-output">
+<h3>4. dataset_profile Must Be the Complete Output<a class="headerlink" href="#dataset-profile-must-be-the-complete-output" title="Link to this heading">#</a></h3>
+<p>Paste the <strong>complete JSON output</strong> from <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code> — do not extract only partial fields.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Unknown operator name</p></td>
+<td><p>Verify it comes from <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> results</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter type mismatch</p></td>
+<td><p>Check the params definition in <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output</p></td>
+</tr>
+<tr class="row-even"><td><p>Missing dataset_profile</p></td>
+<td><p>Run <code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code> first</p></td>
+</tr>
+<tr class="row-odd"><td><p>plan_save blocks</p></td>
+<td><p>Add the <code class="docutils literal notranslate"><span class="pre">--yes</span></code> flag</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="skill-responsibilities">
+<h2>Skill Responsibilities<a class="headerlink" href="#skill-responsibilities" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Skill to Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Main flow</p></td>
+<td><p>data-juicer</p></td>
+</tr>
+<tr class="row-odd"><td><p>Search for operators</p></td>
+<td><p>djx_retrieve</p></td>
+</tr>
+<tr class="row-even"><td><p>Build spec/plan</p></td>
+<td><p><strong>djx_plan (this skill)</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Execute plan</p></td>
+<td><p>djx_apply</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-concepts">Core Concepts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow">Data Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-dataset-spec">1. build_dataset_spec</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-schema">Input Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-hint-fields">Optional Hint Fields</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command">Command</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-process-spec">2. build_process_spec</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Input Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operator-configuration-format">Operator Configuration Format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ordering-rules">Ordering Rules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Command</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-handling">Parameter Handling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-system-spec">3. build_system_spec</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Input Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Command</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assemble-plan">4. assemble_plan</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Input Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Command</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plan-save">5. plan_save</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Input Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Command</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#must-read-pitfalls">Must-Read Pitfalls</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plan-save-parameter-is-output-path">1. plan_save Parameter Is output_path</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operator-names-must-come-from-retrieve-operators">2. Operator Names Must Come from retrieve_operators</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-must-be-ordered-by-type">3. Operators Must Be Ordered by Type</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-profile-must-be-the-complete-output">4. dataset_profile Must Be the Complete Output</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#skill-responsibilities">Skill Responsibilities</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/skills/data-juicer-agents-harness-copaw-version/djx_plan/SKILL.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

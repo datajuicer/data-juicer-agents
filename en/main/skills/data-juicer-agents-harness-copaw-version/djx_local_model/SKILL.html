@@ -1,0 +1,950 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer Skills: Local Model Processing &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../_static/ask-ai-widget.js?v=bd1ac865"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../v0.0.2/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Skills: Local Model Processing</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-skills-local-model-processing">
+<h1>Data-Juicer Skills: Local Model Processing<a class="headerlink" href="#data-juicer-skills-local-model-processing" title="Link to this heading">#</a></h1>
+<p>Process <strong>sensitive or private data</strong> — all operations use local models; data never leaves the machine.</p>
+<hr class="docutils" />
+<section id="core-rule-use-djx-tool-only">
+<h2>Core Rule: Use djx tool Only<a class="headerlink" href="#core-rule-use-djx-tool-only" title="Link to this heading">#</a></h2>
+<p><strong>You must only use the <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> CLI</strong>. Do not use the session or cap modules.</p>
+</section>
+<hr class="docutils" />
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Requirement</p></th>
+<th class="head"><p>Verification Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Ollama installed</strong></p></td>
+<td><p>Installed and running</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ollama</span> <span class="pre">--version</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Model pulled</strong></p></td>
+<td><p>At least one model downloaded</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ollama</span> <span class="pre">list</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Service running</strong></p></td>
+<td><p>Ollama service is running</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">curl</span> <span class="pre">http://localhost:11434/v1/models</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="environment-configuration">
+<h2>Environment Configuration<a class="headerlink" href="#environment-configuration" title="Link to this heading">#</a></h2>
+<p>Route all LLM calls to local Ollama:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;http://localhost:11434/v1&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;ollama&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;false&quot;</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Reason for Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJA_OPENAI_BASE_URL</span></code></p></td>
+<td><p>Ollama’s OpenAI-compatible endpoint</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></td>
+<td><p>Placeholder — Ollama does not validate keys</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJA_SESSION_MODEL</span></code> / <code class="docutils literal notranslate"><span class="pre">DJA_PLANNER_MODEL</span></code></p></td>
+<td><p>Must match a pulled Ollama model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code> — local models do not support extended thinking</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="ollama-setup">
+<h2>Ollama Setup<a class="headerlink" href="#ollama-setup" title="Link to this heading">#</a></h2>
+<section id="start-service">
+<h3>Start Service<a class="headerlink" href="#start-service" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ollama<span class="w"> </span>serve<span class="w"> </span><span class="p">&amp;</span>
+</pre></div>
+</div>
+</section>
+<section id="pull-models">
+<h3>Pull Models<a class="headerlink" href="#pull-models" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lightweight — fast, low resources</span>
+ollama<span class="w"> </span>pull<span class="w"> </span>qwen3.5:0.8b
+
+<span class="c1"># Balanced — better quality</span>
+ollama<span class="w"> </span>pull<span class="w"> </span>qwen3.5:2b
+
+<span class="c1"># High quality — best results, more resources</span>
+ollama<span class="w"> </span>pull<span class="w"> </span>qwen3.5:4b
+</pre></div>
+</div>
+</section>
+<section id="verify">
+<h3>Verify<a class="headerlink" href="#verify" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># List pulled models</span>
+ollama<span class="w"> </span>list
+
+<span class="c1"># Test endpoint</span>
+curl<span class="w"> </span>http://localhost:11434/v1/models
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="model-selection-guide">
+<h2>Model Selection Guide<a class="headerlink" href="#model-selection-guide" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Hardware</p></th>
+<th class="head"><p>Recommended Model</p></th>
+<th class="head"><p>Memory Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>8GB RAM</p></td>
+<td><p>qwen3.5:0.8b</p></td>
+<td><p>~1GB</p></td>
+</tr>
+<tr class="row-odd"><td><p>16GB RAM</p></td>
+<td><p>qwen3.5:2b</p></td>
+<td><p>~2GB</p></td>
+</tr>
+<tr class="row-even"><td><p>32GB+ RAM</p></td>
+<td><p>qwen3.5:4b</p></td>
+<td><p>~4GB</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="local-processing-guide">
+<h2>Local Processing Guide<a class="headerlink" href="#local-processing-guide" title="Link to this heading">#</a></h2>
+<section id="fully-local-tools-no-llm-required">
+<h3>Fully Local Tools (No LLM Required)<a class="headerlink" href="#fully-local-tools-no-llm-required" title="Link to this heading">#</a></h3>
+<p>These tools run entirely locally:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code></p></td>
+<td><p>Dataset analysis</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code></p></td>
+<td><p>Spec validation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></td>
+<td><p>Spec building</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">apply_recipe</span></code></p></td>
+<td><p>Execution via <code class="docutils literal notranslate"><span class="pre">dj-process</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="local-operator-retrieval">
+<h3>Local Operator Retrieval<a class="headerlink" href="#local-operator-retrieval" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> runs entirely locally — no API key, no cloud calls:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;&lt;goal&gt;&quot;, &quot;top_k&quot;: 5}&#39;</span>
+</pre></div>
+</div>
+<p>After selecting a candidate, use <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> to inspect its parameter schema:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operator_name&quot;: &quot;&lt;operator_name&gt;&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="semantic-operators-using-local-models">
+<h3>Semantic Operators Using Local Models<a class="headerlink" href="#semantic-operators-using-local-models" title="Link to this heading">#</a></h3>
+<p>When the pipeline includes LLM-based operators, configure them to use the local endpoint.</p>
+<p>Operator parameters come from <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> output. If parameters are unclear, use empty <code class="docutils literal notranslate"><span class="pre">{}</span></code> — the operator will apply default values.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Connection</span> <span class="pre">refused</span></code></p></td>
+<td><p>Start Ollama: <code class="docutils literal notranslate"><span class="pre">ollama</span> <span class="pre">serve</span> <span class="pre">&amp;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">not</span> <span class="pre">found</span></code></p></td>
+<td><p>Pull the model: <code class="docutils literal notranslate"><span class="pre">ollama</span> <span class="pre">pull</span> <span class="pre">&lt;model&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Port conflict (11434 in use)</p></td>
+<td><p>Use a different port: <code class="docutils literal notranslate"><span class="pre">OLLAMA_HOST=0.0.0.0:11435</span> <span class="pre">ollama</span> <span class="pre">serve</span> <span class="pre">&amp;</span></code>, then update <code class="docutils literal notranslate"><span class="pre">DJA_OPENAI_BASE_URL</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJA_LLM_THINKING=true</span></code> error</p></td>
+<td><p>Set to <code class="docutils literal notranslate"><span class="pre">false</span></code> for all local models</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> mode 401 fallback</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> (already local, no API needed)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="must-read-pitfalls">
+<h2>Must-Read Pitfalls<a class="headerlink" href="#must-read-pitfalls" title="Link to this heading">#</a></h2>
+<section id="always-verify-ollama-is-running">
+<h3>1. Always Verify Ollama Is Running<a class="headerlink" href="#always-verify-ollama-is-running" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ollama<span class="w"> </span>list
+curl<span class="w"> </span>http://localhost:11434/v1/models
+</pre></div>
+</div>
+</section>
+<section id="retrieve-operators-is-already-local">
+<h3>2. retrieve_operators Is Already Local<a class="headerlink" href="#retrieve-operators-is-already-local" title="Link to this heading">#</a></h3>
+<p>No need to specify a special mode — <code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> runs entirely locally by default:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;auto&quot;}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="never-send-private-data-to-the-cloud">
+<h3>3. Never Send Private Data to the Cloud<a class="headerlink" href="#never-send-private-data-to-the-cloud" title="Link to this heading">#</a></h3>
+<p>Configure all semantic operators to use the local endpoint.</p>
+</section>
+<section id="test-with-small-samples-before-processing">
+<h3>4. Test with Small Samples Before Processing<a class="headerlink" href="#test-with-small-samples-before-processing" title="Link to this heading">#</a></h3>
+<p>Validate the pipeline with a small sample before processing the full dataset.</p>
+</section>
+<section id="pull-models-in-advance">
+<h3>5. Pull Models in Advance<a class="headerlink" href="#pull-models-in-advance" title="Link to this heading">#</a></h3>
+<p>Pull models before starting the workflow to avoid mid-process downloads.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="complete-local-workflow-example">
+<h2>Complete Local Workflow Example<a class="headerlink" href="#complete-local-workflow-example" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Start Ollama</span>
+ollama<span class="w"> </span>serve<span class="w"> </span><span class="p">&amp;</span>
+
+<span class="c1"># 2. Pull model (first time)</span>
+ollama<span class="w"> </span>pull<span class="w"> </span>qwen3.5:0.8b
+
+<span class="c1"># 3. Configure environment</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;http://localhost:11434/v1&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;ollama&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;false&quot;</span>
+
+<span class="c1"># 4. Verify</span>
+ollama<span class="w"> </span>list
+curl<span class="w"> </span>http://localhost:11434/v1/models
+
+<span class="c1"># 5. Inspect dataset</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/sensitive.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+
+<span class="c1"># 6. Retrieve operators locally (already local, no mode=vector needed)</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean and filter sensitive data&quot;, &quot;top_k&quot;: 10}&#39;</span>
+
+<span class="c1"># 7. Continue with main flow...</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="skill-responsibilities">
+<h2>Skill Responsibilities<a class="headerlink" href="#skill-responsibilities" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Skill to Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Configure API Key (cloud)</p></td>
+<td><p>djx_auth</p></td>
+</tr>
+<tr class="row-odd"><td><p>Configure local models</p></td>
+<td><p><strong>djx_local_model (this skill)</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Local operator retrieval</p></td>
+<td><p>djx_retrieve (retrieve_operators, already local)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Main flow</p></td>
+<td><p>data-juicer</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-rule-use-djx-tool-only">Core Rule: Use djx tool Only</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-configuration">Environment Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ollama-setup">Ollama Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#start-service">Start Service</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-models">Pull Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verify">Verify</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-selection-guide">Model Selection Guide</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-processing-guide">Local Processing Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fully-local-tools-no-llm-required">Fully Local Tools (No LLM Required)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local-operator-retrieval">Local Operator Retrieval</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#semantic-operators-using-local-models">Semantic Operators Using Local Models</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#must-read-pitfalls">Must-Read Pitfalls</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#always-verify-ollama-is-running">1. Always Verify Ollama Is Running</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-operators-is-already-local">2. retrieve_operators Is Already Local</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#never-send-private-data-to-the-cloud">3. Never Send Private Data to the Cloud</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-with-small-samples-before-processing">4. Test with Small Samples Before Processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-models-in-advance">5. Pull Models in Advance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-local-workflow-example">Complete Local Workflow Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#skill-responsibilities">Skill Responsibilities</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/skills/data-juicer-agents-harness-copaw-version/djx_local_model/SKILL.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
