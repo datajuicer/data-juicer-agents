@@ -225,10 +225,11 @@ class ApplyUseCase:
                 stdout = "dry-run: command not executed"
                 stderr = ""
         else:
-            stdout_f = tempfile.TemporaryFile(mode="w+")
-            stderr_f = tempfile.TemporaryFile(mode="w+")
-            proc: subprocess.Popen | None = None
+            returncode, stdout, stderr = 1, "", ""
+            stdout_f, stderr_f, proc = None, None, None
             try:
+                stdout_f = tempfile.TemporaryFile(mode="w+")
+                stderr_f = tempfile.TemporaryFile(mode="w+")
                 proc = subprocess.Popen(
                     command_args,
                     shell=False,
@@ -273,12 +274,6 @@ class ApplyUseCase:
                     stderr_f.seek(0)
                     stdout = stdout_f.read()
                     stderr = stderr_f.read()
-            except subprocess.TimeoutExpired as exc:
-                if proc is not None:
-                    _terminate_process_gracefully(proc)
-                returncode = 124
-                stdout = str(exc.stdout or "")
-                stderr = str(exc.stderr or "") + f"\nTimeout after {timeout_seconds}s"
             except Exception as exc:
                 _logger.debug("Subprocess execution failed: %s", exc)
                 if proc is not None:
@@ -288,11 +283,13 @@ class ApplyUseCase:
                 stderr = f"Execution failed: {exc}"
             finally:
                 try:
-                    stdout_f.close()
+                    if stdout_f is not None:
+                        stdout_f.close()
                 except Exception:
                     pass
                 try:
-                    stderr_f.close()
+                    if stderr_f is not None:
+                        stderr_f.close()
                 except Exception:
                     pass
 
