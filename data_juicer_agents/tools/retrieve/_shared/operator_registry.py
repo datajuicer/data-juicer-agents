@@ -3,11 +3,14 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from difflib import get_close_matches
 from functools import lru_cache
 from typing import Dict, Iterable, Optional, Set
 
+
+_logger = logging.getLogger(__name__)
 
 _NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
 
@@ -32,7 +35,8 @@ def get_available_operator_names() -> Set[str]:
             for item in info
             if isinstance(item, dict) and str(item.get("class_name", "")).strip()
         }
-    except Exception:
+    except Exception as exc:
+        _logger.debug("get_available_operator_names failed: %s", exc)
         return set()
 
 

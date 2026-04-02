@@ -2,11 +2,15 @@
 """Shared system-spec helpers for plan tools."""
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any, Dict, Iterable, List, Tuple
 
 from .normalize import normalize_string_list
 from .schema import SystemSpec
+
+
+_logger = logging.getLogger(__name__)
 
 
 def normalize_system_spec(
@@ -49,7 +53,8 @@ def normalize_system_spec(
         coerce_errors = extra_errors + core_errors
         if coerce_errors:
             spec.warnings.extend(f"[type coercion] {err}" for err in coerce_errors)
-    except Exception:
+    except Exception as exc:
+        _logger.debug("coerce_fields failed: %s", exc)
         pass  # bridge unavailable — skip coercion
 
     # --- Auto-corrections (mirrors DJ init_setup_from_cfg) ----------------
@@ -115,7 +120,8 @@ def validate_system_spec_payload(
 
         if not is_valid:
             errors.extend(dj_errors)
-    except Exception:
+    except Exception as exc:
+        _logger.debug("DJ validation failed: %s", exc)
         pass
 
     # --- Semantic validation (mirrors DJ init_setup_from_cfg) -------------
@@ -135,7 +141,8 @@ def validate_system_spec_payload(
                         f"fusion_strategy '{fusion_strategy}' is not supported; "
                         f"must be one of {sorted(FUSION_STRATEGIES)}"
                     )
-            except Exception:
+            except Exception as exc:
+                _logger.debug("FUSION_STRATEGIES check failed: %s", exc)
                 pass  # DJ unavailable — skip check
 
     # work_dir: {job_id} placeholder must be the last path component

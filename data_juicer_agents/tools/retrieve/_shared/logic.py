@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import logging
 import re
 import threading
 from typing import Any, Dict, List
@@ -14,6 +15,8 @@ from .operator_registry import (
     resolve_operator_name,
 )
 from .backend.result_builder import trace_step
+
+_logger = logging.getLogger(__name__)
 
 _WORD_RE = re.compile(r"[a-zA-Z0-9_]+")
 _OP_TYPES = {
@@ -40,7 +43,8 @@ def _load_op_retrieval_funcs():
         )
 
         return get_op_catalog, init_op_catalog, retrieve_ops, retrieve_ops_with_meta
-    except Exception:
+    except Exception as exc:
+        _logger.debug("load_op_retrieval_funcs failed: %s", exc)
         return None
 
 
@@ -147,6 +151,7 @@ def _safe_async_retrieve(
                     )
                 )
             except Exception as exc:
+                _logger.debug("worker thread error: %s", exc)
                 payload["error"] = exc
             finally:
                 loop.close()
@@ -168,6 +173,7 @@ def _safe_async_retrieve(
             )
         )
     except Exception as exc:
+        _logger.debug("async retrieve failed: %s", exc)
         return {
             "names": [],
             "source": "",
@@ -262,7 +268,8 @@ def _infer_tags_from_dataset(dataset_path: str) -> List[str]:
             return []
         modality = str(result.get("modality", "")).strip().lower()
         return list(_MODALITY_TAG_MAP.get(modality, []))
-    except Exception:
+    except Exception as exc:
+        _logger.debug("infer_tags_from_dataset failed for %s: %s", dataset_path, exc)
         return []
 
 
@@ -296,7 +303,8 @@ def _prepare_retrieval_inputs(
                 for item in get_op_catalog()
                 if isinstance(item, dict) and str(item.get("class_name", "")).strip()
             ]
-        except Exception:
+        except Exception as exc:
+            _logger.debug("get_op_catalog failed: %s", exc)
             info_rows = []
 
     return {
@@ -627,6 +635,7 @@ def list_operator_catalog(
     try:
         from .backend.catalog import searcher
     except Exception as exc:
+        _logger.debug("catalog import failed: %s", exc)
         return {
             "ok": False,
             "message": f"operator catalog unavailable: {exc}",
@@ -703,6 +712,7 @@ def get_operator_info(operator_name: str) -> Dict[str, Any]:
     try:
         from .backend.catalog import searcher
     except Exception as exc:
+        _logger.debug("catalog import failed: %s", exc)
         return {
             "ok": False,
             "requested_name": raw_name,
