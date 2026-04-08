@@ -12,6 +12,29 @@ from data_juicer_agents.capabilities.plan.service import PlanOrchestrator
 from data_juicer_agents.commands.output_control import emit, emit_json, enabled
 
 
+def _parse_json_object_arg(raw_value: Any, *, arg_name: str) -> tuple[Dict[str, Any] | None, Dict[str, Any] | None]:
+    import json as _json
+
+    raw_text = str(raw_value or "").strip()
+    if not raw_text:
+        return None, None
+    try:
+        parsed = _json.loads(raw_text)
+    except _json.JSONDecodeError as exc:
+        return None, _error_result(
+            f"{arg_name} is not valid JSON: {exc}",
+            error_type="invalid_input",
+            stage="input_validation",
+        )
+    if not isinstance(parsed, dict):
+        return None, _error_result(
+            f"{arg_name} must be a JSON object.",
+            error_type="invalid_input",
+            stage="input_validation",
+        )
+    return parsed, None
+
+
 def _error_result(
     message: str,
     *,
@@ -29,52 +52,22 @@ def _error_result(
 
 
 def execute_plan(args) -> Dict[str, Any]:
-    import json as _json
-
     dataset_path = str(getattr(args, "dataset", "") or "").strip()
     export_path = str(getattr(args, "export", "") or "").strip()
 
-    # Parse complex dataset config from JSON string
-    dataset_config_raw = str(getattr(args, "dataset_config", "") or "").strip()
-    dataset_config: Dict[str, Any] | None = None
-    if dataset_config_raw:
-        try:
-            parsed = _json.loads(dataset_config_raw)
-            if isinstance(parsed, dict):
-                dataset_config = parsed
-            else:
-                return _error_result(
-                    "--dataset-config must be a JSON object.",
-                    error_type="invalid_input",
-                    stage="input_validation",
-                )
-        except _json.JSONDecodeError as exc:
-            return _error_result(
-                f"--dataset-config is not valid JSON: {exc}",
-                error_type="invalid_input",
-                stage="input_validation",
-            )
+    dataset_config, parse_error = _parse_json_object_arg(
+        getattr(args, "dataset_config", None),
+        arg_name="--dataset-config",
+    )
+    if parse_error:
+        return parse_error
 
-    # Parse generated dataset config from JSON string
-    gen_config_raw = str(getattr(args, "generated_dataset_config", "") or "").strip()
-    generated_dataset_config: Dict[str, Any] | None = None
-    if gen_config_raw:
-        try:
-            parsed = _json.loads(gen_config_raw)
-            if isinstance(parsed, dict):
-                generated_dataset_config = parsed
-            else:
-                return _error_result(
-                    "--generated-dataset-config must be a JSON object.",
-                    error_type="invalid_input",
-                    stage="input_validation",
-                )
-        except _json.JSONDecodeError as exc:
-            return _error_result(
-                f"--generated-dataset-config is not valid JSON: {exc}",
-                error_type="invalid_input",
-                stage="input_validation",
-            )
+    generated_dataset_config, parse_error = _parse_json_object_arg(
+        getattr(args, "generated_dataset_config", None),
+        arg_name="--generated-dataset-config",
+    )
+    if parse_error:
+        return parse_error
 
     # At least one dataset source is required
     has_source = bool(dataset_path) or bool(dataset_config) or bool(generated_dataset_config)

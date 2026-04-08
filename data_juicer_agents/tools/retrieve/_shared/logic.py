@@ -281,11 +281,14 @@ def _prepare_retrieval_inputs(
     top_k: int,
     tags: list | None = None,
     dataset_path: str | None = None,
+    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     requested_tags = [str(tag).strip() for tag in (tags or []) if str(tag).strip()]
     inferred_tags: List[str] = []
     if dataset_path:
-        inferred_tags = _infer_tags_from_dataset(dataset_path)
+        inferred_tags = _infer_tags_from_dataset(dataset_path=dataset_path, dataset=None)
+    elif dataset:
+        inferred_tags = _infer_tags_from_dataset(dataset_path="", dataset=dataset)
 
     effective_tags = list(requested_tags)
     for tag in inferred_tags:
@@ -440,6 +443,7 @@ def retrieve_operator_candidates(
     op_type: str | None = None,
     tags: list | None = None,
     dataset_path: str | None = None,
+    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     """Retrieve operators and return a structured payload for CLI/agent usage.
 
@@ -454,8 +458,15 @@ def retrieve_operator_candidates(
         dataset_path: Optional dataset path; when provided, the dataset modality
                       is probed via ``inspect_dataset_schema`` and the inferred
                       tags are merged with any explicit *tags*.
+        dataset: Optional structured dataset config (``{"configs": [...]}``).
+                 Used for modality probing when *dataset_path* is not provided.
     """
-    prepared = _prepare_retrieval_inputs(top_k=top_k, tags=tags, dataset_path=dataset_path)
+    prepared = _prepare_retrieval_inputs(
+        top_k=top_k,
+        tags=tags,
+        dataset_path=dataset_path,
+        dataset=dataset,
+    )
     effective_tags = prepared["effective_tags"] or None
     retrieve_meta = _safe_async_retrieve(
         intent,
@@ -486,6 +497,7 @@ def retrieve_operator_candidates_local(
     op_type: str | None = None,
     tags: list | None = None,
     dataset_path: str | None = None,
+    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     normalized_mode = str(mode or "auto").strip().lower() or "auto"
     if normalized_mode not in _LOCAL_RETRIEVAL_MODES:
@@ -493,7 +505,12 @@ def retrieve_operator_candidates_local(
             f"invalid local retrieval mode: {mode!r}; expected one of {sorted(_LOCAL_RETRIEVAL_MODES)}"
         )
 
-    prepared = _prepare_retrieval_inputs(top_k=top_k, tags=tags, dataset_path=dataset_path)
+    prepared = _prepare_retrieval_inputs(
+        top_k=top_k,
+        tags=tags,
+        dataset_path=dataset_path,
+        dataset=dataset,
+    )
     effective_tags = prepared["effective_tags"] or None
     effective_mode = normalized_mode
     if normalized_mode == "auto":
@@ -528,6 +545,7 @@ def retrieve_operator_candidates_api(
     op_type: str | None = None,
     tags: list | None = None,
     dataset_path: str | None = None,
+    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     normalized_mode = str(mode or "auto").strip().lower() or "auto"
     if normalized_mode not in _API_RETRIEVAL_MODES:
@@ -535,7 +553,12 @@ def retrieve_operator_candidates_api(
             f"invalid api retrieval mode: {mode!r}; expected one of {sorted(_API_RETRIEVAL_MODES)}"
         )
 
-    prepared = _prepare_retrieval_inputs(top_k=top_k, tags=tags, dataset_path=dataset_path)
+    prepared = _prepare_retrieval_inputs(
+        top_k=top_k,
+        tags=tags,
+        dataset_path=dataset_path,
+        dataset=dataset,
+    )
     effective_tags = prepared["effective_tags"] or None
 
     if normalized_mode == "auto":

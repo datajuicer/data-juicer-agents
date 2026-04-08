@@ -57,6 +57,7 @@ class PlanOrchestrator:
         *,
         user_intent: str,
         dataset_path: str,
+        dataset: Dict[str, Any] | None = None,
         top_k: int = 5,
         mode: str = "auto",
         retrieved_candidates: Dict[str, Any] | None = None,
@@ -69,6 +70,7 @@ class PlanOrchestrator:
             top_k=top_k,
             mode=mode,
             dataset_path=dataset_path or None,
+            dataset=dataset,
         )
 
     def generate_plan(
@@ -87,6 +89,7 @@ class PlanOrchestrator:
         retrieval = self._resolve_retrieval(
             user_intent=user_intent,
             dataset_path=dataset_path,
+            dataset=dataset,
             top_k=retrieval_top_k,
             mode=retrieval_mode,
             retrieved_candidates=retrieved_candidates,

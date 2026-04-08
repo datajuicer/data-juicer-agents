@@ -191,6 +191,52 @@ def test_retrieval_service_normalization_empty_updates_lexical_source(monkeypatc
     assert "document_deduplicator" in names
 
 
+def test_prepare_retrieval_inputs_uses_dataset_config_when_dataset_path_missing(monkeypatch):
+    from data_juicer_agents.tools.retrieve._shared import logic as svc
+
+    captured: dict = {}
+
+    def _fake_infer(dataset_path: str, dataset: dict | None = None):
+        captured["dataset_path"] = dataset_path
+        captured["dataset"] = dataset
+        return ["image"]
+
+    monkeypatch.setattr(svc, "_load_op_retrieval_funcs", lambda: None)
+    monkeypatch.setattr(svc, "_infer_tags_from_dataset", _fake_infer)
+
+    dataset = {"configs": [{"type": "local", "path": "/tmp/sample.jsonl"}]}
+    prepared = svc._prepare_retrieval_inputs(top_k=5, tags=["cpu"], dataset=dataset)
+
+    assert captured["dataset_path"] == ""
+    assert captured["dataset"] == dataset
+    assert prepared["inferred_tags"] == ["image"]
+    assert prepared["effective_tags"] == ["cpu", "image"]
+
+
+def test_prepare_retrieval_inputs_prefers_dataset_path_when_both_sources_exist(monkeypatch):
+    from data_juicer_agents.tools.retrieve._shared import logic as svc
+
+    captured: dict = {}
+
+    def _fake_infer(dataset_path: str, dataset: dict | None = None):
+        captured["dataset_path"] = dataset_path
+        captured["dataset"] = dataset
+        return ["text"]
+
+    monkeypatch.setattr(svc, "_load_op_retrieval_funcs", lambda: None)
+    monkeypatch.setattr(svc, "_infer_tags_from_dataset", _fake_infer)
+
+    prepared = svc._prepare_retrieval_inputs(
+        top_k=5,
+        dataset_path="/tmp/primary.jsonl",
+        dataset={"configs": [{"type": "local", "path": "/tmp/secondary.jsonl"}]},
+    )
+
+    assert captured["dataset_path"] == "/tmp/primary.jsonl"
+    assert captured["dataset"] is None
+    assert prepared["inferred_tags"] == ["text"]
+
+
 def test_retrieve_operator_candidates_local_auto_uses_regex_for_regex_like_query():
     payload = retrieve_operator_candidates_local(
         intent="^text_length.*",

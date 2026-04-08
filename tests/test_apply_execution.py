@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import yaml
 
 from data_juicer_agents.adapters.agentscope import invoke_tool_spec
+from data_juicer_agents.commands.apply_cmd import _format_dataset_source
 from data_juicer_agents.commands.apply_cmd import run_apply
 from data_juicer_agents.core.tool import ToolContext, build_default_tool_registry
 from data_juicer_agents.tools.apply import ApplyUseCase
@@ -139,3 +140,15 @@ def test_apply_recipe_failure_payload_includes_failure_preview(tmp_path: Path):
     assert result["error_type"] == "plan_not_found"
     assert "failure_preview" in result
     assert "failed to load plan file" in result["failure_preview"]
+
+
+def test_format_dataset_source_prefers_dataset_path_over_dataset_config():
+    recipe = {
+        "dataset_path": "/tmp/primary.jsonl",
+        "dataset": {
+            "configs": [
+                {"type": "local", "path": "/tmp/secondary.jsonl"},
+            ],
+        },
+    }
+    assert _format_dataset_source(recipe) == "local: /tmp/primary.jsonl"

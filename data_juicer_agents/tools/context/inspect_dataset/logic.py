@@ -222,24 +222,6 @@ def inspect_dataset_schema(
             "message": "No dataset source provided.",
         }
 
-    if _looks_like_unsupported_source(inspectable_path):
-        return {
-            "ok": False,
-            "error_type": "unsupported_input_source",
-            "error": (
-                f"inspect_dataset only supports local file paths. "
-                f"The provided path '{inspectable_path}' looks like a remote or non-local source "
-                f"which is not supported. Please download the dataset to a local path first, "
-                f"then call inspect_dataset with the local file path."
-            ),
-            "message": (
-                f"inspect_dataset does not support remote or non-local input sources. "
-                f"'{inspectable_path}' appears to be a URL or cloud storage path. "
-                f"Download it locally and retry."
-            ),
-            "dataset": resolved_config,
-        }
-
     path = Path(inspectable_path)
     if not path.exists():
         return {
