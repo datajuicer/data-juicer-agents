@@ -109,8 +109,8 @@ def _dataset_source_priority_warning(source_count: int) -> str | None:
     if source_count <= 1:
         return None
     return (
-        "multiple dataset sources are present; current implementation is local-path-first and will "
-        "follow Data-Juicer source priority generated_dataset_config > dataset_path > dataset"
+        "multiple dataset sources are present; "
+        "effective priority: generated_dataset_config > dataset (multi-source config) > dataset_path"
     )
 
 

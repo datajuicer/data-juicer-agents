@@ -285,10 +285,11 @@ def _prepare_retrieval_inputs(
 ) -> Dict[str, Any]:
     requested_tags = [str(tag).strip() for tag in (tags or []) if str(tag).strip()]
     inferred_tags: List[str] = []
-    if dataset_path:
-        inferred_tags = _infer_tags_from_dataset(dataset_path=dataset_path, dataset=None)
-    elif dataset:
+    # Priority: dataset (multi-source config) > dataset_path (plain path)
+    if dataset:
         inferred_tags = _infer_tags_from_dataset(dataset_path="", dataset=dataset)
+    elif dataset_path:
+        inferred_tags = _infer_tags_from_dataset(dataset_path=dataset_path, dataset=None)
 
     effective_tags = list(requested_tags)
     for tag in inferred_tags:

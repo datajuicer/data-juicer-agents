@@ -15,16 +15,12 @@ def _format_dataset_source(recipe: dict) -> str:
     """Build a human-readable dataset source summary from the recipe block.
 
     Priority follows Data-Juicer convention:
-      generated_dataset_config > dataset_path > dataset (multi-source config)
+      generated_dataset_config > dataset (multi-source config) > dataset_path
     """
     generated_cfg = recipe.get("generated_dataset_config")
     if isinstance(generated_cfg, dict):
         formatter_type = str(generated_cfg.get("type", "unknown")).strip()
         return f"generated ({formatter_type})"
-
-    dataset_path = str(recipe.get("dataset_path", "")).strip()
-    if dataset_path:
-        return f"local: {dataset_path}"
 
     dataset_obj = recipe.get("dataset")
     if isinstance(dataset_obj, dict):
@@ -40,6 +36,10 @@ def _format_dataset_source(recipe: dict) -> str:
             entry = f"{src_type}: {src_path}" if src_path else src_type
             parts.append(entry)
         return ", ".join(parts) if parts else "(empty config)"
+
+    dataset_path = str(recipe.get("dataset_path", "")).strip()
+    if dataset_path:
+        return f"local: {dataset_path}"
 
     return "(none)"
 

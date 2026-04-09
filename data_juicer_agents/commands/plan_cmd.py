@@ -79,6 +79,22 @@ def execute_plan(args) -> Dict[str, Any]:
             stage="input_validation",
         )
 
+    # Warn when multiple sources are provided so users understand which one wins.
+    # Priority: generated_dataset_config > dataset-config (multi-source) > dataset (plain path)
+    active_sources = sum([
+        bool(generated_dataset_config),
+        bool(dataset_config),
+        bool(dataset_path),
+    ])
+    if active_sources > 1:
+        import logging as _logging
+        _logging.warning(
+            "Multiple dataset sources provided (%d). "
+            "Effective priority: --generated-dataset-config > --dataset-config > --dataset. "
+            "Only the highest-priority source will be used; lower-priority sources are ignored.",
+            active_sources,
+        )
+
     custom_operator_paths = list(getattr(args, "custom_operator_paths", []) or [])
     orchestrator = PlanOrchestrator(
         planner_model_name=getattr(args, "planner_model", None),

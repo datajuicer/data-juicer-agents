@@ -154,8 +154,12 @@ def _resolve_dataset_config(
 ) -> Dict[str, Any]:
     """Merge dataset_path and dataset into a single standard dataset config.
 
-    Priority: explicit *dataset* config wins; *dataset_path* is converted to
-    the standard format as a fallback.
+    Priority matches the runtime execution convention used across all consumers:
+      generated_dataset_config > dataset (multi-source config) > dataset_path
+
+    A structured *dataset* config wins over a plain *dataset_path* because it
+    carries richer multi-source information.  *dataset_path* is converted to
+    the standard format as the lowest-priority fallback.
     """
     if dataset and isinstance(dataset, dict):
         return dict(dataset)

@@ -94,11 +94,19 @@ class PlanOrchestrator:
             mode=retrieval_mode,
             retrieved_candidates=retrieved_candidates,
         )
-        dataset_profile = inspect_dataset_schema(
-            dataset_path=dataset_path,
-            sample_size=20,
-            dataset=dataset,
-        ) if (dataset_path or dataset) else {}
+        # Skip schema probing when a generated dataset is the effective runtime
+        # source (highest priority).  Probing a lower-priority dataset_path/dataset
+        # would imprint the wrong modality and key bindings into the final plan.
+        if generated_dataset_config:
+            dataset_profile: Dict[str, Any] = {}
+        elif dataset_path or dataset:
+            dataset_profile = inspect_dataset_schema(
+                dataset_path=dataset_path,
+                sample_size=20,
+                dataset=dataset,
+            )
+        else:
+            dataset_profile = {}
 
         dataset_result = build_dataset_spec(
             user_intent=user_intent,
