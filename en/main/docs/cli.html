@@ -637,12 +637,15 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <p>Key options:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code>: output plan path (default: <code class="docutils literal notranslate"><span class="pre">plans/&lt;plan_id&gt;.yaml</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code>: JSON string for complex multi-source dataset config (mixed sources, per-source weights, <code class="docutils literal notranslate"><span class="pre">max_sample_num</span></code>); use instead of <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> for advanced loading strategies discovered via <code class="docutils literal notranslate"><span class="pre">list_dataset_load_strategies</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code>: JSON string for dynamically generated datasets via Data-Juicer formatters; must contain a <code class="docutils literal notranslate"><span class="pre">type</span></code> key matching a registered formatter name discovered via <code class="docutils literal notranslate"><span class="pre">list_dataset_formatters</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--custom-operator-paths</span></code>: custom operator dirs/files used for validation and later execution</p></li>
 </ul>
+<p>At least one dataset source must be provided: <code class="docutils literal notranslate"><span class="pre">--dataset</span></code>, <code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code>, or <code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code>.</p>
 <p>Behavior:</p>
 <ol class="arabic simple">
 <li><p>internally retrieves operator candidates from the intent and optional dataset-derived modality signals</p></li>
-<li><p>builds a deterministic dataset spec from dataset IO and profile signals</p></li>
+<li><p>builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)</p></li>
 <li><p>calls the model once to generate only the operator list for the process spec</p></li>
 <li><p>builds the process spec, builds the system spec, and assembles the final plan</p></li>
 <li><p>validates the final plan and writes the plan YAML</p></li>

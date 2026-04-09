@@ -39,11 +39,15 @@ djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
 
 Key options:
 - `--output`: output plan path (default: `plans/<plan_id>.yaml`)
+- `--dataset-config`: JSON string for complex multi-source dataset config (mixed sources, per-source weights, `max_sample_num`); use instead of `--dataset` for advanced loading strategies discovered via `list_dataset_load_strategies`
+- `--generated-dataset-config`: JSON string for dynamically generated datasets via Data-Juicer formatters; must contain a `type` key matching a registered formatter name discovered via `list_dataset_formatters`
 - `--custom-operator-paths`: custom operator dirs/files used for validation and later execution
+
+At least one dataset source must be provided: `--dataset`, `--dataset-config`, or `--generated-dataset-config`.
 
 Behavior:
 1. internally retrieves operator candidates from the intent and optional dataset-derived modality signals
-2. builds a deterministic dataset spec from dataset IO and profile signals
+2. builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)
 3. calls the model once to generate only the operator list for the process spec
 4. builds the process spec, builds the system spec, and assembles the final plan
 5. validates the final plan and writes the plan YAML

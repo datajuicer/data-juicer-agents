@@ -640,8 +640,8 @@
     <span class="k">if</span> <span class="n">source_count</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="s2">&quot;multiple dataset sources are present; current implementation is local-path-first and will &quot;</span>
-        <span class="s2">&quot;follow Data-Juicer source priority generated_dataset_config &gt; dataset_path &gt; dataset&quot;</span>
+        <span class="s2">&quot;multiple dataset sources are present; &quot;</span>
+        <span class="s2">&quot;effective priority: generated_dataset_config &gt; dataset (multi-source config) &gt; dataset_path&quot;</span>
     <span class="p">)</span>
 
 

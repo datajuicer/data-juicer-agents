@@ -641,12 +641,15 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <p>关键参数：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code>：计划输出路径（默认 <code class="docutils literal notranslate"><span class="pre">plans/&lt;plan_id&gt;.yaml</span></code>）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code>：JSON 字符串，用于复杂多源数据集配置（混合数据源、按源权重、<code class="docutils literal notranslate"><span class="pre">max_sample_num</span></code>）；当需要使用 <code class="docutils literal notranslate"><span class="pre">list_dataset_load_strategies</span></code> 发现的高级加载策略时，用此参数代替 <code class="docutils literal notranslate"><span class="pre">--dataset</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code>：JSON 字符串，用于通过 Data-Juicer formatter 动态生成数据集；必须包含 <code class="docutils literal notranslate"><span class="pre">type</span></code> 键，值为通过 <code class="docutils literal notranslate"><span class="pre">list_dataset_formatters</span></code> 发现的已注册 formatter 名称</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--custom-operator-paths</span></code>：校验和后续执行时可用的自定义算子目录或文件</p></li>
 </ul>
+<p>至少需要提供一个数据集来源：<code class="docutils literal notranslate"><span class="pre">--dataset</span></code>、<code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code>。</p>
 <p>执行行为：</p>
 <ol class="arabic simple">
 <li><p>内部先根据 intent 和可选数据集模态信号做算子检索</p></li>
-<li><p>根据数据集 IO 和画像信息构建确定性的 dataset spec</p></li>
+<li><p>根据数据集 IO 和画像信息构建确定性的 dataset spec（支持简单路径、多源配置和动态 formatter 配置）</p></li>
 <li><p>调用模型只生成 process spec 所需的 operator list</p></li>
 <li><p>依次构建 process spec、system spec，并 assemble 为最终 plan</p></li>
 <li><p>校验最终 plan，并将 plan 以 YAML 落盘</p></li>

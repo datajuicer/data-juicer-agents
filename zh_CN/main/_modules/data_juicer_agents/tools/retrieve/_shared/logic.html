@@ -785,9 +785,13 @@
     <span class="s2">&quot;video&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">],</span>
 <span class="p">}</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_infer_tags_from_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probe *dataset_path* and return modality tags inferred from its schema.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_infer_tags_from_dataset</span><span class="p">(</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probe dataset and return modality tags inferred from its schema.</span>
 
+<span class="sd">    Accepts either a plain *dataset_path* or a structured *dataset* config.</span>
 <span class="sd">    Returns an empty list when the dataset cannot be inspected or the modality</span>
 <span class="sd">    is unknown, so the caller can fall back to unfiltered retrieval.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -795,7 +799,7 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.context.inspect_dataset.logic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
             <span class="n">inspect_dataset_schema</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">inspect_dataset_schema</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">inspect_dataset_schema</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[]</span>
         <span class="n">modality</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -809,11 +813,15 @@
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">requested_tags</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">(</span><span class="n">tags</span> <span class="ow">or</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
     <span class="n">inferred_tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">dataset_path</span><span class="p">:</span>
-        <span class="n">inferred_tags</span> <span class="o">=</span> <span class="n">_infer_tags_from_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="c1"># Priority: dataset (multi-source config) &gt; dataset_path (plain path)</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">inferred_tags</span> <span class="o">=</span> <span class="n">_infer_tags_from_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dataset_path</span><span class="p">:</span>
+        <span class="n">inferred_tags</span> <span class="o">=</span> <span class="n">_infer_tags_from_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">effective_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">requested_tags</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">inferred_tags</span><span class="p">:</span>
@@ -970,6 +978,7 @@
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve operators and return a structured payload for CLI/agent usage.</span>
 
@@ -984,8 +993,15 @@
 <span class="sd">        dataset_path: Optional dataset path; when provided, the dataset modality</span>
 <span class="sd">                      is probed via ``inspect_dataset_schema`` and the inferred</span>
 <span class="sd">                      tags are merged with any explicit *tags*.</span>
+<span class="sd">        dataset: Optional structured dataset config (``{&quot;configs&quot;: [...]}``).</span>
+<span class="sd">                 Used for modality probing when *dataset_path* is not provided.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span>
+        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+        <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">effective_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
     <span class="n">retrieve_meta</span> <span class="o">=</span> <span class="n">_safe_async_retrieve</span><span class="p">(</span>
         <span class="n">intent</span><span class="p">,</span>
@@ -1019,6 +1035,7 @@
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">normalized_mode</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span>
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_LOCAL_RETRIEVAL_MODES</span><span class="p">:</span>
@@ -1026,7 +1043,12 @@
             <span class="sa">f</span><span class="s2">&quot;invalid local retrieval mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">; expected one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_LOCAL_RETRIEVAL_MODES</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span>
+        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+        <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">effective_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
     <span class="n">effective_mode</span> <span class="o">=</span> <span class="n">normalized_mode</span>
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
@@ -1064,6 +1086,7 @@
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">normalized_mode</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span>
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_API_RETRIEVAL_MODES</span><span class="p">:</span>
@@ -1071,7 +1094,12 @@
             <span class="sa">f</span><span class="s2">&quot;invalid api retrieval mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">; expected one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_API_RETRIEVAL_MODES</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span>
+        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+        <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">effective_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>

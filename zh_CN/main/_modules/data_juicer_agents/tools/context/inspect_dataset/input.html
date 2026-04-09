@@ -535,15 +535,29 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 
 <div class="viewcode-block" id="InspectDatasetInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.inspect_dataset.input.html#data_juicer_agents.tools.context.inspect_dataset.InspectDatasetInput">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InspectDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dataset file path to inspect.&quot;</span><span class="p">)</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Dataset file path to inspect. Will be converted to the standard &quot;</span>
+            <span class="s2">&quot;dataset config format internally. Ignored when &#39;dataset&#39; is provided.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Structured multi-source dataset config in the standard format: &quot;</span>
+            <span class="s1">&#39;{&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;...&quot;}]}. &#39;</span>
+            <span class="s2">&quot;Takes priority over dataset_path when both are provided.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
     <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of samples to inspect.&quot;</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="GenericOutput">

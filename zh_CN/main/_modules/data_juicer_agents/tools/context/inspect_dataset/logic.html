@@ -671,37 +671,103 @@
     <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">_UNSUPPORTED_PREFIXES</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_dataset_path_to_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a plain dataset_path string to the standard dataset config format.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;configs&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_dataset_config</span><span class="p">(</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge dataset_path and dataset into a single standard dataset config.</span>
+
+<span class="sd">    Priority matches the runtime execution convention used across all consumers:</span>
+<span class="sd">      generated_dataset_config &gt; dataset (multi-source config) &gt; dataset_path</span>
+
+<span class="sd">    A structured *dataset* config wins over a plain *dataset_path* because it</span>
+<span class="sd">    carries richer multi-source information.  *dataset_path* is converted to</span>
+<span class="sd">    the standard format as the lowest-priority fallback.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset_path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_dataset_path_to_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;configs&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pick_inspectable_path</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the first local file path from a dataset config that can be inspected.&quot;&quot;&quot;</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">source_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">path_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path_value</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">}:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_looks_like_unsupported_source</span><span class="p">(</span><span class="n">path_value</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">path_value</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
 <div class="viewcode-block" id="inspect_dataset_schema">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.inspect_dataset.logic.html#data_juicer_agents.tools.context.inspect_dataset.inspect_dataset_schema">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">inspect_dataset_schema</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inspect a small sample of a dataset and infer keys/modality for planning.&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inspect_dataset_schema</span><span class="p">(</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inspect a small sample of a dataset and infer keys/modality for planning.</span>
 
-    <span class="k">if</span> <span class="n">_looks_like_unsupported_source</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">):</span>
+<span class="sd">    Accepts either a plain *dataset_path* or a structured *dataset* config</span>
+<span class="sd">    (the ``{&quot;configs&quot;: [...]}`` format).  When *dataset_path* is provided it</span>
+<span class="sd">    is automatically converted to the standard dataset config format so that</span>
+<span class="sd">    all sources are handled uniformly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_config</span> <span class="o">=</span> <span class="n">_resolve_dataset_config</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">inspectable_path</span> <span class="o">=</span> <span class="n">_pick_inspectable_path</span><span class="p">(</span><span class="n">resolved_config</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">inspectable_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># No local path available to inspect</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="n">resolved_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">configs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;unsupported_input_source&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="s2">&quot;inspect_dataset could not find a local file path to inspect &quot;</span>
+                    <span class="s2">&quot;in the provided dataset config. Only local file-based sources &quot;</span>
+                    <span class="s2">&quot;are supported for schema inspection.&quot;</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="s2">&quot;No inspectable local path found in dataset config. &quot;</span>
+                    <span class="s2">&quot;Ensure at least one source has type=&#39;local&#39; with a valid file path.&quot;</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">resolved_config</span><span class="p">,</span>
+            <span class="p">}</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;unsupported_input_source&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;inspect_dataset only supports local file paths. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;The provided path &#39;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39; looks like a remote or non-local source &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;which is not supported. Please download the dataset to a local path first, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;then call inspect_dataset with the local file path.&quot;</span>
-            <span class="p">),</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;inspect_dataset does not support remote or non-local input sources. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39; appears to be a URL or cloud storage path. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Download it locally and retry.&quot;</span>
-            <span class="p">),</span>
-            <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_dataset_source&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No dataset source provided. Pass dataset_path or dataset config.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No dataset source provided.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inspectable_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset_path_not_found&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">inspectable_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">inspectable_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">resolved_config</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="k">if</span> <span class="n">sample_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">sample_size</span> <span class="o">=</span> <span class="mi">20</span>
@@ -732,12 +798,12 @@
                 <span class="sa">f</span><span class="s2">&quot;Scanned </span><span class="si">{</span><span class="n">scanned</span><span class="si">}</span><span class="s2"> lines but found no valid dict records.&quot;</span>
             <span class="p">),</span>
             <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Could not extract valid records from &#39;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not extract valid records from &#39;</span><span class="si">{</span><span class="n">inspectable_path</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Try inspecting the file manually with shell commands like: &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;head -n 3 </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&#39; or &#39;cat </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2"> | head -n 3&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;head -n 3 </span><span class="si">{</span><span class="n">inspectable_path</span><span class="si">}</span><span class="s2">&#39; or &#39;cat </span><span class="si">{</span><span class="n">inspectable_path</span><span class="si">}</span><span class="s2"> | head -n 3&#39; &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;to verify the file format and content structure.&quot;</span>
             <span class="p">),</span>
-            <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+            <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">resolved_config</span><span class="p">,</span>
             <span class="s2">&quot;sampled_records&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">&quot;scanned_lines&quot;</span><span class="p">:</span> <span class="n">scanned</span><span class="p">,</span>
         <span class="p">}</span>
@@ -813,7 +879,8 @@
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset inspected&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+        <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">resolved_config</span><span class="p">,</span>
+        <span class="s2">&quot;inspected_path&quot;</span><span class="p">:</span> <span class="n">inspectable_path</span><span class="p">,</span>
         <span class="s2">&quot;sampled_records&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span>
         <span class="s2">&quot;scanned_lines&quot;</span><span class="p">:</span> <span class="n">scanned</span><span class="p">,</span>
         <span class="s2">&quot;modality&quot;</span><span class="p">:</span> <span class="n">modality</span><span class="p">,</span>

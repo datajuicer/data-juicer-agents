@@ -39,11 +39,15 @@ djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
 
 关键参数：
 - `--output`：计划输出路径（默认 `plans/<plan_id>.yaml`）
+- `--dataset-config`：JSON 字符串，用于复杂多源数据集配置（混合数据源、按源权重、`max_sample_num`）；当需要使用 `list_dataset_load_strategies` 发现的高级加载策略时，用此参数代替 `--dataset`
+- `--generated-dataset-config`：JSON 字符串，用于通过 Data-Juicer formatter 动态生成数据集；必须包含 `type` 键，值为通过 `list_dataset_formatters` 发现的已注册 formatter 名称
 - `--custom-operator-paths`：校验和后续执行时可用的自定义算子目录或文件
+
+至少需要提供一个数据集来源：`--dataset`、`--dataset-config` 或 `--generated-dataset-config`。
 
 执行行为：
 1. 内部先根据 intent 和可选数据集模态信号做算子检索
-2. 根据数据集 IO 和画像信息构建确定性的 dataset spec
+2. 根据数据集 IO 和画像信息构建确定性的 dataset spec（支持简单路径、多源配置和动态 formatter 配置）
 3. 调用模型只生成 process spec 所需的 operator list
 4. 依次构建 process spec、system spec，并 assemble 为最终 plan
 5. 校验最终 plan，并将 plan 以 YAML 落盘

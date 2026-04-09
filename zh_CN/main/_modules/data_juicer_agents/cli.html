@@ -638,6 +638,24 @@
     <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--export&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output jsonl path&quot;</span><span class="p">)</span>
     <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output plan yaml path&quot;</span><span class="p">)</span>
     <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--dataset-config&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;JSON string for complex multi-source dataset config. &quot;</span>
+            <span class="s2">&quot;Use this for mixed sources, per-source weights, or max_sample_num. &quot;</span>
+            <span class="s1">&#39;Example: </span><span class="se">\&#39;</span><span class="s1">{&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/a.jsonl&quot;, &quot;weight&quot;: 0.7}]}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--generated-dataset-config&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;JSON string for dynamically generated dataset via Data-Juicer formatters. &quot;</span>
+            <span class="s2">&quot;Must contain a &#39;type&#39; key matching a registered formatter name. &quot;</span>
+            <span class="s1">&#39;Example: </span><span class="se">\&#39;</span><span class="s1">{&quot;type&quot;: &quot;EmptyFormatter&quot;, &quot;length&quot;: 1000}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--custom-operator-paths&quot;</span><span class="p">,</span>
         <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
