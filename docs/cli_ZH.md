@@ -88,7 +88,7 @@ djx plan "生成合成 text 数据" \
   --export ./out.jsonl
 ```
 
-对应 Data-Juicer recipe 配置中的 [`generated_dataset_config`] 字段。完整 formatter 列表参见 [format 模块](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format)。
+对应 Data-Juicer recipe 配置中的 [`generated_dataset_config`](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/config/config_all.yaml) 字段。完整 formatter 列表参见 [format 模块](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format)。
 
 ### 执行行为
 

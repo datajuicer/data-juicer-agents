@@ -55,8 +55,8 @@ class ProcessOperatorGenerator:
         if custom_candidates:
             prompt_parts.append(
                 "\nThe user has provided custom operators via --custom-operator-paths. "
-                "These operators are specifically designed for this task and should be preferred "
-                "when they match the user intent. Include them in the operator list.\n"
+                "Consider using these custom operators when they match the user intent. "
+                "They take priority over built-in operators with similar functionality.\n"
                 f"\ncustom_operators:\n{json.dumps(custom_candidates, ensure_ascii=False, indent=2)}\n"
             )
 

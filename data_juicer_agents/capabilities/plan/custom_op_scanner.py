@@ -20,15 +20,9 @@ from typing import Any, Dict, Iterable, List
 
 logger = logging.getLogger(__name__)
 
-
-def _load_custom_operators(paths: List[str]) -> List[str]:
-    """Import custom operator modules into the DJ OPERATORS registry.
-
-    Returns:
-        List of warning/error messages from the loading process.
-    """
-    from data_juicer_agents.utils.dj_config_bridge import load_custom_operators_into_registry
-    return load_custom_operators_into_registry(paths)
+# Maximum number of __init__ params to include in the candidate preview.
+# Keeps the LLM prompt concise while still showing the most important params.
+_MAX_PREVIEW_PARAMS = -1
 
 
 def _extract_init_params_from_class(cls: type) -> List[str]:
@@ -43,7 +37,7 @@ def _extract_init_params_from_class(cls: type) -> List[str]:
                 inspect.Parameter.VAR_POSITIONAL,
                 inspect.Parameter.VAR_KEYWORD,
             )
-        ][:6]
+        ][:_MAX_PREVIEW_PARAMS]
     except (ValueError, TypeError):
         return []
 
@@ -73,7 +67,8 @@ def scan_custom_operators(
         return []
 
     # Load custom operators into registry (also captures builtin snapshot)
-    load_warnings = _load_custom_operators(paths)
+    from data_juicer_agents.utils.dj_config_bridge import load_custom_operators_into_registry
+    load_warnings = load_custom_operators_into_registry(paths)
     for warning in load_warnings:
         logger.warning("Custom operator loading: %s", warning)
 
@@ -103,7 +98,7 @@ def scan_custom_operators(
 
     candidates = []
     for rank, op_name in enumerate(custom_op_names, start=1):
-        if all_ops and op_name in all_ops:
+        if all_ops is not None and op_name in all_ops:
             record = all_ops[op_name]
             operator_type = getattr(record, "type", "unknown")
             description = getattr(record, "desc", "") or ""
@@ -138,7 +133,13 @@ def scan_custom_operators(
 
 
 def _infer_type_from_bases(cls: type) -> str:
-    """Infer operator type from class inheritance hierarchy."""
+    """Infer operator type from class inheritance hierarchy (best-effort).
+
+    Uses class name matching against the MRO, which works for standard
+    DJ base classes but may misidentify user classes that happen to share
+    names like ``Mapper`` or ``Filter`` with unrelated hierarchies.
+    Prefer ``OPSearcher`` metadata when available.
+    """
     base_names = {base.__name__ for base in cls.__mro__}
     if "Mapper" in base_names:
         return "mapper"

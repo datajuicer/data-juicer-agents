@@ -101,7 +101,9 @@ class PlanOrchestrator:
         custom_candidates = scan_custom_operators(custom_operator_paths)
         if custom_candidates:
             existing = retrieval.get("candidates", [])
-            # Re-rank: custom operators first, then built-in candidates
+            # Simplified re-rank: custom operators first, then built-in
+            # candidates.  A future improvement could filter custom operators
+            # by intent relevance instead of unconditionally prioritising them.
             merged = list(custom_candidates)
             existing_names = {c["operator_name"] for c in custom_candidates}
             for candidate in existing:

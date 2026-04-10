@@ -69,7 +69,10 @@ def execute_plan(args) -> Dict[str, Any]:
     if parse_error:
         return parse_error
 
-    # Validate that exactly one dataset source is provided
+    # Validate that exactly one dataset source is provided.
+    # Note: argparse's mutually_exclusive_group already enforces this at the
+    # CLI layer.  This check is defense-in-depth for non-CLI callers that
+    # invoke execute_plan() directly (e.g. tests, session agent).
     active_sources = sum([
         bool(generated_dataset_config),
         bool(dataset_config),

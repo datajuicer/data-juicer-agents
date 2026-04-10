@@ -43,27 +43,6 @@ def normalize_process_spec(process_spec: ProcessSpec | Dict[str, Any]) -> Proces
     return spec
 
 
-def _load_custom_operators_into_registry(
-    custom_operator_paths: Iterable[Any] | None,
-) -> List[str]:
-    """Load custom operators into the DJ OPERATORS registry.
-
-    Delegates to the shared utility in ``utils.dj_config_bridge``.
-    This makes custom operators visible to the registry-based
-    validation in ``validate_process_spec_payload``.
-
-    Returns:
-        List of warning/error messages from the loading process.
-    """
-    if not custom_operator_paths:
-        return []
-    paths = [str(p).strip() for p in custom_operator_paths if str(p).strip()]
-    if not paths:
-        return []
-    from data_juicer_agents.utils.dj_config_bridge import load_custom_operators_into_registry
-    return load_custom_operators_into_registry(paths)
-
-
 def validate_process_spec_payload(
     process_spec: ProcessSpec | Dict[str, Any],
     custom_operator_paths: Iterable[Any] | None = None,
@@ -92,10 +71,18 @@ def validate_process_spec_payload(
         if not isinstance(op.params, dict):
             errors.append(f"operators[{idx}].params must be an object")
 
-    # Load custom operators into registry before DJ bridge validation
-    load_warnings = _load_custom_operators_into_registry(custom_operator_paths)
-    if load_warnings:
-        warnings.extend(load_warnings)
+    # Load custom operators into registry before DJ bridge validation.
+    # When called from the CLI orchestrator, operators are already loaded by
+    # scan_custom_operators (idempotent via _loaded_custom_paths in
+    # dj_config_bridge); when called standalone via
+    # `djx tool run build_process_spec`, this is the first load point.
+    if custom_operator_paths:
+        _paths = [str(p).strip() for p in custom_operator_paths if str(p).strip()]
+        if _paths:
+            from data_juicer_agents.utils.dj_config_bridge import load_custom_operators_into_registry
+            load_warnings = load_custom_operators_into_registry(_paths)
+            if load_warnings:
+                warnings.extend(load_warnings)
 
     # DJ bridge validation (two steps)
     try:

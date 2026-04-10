@@ -89,7 +89,7 @@ djx plan "generate synthetic text samples" \
   --export ./out.jsonl
 ```
 
-Corresponds to `generated_dataset_config` in a Data-Juicer recipe config. See the [format module](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format) for all available formatters.
+Corresponds to [`generated_dataset_config`](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/config/config_all.yaml) in a Data-Juicer recipe config. See the [format module](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format) for all available formatters.
 
 ### Execution Behavior
 

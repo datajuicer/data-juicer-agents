@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+
 class ProcessOperatorInput(BaseModel):
     name: str = Field(description="Canonical operator name.")
     params: Dict[str, Any] = Field(
@@ -17,6 +18,7 @@ class ProcessOperatorInput(BaseModel):
             "If a threshold, mode, or explicit option is already known, include it here."
         ),
     )
+
 
 class BuildProcessSpecInput(BaseModel):
     operators: List[ProcessOperatorInput] = Field(
