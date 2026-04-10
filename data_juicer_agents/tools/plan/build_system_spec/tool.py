@@ -31,7 +31,7 @@ BUILD_SYSTEM_SPEC = ToolSpec(
     name="build_system_spec",
     description=(
         "Build a system spec with Data-Juicer configuration. "
-        "Core parameters: np, executor_type, custom_operator_paths. "
+        "Core parameters: np, executor_type. "
         "Advanced parameters (open_tracer, use_cache, checkpoint, etc.) can be passed directly. "
         "Use list_system_config to discover all available system configuration options."
     ),

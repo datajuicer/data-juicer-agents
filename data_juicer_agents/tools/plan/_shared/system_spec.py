@@ -15,13 +15,14 @@ _logger = logging.getLogger(__name__)
 
 def normalize_system_spec(
     system_spec: SystemSpec | Dict[str, Any] | None,
-    *,
-    custom_operator_paths: Iterable[Any] | None = None,
 ) -> SystemSpec:
     """Normalize system spec, preserving all dynamic fields from Data-Juicer.
 
     Performs type coercion on all fields (core + extra) via
     ``coerce_fields`` so that values serialise correctly in recipe YAML.
+
+    Note: ``custom_operator_paths`` is now owned by ``ProcessSpec`` and
+    is no longer handled here.
     """
     if isinstance(system_spec, SystemSpec):
         spec = system_spec
@@ -31,10 +32,6 @@ def normalize_system_spec(
         spec = SystemSpec()
     else:
         raise ValueError("system_spec must be a dict object")
-
-    # Override custom_operator_paths if provided externally
-    if custom_operator_paths is not None:
-        spec.custom_operator_paths = normalize_string_list(custom_operator_paths)
 
     # Coerce all fields to correct types for YAML serialization
     try:

@@ -27,13 +27,11 @@ class PlannerCore:
         user_intent: str,
         dataset_path: str = "",
         export_path: str,
-        custom_operator_paths: Iterable[Any] | None = None,
     ) -> PlanContext:
         context = PlanContext(
             user_intent=str(user_intent or "").strip(),
             dataset_path=str(dataset_path or "").strip(),
             export_path=str(export_path or "").strip(),
-            custom_operator_paths=normalize_string_list(custom_operator_paths),
         )
         missing = [
             name
@@ -90,6 +88,12 @@ class PlannerCore:
             {op.name: op.params} for op in normalized_process_spec.operators
         ]
 
+        # --- custom_operator_paths (bound to process spec) ---
+        if normalized_process_spec.custom_operator_paths:
+            recipe["custom_operator_paths"] = list(
+                normalized_process_spec.custom_operator_paths
+            )
+
         # --- system fields ---
         system_dict = normalized_system_spec.to_dict()
         # warnings is our internal field, not part of DJ recipe
@@ -113,10 +117,7 @@ class PlannerCore:
         try:
             normalized_dataset = normalize_dataset_spec(dataset_spec)
             normalized_process = normalize_process_spec(process_spec)
-            normalized_system = normalize_system_spec(
-                system_spec,
-                custom_operator_paths=_normalized_system_custom_paths(system_spec),
-            )
+            normalized_system = normalize_system_spec(system_spec)
         except ValueError as exc:
             raise PlannerBuildError(str(exc)) from exc
 
@@ -124,7 +125,6 @@ class PlannerCore:
             user_intent=user_intent,
             dataset_path=normalized_dataset.io.dataset_path,
             export_path=normalized_dataset.io.export_path,
-            custom_operator_paths=normalized_system.custom_operator_paths,
         )
         modality = infer_modality(normalized_dataset.binding)
         recipe = cls._build_recipe(normalized_dataset, normalized_process, normalized_system)
@@ -141,15 +141,6 @@ class PlannerCore:
             ),
             approval_required=bool(approval_required),
         )
-
-
-def _normalized_system_custom_paths(system_spec: Dict[str, Any] | None) -> List[str]:
-    if isinstance(system_spec, dict):
-        raw = system_spec.get("custom_operator_paths", [])
-        if isinstance(raw, list):
-            return [str(item).strip() for item in raw if str(item).strip()]
-    return []
-
 
 def assemble_plan(
     *,
@@ -178,6 +169,5 @@ def assemble_plan(
         "modality": plan.modality,
         "warnings": list(plan.warnings),
     }
-
 
 __all__ = ["PlannerBuildError", "PlannerCore", "assemble_plan"]

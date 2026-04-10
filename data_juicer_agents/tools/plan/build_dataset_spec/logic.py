@@ -46,8 +46,29 @@ def build_dataset_spec(
         return {
             "ok": False,
             "error_type": "missing_required",
-            "message": "at least one dataset source is required: dataset_path, dataset, or generated_dataset_config",
+            "message": (
+                "Exactly one dataset source is required: "
+                "dataset_path, dataset, or generated_dataset_config."
+            ),
             "requires": ["dataset_path", "dataset", "generated_dataset_config"],
+        }
+    if source_count > 1:
+        provided = [
+            name for name, present in [
+                ("dataset_path", bool(dataset_path)),
+                ("dataset", bool(dataset)),
+                ("generated_dataset_config", bool(generated_dataset_config)),
+            ] if present
+        ]
+        return {
+            "ok": False,
+            "error_type": "conflicting_arguments",
+            "message": (
+                f"Only one dataset source can be specified at a time, "
+                f"but got {len(provided)}: {', '.join(provided)}. "
+                f"Please use either dataset_path, dataset, or generated_dataset_config."
+            ),
+            "requires": [],
         }
     if not export_path:
         return {

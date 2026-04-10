@@ -20,6 +20,7 @@ from data_juicer_agents.tools.plan import (
     plan_validate,
 )
 
+from .custom_op_scanner import scan_custom_operators
 from .generator import ProcessOperatorGenerator
 
 
@@ -94,9 +95,28 @@ class PlanOrchestrator:
             mode=retrieval_mode,
             retrieved_candidates=retrieved_candidates,
         )
-        # Skip schema probing when a generated dataset is the effective runtime
-        # source (highest priority).  Probing a lower-priority dataset_path/dataset
-        # would imprint the wrong modality and key bindings into the final plan.
+
+        # Inject custom operators into retrieval candidates so the LLM
+        # planner can select them alongside built-in operators.
+        custom_candidates = scan_custom_operators(custom_operator_paths)
+        if custom_candidates:
+            existing = retrieval.get("candidates", [])
+            # Re-rank: custom operators first, then built-in candidates
+            merged = list(custom_candidates)
+            existing_names = {c["operator_name"] for c in custom_candidates}
+            for candidate in existing:
+                if candidate.get("operator_name") not in existing_names:
+                    merged.append(candidate)
+            for rank, candidate in enumerate(merged, start=1):
+                candidate["rank"] = rank
+            retrieval["candidates"] = merged
+            retrieval["candidate_count"] = len(merged)
+            retrieval["candidate_names"] = [
+                c["operator_name"] for c in merged
+            ]
+
+        # Skip schema probing when using a generated dataset config, since the
+        # dataset does not exist yet and cannot be inspected.
         if generated_dataset_config:
             dataset_profile: Dict[str, Any] = {}
         elif dataset_path or dataset:
@@ -128,13 +148,12 @@ class PlanOrchestrator:
 
         process_result = build_process_spec(
             operators=operator_payload.get("operators", []),
+            custom_operator_paths=custom_operator_paths,
         )
         if not process_result.get("ok"):
             raise ValueError("process spec build failed: " + "; ".join(process_result.get("validation_errors", []) or [str(process_result.get("message", "unknown error"))]))
 
-        system_result = build_system_spec(
-            custom_operator_paths=custom_operator_paths,
-        )
+        system_result = build_system_spec()
         if not system_result.get("ok"):
             raise ValueError("system spec build failed: " + "; ".join(system_result.get("validation_errors", []) or [str(system_result.get("message", "unknown error"))]))
 

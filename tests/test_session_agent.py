@@ -132,7 +132,7 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
     system_spec = invoke_tool_spec(
         registry.get("build_system_spec"),
         ctx=ctx,
-        raw_kwargs={"custom_operator_paths": [], "np": 1},
+        raw_kwargs={"np": 1},
     )
     assert system_spec["ok"] is True
     assert system_spec["system_spec"]["np"] == 1

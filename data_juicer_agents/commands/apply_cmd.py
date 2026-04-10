@@ -14,9 +14,21 @@ from data_juicer_agents.commands.output_control import emit, emit_json, enabled
 def _format_dataset_source(recipe: dict) -> str:
     """Build a human-readable dataset source summary from the recipe block.
 
-    Priority follows Data-Juicer convention:
-      generated_dataset_config > dataset (multi-source config) > dataset_path
+    Exactly one dataset source must be present in the plan.
     """
+    source_count = sum([
+        bool(recipe.get("generated_dataset_config")),
+        bool(recipe.get("dataset")),
+        bool(recipe.get("dataset_path")),
+    ])
+
+    if source_count > 1:
+        raise ValueError(
+            "Plan contains multiple dataset sources. "
+            "Only one of dataset_path, dataset, or generated_dataset_config "
+            "is allowed. Please regenerate the plan."
+        )
+
     generated_cfg = recipe.get("generated_dataset_config")
     if isinstance(generated_cfg, dict):
         formatter_type = str(generated_cfg.get("type", "unknown")).strip()

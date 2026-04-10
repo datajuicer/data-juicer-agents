@@ -40,18 +40,34 @@ class ProcessOperatorGenerator:
             binding = dataset_spec.get("binding", {})
             if isinstance(binding, dict):
                 dataset_binding = binding
-        return (
+        custom_candidates = [c for c in candidates if c.get("is_custom")]
+        builtin_candidates = [c for c in candidates if not c.get("is_custom")]
+
+        prompt_parts = [
             "You generate only the operator list for a staged deterministic Data-Juicer planner.\n"
             "Return JSON only with one key: operators.\n"
             "operators must be a non-empty array of objects: {name: string, params: object}.\n"
             "Use canonical operator names from retrieved candidates.\n"
             "Fill concrete params whenever a threshold, mode, or explicit option is already known.\n"
-            "Do not include modality, text_keys, image_key, risk_notes, estimation, approval_required, workflow, or markdown.\n\n"
-            f"user_intent: {user_intent}\n"
+            "Do not include modality, text_keys, image_key, risk_notes, estimation, approval_required, workflow, or markdown.\n",
+        ]
+
+        if custom_candidates:
+            prompt_parts.append(
+                "\nThe user has provided custom operators via --custom-operator-paths. "
+                "These operators are specifically designed for this task and should be preferred "
+                "when they match the user intent. Include them in the operator list.\n"
+                f"\ncustom_operators:\n{json.dumps(custom_candidates, ensure_ascii=False, indent=2)}\n"
+            )
+
+        prompt_parts.append(
+            f"\nuser_intent: {user_intent}\n"
             f"dataset_binding:\n{json.dumps(dataset_binding, ensure_ascii=False, indent=2)}\n"
-            f"retrieved_candidates:\n{json.dumps(candidates, ensure_ascii=False, indent=2)}\n"
+            f"retrieved_candidates:\n{json.dumps(builtin_candidates, ensure_ascii=False, indent=2)}\n"
             f"dataset_profile:\n{json.dumps(profile_payload, ensure_ascii=False, indent=2)}\n"
         )
+
+        return "\n".join(prompt_parts)
 
     def generate(
         self,

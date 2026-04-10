@@ -235,6 +235,26 @@ def inspect_dataset_schema(
             "message": f"dataset_path does not exist: {inspectable_path}",
             "dataset": resolved_config,
         }
+    if path.is_dir():
+        # Directory paths cannot be sampled directly; skip schema probing.
+        # Data-Juicer will auto-detect the format at runtime.
+        # TODO: support directory sampling by picking a representative file from the directory
+        #       (e.g. first file matching a known suffix) so that modality and key hints
+        #       can still be inferred when dataset_path points to a directory.
+        return {
+            "ok": True,
+            "message": "dataset is a directory; schema probing skipped",
+            "dataset": resolved_config,
+            "inspected_path": inspectable_path,
+            "sampled_records": 0,
+            "scanned_lines": 0,
+            "modality": "unknown",
+            "keys": [],
+            "candidate_text_keys": [],
+            "candidate_image_keys": [],
+            "key_stats": {},
+            "sample_preview": [],
+        }
     if sample_size <= 0:
         sample_size = 20
 

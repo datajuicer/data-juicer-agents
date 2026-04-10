@@ -34,31 +34,82 @@ djx --debug retrieve "deduplicate text" --dataset ./data.jsonl
 ## `djx plan`
 
 ```bash
-djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
+djx plan "<intent>" (--dataset <path> | --dataset-config '<json>' | --generated-dataset-config '<json>') --export <output.jsonl> [options]
 ```
 
 Key options:
 - `--output`: output plan path (default: `plans/<plan_id>.yaml`)
-- `--dataset-config`: JSON string for complex multi-source dataset config (mixed sources, per-source weights, `max_sample_num`); use instead of `--dataset` for advanced loading strategies discovered via `list_dataset_load_strategies`
-- `--generated-dataset-config`: JSON string for dynamically generated datasets via Data-Juicer formatters; must contain a `type` key matching a registered formatter name discovered via `list_dataset_formatters`
 - `--custom-operator-paths`: custom operator dirs/files used for validation and later execution
 
-At least one dataset source must be provided: `--dataset`, `--dataset-config`, or `--generated-dataset-config`.
+### Dataset Source
 
-Behavior:
-1. internally retrieves operator candidates from the intent and optional dataset-derived modality signals
-2. builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)
-3. calls the model once to generate only the operator list for the process spec
-4. builds the process spec, builds the system spec, and assembles the final plan
-5. validates the final plan and writes the plan YAML
+The three dataset source options are **mutually exclusive** — exactly one must be specified.
 
-CLI output:
-- summary: `Plan generated`, `Modality`, `Operators`
-- `--verbose`: planning meta (`planner_model`, `retrieval_source`, `retrieval_candidate_count`)
-- `--debug`: retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload
+#### `--dataset` — Local file or directory
 
-Failure behavior:
-- exits non-zero and prints a user-facing error message
+Process an existing local dataset. Accepts a file path or directory (Data-Juicer auto-detects the format).
+
+```bash
+djx plan "deduplicate text" --dataset ./data/my-dataset.jsonl --export ./out.jsonl
+```
+
+Corresponds to [`dataset_path`](https://github.com/modelscope/data-juicer/blob/main/data_juicer/config/schema.py) in a Data-Juicer recipe config.
+
+#### `--dataset-config` — Multi-source dataset config
+
+Mix multiple sources, set per-source weights, or cap total samples with `max_sample_num`. Run `djx tool run list_dataset_load_strategies --input-json '{}'` to discover available source types (e.g. `local`, `s3`) and their fields.
+
+```bash
+djx plan "mix and deduplicate" \
+  --dataset-config '{"configs": [{"type": "local", "path": "/data/a.jsonl", "weight": 0.7}, {"type": "local", "path": "/data/b.jsonl", "weight": 0.3}], "max_sample_num": 50000}' \
+  --export ./out.jsonl
+```
+
+Corresponds to the [`dataset`](https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html) config block in a Data-Juicer recipe. 
+
+#### `--generated-dataset-config` — Formatter-based dataset loading / generation
+
+Load or generate a dataset via a Data-Juicer [formatter](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format). The JSON must contain a `type` key matching a registered formatter name. Run `djx tool run list_dataset_formatters --input-json '{}'` to discover available formatters and their parameters.
+
+Two typical use cases:
+
+- **File loading**: `TextFormatter`, `JsonFormatter`, `CsvFormatter`, etc. load files from a local path — useful when you need formatter-specific options (e.g. custom suffixes) not available through `--dataset`.
+- **Empty dataset generation**: `EmptyFormatter` creates an empty dataset of a given length, intended for use with custom generation operators supplied via `--custom-operator-paths`.
+
+```bash
+# Load .md files using TextFormatter
+djx plan "deduplicate markdown docs" \
+  --generated-dataset-config '{"type": "TextFormatter", "dataset_path": "/path/to/docs", "suffixes": [".md"]}' \
+  --export ./out.jsonl
+
+# Generate 1000 empty samples, to be filled by a custom generation operator
+djx plan "generate synthetic text samples" \
+  --generated-dataset-config '{"type": "EmptyFormatter", "length": 1000, "feature_keys": ["text"]}' \
+  --custom-operator-paths ./my_operators \
+  --export ./out.jsonl
+```
+
+Corresponds to `generated_dataset_config` in a Data-Juicer recipe config. See the [format module](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format) for all available formatters.
+
+### Execution Behavior
+
+The overall execution flow of the `djx plan` command:
+
+1. Internally retrieves operator candidates from the intent and optional dataset-derived modality signals
+2. Builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)
+3. Calls the model once to generate only the operator list for the process spec
+4. Builds the process spec, builds the system spec, and assembles the final plan
+5. Validates the final plan and writes the plan YAML
+
+### CLI Output
+
+- Summary: `Plan generated`, `Modality`, `Operators`
+- `--verbose`: Planning meta (`planner_model`, `retrieval_source`, `retrieval_candidate_count`)
+- `--debug`: Retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload
+
+### Failure Behavior
+
+- Exits non-zero and prints a user-facing error message
 
 ## `djx apply`
 

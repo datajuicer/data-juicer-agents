@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+import logging
+from typing import Any, Dict, Iterable, List, Tuple
 
 from .normalize import normalize_params
 from .schema import ProcessOperator, ProcessSpec
+
+logger = logging.getLogger(__name__)
 
 PROCESS_SPEC_DEFERRED_WARNING = (
     "operator parameter validation deferred; runtime errors will be used as the repair signal"
@@ -31,16 +34,60 @@ def normalize_process_spec(process_spec: ProcessSpec | Dict[str, Any]) -> Proces
             ProcessOperator(name=raw_name, params=normalize_params(item.params))
         )
 
-    spec = ProcessSpec(operators=operators)
+    spec = ProcessSpec(
+        operators=operators,
+        custom_operator_paths=list(source.custom_operator_paths),
+    )
     if not spec.operators:
         raise ValueError("process_spec.operators must contain at least one operator")
     return spec
 
 
+def _load_custom_operators_into_registry(
+    custom_operator_paths: Iterable[Any] | None,
+) -> None:
+    """Load custom operators into the DJ OPERATORS registry.
+
+    Calls the main library's ``load_custom_operators`` to dynamically import
+    custom operator modules, triggering their ``@OPERATORS.register_module``
+    decorators.  This makes custom operators visible to the registry-based
+    validation in ``validate_process_spec_payload``.
+
+    Safe to call multiple times within the same process: the main library
+    checks ``sys.modules`` and raises on true conflicts, but we catch and
+    log those to avoid blocking validation.
+    """
+    if not custom_operator_paths:
+        return
+    paths = [str(p).strip() for p in custom_operator_paths if str(p).strip()]
+    if not paths:
+        return
+    try:
+        from data_juicer.config.config import load_custom_operators
+        load_custom_operators(paths)
+    except RuntimeError as exc:
+        # Already loaded in this process — safe to ignore
+        if "already loaded" in str(exc).lower():
+            logger.debug("Custom operators already loaded: %s", exc)
+        else:
+            logger.warning("Failed to load custom operators: %s", exc)
+    except Exception as exc:
+        logger.warning("Failed to load custom operators: %s", exc)
+
+
 def validate_process_spec_payload(
     process_spec: ProcessSpec | Dict[str, Any],
+    custom_operator_paths: Iterable[Any] | None = None,
 ) -> Tuple[List[str], List[str]]:
-    """Validate process spec structure and operator names/params via DJ bridge."""
+    """Validate process spec structure and operator names/params via DJ bridge.
+
+    Args:
+        process_spec: The process spec to validate.
+        custom_operator_paths: Optional paths to custom operator directories
+            or files.  When provided, the operators are dynamically loaded
+            into the DJ registry before validation so that registry-level
+            name and param checks work for custom operators as well.
+    """
     if isinstance(process_spec, dict):
         process_spec = ProcessSpec.from_dict(process_spec)
 
@@ -55,6 +102,9 @@ def validate_process_spec_payload(
             errors.append(f"operators[{idx}].name is required")
         if not isinstance(op.params, dict):
             errors.append(f"operators[{idx}].params must be an object")
+
+    # Load custom operators into registry before DJ bridge validation
+    _load_custom_operators_into_registry(custom_operator_paths)
 
     # DJ bridge validation (two steps)
     try:

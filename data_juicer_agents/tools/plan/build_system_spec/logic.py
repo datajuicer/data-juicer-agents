@@ -32,18 +32,16 @@ def _load_dj_system_config() -> Dict[str, Any]:
 
 def build_system_spec(
     *,
-    custom_operator_paths: Iterable[Any] | None = None,
     np: int | None = None,
     executor_type: str | None = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
     """Build system spec with complete config dynamically loaded from Data-Juicer.
     
-    This function now loads ALL system configuration fields from Data-Juicer,
+    This function loads ALL system configuration fields from Data-Juicer,
     ensuring automatic sync with any upstream changes.
     
     Args:
-        custom_operator_paths: Optional list of custom operator paths
         np: Optional number of processes
         executor_type: Optional executor type
         **kwargs: Any additional system config options (must be valid DJ system
@@ -54,10 +52,8 @@ def build_system_spec(
     """
     # Load complete system config from Data-Juicer
     dj_system_config = _load_dj_system_config()
-
-    # Override core parameters if provided
-    if custom_operator_paths is not None:
-        dj_system_config['custom_operator_paths'] = normalize_string_list(custom_operator_paths)
+    # custom_operator_paths is owned by ProcessSpec; remove it from system config
+    dj_system_config.pop('custom_operator_paths', None)
 
     if np is not None:
         dj_system_config['np'] = np

@@ -3,10 +3,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+import json
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field, field_validator
 
 class ProcessOperatorInput(BaseModel):
     name: str = Field(description="Canonical operator name.")
@@ -18,7 +18,6 @@ class ProcessOperatorInput(BaseModel):
         ),
     )
 
-
 class BuildProcessSpecInput(BaseModel):
     operators: List[ProcessOperatorInput] = Field(
         description=(
@@ -26,3 +25,32 @@ class BuildProcessSpecInput(BaseModel):
             "results and fill appropriate params for each operator."
         ),
     )
+    custom_operator_paths: Optional[List[str]] = Field(
+        default=None,
+        description=(
+            "Optional list of directory paths containing custom operators. "
+            "Example: ['./custom_ops', './my_operators']. "
+            "When provided, custom operators are loaded into the registry before validation."
+        ),
+    )
+
+    @field_validator("custom_operator_paths", mode="before")
+    @classmethod
+    def _coerce_string_to_list(cls, value: Any) -> Any:
+        """Handle LLMs that serialise a list as a JSON string.
+
+        Some models produce ``'["./path"]'`` (a string) instead of
+        ``["./path"]`` (a list) when the JSON Schema uses ``anyOf``
+        for ``Optional[List[str]]``.
+        """
+        if not isinstance(value, str):
+            return value
+        stripped = value.strip()
+        if stripped.startswith("["):
+            try:
+                parsed = json.loads(stripped)
+                if isinstance(parsed, list):
+                    return parsed
+            except (json.JSONDecodeError, ValueError):
+                pass
+        return [stripped] if stripped else None

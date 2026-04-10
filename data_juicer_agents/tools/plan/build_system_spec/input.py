@@ -28,10 +28,7 @@ class BuildSystemSpecInput(BaseModel):
         description='Executor type: "default" (single machine), "ray" (distributed), or "ray_partitioned". Default is "default".'
     )
     
-    custom_operator_paths: List[str] = Field(
-        default_factory=list,
-        description="Paths to custom operator modules or packages."
-    )
+    # Note: custom_operator_paths is now owned by ProcessSpec / build_process_spec.
     
     # All other system parameters (open_tracer, use_cache, checkpoint, etc.)
     # can be passed directly as kwargs - they will be validated by DJ bridge

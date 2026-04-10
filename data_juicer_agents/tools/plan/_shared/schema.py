@@ -27,12 +27,16 @@ def _coerce_optional_text(value: Any) -> Optional[str]:
 
 @dataclass
 class SystemSpec:
-    """Runtime/executor-level settings shared by the whole recipe."""
+    """Runtime/executor-level settings shared by the whole recipe.
+
+    Note: ``custom_operator_paths`` is owned by ``ProcessSpec``, not here.
+    It is semantically tied to the operator list and is written to the
+    recipe by ``assemble_plan`` from the process spec.
+    """
 
     # Core fields that are always present
     executor_type: str = "default"
     np: int = 1
-    custom_operator_paths: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
 
     # Extra fields storage for any additional DJ system config fields
@@ -49,15 +53,6 @@ class SystemSpec:
             ).strip()
             or "default",
             "np": int(data.get("np", 1) or 1),
-            "custom_operator_paths": (
-                [
-                    str(item).strip()
-                    for item in data.get("custom_operator_paths", [])
-                    if str(item).strip()
-                ]
-                if isinstance(data.get("custom_operator_paths", []), list)
-                else []
-            ),
             "warnings": (
                 [
                     str(item).strip()
@@ -70,6 +65,8 @@ class SystemSpec:
         }
 
         # Store all other fields in _extra_fields as-is.
+        # custom_operator_paths is now owned by ProcessSpec; if present in
+        # input data (e.g. legacy payloads), it is silently dropped here.
         # Type coercion is handled later by normalize_system_spec().
         core_field_names = {"executor_type", "np", "custom_operator_paths", "warnings"}
         raw_extra_fields = {k: v for k, v in data.items() if k not in core_field_names}
@@ -81,7 +78,6 @@ class SystemSpec:
         result = {
             "executor_type": self.executor_type,
             "np": self.np,
-            "custom_operator_paths": list(self.custom_operator_paths),
             "warnings": list(self.warnings),
         }
 
@@ -96,8 +92,6 @@ class SystemSpec:
             return self.executor_type
         elif key == "np":
             return self.np
-        elif key == "custom_operator_paths":
-            return self.custom_operator_paths
         elif key == "warnings":
             return self.warnings
         else:
@@ -109,8 +103,6 @@ class SystemSpec:
             self.executor_type = value
         elif key == "np":
             self.np = value
-        elif key == "custom_operator_paths":
-            self.custom_operator_paths = value
         elif key == "warnings":
             self.warnings = value
         else:
@@ -370,9 +362,17 @@ class ProcessOperator:
 
 @dataclass
 class ProcessSpec:
-    """Ordered process/operator specification."""
+    """Ordered process/operator specification.
+
+    ``custom_operator_paths`` is bound here (not in ``SystemSpec``)
+    because it is semantically tied to the operator list: the paths
+    determine which custom operators are available for validation and
+    execution.  This mirrors how ``DatasetBindingSpec`` binds
+    ``image_key`` to the dataset spec.
+    """
 
     operators: List[ProcessOperator] = field(default_factory=list)
+    custom_operator_paths: List[str] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ProcessSpec":
@@ -386,14 +386,23 @@ class ProcessSpec:
                 params = {}
             if name:
                 operators.append(ProcessOperator(name=name, params=params))
-        return cls(operators=operators)
+        raw_paths = data.get("custom_operator_paths", [])
+        custom_operator_paths = (
+            [str(p).strip() for p in raw_paths if str(p).strip()]
+            if isinstance(raw_paths, list)
+            else []
+        )
+        return cls(operators=operators, custom_operator_paths=custom_operator_paths)
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        result: Dict[str, Any] = {
             "operators": [
                 {"name": item.name, "params": item.params} for item in self.operators
             ],
         }
+        if self.custom_operator_paths:
+            result["custom_operator_paths"] = list(self.custom_operator_paths)
+        return result
 
 
 @dataclass
@@ -403,7 +412,6 @@ class PlanContext:
     user_intent: str
     dataset_path: str
     export_path: str
-    custom_operator_paths: List[str] = field(default_factory=list)
 
 
 @dataclass

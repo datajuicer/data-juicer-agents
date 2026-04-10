@@ -16,7 +16,10 @@ class GenericOutput(BaseModel):
 
 
 def _build_process_spec(_ctx: ToolContext, args: BuildProcessSpecInput) -> ToolResult:
-    result = build_process_spec(operators=[item.model_dump() for item in args.operators])
+    result = build_process_spec(
+        operators=[item.model_dump() for item in args.operators],
+        custom_operator_paths=args.custom_operator_paths,
+    )
     if result.get("ok"):
         return ToolResult.success(summary=str(result.get("message", "process spec built")), data=result)
     return ToolResult.failure(
