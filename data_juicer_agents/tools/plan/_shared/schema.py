@@ -65,10 +65,8 @@ class SystemSpec:
         }
 
         # Store all other fields in _extra_fields as-is.
-        # custom_operator_paths is now owned by ProcessSpec; if present in
-        # input data (e.g. legacy payloads), it is silently dropped here.
         # Type coercion is handled later by normalize_system_spec().
-        core_field_names = {"executor_type", "np", "custom_operator_paths", "warnings"}
+        core_field_names = {"executor_type", "np", "warnings"}
         raw_extra_fields = {k: v for k, v in data.items() if k not in core_field_names}
 
         return cls(**core_fields, _extra_fields=raw_extra_fields)

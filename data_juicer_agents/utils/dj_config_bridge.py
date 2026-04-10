@@ -70,7 +70,6 @@ system_fields = [
     "checkpoint.strategy",
     "checkpoint_dir",
     "conflict_resolve_strategy",
-    "custom_operator_paths",
     "data_probe_algo",
     "data_probe_ratio",
     "debug",

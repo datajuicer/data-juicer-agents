@@ -52,8 +52,6 @@ def build_system_spec(
     """
     # Load complete system config from Data-Juicer
     dj_system_config = _load_dj_system_config()
-    # custom_operator_paths is owned by ProcessSpec; remove it from system config
-    dj_system_config.pop('custom_operator_paths', None)
 
     if np is not None:
         dj_system_config['np'] = np

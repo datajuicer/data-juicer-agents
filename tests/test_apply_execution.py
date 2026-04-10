@@ -3,6 +3,7 @@
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
 import yaml
 
 from data_juicer_agents.adapters.agentscope import invoke_tool_spec
@@ -142,8 +143,8 @@ def test_apply_recipe_failure_payload_includes_failure_preview(tmp_path: Path):
     assert "failed to load plan file" in result["failure_preview"]
 
 
-def test_format_dataset_source_prefers_dataset_config_over_dataset_path():
-    # Priority: generated_dataset_config > dataset (multi-source config) > dataset_path
+def test_format_dataset_source_rejects_multiple_sources():
+    # Only one of dataset_path, dataset, or generated_dataset_config is allowed.
     recipe = {
         "dataset_path": "/tmp/primary.jsonl",
         "dataset": {
@@ -152,4 +153,5 @@ def test_format_dataset_source_prefers_dataset_config_over_dataset_path():
             ],
         },
     }
-    assert _format_dataset_source(recipe) == "local: /tmp/secondary.jsonl"
+    with pytest.raises(ValueError, match="multiple dataset sources"):
+        _format_dataset_source(recipe)
