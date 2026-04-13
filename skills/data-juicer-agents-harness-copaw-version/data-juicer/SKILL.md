@@ -242,11 +242,8 @@ djx tool run develop_operator --yes --input-json '{
   "smoke_check": true
 }'
 
-# Integrate into pipeline (custom_operator_paths goes with build_process_spec)
-djx tool run build_process_spec --input-json '{
-  "operators": [{"name": "email_mask_mapper", "params": {}}],
-  "custom_operator_paths": ["./custom_operators"]
-}'
+# Integrate into pipeline
+djx tool run build_system_spec --input-json '{"custom_operator_paths": ["./custom_operators"]}'
 ```
 
 ---
