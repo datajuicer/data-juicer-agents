@@ -14,8 +14,11 @@ Field classification lists:
     agent_managed_fields    → fields auto-set by the agent (not by LLM)
 """
 
+import inspect
 import logging
+import os
 import threading
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -77,9 +80,6 @@ def _patch_op_record() -> None:
         except ImportError:
             return
 
-        import inspect as _inspect
-        from pathlib import Path as _Path
-
         original_init = OPRecord.__init__
 
         def _safe_init(self, name, op_cls, op_type=None):
@@ -106,7 +106,7 @@ def _patch_op_record() -> None:
                     self.tags = []
 
                 try:
-                    self.sig = _inspect.signature(op_cls.__init__)
+                    self.sig = inspect.signature(op_cls.__init__)
                 except (ValueError, TypeError):
                     self.sig = None
 
@@ -122,7 +122,7 @@ def _patch_op_record() -> None:
 
                 # Use the actual source file path (absolute) for custom ops
                 try:
-                    self.source_path = str(_Path(_inspect.getfile(op_cls)))
+                    self.source_path = str(Path(inspect.getfile(op_cls)))
                 except (TypeError, OSError):
                     self.source_path = ""
 
@@ -221,7 +221,6 @@ def load_custom_operators_into_registry(paths: List[str]) -> List[str]:
     _patch_op_record()
 
     # Normalize and filter out already-loaded paths
-    import os
     with _custom_op_lock:
         new_paths = []
         for path in paths:
@@ -551,8 +550,6 @@ class DJConfigBridge:
             List of dicts with keys: executor_type, type, source,
             config_validation_rules (required_fields, optional_fields).
         """
-        import inspect
-
         try:
             from data_juicer.core.data.load_strategy import DataLoadStrategyRegistry
         except ImportError:

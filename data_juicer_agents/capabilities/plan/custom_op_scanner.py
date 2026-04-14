@@ -1,28 +1,31 @@
 # -*- coding: utf-8 -*-
-"""Scan custom operator paths by importing them into the DJ registry.
+"""Scan custom operator paths and build retrieval-compatible candidate metadata.
 
 Used by PlanOrchestrator to inject custom operators into the retrieval
 candidate list so the LLM planner can select them.
 
-Strategy: import the custom operator modules (triggering their
-``@OPERATORS.register_module`` decorators), then diff the current
-registry against a builtin snapshot to identify custom operators.
-Metadata is extracted from ``OPSearcher`` records which provide
-accurate type, docstring, init params (including inherited ones),
-and tags.
+This module is **metadata-only**: it assumes operators have already been
+registered into the DJ global registry (via ``register_custom_operators``).
+It reads the registry + ``OPSearcher`` to produce candidate dicts.
 """
 
 from __future__ import annotations
 
 import inspect
 import logging
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, List, Sequence
+
+from data_juicer_agents.utils.dj_config_bridge import (
+    create_op_searcher,
+    get_builtin_operator_names,
+)
 
 logger = logging.getLogger(__name__)
 
 # Maximum number of __init__ params to include in the candidate preview.
-# Keeps the LLM prompt concise while still showing the most important params.
+# ``None`` means no limit; set to a positive int to truncate.
 _MAX_PREVIEW_PARAMS: int | None = None
+
 
 def _extract_init_params_from_class(cls: type) -> List[str]:
     """Extract __init__ parameter names via inspect (includes inherited params)."""
@@ -41,54 +44,51 @@ def _extract_init_params_from_class(cls: type) -> List[str]:
     except (ValueError, TypeError):
         return []
 
-def scan_custom_operators(
-    custom_operator_paths: Iterable[Any] | None,
-) -> List[Dict[str, Any]]:
-    """Load custom operators and return candidate-format metadata.
 
-    Imports custom operator modules into the DJ registry, then identifies
-    custom operators by diffing the current registry against the builtin
-    snapshot (captured before any custom operators were loaded).  This
-    approach is idempotent and correctly detects name conflicts.
+def scan_custom_operators(
+    registered_operator_names: Sequence[str] | None = None,
+) -> List[Dict[str, Any]]:
+    """Build candidate-format metadata for already-registered custom operators.
+
+    This function does **not** load or register operators itself — that is
+    the responsibility of ``register_custom_operators``.  It only reads
+    the DJ registry to produce candidate dicts compatible with the
+    retrieval payload format.
 
     Args:
-        custom_operator_paths: Directories or .py files containing custom
-            operators registered via ``@OPERATORS.register_module``.
+        registered_operator_names: Explicit list of custom operator names
+            (as returned by ``register_custom_operators``).  When provided,
+            the registry diff is skipped entirely.  When ``None``, falls
+            back to diffing the registry against the builtin snapshot.
 
     Returns:
         List of candidate dicts compatible with the retrieval payload format.
     """
-    if not custom_operator_paths:
+    # Determine which operator names to scan
+    if registered_operator_names is not None:
+        custom_op_names = sorted(registered_operator_names)
+    else:
+        # Fallback: diff registry against builtin snapshot
+        try:
+            from data_juicer.ops import OPERATORS
+        except ImportError:
+            logger.warning("data_juicer.ops not available; skipping custom operator scan")
+            return []
+        builtin_names = get_builtin_operator_names()
+        custom_op_names = sorted(set(OPERATORS.modules.keys()) - builtin_names)
+
+    if not custom_op_names:
         return []
 
-    paths = [str(p).strip() for p in custom_operator_paths if str(p).strip()]
-    if not paths:
-        return []
-
-    # Load custom operators into registry (also captures builtin snapshot)
-    from data_juicer_agents.utils.dj_config_bridge import load_custom_operators_into_registry
-    load_warnings = load_custom_operators_into_registry(paths)
-    for warning in load_warnings:
-        logger.warning("Custom operator loading: %s", warning)
-
+    # Ensure OPERATORS is available for class lookup
     try:
         from data_juicer.ops import OPERATORS
     except ImportError:
         logger.warning("data_juicer.ops not available; skipping custom operator scan")
         return []
 
-    # Diff against builtin snapshot to find custom operators
-    from data_juicer_agents.utils.dj_config_bridge import get_builtin_operator_names
-    builtin_names = get_builtin_operator_names()
-    custom_op_names = sorted(set(OPERATORS.modules.keys()) - builtin_names)
-
-    if not custom_op_names:
-        logger.debug("No custom operators registered from paths: %s", paths)
-        return []
-
     # Use OPSearcher to get rich metadata (type, desc, params, tags)
     try:
-        from data_juicer_agents.utils.dj_config_bridge import create_op_searcher
         searcher = create_op_searcher()
         all_ops = searcher.all_ops
     except Exception as exc:
@@ -97,6 +97,10 @@ def scan_custom_operators(
 
     candidates = []
     for rank, op_name in enumerate(custom_op_names, start=1):
+        if op_name not in OPERATORS.modules:
+            logger.warning("Operator %s not found in registry; skipping", op_name)
+            continue
+
         if all_ops is not None and op_name in all_ops:
             record = all_ops[op_name]
             operator_type = getattr(record, "type", "unknown")

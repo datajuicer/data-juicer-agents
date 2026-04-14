@@ -104,9 +104,10 @@ class PlanOrchestrator:
         )
 
         # Register custom operators into the DJ registry first, then
-        # scan for candidate metadata.  This two-step approach mirrors
-        # the session workflow where register_custom_operators is called
-        # as a standalone tool before retrieval / build_process_spec.
+        # scan for candidate metadata.  Registration is the single
+        # authoritative entry-point; scan_custom_operators only reads
+        # the registry to build candidate dicts — no redundant loading.
+        registered_op_names: list[str] = []
         if custom_operator_paths:
             _paths = [str(p).strip() for p in custom_operator_paths if str(p).strip()]
             if _paths:
@@ -119,10 +120,11 @@ class PlanOrchestrator:
                 if reg_result.get("warnings"):
                     for w in reg_result["warnings"]:
                         _plan_logger.warning("register_custom_operators: %s", w)
+                registered_op_names = reg_result.get("registered_operators", [])
 
         # Inject custom operators into retrieval candidates so the LLM
         # planner can select them alongside built-in operators.
-        custom_candidates = scan_custom_operators(custom_operator_paths)
+        custom_candidates = scan_custom_operators(registered_op_names or None)
         if custom_candidates:
             existing = retrieval.get("candidates", [])
             existing_names = {c.get("operator_name") for c in existing}

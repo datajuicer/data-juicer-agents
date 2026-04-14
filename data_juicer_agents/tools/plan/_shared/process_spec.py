@@ -3,8 +3,15 @@
 
 from __future__ import annotations
 
+import inspect
 import logging
+import os
 from typing import Any, Dict, Iterable, List, Tuple
+
+from data_juicer_agents.utils.dj_config_bridge import (
+    get_builtin_operator_names,
+    get_dj_config_bridge,
+)
 
 from .normalize import normalize_params
 from .schema import ProcessOperator, ProcessSpec
@@ -82,11 +89,8 @@ def validate_process_spec_payload(
     allowed_custom_op_names: set | None = None
     builtin_names: frozenset = frozenset()  # default to empty set if DJ bridge not available
     try:
-        from data_juicer_agents.utils.dj_config_bridge import get_builtin_operator_names
         builtin_names = get_builtin_operator_names()
         if custom_operator_paths:
-            import inspect
-            import os
             from data_juicer.ops import OPERATORS
 
             abs_paths = [
@@ -115,8 +119,6 @@ def validate_process_spec_payload(
 
     # DJ bridge validation (two steps)
     try:
-        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
-
         bridge = get_dj_config_bridge()
 
         # Step 1: op_registry validation (dj-agents-side business logic)

@@ -15,6 +15,11 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List
 
+from data_juicer_agents.utils.dj_config_bridge import (
+    get_builtin_operator_names,
+    load_custom_operators_into_registry,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,11 +46,6 @@ def register_custom_operators(
             "warnings": [],
             "message": "custom_operator_paths must contain at least one non-empty path",
         }
-
-    from data_juicer_agents.utils.dj_config_bridge import (
-        get_builtin_operator_names,
-        load_custom_operators_into_registry,
-    )
 
     # Snapshot builtin names before loading (idempotent)
     builtin_names = get_builtin_operator_names()
