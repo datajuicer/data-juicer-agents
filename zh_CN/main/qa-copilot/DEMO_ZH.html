@@ -493,27 +493,6 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">其他</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Data-Juicer 问答 Copilot 示例（中文）</a></li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="README_ZH.html">Data-Juicer Q&amp;A Copilot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../interactive_recipe/README_ZH.html">🔧 InteRecipe：交互式数据处理配方生成流程</a></li>
 </ul>
@@ -579,10 +558,11 @@
   <section id="data-juicer-copilot">
 <h1>Data-Juicer 问答 Copilot 示例（中文）<a class="headerlink" href="#data-juicer-copilot" title="链接到此标题。">#</a></h1>
 <p>本文按案例展示 <strong>输入问题（Input）</strong> 与 <strong>助手回答（Output）</strong>，便于理解 QA Copilot 的实际效果。</p>
-<p>你可以在官方<a class="reference external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html">文档页</a>和我们的 <span class="xref myst">问答 Copilot</span> <em><strong>Juicer</strong></em> 聊天! 欢迎向 <em><strong>Juicer</strong></em> 提出任何与 Data-Juicer 生态相关的问题。</p>
+<p>你可以在官方<a class="reference external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html">文档页</a>和我们的 <a class="reference internal" href="README_ZH.html"><span class="std std-doc">问答 Copilot</span></a> <em><strong>Juicer</strong></em> 聊天! 欢迎向 <em><strong>Juicer</strong></em> 提出任何与 Data-Juicer 生态相关的问题。</p>
 <div align="center">
 <img src="https://github.com/user-attachments/assets/a0099ce2-4ed3-4fab-8cfa-b0bbd3beeac9" width=90%>
 </div>
+<hr class="docutils" />
 <hr class="docutils" />
 <section id="alphanumeric-filter-zh">
 <h2>案例 1 · 算子介绍（alphanumeric_filter，ZH）<a class="headerlink" href="#alphanumeric-filter-zh" title="链接到此标题。">#</a></h2>
@@ -596,74 +576,77 @@
 </div></blockquote>
 <details>
 <summary><strong>输出（助手回答）</strong></summary>
-<p><code class="docutils literal notranslate"><span class="pre">alphanumeric_filter</span></code> 是 Data-Juicer 中的一个<strong>过滤算子（Filter Operator）</strong>，用于根据样本中<strong>字母数字字符（或词元）的比例</strong>筛选数据。它保留那些字母数字比例落在指定区间内的样本，常用于清洗低质量或非自然语言文本（如代码、乱码、广告等）。</p>
-<hr class="docutils" />
-</section>
+<p><code class="docutils literal notranslate"><span class="pre">alphanumeric_filter</span></code> 是 Data-Juicer 中的一个<strong>过滤器算子（Filter Operator）</strong>，主要用于根据文本中<strong>字母和数字字符（或 Token）的比例</strong>来筛选数据样本。</p>
 </section>
 <section id="id1">
-<h1>📌 核心功能<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
-<ul class="simple">
-<li><p><strong>字符级或词元级计算</strong>：<br />
-通过 <code class="docutils literal notranslate"><span class="pre">tokenization</span></code> 参数控制：</p>
-<ul>
-<li><p>若为 <code class="docutils literal notranslate"><span class="pre">False</span></code>（默认），按<strong>字符数</strong>计算字母数字占比 → 使用字段 <code class="docutils literal notranslate"><span class="pre">'alnum_ratio'</span></code></p></li>
-<li><p>若为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，使用 Hugging Face tokenizer 按**词元（token）**计算 → 使用字段 <code class="docutils literal notranslate"><span class="pre">'alpha_token_ratio'</span></code></p></li>
-</ul>
-</li>
-<li><p><strong>范围过滤</strong>：<br />
-通过 <code class="docutils literal notranslate"><span class="pre">min_ratio</span></code> 和 <code class="docutils literal notranslate"><span class="pre">max_ratio</span></code> 设置保留样本的合法比例区间 [min, max]。</p></li>
-</ul>
-<hr class="docutils" />
+<h2>📌 核心功能<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
+<p>该算子计算样本中字母数字内容（Alphanumeric）占整体内容（字符或 Token）的比例，并保留该比例在指定范围 <code class="docutils literal notranslate"><span class="pre">[min_ratio,</span> <span class="pre">max_ratio]</span></code> 内的样本。这有助于过滤掉那些包含过多特殊符号、乱码或非自然语言内容的低质量数据。</p>
 </section>
 <section id="id2">
-<h1>⚙️ 参数说明<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h1>
+<h2>⚙️ 主要参数<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>参数名</p></th>
-<th class="head"><p>类型</p></th>
-<th class="head"><p>描述</p></th>
+<tr class="row-odd"><th class="head text-left"><p>参数名</p></th>
+<th class="head text-left"><p>类型</p></th>
+<th class="head text-left"><p>默认值</p></th>
+<th class="head text-left"><p>说明</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>是否启用词元化计算（默认 False → 字符级）</p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td class="text-left"><p>是否基于 Token 计算比例。若为 <code class="docutils literal notranslate"><span class="pre">False</span></code>，则基于字符（Character）计算；若为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，则使用 Hugging Face Tokenizer 分词后计算。</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_ratio</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
-<td><p>最小字母数字比例阈值</p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">min_ratio</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td class="text-left"><p>最小比例阈值。低于此值的样本将被过滤掉。</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_ratio</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
-<td><p>最大字母数字比例阈值</p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_ratio</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">sys.maxsize</span></code></p></td>
+<td class="text-left"><p>最大比例阈值。高于此值的样本将被过滤掉。</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<blockquote>
-<div><p>💡 示例：设置 <code class="docutils literal notranslate"><span class="pre">min_ratio=0.25</span></code>, <code class="docutils literal notranslate"><span class="pre">max_ratio=1.0</span></code> 可过滤掉字母数字比例低于 25% 的样本（如纯符号、乱码文本）。</p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-<section id="yaml">
-<h1>🧩 使用示例（YAML 配置）<a class="headerlink" href="#yaml" title="链接到此标题。">#</a></h1>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alphanumeric_filter</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">tokenization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">      </span><span class="nt">min_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.25</span>
-<span class="w">      </span><span class="nt">max_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-</pre></div>
-</div>
-<hr class="docutils" />
 </section>
 <section id="id3">
-<h1>📚 参考资料<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h1>
+<h2>💡 工作原理<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>计算指标</strong>：</p>
 <ul class="simple">
-<li><p>算子源码：<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/filter/alphanumeric_filter.py">alphanumeric_filter.py</a></p></li>
-<li><p>单元测试：<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/tests/ops/filter/test_alphanumeric_filter.py">test_alphanumeric_filter.py</a></p></li>
-<li><p>官方文档：<a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/operators/filter/alphanumeric_filter.md">alphanumeric_filter.md</a></p></li>
+<li><p>如果 <code class="docutils literal notranslate"><span class="pre">tokenization=False</span></code>：计算 <code class="docutils literal notranslate"><span class="pre">alnum_ratio</span></code> = (字母+数字字符数) / (总字符数)。</p></li>
+<li><p>如果 <code class="docutils literal notranslate"><span class="pre">tokenization=True</span></code>：计算 <code class="docutils literal notranslate"><span class="pre">alpha_token_ratio</span></code> = (包含字母或数字的 Token 数) / (总 Token 数)。</p></li>
 </ul>
+</li>
+<li><p><strong>过滤判断</strong>：检查计算出的比例是否在 <code class="docutils literal notranslate"><span class="pre">[min_ratio,</span> <span class="pre">max_ratio]</span></code> 区间内。</p></li>
+<li><p><strong>缓存统计</strong>：算子会将计算出的比例值缓存到样本的 <code class="docutils literal notranslate"><span class="pre">stats</span></code> 字段中，方便后续分析或可视化。</p></li>
+</ol>
+</section>
+<section id="id4">
+<h2>📊 效果示例<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
+<p>假设配置为 <code class="docutils literal notranslate"><span class="pre">min_ratio=0.2,</span> <span class="pre">max_ratio=0.9</span></code>：</p>
+<ul class="simple">
+<li><p><strong>保留</strong>：<code class="docutils literal notranslate"><span class="pre">&quot;a=1\nb\nc=1+2&quot;</span></code>（字母数字占比适中）。</p></li>
+<li><p><strong>过滤</strong>：<code class="docutils literal notranslate"><span class="pre">&quot;，。、„”“«»１」&quot;</span></code>（几乎全是特殊符号，字母数字占比极低）。</p></li>
+</ul>
+<p>当启用 <code class="docutils literal notranslate"><span class="pre">tokenization=True</span></code> 且 <code class="docutils literal notranslate"><span class="pre">min_ratio=1.5</span></code> 时（注意：Token 模式下比例计算逻辑可能因 Tokenizer 而异，通常用于确保大部分 Token 都是有意义的字母数字组合）：</p>
+<ul class="simple">
+<li><p><strong>保留</strong>：<code class="docutils literal notranslate"><span class="pre">&quot;Do</span> <span class="pre">you</span> <span class="pre">need</span> <span class="pre">a</span> <span class="pre">cup</span> <span class="pre">of</span> <span class="pre">coffee?&quot;</span></code></p></li>
+<li><p><strong>过滤</strong>：纯标点或乱码样本。</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>🔗 相关链接<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/operators/filter/alphanumeric_filter.md">官方文档</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/filter/alphanumeric_filter.py">源代码</a></p></li>
+</ul>
+<p>这个算子通常用于数据清洗的早期阶段，以快速剔除明显非文本或格式混乱的数据。</p>
 </details>
+</section>
 <hr class="docutils" />
 <section id="dj-agents-zh">
 <h2>案例 2 · 模块介绍（DJ-Agents，ZH）<a class="headerlink" href="#dj-agents-zh" title="链接到此标题。">#</a></h2>
@@ -677,100 +660,92 @@
 </div></blockquote>
 <details>
 <summary><strong>输出（助手回答）</strong></summary>
-<p>Data-Juicer Agents（DJ-Agents）是 Data-Juicer 生态中的智能代理模块，旨在通过对话式交互和可视化界面，帮助用户快速构建、调试和优化数据处理菜谱（Recipe）。它结合了大语言模型（如通义千问）与 Data-Juicer 的算子能力，实现“需求描述 → 自动生成菜谱 → 交互式调试”的闭环流程。</p>
+<p><strong>Data-Juicer Agents (DJ-Agents)</strong> 是 Data-Juicer 生态系统中的一个智能代理套件，旨在实现<strong>代理式数据处理（Agentic Data Processing）</strong>。它构建在 <a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer</a> 和 <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a> 之上，目标是让开发者从“如何实现”数据处理细节中解放出来，专注于“要做什么”，从而实现无代码或低代码的数据处理生命周期。</p>
+<p>以下是 DJ-Agents 的核心介绍：</p>
 </section>
-<hr class="docutils" />
-<section id="id4">
-<h2>✅ 核心功能<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>对话式菜谱生成</strong><br />
-用户只需用自然语言描述数据处理需求（例如：“帮我过滤掉中文文本中长度小于50的样本”），Agent 会自动生成对应的 YAML 菜谱配置。</p></li>
-<li><p><strong>交互式调试与优化</strong><br />
-支持在运行过程中动态修改参数、增删算子、查看中间结果，并实时反馈调整效果。</p></li>
-<li><p><strong>支持自定义算子开发</strong><br />
-若需扩展新算子，可结合本地 Data-Juicer 源码进行开发，Agent 会自动识别并集成新增算子。</p></li>
-<li><p><strong>双模式运行</strong></p>
-<ul class="simple">
-<li><p><strong>命令行模式</strong>：适合快速测试与脚本化使用。</p></li>
-<li><p><strong>AgentScope Studio 可视化模式</strong>：提供图形化界面，便于教学、演示和协作。</p></li>
-</ul>
-</li>
-</ol>
-</section>
-<hr class="docutils" />
-<section id="id5">
-<h2>🚀 快速开始<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
 <section id="id6">
-<h3>系统要求<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
+<h2>1. 核心愿景与定位<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
 <ul class="simple">
-<li><p>Python 3.10+</p></li>
-<li><p>DashScope API Key（用于调用大模型）</p></li>
-<li><p>（可选）本地 Data-Juicer 源码路径（用于自定义算子）</p></li>
+<li><p><strong>智能副驾驶</strong>：作为数据探索和数据处理流水线的智能助手。</p></li>
+<li><p><strong>自然语言交互</strong>：用户可以通过自然语言描述数据处理需求（例如“为 RAG 任务去重并清洗文本”），Agent 会自动规划、选择算子并生成执行方案。</p></li>
+<li><p><strong>工具化与技能化</strong>：将 Data-Juicer 的强大能力封装为 Agent 可调用的 <code class="docutils literal notranslate"><span class="pre">tools</span></code>（工具）和 <code class="docutils literal notranslate"><span class="pre">skills</span></code>（技能），支持通用大模型 Agent 的自主编排。</p></li>
 </ul>
 </section>
 <section id="id7">
-<h3>安装步骤<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装 uv（推荐）</span>
-curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
-
-<span class="c1"># 克隆并安装 DJ-Agents</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer-agents.git
-<span class="nb">cd</span><span class="w"> </span>data-juicer-agents
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</pre></div>
-</div>
-<blockquote>
-<div><p>如需开发自定义算子，请同时安装 Data-Juicer：</p>
-</div></blockquote>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
-<span class="nb">cd</span><span class="w"> </span>data-juicer
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</pre></div>
-</div>
-</section>
-<section id="id8">
-<h3>配置环境变量<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-dashscope-key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_PATH</span><span class="o">=</span><span class="s2">&quot;/path/to/data-juicer&quot;</span><span class="w">  </span><span class="c1"># 可选</span>
-</pre></div>
-</div>
-</section>
-<section id="id9">
-<h3>启动方式<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
+<h2>2. 主要功能模块<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h2>
+<p>根据最新的架构重构（2026-03-11），DJ-Agents 主要包含以下部分：</p>
+<ul class="simple">
+<li><p><strong>CLI 命令行工具 (<code class="docutils literal notranslate"><span class="pre">djx</span></code>)</strong>：</p>
 <ul>
-<li><p><strong>命令行模式</strong>（默认）：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-agents
-</pre></div>
-</div>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code>：根据自然语言意图检索合适的 Data-Juicer 算子。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code>：分析数据集并生成处理计划（YAML 格式的 Recipe）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code>：应用生成的计划进行数据处理。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code>：提供 JSON 格式的工具接口，便于与其他 Agent 系统或自动化流程集成。</p></li>
+</ul>
 </li>
-<li><p><strong>可视化模式</strong>（需先安装 AgentScope Studio）：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>@agentscope/studio
-as_studio<span class="w">  </span><span class="c1"># 启动 Studio</span>
-dj-agents<span class="w"> </span>--use-studio
-</pre></div>
-</div>
+<li><p><strong>会话模式 (<code class="docutils literal notranslate"><span class="pre">dj-agents</span></code>)</strong>：</p>
+<ul>
+<li><p>提供一个交互式界面（支持 TUI 终端用户界面或 AgentScope Studio），用户可以像聊天一样与 Agent 对话，逐步完成数据检查、算子推荐、方案生成和执行。</p></li>
+<li><p>支持中断当前操作 (<code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>) 和退出 (<code class="docutils literal notranslate"><span class="pre">Ctrl+D</span></code>)。</p></li>
+</ul>
+</li>
+<li><p><strong>Q&amp;A Copilot (Juicer)</strong>：</p>
+<ul>
+<li><p>一个专门针对 Data-Juicer 生态的智能问答助手，已部署在官方文档网站、钉钉群和 Discord 社区中，帮助用户解答关于 DJ 算子、菜谱和使用方法的问题。</p></li>
+</ul>
 </li>
 </ul>
 </section>
-</section>
-<hr class="docutils" />
-<section id="id10">
-<h2>💡 使用示例<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h2>
-<p>你可以这样与 Agent 对话：</p>
-<blockquote>
-<div><p>“帮我写一个菜谱：读取 JSONL 文件，过滤掉英文文本中单词数少于10的样本，再按语言聚合并保存。”</p>
-</div></blockquote>
-<p>Agent 将返回结构化的 YAML 配置，并支持你进一步调整参数或添加新步骤。</p>
-<hr class="docutils" />
-<p>📌 <strong>提示</strong>：所有操作均可通过自然语言完成，无需记忆 YAML 语法或算子名称！</p>
-</section>
-<hr class="docutils" />
-<section id="id11">
-<h2>🔗 参考资料<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h2>
+<section id="id8">
+<h2>3. 技术架构特点<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/docs/QuickStart.md">DJ-Agents QuickStart 文档</a></p></li>
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer GitHub 主仓库</a></p></li>
-<li><p><a class="reference external" href="https://github.com/modelscope/agentscope">AgentScope Studio 官网</a></p></li>
+<li><p><strong>基于 AgentScope</strong>：利用 AgentScope 框架强大的多 Agent 协作和工具调用能力。</p></li>
+<li><p><strong>模块化设计</strong>：</p>
+<ul>
+<li><p><strong>Core</strong>：包含完整的 <code class="docutils literal notranslate"><span class="pre">djx</span></code> 和 <code class="docutils literal notranslate"><span class="pre">dj-agents</span></code> 命令。</p></li>
+<li><p><strong>Harness</strong>：最小化安装，仅包含用于自动化的 <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code> 核心工具集。</p></li>
+<li><p><strong>Full</strong>：包含核心功能以及 Q&amp;A Copilot 和交互式菜谱（InteRecipe）等高级功能。</p></li>
+</ul>
+</li>
+<li><p><strong>模型支持</strong>：支持 DashScope（通义千问系列）以及其他 OpenAI 兼容的 API。</p></li>
+</ul>
+</section>
+<section id="id9">
+<h2>4. 快速开始示例<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h2>
+<p>你可以通过以下步骤体验 DJ-Agents：</p>
+<ol class="arabic">
+<li><p><strong>安装</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer-agents.git
+<span class="nb">cd</span><span class="w"> </span>data-juicer-agents
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[full]&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>配置 API Key</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_api_key&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>运行会话模式</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-agents<span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/output.jsonl
+</pre></div>
+</div>
+<p>然后在终端中与 Agent 对话，例如输入：“帮我检查一下数据集的质量，并去除重复项。”</p>
+</li>
+</ol>
+</section>
+<section id="roadmap">
+<h2>5. 未来路线图 (Roadmap)<a class="headerlink" href="#roadmap" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>DJ Skills</strong>：通过提示词软编排将工具打包为技能，供更通用的 Agent 使用。</p></li>
+<li><p><strong>InteRecipe Studio</strong>：开发前端界面，支持通过自然语言交互式构建数据菜谱，并提供多维度的数据和结果视图。</p></li>
+<li><p><strong>扩展应用场景</strong>：进一步支持 RAG（检索增强生成）、具身智能和数据湖仓架构等复杂场景的数据处理。</p></li>
+</ul>
+<p>更多详细信息可以参考官方文档：</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/docs/overview.md">Overview Doc</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/docs/quick_start.md">Quick Start Doc</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/docs/cli.md">CLI Doc</a></p></li>
 </ul>
 </details>
 </section>
@@ -787,145 +762,153 @@ dj-agents<span class="w"> </span>--use-studio
 </div></blockquote>
 <details>
 <summary><strong>输出（助手回答）</strong></summary>
-<p>在 Data-Juicer 系统中，<strong>基类算子（Base Operator）</strong> 是所有具体算子（如 Mapper、Filter、Deduplicator 等）的抽象父类，定义了数据处理算子的基本结构、通用属性和核心方法。它位于 <code class="docutils literal notranslate"><span class="pre">data_juicer/ops/base_op.py</span></code> 文件中，是整个算子体系的基石。</p>
-<hr class="docutils" />
+<p>在 Data-Juicer (DJ) 中，<strong>基类算子 (Base Operators)</strong> 是所有具体数据处理算子的父类或抽象基础。它们定义了算子的基本结构、接口规范以及通用的执行逻辑，确保所有算子遵循统一的标准以便组合成流水线（Pipeline）。</p>
+<p>为了给你提供最准确的介绍，我需要检索 Data-Juicer源码中关于基类算子的定义和文档。</p>
+<p>在 Data-Juicer (DJ) 中，<strong>基类算子 (Base Operators)</strong> 是所有具体数据处理逻辑的抽象基础。它们位于 <code class="docutils literal notranslate"><span class="pre">data_juicer/ops/base_op.py</span></code> 文件中，定义了算子的通用接口、执行流程以及资源管理方式。</p>
+<p>以下是 DJ 中主要基类算子的详细介绍：</p>
 </section>
-</section>
-<section id="id12">
-<h1>🧱 基类结构概览<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h1>
-<section id="op">
-<h2>1. <strong>顶层基类 <code class="docutils literal notranslate"><span class="pre">OP</span></code></strong><a class="headerlink" href="#op" title="链接到此标题。">#</a></h2>
-<p>所有算子都继承自 <code class="docutils literal notranslate"><span class="pre">OP</span></code> 类，该类使用元类 <code class="docutils literal notranslate"><span class="pre">OPMetaClass</span></code> 实现实例化时自动记录初始化参数：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">OP</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">OPMetaClass</span><span class="p">):</span>
-</pre></div>
-</div>
-<section id="id13">
-<h3>✅ 核心功能：<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h3>
+<section id="op-operator-base-class">
+<h2>1. <code class="docutils literal notranslate"><span class="pre">OP</span></code> (Operator Base Class)<a class="headerlink" href="#op-operator-base-class" title="链接到此标题。">#</a></h2>
+<p>这是所有算子的最顶层父类。它定义了算子的基本属性和通用方法。</p>
 <ul class="simple">
-<li><p><strong>统一数据字段键名管理</strong>：如 <code class="docutils literal notranslate"><span class="pre">text_key</span></code>, <code class="docutils literal notranslate"><span class="pre">image_key</span></code>, <code class="docutils literal notranslate"><span class="pre">audio_key</span></code>, <code class="docutils literal notranslate"><span class="pre">video_key</span></code>, <code class="docutils literal notranslate"><span class="pre">query_key</span></code>, <code class="docutils literal notranslate"><span class="pre">response_key</span></code>, <code class="docutils literal notranslate"><span class="pre">history_key</span></code> 等。</p></li>
-<li><p><strong>硬件加速支持</strong>：通过 <code class="docutils literal notranslate"><span class="pre">accelerator</span></code> 属性支持 CPU/CUDA 自动切换。</p></li>
-<li><p><strong>批处理模式控制</strong>：<code class="docutils literal notranslate"><span class="pre">_batched_op</span></code> 和 <code class="docutils literal notranslate"><span class="pre">batch_mode</span></code> 控制是否启用批处理。</p></li>
-<li><p><strong>资源调度配置</strong>：支持 Ray 分布式执行时的资源配置（<code class="docutils literal notranslate"><span class="pre">num_cpus</span></code>, <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code>, <code class="docutils literal notranslate"><span class="pre">runtime_env</span></code>, <code class="docutils literal notranslate"><span class="pre">ray_execution_mode</span></code>）。</p></li>
-<li><p><strong>错误容忍机制</strong>：通过 <code class="docutils literal notranslate"><span class="pre">skip_op_error</span></code> 控制是否跳过处理异常样本。</p></li>
-<li><p><strong>运行时并发计算</strong>：<code class="docutils literal notranslate"><span class="pre">runtime_np()</span></code> 方法根据资源限制自动计算并行进程数。</p></li>
-<li><p><strong>嵌套数据访问封装</strong>：通过 <code class="docutils literal notranslate"><span class="pre">wrap_func_with_nested_access</span></code> 自动支持嵌套字段访问。</p></li>
-<li><p><strong>通用运行入口 <code class="docutils literal notranslate"><span class="pre">run()</span></code></strong>：</p>
+<li><p><strong>核心功能</strong>：</p>
 <ul>
-<li><p>自动为 Tagging 类算子添加 <code class="docutils literal notranslate"><span class="pre">meta</span></code> 字段；</p></li>
-<li><p>为 Filter 类算子添加 <code class="docutils literal notranslate"><span class="pre">stats</span></code> 字段；</p></li>
-<li><p>支持为样本添加索引（<code class="docutils literal notranslate"><span class="pre">index_key</span></code>）。</p></li>
+<li><p><strong>参数初始化</strong>：统一处理数据键名（如 <code class="docutils literal notranslate"><span class="pre">text_key</span></code>, <code class="docutils literal notranslate"><span class="pre">image_key</span></code>）、批处理大小 (<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>)、加速设备 (<code class="docutils literal notranslate"><span class="pre">accelerator</span></code>: cpu/cuda) 以及并行度 (<code class="docutils literal notranslate"><span class="pre">num_proc</span></code>)。</p></li>
+<li><p><strong>资源管理</strong>：支持 Ray 分布式执行所需的资源配置（如 <code class="docutils literal notranslate"><span class="pre">num_cpus</span></code>, <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code>）。</p></li>
+<li><p><strong>生命周期</strong>：提供 <code class="docutils literal notranslate"><span class="pre">run()</span></code> 方法的模板，负责在执行前后添加元数据列（如 <code class="docutils literal notranslate"><span class="pre">meta</span></code>, <code class="docutils literal notranslate"><span class="pre">stats</span></code>）或索引。</p></li>
+</ul>
+</li>
+<li><p><strong>关键属性</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">_name</span></code>: 算子名称（由注册表自动设置）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_accelerator</span></code>: 默认运行设备。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_batched_op</span></code>: 是否为批处理算子。</p></li>
 </ul>
 </li>
 </ul>
 </section>
-</section>
-<hr class="docutils" />
-<section id="id14">
-<h2>2. <strong>五大核心子类算子</strong><a class="headerlink" href="#id14" title="链接到此标题。">#</a></h2>
-<p>从 <code class="docutils literal notranslate"><span class="pre">OP</span></code> 派生出五类专用基类，分别对应不同数据处理范式：</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>类型</p></th>
-<th class="head"><p>基类</p></th>
-<th class="head"><p>功能描述</p></th>
-<th class="head"><p>输入 → 输出</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>数据映射</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Mapper</span></code></p></td>
-<td><p>修改或增强样本内容</p></td>
-<td><p>sample → sample</p></td>
-</tr>
-<tr class="row-odd"><td><p>数据过滤</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Filter</span></code></p></td>
-<td><p>根据条件保留/丢弃样本</p></td>
-<td><p>sample → bool</p></td>
-</tr>
-<tr class="row-even"><td><p>数据去重</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Deduplicator</span></code></p></td>
-<td><p>计算样本哈希并移除重复项</p></td>
-<td><p>dataset → dataset</p></td>
-</tr>
-<tr class="row-odd"><td><p>数据选择</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Selector</span></code></p></td>
-<td><p>在数据集级别选择子集（如Top-K采样）</p></td>
-<td><p>dataset → dataset</p></td>
-</tr>
-<tr class="row-even"><td><p>数据聚合</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Aggregator</span></code></p></td>
-<td><p>将分组样本聚合成单个样本</p></td>
-<td><p>batched sample → sample</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<blockquote>
-<div><p>💡 每个子类都强制要求实现特定方法（如 <code class="docutils literal notranslate"><span class="pre">process_single</span></code>, <code class="docutils literal notranslate"><span class="pre">compute_stats</span></code>），并通过装饰器自动包装为支持批处理和错误捕获的版本。</p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-</section>
-<section id="id15">
-<h1>⚙️ 关键设计特性<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h1>
-<section id="id16">
-<h2>🔁 自动批处理与单样本兼容<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>若 <code class="docutils literal notranslate"><span class="pre">_batched_op</span> <span class="pre">=</span> <span class="pre">True</span></code> 或用户设置 <code class="docutils literal notranslate"><span class="pre">batch_mode=True</span></code>，系统自动将 <code class="docutils literal notranslate"><span class="pre">process_single</span></code> 包装为批处理逻辑。</p></li>
-<li><p>所有输入统一转换为 Python dict（支持 Arrow Table 自动转换）。</p></li>
-<li><p>提供 <code class="docutils literal notranslate"><span class="pre">convert_list_dict_to_dict_list</span></code> / <code class="docutils literal notranslate"><span class="pre">convert_dict_list_to_list_dict</span></code> 工具函数用于格式互转。</p></li>
-</ul>
-</section>
-<section id="id17">
-<h2>🛡️ 错误容忍机制<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>使用 <code class="docutils literal notranslate"><span class="pre">catch_map_single_exception</span></code> / <code class="docutils literal notranslate"><span class="pre">catch_map_batches_exception</span></code> 装饰器捕获单样本或批次处理中的异常。</p></li>
-<li><p>可选跳过错误样本（<code class="docutils literal notranslate"><span class="pre">skip_op_error=True</span></code>），避免整个流程中断。</p></li>
-</ul>
-</section>
-<section id="tracer">
-<h2>📊 数据追踪支持（Tracer）<a class="headerlink" href="#tracer" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>自动包装 <code class="docutils literal notranslate"><span class="pre">process</span></code> 方法，在处理前后记录样本变化（适用于 Mapper/Filter）。</p></li>
-<li><p>支持可视化调试和质量分析。</p></li>
-</ul>
-</section>
-<section id="id18">
-<h2>🧩 注册机制<a class="headerlink" href="#id18" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>所有算子通过 <code class="docutils literal notranslate"><span class="pre">Registry(&quot;Operators&quot;)</span></code> 注册，便于动态发现和调用。</p></li>
-<li><p>特殊类型算子（如不可 fork 的、非统计型 Filter、Tagging 算子等）也有独立注册表。</p></li>
-</ul>
-<hr class="docutils" />
-</section>
-</section>
 <section id="mapper">
-<h1>🧩 示例：自定义一个简单 Mapper<a class="headerlink" href="#mapper" title="链接到此标题。">#</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapper</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MyTextMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
-        <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">text_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">text_key</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">sample</span>
-</pre></div>
-</div>
-<p>系统会自动为其添加：</p>
+<h2>2. <code class="docutils literal notranslate"><span class="pre">Mapper</span></code> (映射算子)<a class="headerlink" href="#mapper" title="链接到此标题。">#</a></h2>
+<p>继承自 <code class="docutils literal notranslate"><span class="pre">OP</span></code>，用于对数据进行<strong>一对一</strong>或<strong>一对多</strong>的转换和编辑。</p>
 <ul class="simple">
-<li><p>批处理支持</p></li>
-<li><p>错误捕获</p></li>
-<li><p>嵌套字段访问</p></li>
-<li><p>Tracer 集成</p></li>
+<li><p><strong>用途</strong>：数据清洗、格式转换、内容增强、标注等。</p></li>
+<li><p><strong>核心方法</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">process_single(sample)</span></code>: 处理单个样本。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process_batched(samples)</span></code>: 处理一批样本（如果算子支持批处理）。</p></li>
 </ul>
-<hr class="docutils" />
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li><p>输入一个样本，输出一个修改后的样本（可能增加或删除字段）。</p></li>
+<li><p>支持异常捕获（<code class="docutils literal notranslate"><span class="pre">catch_map_batches_exception</span></code>），确保流水线在遇到错误时不会完全崩溃。</p></li>
+<li><p>示例：<code class="docutils literal notranslate"><span class="pre">clean_email_mapper</span></code> (删除邮箱), <code class="docutils literal notranslate"><span class="pre">image_face_blur_mapper</span></code> (人脸模糊)。</p></li>
+</ul>
+</li>
+</ul>
 </section>
-<section id="id19">
-<h1>📚 参考资料<a class="headerlink" href="#id19" title="链接到此标题。">#</a></h1>
+<section id="filter">
+<h2>3. <code class="docutils literal notranslate"><span class="pre">Filter</span></code> (过滤算子)<a class="headerlink" href="#filter" title="链接到此标题。">#</a></h2>
+<p>继承自 <code class="docutils literal notranslate"><span class="pre">OP</span></code>，用于根据特定条件<strong>筛选</strong>数据。</p>
 <ul class="simple">
-<li><p>基类源码: <a class="github reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/base_op.py">datajuicer/data-juicer</a></p></li>
-<li><p>算子文档: <a class="github reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">datajuicer/data-juicer</a></p></li>
-<li><p>教程: <a class="github reference external" href="https://github.com/datajuicer/data-juicer/tree/main/docs/tutorial">datajuicer/data-juicer</a></p></li>
+<li><p><strong>用途</strong>：去除低质量数据、去重前的初步筛选、基于指标的过滤。</p></li>
+<li><p><strong>核心方法</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_stats_single(sample)</span></code>: 计算样本的统计指标（如文本长度、困惑度、图像相似度得分）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process_single(sample)</span></code>: 根据计算出的 stats 返回 <code class="docutils literal notranslate"><span class="pre">True</span></code> (保留) 或 <code class="docutils literal notranslate"><span class="pre">False</span></code> (过滤)。</p></li>
 </ul>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li><p>分为两步：先计算统计信息 (<code class="docutils literal notranslate"><span class="pre">compute_stats</span></code>)，再根据阈值进行过滤 (<code class="docutils literal notranslate"><span class="pre">process</span></code>)。</p></li>
+<li><p>支持将统计结果导出 (<code class="docutils literal notranslate"><span class="pre">stats_export_path</span></code>) 以便分析数据分布。</p></li>
+<li><p>示例：<code class="docutils literal notranslate"><span class="pre">text_length_filter</span></code> (文本长度过滤), <code class="docutils literal notranslate"><span class="pre">image_face_count_filter</span></code> (人脸数量过滤)。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="deduplicator">
+<h2>4. <code class="docutils literal notranslate"><span class="pre">Deduplicator</span></code> (去重算子)<a class="headerlink" href="#deduplicator" title="链接到此标题。">#</a></h2>
+<p>继承自 <code class="docutils literal notranslate"><span class="pre">OP</span></code>，专门用于<strong>去除重复数据</strong>。</p>
+<ul class="simple">
+<li><p><strong>用途</strong>：MinHash 去重、精确哈希去重、语义去重。</p></li>
+<li><p><strong>核心方法</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_hash(sample)</span></code>: 为样本计算哈希值或指纹。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process(dataset)</span></code>: 在整个数据集层面根据哈希值移除重复项。</p></li>
+</ul>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li><p>通常在数据集全局范围内操作，而不仅仅是单样本。</p></li>
+<li><p>可以追踪并返回重复对 (<code class="docutils literal notranslate"><span class="pre">dup_pairs</span></code>)。</p></li>
+<li><p>示例：<code class="docutils literal notranslate"><span class="pre">ray_basic_deduplicator</span></code>。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="selector">
+<h2>5. <code class="docutils literal notranslate"><span class="pre">Selector</span></code> (选择算子)<a class="headerlink" href="#selector" title="链接到此标题。">#</a></h2>
+<p>继承自 <code class="docutils literal notranslate"><span class="pre">OP</span></code>，用于在<strong>数据集级别</strong>进行选择。</p>
+<ul class="simple">
+<li><p><strong>用途</strong>：随机采样、基于复杂逻辑的子集选择。</p></li>
+<li><p><strong>核心方法</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">process(dataset)</span></code>: 接收整个数据集，返回选中的子集。</p></li>
+</ul>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li><p>与 <code class="docutils literal notranslate"><span class="pre">Filter</span></code> 不同，<code class="docutils literal notranslate"><span class="pre">Selector</span></code> 通常不依赖单样本的统计指标，而是基于全局逻辑（如“随机选择 10%”）。</p></li>
+<li><p>示例：<code class="docutils literal notranslate"><span class="pre">random_selector</span></code>。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="grouper-aggregator">
+<h2>6. <code class="docutils literal notranslate"><span class="pre">Grouper</span></code> (分组算子) &amp; <code class="docutils literal notranslate"><span class="pre">Aggregator</span></code> (聚合算子)<a class="headerlink" href="#grouper-aggregator" title="链接到此标题。">#</a></h2>
+<p>这两个算子通常配合使用，用于处理<strong>多对一</strong>的逻辑。</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">Grouper</span></code></strong>：</p>
+<ul>
+<li><p>将多个样本组合成一个批次（Batch）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process(dataset)</span></code>: 返回分组后的数据集。</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">Aggregator</span></code></strong>：</p>
+<ul>
+<li><p>对分组后的批次进行聚合处理，生成一个新的样本。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process_single(batched_sample)</span></code>: 输入一组样本，输出一个聚合后的样本。</p></li>
+</ul>
+</li>
+<li><p><strong>用途</strong>：构建训练对（如 SFT 数据构造）、文档级上下文聚合。</p></li>
+</ul>
+</section>
+<section id="pipeline">
+<h2>7. <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> (流水线算子)<a class="headerlink" href="#pipeline" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>用途</strong>：将多个算子组合成一个复合算子。</p></li>
+<li><p><strong>特点</strong>：允许用户将常用的算子序列封装成一个独立的单元，方便复用。</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="id10">
+<h2>基类算子的通用特性<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>注册机制 (<code class="docutils literal notranslate"><span class="pre">Registry</span></code>)</strong>：
+所有算子通过 <code class="docutils literal notranslate"><span class="pre">&#64;OPERATORS.register_module()</span></code> 装饰器注册，用户可以通过名称直接调用。</p></li>
+<li><p><strong>批处理支持 (<code class="docutils literal notranslate"><span class="pre">Batched</span> <span class="pre">Op</span></code>)</strong>：
+基类支持 <code class="docutils literal notranslate"><span class="pre">_batched_op</span></code> 标记。如果设置为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，算子将接收一个包含多个样本的字典（Dict of Lists），这在使用 GPU 加速模型（如 LLM、CLIP）时能显著提高效率。</p></li>
+<li><p><strong>异常容错</strong>：
+基类提供了 <code class="docutils literal notranslate"><span class="pre">skip_op_error</span></code> 参数。如果开启，当某个样本处理失败时，算子会记录错误并跳过该样本，而不是中断整个任务。</p></li>
+<li><p><strong>Tracer 集成</strong>：
+基类集成了 <code class="docutils literal notranslate"><span class="pre">tracer</span></code> 功能，可以自动记录数据在处理前后的变化（如文本被修改了多少字符，哪些样本被过滤了），便于数据溯源和分析。</p></li>
+<li><p><strong>分布式兼容</strong>：
+所有基类都内置了对 Ray 分布式框架的支持，可以通过 <code class="docutils literal notranslate"><span class="pre">num_cpus</span></code>, <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> 等参数轻松扩展到多机多卡环境。</p></li>
+</ol>
+<p>如果你想了解如何自定义一个新的算子，可以参考 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md">DeveloperGuide.md</a>，其中详细说明了如何继承这些基类并实现 <code class="docutils literal notranslate"><span class="pre">process</span></code> 方法。</p>
 </details>
+</section>
 <hr class="docutils" />
 <section id="dj-zh">
 <h2>案例 4 · 快速开始（如何安装 DJ，ZH）<a class="headerlink" href="#dj-zh" title="链接到此标题。">#</a></h2>
@@ -939,212 +922,96 @@ dj-agents<span class="w"> </span>--use-studio
 </div></blockquote>
 <details>
 <summary><strong>输出（助手回答）</strong></summary>
-<p>安装 Data-Juicer（DJ）有多种方式，您可以根据需求选择适合的安装方法：</p>
-<hr class="docutils" />
+<p>安装 Data-Juicer (DJ) 主要有几种方式，取决于您的使用场景（是作为 Python 库使用，还是使用 Docker 环境）。以下是基于官方文档的安装指南：</p>
 </section>
-</section>
-<section id="id20">
-<h1>🐍 基础安装（推荐）<a class="headerlink" href="#id20" title="链接到此标题。">#</a></h1>
-<section id="id21">
-<h2>前提条件：<a class="headerlink" href="#id21" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p>Python 3.10 ~ 3.12</p></li>
-<li><p>推荐使用 <code class="docutils literal notranslate"><span class="pre">uv</span></code> 包管理器（更快更稳定）</p></li>
-</ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装 uv（任选其一）</span>
-curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
-<span class="c1"># 或</span>
-pip<span class="w"> </span>install<span class="w"> </span>uv
-
-<span class="c1"># 安装 DJ 核心功能</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>py-data-juicer
-</pre></div>
-</div>
-<blockquote>
-<div><p>此方式仅包含核心数据处理能力：数据加载、文件操作、并行处理等。</p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-</section>
-<section id="id22">
-<h1>🧩 场景化安装（按需组合）<a class="headerlink" href="#id22" title="链接到此标题。">#</a></h1>
-<p>根据您的任务类型，可选择安装特定模块：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 通用机器学习/深度学习支持</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic]&quot;</span>
-
-<span class="c1"># 自然语言处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[nlp]&quot;</span>
-
-<span class="c1"># 计算机视觉</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[vision]&quot;</span>
-
-<span class="c1"># 音频处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[audio]&quot;</span>
-
-<span class="c1"># 分布式计算</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[distributed]&quot;</span>
-
-<span class="c1"># AI服务/API支持</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[ai_services]&quot;</span>
-
-<span class="c1"># 开发与测试工具</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[dev]&quot;</span>
-</pre></div>
-</div>
-<section id="id23">
-<h2>常用组合示例：<a class="headerlink" href="#id23" title="链接到此标题。">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 文本处理完整环境</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
-
-<span class="c1"># 视觉处理完整环境</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,vision]&quot;</span>
-
-<span class="c1"># 全功能安装（除沙箱外）</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[all]&quot;</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-</section>
-<section id="id24">
-<h1>🛠️ 从源码安装（获取最新特性）<a class="headerlink" href="#id24" title="链接到此标题。">#</a></h1>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
-<span class="nb">cd</span><span class="w"> </span>data-juicer
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w">                  </span><span class="c1"># 安装核心</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[vision]&quot;</span><span class="w">        </span><span class="c1"># 安装特定模块</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">-e</span></code> 表示“可编辑模式”，便于开发调试。</p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-<section id="docker">
-<h1>🐳 Docker 安装<a class="headerlink" href="#docker" title="链接到此标题。">#</a></h1>
-<section id="id25">
-<h2>拉取官方镜像：<a class="headerlink" href="#id25" title="链接到此标题。">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;
-<span class="c1"># 示例：</span>
-docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:v0.2.0
-</pre></div>
-</div>
-</section>
-<section id="id26">
-<h2>或自行构建镜像：<a class="headerlink" href="#id26" title="链接到此标题。">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>datajuicer/data-juicer:v0.2.0<span class="w"> </span>.
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-</section>
-<section id="id27">
-<h1>⚙️ 特定算子依赖安装<a class="headerlink" href="#id27" title="链接到此标题。">#</a></h1>
-<p>如果只想为某个配置文件中的算子安装最小依赖：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 仅适用于源码安装</span>
-python<span class="w"> </span>tools/dj_install.py<span class="w"> </span>--config<span class="w"> </span>your_config.yaml
-<span class="c1"># 或使用命令行工具</span>
-dj-install<span class="w"> </span>--config<span class="w"> </span>your_config.yaml
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="id28">
-<h1>📌 注意事项<a class="headerlink" href="#id28" title="链接到此标题。">#</a></h1>
+<section id="pip">
+<h2>方法一：使用 pip 安装（推荐用于开发或作为库使用）<a class="headerlink" href="#pip" title="链接到此标题。">#</a></h2>
+<p>这是最通用的安装方式。建议您先创建一个虚拟环境。</p>
 <ol class="arabic">
-<li><p><strong>视频处理</strong>：如需使用视频相关算子，请先安装 <strong>FFmpeg</strong> 并确保其在 <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> 中。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ffmpeg
-<span class="c1"># macOS</span>
-brew<span class="w"> </span>install<span class="w"> </span>ffmpeg
+<li><p><strong>创建并激活虚拟环境</strong>（可选但推荐）：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>dj_env
+<span class="nb">source</span><span class="w"> </span>dj_env/bin/activate<span class="w">  </span><span class="c1"># Linux/Mac</span>
+<span class="c1"># 或者在 Windows 上: dj_env\Scripts\activate</span>
 </pre></div>
 </div>
 </li>
-<li><p><strong>验证安装</strong>：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dj</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<li><p><strong>安装 Data-Juicer</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>data-juicer
 </pre></div>
 </div>
 </li>
-<li><p><strong>遇到问题</strong>：</p>
-<ul class="simple">
-<li><p>优先查阅文档或 GitHub Issues</p></li>
-<li><p>可提交 Issue 或加入社区讨论</p></li>
-</ul>
+<li><p><strong>安装额外依赖</strong>（可选）：
+Data-Juicer 有很多算子依赖不同的第三方库（如 OCR、音频处理等）。如果您需要特定功能，可以安装 extras：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 例如，安装所有额外依赖</span>
+pip<span class="w"> </span>install<span class="w"> </span>data-juicer<span class="o">[</span>all<span class="o">]</span>
+
+<span class="c1"># 或者只安装特定模块的依赖，例如：</span>
+pip<span class="w"> </span>install<span class="w"> </span>data-juicer<span class="o">[</span>video<span class="o">]</span>
+pip<span class="w"> </span>install<span class="w"> </span>data-juicer<span class="o">[</span>audio<span class="o">]</span>
+</pre></div>
+</div>
 </li>
 </ol>
-<hr class="docutils" />
-<p>✅ 推荐首次用户使用 <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">py-data-juicer</span></code> 快速上手，再根据具体任务扩展模块。</p>
-<hr class="docutils" />
-<p><strong>参考文档</strong>：</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Installation Guide</a></p></li>
-</ul>
-</details>
-<hr class="docutils" />
-<section id="id29">
-<h2>案例 5 · 处理指导（过滤脏话文本，ZH）<a class="headerlink" href="#id29" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p><strong>类型</strong>: <code class="docutils literal notranslate"><span class="pre">processing_qa</span></code></p></li>
-<li><p><strong>语言</strong>: <code class="docutils literal notranslate"><span class="pre">zh</span></code></p></li>
-</ul>
-<p><strong>输入（用户提问）</strong></p>
-<blockquote>
-<div><p>我想过滤文本数据中的脏话，告诉我怎么做</p>
-</div></blockquote>
-<details>
-<summary><strong>输出（助手回答）</strong></summary>
-<p>要过滤文本数据中的脏话，你可以使用 <strong><code class="docutils literal notranslate"><span class="pre">remove_words_with_incorrect_substrings_mapper</span></code></strong> 算子。虽然该算子默认用于移除包含如 &quot;http&quot;、&quot;www&quot; 等子串的词，但你可以通过自定义 <code class="docutils literal notranslate"><span class="pre">substrings</span></code> 参数传入脏话关键词列表，从而实现脏话过滤。</p>
 </section>
-<hr class="docutils" />
-<section id="id30">
-<h2>✅ 使用方法<a class="headerlink" href="#id30" title="链接到此标题。">#</a></h2>
-<p>在你的 Data-Juicer 配置文件（如 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>）中添加如下配置：</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">remove_words_with_incorrect_substrings_mapper</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">lang</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;en&quot;</span><span class="w">  </span><span class="c1"># 或 &quot;zh&quot; 等其他语言</span>
-<span class="w">      </span><span class="nt">tokenization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">  </span><span class="c1"># 若无需分词可设为 false</span>
-<span class="w">      </span><span class="nt">substrings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;fuck&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;shit&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bitch&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;asshole&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># 替换为你想过滤的脏话关键词</span>
+<section id="docker">
+<h2>方法二：使用 Docker 安装（推荐用于快速体验或隔离环境）<a class="headerlink" href="#docker" title="链接到此标题。">#</a></h2>
+<p>如果您不想配置本地 Python 环境，可以使用官方提供的 Docker 镜像。</p>
+<ol class="arabic">
+<li><p><strong>拉取镜像</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:latest
 </pre></div>
 </div>
-</section>
-<hr class="docutils" />
-<section id="id31">
-<h2>📌 说明<a class="headerlink" href="#id31" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">lang</span></code></strong>: 指定文本语言，影响分句和分词行为。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">tokenization</span></code></strong>: 是否使用 Hugging Face tokenizer 进行分词。若设为 <code class="docutils literal notranslate"><span class="pre">false</span></code>，则按空格或标点简单切分。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">substrings</span></code></strong>: 关键参数！填入你希望屏蔽的所有脏话或敏感词子串（支持部分匹配）。</p></li>
-</ul>
-<blockquote>
-<div><p>⚠️ 注意：该算子会<strong>删除包含指定子串的整个词</strong>。例如，若 <code class="docutils literal notranslate"><span class="pre">substrings</span></code> 包含 <code class="docutils literal notranslate"><span class="pre">&quot;ass&quot;</span></code>，则 <code class="docutils literal notranslate"><span class="pre">&quot;classic&quot;</span></code> 也会被误删。建议尽量使用完整脏词，避免过度匹配。</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="id32">
-<h2>🧪 示例输入/输出<a class="headerlink" href="#id32" title="链接到此标题。">#</a></h2>
-<p><strong>输入文本</strong>：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">fucking</span> <span class="n">bad</span> <span class="n">example</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t be an asshole.</span>
+</li>
+<li><p><strong>运行容器</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--gpus<span class="w"> </span>all<span class="w"> </span>--shm-size<span class="w"> </span>16g<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/path/to/your/data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/path/to/your/config:/config<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>datajuicer/data-juicer:latest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>bash
 </pre></div>
 </div>
-<p><strong>处理后输出</strong>：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">bad</span> <span class="n">example</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t be .</span>
+<p><em>注意：请根据您的实际需求调整挂载路径 (<code class="docutils literal notranslate"><span class="pre">-v</span></code>) 和 GPU 参数。</em></p>
+</li>
+</ol>
+</section>
+<section id="id11">
+<h2>方法三：从源码安装（用于贡献代码或获取最新特性）<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h2>
+<ol class="arabic">
+<li><p><strong>克隆仓库</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
+<span class="nb">cd</span><span class="w"> </span>data-juicer
 </pre></div>
 </div>
+</li>
+<li><p><strong>安装依赖</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<span class="c1"># 如果需要所有额外依赖</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
+</pre></div>
+</div>
+</li>
+</ol>
 </section>
-<hr class="docutils" />
-<section id="id33">
-<h2>📚 参考资料<a class="headerlink" href="#id33" title="链接到此标题。">#</a></h2>
+<section id="id12">
+<h2>验证安装<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h2>
+<p>安装完成后，您可以在终端输入以下命令来验证是否安装成功：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>如果看到帮助信息，说明安装成功。</p>
+</section>
+<section id="id13">
+<h2>参考链接<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h2>
 <ul class="simple">
-<li><p>算子代码：<a class="github reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/mapper/remove_words_with_incorrect_substrings_mapper.py">datajuicer/data-juicer</a></p></li>
-<li><p>使用文档：<a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/operators/mapper/remove_words_with_incorrect_substrings_mapper.md">https://datajuicer.github.io/data-juicer/en/main/docs/operators/mapper/remove_words_with_incorrect_substrings_mapper.md</a></p></li>
-<li><p>测试用例：<a class="github reference external" href="https://github.com/datajuicer/data-juicer/blob/main/tests/ops/mapper/test_remove_words_with_incorrect_substrings_mapper.py">datajuicer/data-juicer</a></p></li>
+<li><p><strong>详细安装教程</strong>: <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Data-Juicer Installation Guide</a></p></li>
+<li><p><strong>GitHub 仓库</strong>: <a class="reference external" href="https://github.com/datajuicer/data-juicer">datajuicer/data-juicer</a></p></li>
 </ul>
-<p>如需更智能的脏话识别（如语义或上下文感知），可结合外部敏感词库或模型进行预处理，再接入 Data-Juicer 流程。</p>
+<p>如果您在安装过程中遇到特定错误（如依赖冲突），请提供错误日志，我可以帮您进一步排查。</p>
 </details>
 </section>
 <hr class="docutils" />
-<section id="id34">
-<h2>案例 6 · 最佳实践（使用 DJ 的建议，ZH）<a class="headerlink" href="#id34" title="链接到此标题。">#</a></h2>
+<section id="id14">
+<h2>案例 5 · 最佳实践（使用 DJ 的建议，ZH）<a class="headerlink" href="#id14" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p><strong>类型</strong>: <code class="docutils literal notranslate"><span class="pre">best_practice_qa</span></code></p></li>
 <li><p><strong>语言</strong>: <code class="docutils literal notranslate"><span class="pre">zh</span></code></p></li>
@@ -1155,151 +1022,97 @@ brew<span class="w"> </span>install<span class="w"> </span>ffmpeg
 </div></blockquote>
 <details>
 <summary><strong>输出（助手回答）</strong></summary>
-<p>以下是使用 Data-Juicer (DJ) 的一些最佳实践，结合官方文档、示例菜谱和社区经验整理而成：</p>
-<hr class="docutils" />
+<p>当然可以！Data-Juicer (DJ) 是一个强大的多模态数据处理框架。为了帮助你更高效地使用它，我整理了一些基于官方文档和社区经验的最佳实践。</p>
+<p>以下是使用 Data-Juicer 的关键最佳实践：</p>
 </section>
+<section id="pipeline-design">
+<h2>1. 明确数据处理流程 (Pipeline Design)<a class="headerlink" href="#pipeline-design" title="链接到此标题。">#</a></h2>
+<p>不要试图用一个巨大的配置文件完成所有事情。将数据处理分为几个逻辑阶段：</p>
+<ul class="simple">
+<li><p><strong>基础清洗 (Basic Cleaning)</strong>:去除空白、特殊字符、过短/过长文本等。</p></li>
+<li><p><strong>质量过滤 (Quality Filtering)</strong>:使用语言模型评分、困惑度（Perplexity）、毒性检测等算子。</p></li>
+<li><p><strong>去重 (Deduplication)</strong>:在高质量过滤后进行去重，以减少计算资源浪费。通常先做局部去重（MinHash），再做全局去重。</p></li>
+<li><p><strong>增强与格式化 (Enhancement &amp; Formatting)</strong>:如添加元数据、转换格式等。</p></li>
+</ul>
+<p><strong>建议</strong>：参考 <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">Data-Juicer Hub</a> 中的官方菜谱（Recipes），它们已经展示了经过验证的处理流程。</p>
 </section>
-<section id="id35">
-<h1>✅ 1. <strong>模块化安装，按需加载</strong><a class="headerlink" href="#id35" title="链接到此标题。">#</a></h1>
+<section id="operator-selection">
+<h2>2. 合理选择算子 (Operator Selection)<a class="headerlink" href="#operator-selection" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>从小规模开始</strong>：在大规模数据集上运行之前，先在小样本（例如 1000 条数据）上测试你的配置。这可以快速发现配置错误或性能瓶颈。</p></li>
+<li><p><strong>利用 <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></strong>：如果你不确定哪个算子适合你的需求，可以使用自然语言描述你的意图，让系统推荐合适的算子。</p>
 <ul>
-<li><p><strong>不要一次性安装全部依赖</strong>。DJ 支持按场景安装，避免环境臃肿：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 文本处理基础</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
+<li><p>例如：<em>&quot;我想过滤掉包含大量非ASCII字符的文本&quot;</em></p></li>
+</ul>
+</li>
+<li><p><strong>查看算子文档</strong>：使用 <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code> 获取算子的详细参数说明和示例。确保你理解每个参数的含义，特别是阈值（thresholds）。</p></li>
+</ul>
+</section>
+<section id="performance-optimization">
+<h2>3. 性能优化 (Performance Optimization)<a class="headerlink" href="#performance-optimization" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>并行处理</strong>：Data-Juicer 支持多进程并行处理。根据你的 CPU 核心数调整 <code class="docutils literal notranslate"><span class="pre">parallelism</span></code> 参数。</p></li>
+<li><p><strong>资源管理</strong>：</p>
+<ul>
+<li><p>对于 CPU 密集型算子（如 MinHash 去重），确保有足够的内存。</p></li>
+<li><p>对于 GPU 密集型算子（如基于 LLM 的评分），注意显存限制，可能需要减小 batch size。</p></li>
+</ul>
+</li>
+<li><p><strong>缓存中间结果</strong>：如果处理流程很长，建议在关键步骤后保存中间数据集。这样如果后续步骤失败或需要调整，可以从断点继续，而不必从头开始。</p></li>
+</ul>
+</section>
+<section id="monitoring-debugging">
+<h2>4. 监控与调试 (Monitoring &amp; Debugging)<a class="headerlink" href="#monitoring-debugging" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>启用日志</strong>：设置适当的日志级别（INFO 或 DEBUG），以便跟踪处理进度和潜在错误。</p></li>
+<li><p><strong>统计信息</strong>：Data-Juicer 通常会输出每个算子处理前后的数据量变化。密切关注这些统计信息，如果某个算子过滤掉了过多数据（例如 &gt;90%），可能需要检查其参数是否过于严格。</p></li>
+<li><p><strong>可视化</strong>：如果可能，使用可视化工具检查处理后的数据样本，确保数据质量符合预期。</p></li>
+</ul>
+</section>
+<section id="data-juicer-hub">
+<h2>5. 利用 Data-Juicer Hub<a class="headerlink" href="#data-juicer-hub" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>复用现有 Recipes</strong>：不要从头开始编写配置。浏览 <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Recipe Gallery</a>，找到与你的数据类型（文本、图像、音频、视频）和目标相似的场景，然后在此基础上进行修改。</p></li>
+<li><p><strong>贡献与分享</strong>：如果你开发了一个有效的处理流程，考虑将其贡献回 Hub，帮助社区其他成员。</p></li>
+</ul>
+</section>
+<section id="id15">
+<h2>6. 特定数据类型建议<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><strong>文本</strong>：重点关注语言识别、毒性过滤和去重。</p></li>
+<li><p><strong>图像</strong>：关注分辨率、宽高比、美学评分和水印检测。</p></li>
+<li><p><strong>多模态</strong>：确保文本和图像/音频之间的对齐质量，使用多模态算子进行联合过滤。</p></li>
+</ul>
+</section>
+<section id="id16">
+<h2>示例：一个简单的文本处理流程<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># example_recipe.yaml</span>
+<span class="nt">dataset_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your/dataset.jsonl&quot;</span>
+<span class="nt">export_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/output/dataset.jsonl&quot;</span>
 
-<span class="c1"># 图像处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[vision]&quot;</span>
-
-<span class="c1"># 分布式处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[distributed]&quot;</span>
+<span class="nt">process</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span><span class="w"> </span><span class="c1"># 基础过滤</span>
+<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alphanumeric_filter&quot;</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span><span class="w"> </span><span class="c1"># 长度过滤</span>
+<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;text_length_filter&quot;</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_len</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">        </span><span class="nt">max_len</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">deduplicator</span><span class="p">:</span><span class="w"> </span><span class="c1"># 去重</span>
+<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;minhash_deduplicator&quot;</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">window_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">        </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
 </pre></div>
 </div>
-</li>
-<li><p>对于特定菜谱（Recipe），可使用 <code class="docutils literal notranslate"><span class="pre">dj-install</span></code> 工具自动安装最小依赖：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-install<span class="w"> </span>--config<span class="w"> </span>your_recipe.yaml
-</pre></div>
-</div>
-</li>
-</ul>
-<blockquote>
-<div><p>📌 参考：<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Installation Guide</a></p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-<section id="id36">
-<h1>✅ 2. <strong>从官方菜谱库学习与复用</strong><a class="headerlink" href="#id36" title="链接到此标题。">#</a></h1>
-<ul class="simple">
-<li><p>DJ Hub 提供了大量经过验证的菜谱，涵盖文本、图像、视频等模态：</p>
-<ul>
-<li><p>预训练数据清洗（如 RedPajama、BLOOM）</p></li>
-<li><p>指令微调数据优化（如 Alpaca-CoT）</p></li>
-<li><p>多模态合成（如 Img-Diff、LLaVA）</p></li>
-<li><p>视频数据处理（如 HumanVBench）</p></li>
-</ul>
-</li>
-</ul>
-<p>👉 推荐路径：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>data-juicer-hub/refined_recipes/
-├── pretrain/           # 预训练数据精炼
-├── alpaca_cot/         # 指令微调数据优化
-├── image/              # 图像数据处理
-└── video/              # 视频数据处理
-</pre></div>
-</div>
-<blockquote>
-<div><p>📌 参考：<a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Data-Juicer Recipe Gallery</a></p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-<section id="operators">
-<h1>✅ 3. <strong>合理组合算子（Operators）</strong><a class="headerlink" href="#operators" title="链接到此标题。">#</a></h1>
-<ul class="simple">
-<li><p>根据任务选择合适的 OP 类型：</p>
-<ul>
-<li><p><strong>Filter（过滤器）</strong>：去除低质量样本（如 <code class="docutils literal notranslate"><span class="pre">language_id_score_filter</span></code>, <code class="docutils literal notranslate"><span class="pre">image_nsfw_filter</span></code>）</p></li>
-<li><p><strong>Mapper（映射器）</strong>：增强或转换数据（如 <code class="docutils literal notranslate"><span class="pre">image_captioning_mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">generate_qa_from_text_mapper</span></code>）</p></li>
-<li><p><strong>Deduplicator（去重器）</strong>：消除重复内容（如 <code class="docutils literal notranslate"><span class="pre">document_simhash_deduplicator</span></code>）</p></li>
-<li><p><strong>Selector（选择器）</strong>：基于评分筛选优质样本（如 <code class="docutils literal notranslate"><span class="pre">topk_specified_field_selector</span></code>）</p></li>
-</ul>
-</li>
-</ul>
-<p>💡 示例：构建高质量图文数据集</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_aspect_ratio_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> min_ratio</span><span class="p">:</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="nt"> max_ratio</span><span class="p">:</span><span class="w"> </span><span class="nv">2.0</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_nsfw_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> score_threshold</span><span class="p">:</span><span class="w"> </span><span class="nv">0.8</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_text_matching_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;clip&quot;</span><span class="p p-Indicator">,</span><span class="nt"> min_score</span><span class="p">:</span><span class="w"> </span><span class="nv">0.2</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_captioning_mapper</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;blip&quot;</span><span class="w"> </span><span class="p p-Indicator">}</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p>📌 参考：<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Operator Schemas</a></p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-<section id="id37">
-<h1>✅ 4. <strong>利用批处理与分布式加速</strong><a class="headerlink" href="#id37" title="链接到此标题。">#</a></h1>
-<ul>
-<li><p>对大规模数据，启用 Ray 分布式后端：</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在 config.yaml 中启用</span>
-<span class="nt">use_ray</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="nt">ray_num_nodes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
-</pre></div>
-</div>
-</li>
-<li><p>使用 <code class="docutils literal notranslate"><span class="pre">grouper</span></code> 和 <code class="docutils literal notranslate"><span class="pre">pipeline</span></code> 算子实现批量推理，提升 GPU 利用率。</p></li>
-</ul>
-<hr class="docutils" />
-</section>
-<section id="id38">
-<h1>✅ 5. <strong>评估与迭代</strong><a class="headerlink" href="#id38" title="链接到此标题。">#</a></h1>
-<ul class="simple">
-<li><p>所有精炼后的数据集都应进行下游任务验证（如 LLM 训练、多模态模型微调）。</p></li>
-<li><p>官方案例显示，经 DJ 处理的数据在多个基准上显著提升模型性能（如 LLaVA、T2V-Turbo）。</p></li>
-</ul>
-<p>📊 示例：LLaVA 使用 DJ 优化预训练数据后，在 MM-Bench 上提升 +0.5，MM-Vet 提升 +1.3。</p>
-<blockquote>
-<div><p>📌 参考：<a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md#61-evaluation-and-verification">RecipeGallery 中的评估表格</a></p>
-</div></blockquote>
-<hr class="docutils" />
-</section>
-<section id="id39">
-<h1>✅ 6. <strong>贡献与协作</strong><a class="headerlink" href="#id39" title="链接到此标题。">#</a></h1>
-<ul class="simple">
-<li><p>如果你开发了新算子或优化了菜谱，欢迎提交 PR 至 <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">data-juicer-hub</a>。</p></li>
-<li><p>社区共建的菜谱会被收录到 Gallery，并获得官方致谢。</p></li>
-</ul>
-<hr class="docutils" />
-</section>
-<section id="id40">
-<h1>✅ 7. <strong>调试与日志</strong><a class="headerlink" href="#id40" title="链接到此标题。">#</a></h1>
-<ul>
-<li><p>启用详细日志便于调试：</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
-<span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
-<span class="nt">save_stats_in_one_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</pre></div>
-</div>
-</li>
-<li><p>使用内置测试数据验证算子效果：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>tests.ops.test_your_operator
-</pre></div>
-</div>
-</li>
-</ul>
-<hr class="docutils" />
-<p>遵循以上最佳实践，你可以高效、稳定地使用 Data-Juicer 构建高质量数据集，为大模型训练提供坚实基础。</p>
-<hr class="docutils" />
-<section id="id41">
-<h2>🔗 参考资料<a class="headerlink" href="#id41" title="链接到此标题。">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Data-Juicer Installation Guide</a></p></li>
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Data-Juicer Recipe Gallery</a></p></li>
-<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md">Data-Juicer Operators Documentation</a></p></li>
-</ul>
+<p>希望这些最佳实践能帮助你更好地使用 Data-Juicer！如果你有具体的数据处理任务或遇到问题，欢迎提供更多细节，我可以给出更针对性的建议。</p>
 </details>
 </section>
 <hr class="docutils" />
-<section id="id42">
-<h2>案例 7 · 越界问题（与 DJ 无关提问，ZH）<a class="headerlink" href="#id42" title="链接到此标题。">#</a></h2>
+<section id="id17">
+<h2>案例 6 · 越界问题（与 DJ 无关提问，ZH）<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p><strong>类型</strong>: <code class="docutils literal notranslate"><span class="pre">off_topic_qa</span></code></p></li>
 <li><p><strong>语言</strong>: <code class="docutils literal notranslate"><span class="pre">zh</span></code></p></li>
@@ -1361,86 +1174,44 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
     <i class="fa-solid fa-list"></i> 当前页面
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Data-Juicer 问答 Copilot 示例（中文）</a><ul class="nav section-nav flex-column">
+    <ul class="nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alphanumeric-filter-zh">案例 1 · 算子介绍（alphanumeric_filter，ZH）</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">📌 核心功能</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">⚙️ 参数说明</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#yaml">🧩 使用示例（YAML 配置）</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">📚 参考资料</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">📌 核心功能</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">⚙️ 主要参数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">💡 工作原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">📊 效果示例</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">🔗 相关链接</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-agents-zh">案例 2 · 模块介绍（DJ-Agents，ZH）</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">✅ 核心功能</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">🚀 快速开始</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">系统要求</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">安装步骤</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">配置环境变量</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">启动方式</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">💡 使用示例</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">🔗 参考资料</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">1. 核心愿景与定位</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2. 主要功能模块</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3. 技术架构特点</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4. 快速开始示例</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roadmap">5. 未来路线图 (Roadmap)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zh">案例 3 · 概念问题（基类算子，ZH）</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">🧱 基类结构概览</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#op">1. <strong>顶层基类 <code class="docutils literal notranslate"><span class="pre">OP</span></code></strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">✅ 核心功能：</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">2. <strong>五大核心子类算子</strong></a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">⚙️ 关键设计特性</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">🔁 自动批处理与单样本兼容</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">🛡️ 错误容忍机制</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracer">📊 数据追踪支持（Tracer）</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">🧩 注册机制</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mapper">🧩 示例：自定义一个简单 Mapper</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">📚 参考资料</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#op-operator-base-class">1. <code class="docutils literal notranslate"><span class="pre">OP</span></code> (Operator Base Class)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapper">2. <code class="docutils literal notranslate"><span class="pre">Mapper</span></code> (映射算子)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">3. <code class="docutils literal notranslate"><span class="pre">Filter</span></code> (过滤算子)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deduplicator">4. <code class="docutils literal notranslate"><span class="pre">Deduplicator</span></code> (去重算子)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#selector">5. <code class="docutils literal notranslate"><span class="pre">Selector</span></code> (选择算子)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grouper-aggregator">6. <code class="docutils literal notranslate"><span class="pre">Grouper</span></code> (分组算子) &amp; <code class="docutils literal notranslate"><span class="pre">Aggregator</span></code> (聚合算子)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline">7. <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> (流水线算子)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">基类算子的通用特性</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-zh">案例 4 · 快速开始（如何安装 DJ，ZH）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pip">方法一：使用 pip 安装（推荐用于开发或作为库使用）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker">方法二：使用 Docker 安装（推荐用于快速体验或隔离环境）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">方法三：从源码安装（用于贡献代码或获取最新特性）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">验证安装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">参考链接</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">案例 5 · 最佳实践（使用 DJ 的建议，ZH）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-design">1. 明确数据处理流程 (Pipeline Design)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operator-selection">2. 合理选择算子 (Operator Selection)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-optimization">3. 性能优化 (Performance Optimization)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-debugging">4. 监控与调试 (Monitoring &amp; Debugging)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-juicer-hub">5. 利用 Data-Juicer Hub</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">6. 特定数据类型建议</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">示例：一个简单的文本处理流程</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">案例 6 · 越界问题（与 DJ 无关提问，ZH）</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">🐍 基础安装（推荐）</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">前提条件：</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">🧩 场景化安装（按需组合）</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">常用组合示例：</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">🛠️ 从源码安装（获取最新特性）</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#docker">🐳 Docker 安装</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">拉取官方镜像：</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">或自行构建镜像：</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id27">⚙️ 特定算子依赖安装</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id28">📌 注意事项</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id29">案例 5 · 处理指导（过滤脏话文本，ZH）</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id30">✅ 使用方法</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id31">📌 说明</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id32">🧪 示例输入/输出</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id33">📚 参考资料</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id34">案例 6 · 最佳实践（使用 DJ 的建议，ZH）</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id35">✅ 1. <strong>模块化安装，按需加载</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id36">✅ 2. <strong>从官方菜谱库学习与复用</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#operators">✅ 3. <strong>合理组合算子（Operators）</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id37">✅ 4. <strong>利用批处理与分布式加速</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id38">✅ 5. <strong>评估与迭代</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id39">✅ 6. <strong>贡献与协作</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id40">✅ 7. <strong>调试与日志</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id41">🔗 参考资料</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id42">案例 7 · 越界问题（与 DJ 无关提问，ZH）</a></li>
-</ul>
-</li>
-</ul>
-
   </nav></div>
 
   <div class="sidebar-secondary-item">

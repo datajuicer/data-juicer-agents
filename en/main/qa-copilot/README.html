@@ -494,22 +494,6 @@
 <li class="toctree-l1"><a class="reference internal" href="DEMO.html">Data-Juicer Q&amp;A Copilot Demo</a></li>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Data-Juicer Q&amp;A Copilot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
 </ul>
@@ -574,19 +558,19 @@
                   
   <section id="data-juicer-q-a-copilot">
 <h1>Data-Juicer Q&amp;A Copilot<a class="headerlink" href="#data-juicer-q-a-copilot" title="Link to this heading">#</a></h1>
-<p>Q&amp;A Copilot is the intelligent question-answering component of the Data-Juicer Agents system, a professional Data-Juicer AI assistant built on the AgentScope framework.</p>
-<p>You can chat with our <a class="reference internal" href="#"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> on the official <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation site</a> of Data-Juicer! Feel free to ask <em><strong>Juicer</strong></em> anything related to Data-Juicer ecosystem.</p>
+<p>Q&amp;A Copilot is the question-answering component of Data-Juicer Agents. It runs as an AgentScope-based web service and answers Data-Juicer ecosystem questions with a combination of LLM reasoning, GitHub MCP retrieval, and operator lookup tools.</p>
+<p>You can chat with <em><strong>Juicer</strong></em> on the official <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">Data-Juicer documentation site</a>.</p>
 <div align="center">
 <img src="https://github.com/user-attachments/assets/d10a95a8-fb7a-494f-b858-f21e5996790b" width=90%>
 </div>
 <section id="core-components">
 <h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>Agent</strong>: Intelligent Q&amp;A agent based on ReActAgent</p></li>
-<li><p><strong>FAQ RAG System</strong>: Fast and accurate FAQ retrieval powered by Qdrant vector database and DashScope text embedding model</p></li>
-<li><p><strong>MCP Integration</strong>: Online GitHub search capabilities through GitHub MCP Server</p></li>
-<li><p><strong>Redis Storage</strong>: Supports session history and feedback data persistence</p></li>
-<li><p><strong>Web API</strong>: Provides RESTful interfaces for frontend integration</p></li>
+<li><p><strong>Agent</strong>: ReActAgent-based Q&amp;A service</p></li>
+<li><p><strong>GitHub MCP Integration</strong>: <code class="docutils literal notranslate"><span class="pre">search_repositories</span></code>, <code class="docutils literal notranslate"><span class="pre">search_code</span></code>, and <code class="docutils literal notranslate"><span class="pre">get_file_contents</span></code></p></li>
+<li><p><strong>Operator Tools</strong>: <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code> (llm mode) and <code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code></p></li>
+<li><p><strong>Session Storage</strong>: JSON-based storage by default, Redis optional</p></li>
+<li><p><strong>Web API</strong>: REST endpoints for chat, memory, clear, and feedback</p></li>
 </ul>
 </section>
 <section id="quick-start">
@@ -594,138 +578,108 @@
 <section id="prerequisites">
 <h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>3.10 &lt;= Python &lt;= 3.12</p></li>
-<li><p>Docker (for running Qdrant vector database)</p></li>
-<li><p>Redis server (optional, activated by <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>)</p></li>
-<li><p>DashScope API Key (for large language model calls and text embedding)</p></li>
+<li><p>Python <code class="docutils literal notranslate"><span class="pre">&gt;=3.10,</span> <span class="pre">&lt;=3.12</span></code></p></li>
+<li><p>DashScope API key</p></li>
+<li><p>GitHub token</p></li>
+<li><p>Redis server only if you want <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code></p></li>
 </ul>
 </section>
 <section id="installation">
 <h3>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h3>
 <ol class="arabic">
-<li><p>Install dependencies</p>
+<li><p>Install dependencies.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>..
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;.[copilot]&#39;</span>
 <span class="nb">cd</span><span class="w"> </span>qa-copilot
 </pre></div>
 </div>
 </li>
-<li><p>Install Docker (for Qdrant vector database)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
-sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>docker.io
-sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
-
-<span class="c1"># macOS</span>
-brew<span class="w"> </span>install<span class="w"> </span>docker
-</pre></div>
-</div>
-<p><strong>Note</strong>: The system will automatically check and start the Qdrant Docker container on startup. If FAQ data is not initialized, the system will automatically read from <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> and initialize the RAG data.</p>
-</li>
-<li><p>Install and start Redis (optional - skip if using the default <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code>)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
-sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>redis-server
-redis-server<span class="w"> </span>--daemonize<span class="w"> </span>yes
-
-<span class="c1"># macOS</span>
-brew<span class="w"> </span>install<span class="w"> </span>redis
-brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
-</pre></div>
-</div>
-<p><strong>Note</strong>:</p>
-<ul class="simple">
-<li><p>If you set <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code> (default), session history will be stored as JSON files in the <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code> directory with automatic TTL-based cleanup.</p></li>
-<li><p>If you set <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>, you need to have Redis server running. Session state is automatically managed by RedisMemory, and TTL is handled by Redis server configuration.</p></li>
-</ul>
-</li>
-</ol>
-</section>
-<section id="configuration">
-<h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h3>
-<ol class="arabic">
-<li><p>Set required environment variables</p>
+<li><p>Export required environment variables.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span><span class="w">  </span><span class="c1"># Required: for GitHub MCP integration</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span>
 </pre></div>
 </div>
 </li>
-<li><p>Set optional environment variables</p>
-<p><strong>Session Storage Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Session store type: &quot;json&quot; (default) or &quot;redis&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># or &quot;redis&quot;</span>
+<li><p>Optional session storage configuration.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># or &quot;redis&quot;</span>
 
-<span class="c1"># For JSON mode (default):</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span><span class="w">  </span><span class="c1"># Session file storage directory (default: &quot;./sessions&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span><span class="w">  </span><span class="c1"># Session TTL in seconds (default: 21600 = 6 hours)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span><span class="w">  </span><span class="c1"># Cleanup interval in seconds (default: 1800 = 30 minutes)</span>
+<span class="c1"># JSON mode</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span>
 
-<span class="c1"># For Redis mode:</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="w">  </span><span class="c1"># Redis server host (default: &quot;localhost&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span><span class="w">  </span><span class="c1"># Redis server port (default: 6379)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="w">  </span><span class="c1"># Redis database number (default: 0)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Redis password (default: None, optional)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="w">  </span><span class="c1"># Redis max connections (default: 10)</span>
-<span class="c1"># Note: Redis TTL is handled by Redis server configuration, not by application</span>
-</pre></div>
-</div>
-<p><strong>Model Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">&quot;200000&quot;</span><span class="w">  </span><span class="c1"># Maximum tokens for context window (default: 200000)</span>
-<span class="c1"># Note: This value is multiplied by 3 when passed to DashScopeChatFormatter</span>
-<span class="c1"># because CharTokenCounter counts characters, and ~3 chars ≈ 1 token for mixed CHN &amp; ENG text</span>
-</pre></div>
-</div>
-<p><strong>Qdrant Vector Database:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Qdrant server host (default: &quot;127.0.0.1&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">&quot;6333&quot;</span><span class="w">  </span><span class="c1"># Qdrant server port (default: 6333)</span>
-</pre></div>
-</div>
-<p><strong>Service Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Service host address (default: &quot;127.0.0.1&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="w">  </span><span class="c1"># Enable session logging (default: &quot;true&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="w">  </span><span class="c1"># Log directory (default: &quot;./logs&quot;)</span>
-</pre></div>
-</div>
-<p><strong>Advanced Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Path to FastAPI config JSON file (optional)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Path to custom safe check handler module (optional)</span>
+<span class="c1"># Redis mode</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span>
 </pre></div>
 </div>
 </li>
-<li><p>Configure FAQ file (optional)</p>
-<p>The system uses <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> as the FAQ data source by default. You can edit this file to customize FAQ content. FAQ file format example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_001&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;What is Data-Juicer?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;Data-Juicer is a...&#39;</span>
-<span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_002&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;How to install?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;You can install by...&#39;</span>
+<li><p>Optional service configuration.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_PORT</span><span class="o">=</span><span class="s2">&quot;8080&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
 </pre></div>
 </div>
 </li>
-<li><p>Start the service</p>
+<li><p>Start the service.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>setup_server.sh
 </pre></div>
 </div>
-<p>On first startup, the system will automatically:</p>
-<ul class="simple">
-<li><p>Check and start the Qdrant Docker container (port 6333)</p></li>
-<li><p>Initialize FAQ RAG data (if not already initialized)</p></li>
-<li><p>Start the Web API service</p></li>
-</ul>
 </li>
 </ol>
 </section>
 </section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<section id="web-api-interfaces">
-<h3>Web API Interfaces<a class="headerlink" href="#web-api-interfaces" title="Link to this heading">#</a></h3>
-<p>After starting the service, the system provides the following API interfaces:</p>
+<section id="runtime-behavior">
+<h2>Runtime Behavior<a class="headerlink" href="#runtime-behavior" title="Link to this heading">#</a></h2>
+<section id="model">
+<h3>Model<a class="headerlink" href="#model" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Default model: <code class="docutils literal notranslate"><span class="pre">qwen3.6-plus</span></code></p></li>
+<li><p>Transport: DashScope OpenAI-compatible endpoint</p></li>
+<li><p>Streaming: enabled</p></li>
+<li><p>The runtime applies local formatter-based truncation with <code class="docutils literal notranslate"><span class="pre">OpenAIChatFormatter</span></code>.</p></li>
+<li><p>Provider-side context window is <code class="docutils literal notranslate"><span class="pre">1M</span></code> tokens; the local formatter conservatively truncates at <code class="docutils literal notranslate"><span class="pre">0.8M</span></code> tokens to leave headroom for tokenizer mismatch between DashScope/Qwen serving and the local OpenAI-compatible token counter.</p></li>
+</ul>
+</section>
+<section id="mounted-tools">
+<h3>Mounted Tools<a class="headerlink" href="#mounted-tools" title="Link to this heading">#</a></h3>
+<p>The current QA runtime mounts these tools:</p>
+<ul class="simple">
+<li><p>GitHub MCP:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">search_repositories</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">search_code</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_file_contents</span></code></p></li>
+</ul>
+</li>
+<li><p>Operator tools:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code></p></li>
+</ul>
+</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code> is wrapped so that QA always uses <code class="docutils literal notranslate"><span class="pre">llm</span></code> retrieval mode internally.</p>
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading">#</a></h2>
 <section id="q-a-conversation">
-<h4>1. Q&amp;A Conversation<a class="headerlink" href="#q-a-conversation" title="Link to this heading">#</a></h4>
+<h3>1. Q&amp;A Conversation<a class="headerlink" href="#q-a-conversation" title="Link to this heading">#</a></h3>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /process</span>
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
 <span class="err">  &quot;input&quot;: [</span>
 <span class="err">    {</span>
-<span class="err">      &quot;role&quot;: &quot;user&quot;, </span>
-<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;How to use Data-Juicer for data cleaning?&quot;}]</span>
+<span class="err">      &quot;role&quot;: &quot;user&quot;,</span>
+<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;How do I use Data-Juicer for data cleaning?&quot;}]</span>
 <span class="err">    }</span>
 <span class="err">  ],</span>
 <span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
@@ -735,7 +689,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="get-session-history">
-<h4>2. Get Session History<a class="headerlink" href="#get-session-history" title="Link to this heading">#</a></h4>
+<h3>2. Get Session History<a class="headerlink" href="#get-session-history" title="Link to this heading">#</a></h3>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /memory</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -747,7 +701,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="clear-session-history">
-<h4>3. Clear Session History<a class="headerlink" href="#clear-session-history" title="Link to this heading">#</a></h4>
+<h3>3. Clear Session History<a class="headerlink" href="#clear-session-history" title="Link to this heading">#</a></h3>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /clear</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -759,7 +713,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </div>
 </section>
 <section id="submit-user-feedback">
-<h4>4. Submit User Feedback<a class="headerlink" href="#submit-user-feedback" title="Link to this heading">#</a></h4>
+<h3>4. Submit User Feedback<a class="headerlink" href="#submit-user-feedback" title="Link to this heading">#</a></h3>
 <div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="err">POST /feedback</span>
 <span class="err">Content-Type: application/json</span>
 
@@ -774,34 +728,26 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">}</span>
 </pre></div>
 </div>
-<p><strong>Parameters:</strong></p>
+<p>Feedback parameters:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">message_id</span></code>: The ID of the message to provide feedback on (required)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">feedback_type</span></code>: Type of feedback, either <code class="docutils literal notranslate"><span class="pre">&quot;like&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;dislike&quot;</span></code> (required)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">comment</span></code>: Optional user comment text (optional)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">message_id</span></code>: target message id</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feedback_type</span></code>: <code class="docutils literal notranslate"><span class="pre">like</span></code> or <code class="docutils literal notranslate"><span class="pre">dislike</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comment</span></code>: optional free-form comment</p></li>
 </ul>
-<p><strong>Response example:</strong></p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feedback recorded successfully&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
 </section>
 </section>
 <section id="webui">
-<h3>WebUI<a class="headerlink" href="#webui" title="Link to this heading">#</a></h3>
-<p>you can simply run the following command in your terminal:</p>
+<h2>WebUI<a class="headerlink" href="#webui" title="Link to this heading">#</a></h2>
+<p>You can launch the Runtime WebUI with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npx<span class="w"> </span>@agentscope-ai/chat<span class="w"> </span>agentscope-runtime-webui<span class="w"> </span>--url<span class="w"> </span>http://localhost:8080/process
 </pre></div>
 </div>
-<p>Refer to <a class="reference external" href="https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx">AgentScope Runtime WebUI</a> for more information.</p>
+<p>If you change <code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_PORT</span></code>, update the WebUI URL accordingly.</p>
+<p>See <a class="reference external" href="https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx">AgentScope Runtime WebUI</a> for more details.</p>
 </section>
-</section>
-<section id="configuration-details">
-<h2>Configuration Details<a class="headerlink" href="#configuration-details" title="Link to this heading">#</a></h2>
-<section id="environment-variables-summary">
-<h3>Environment Variables Summary<a class="headerlink" href="#environment-variables-summary" title="Link to this heading">#</a></h3>
+<section id="environment-variables">
+<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
+<p>JSON session settings only apply when <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=json</span></code>. Redis settings only apply when <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
@@ -814,7 +760,7 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></td>
 <td><p>✅ Yes</p></td>
 <td><p>-</p></td>
-<td><p>DashScope API key for LLM and embedding</p></td>
+<td><p>DashScope API key</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code></p></td>
 <td><p>✅ Yes</p></td>
@@ -829,62 +775,52 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;./sessions&quot;</span></code></p></td>
-<td><p>Session file directory (JSON mode only)</p></td>
+<td><p>Session file directory in JSON mode</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_TTL_SECONDS</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">21600</span></code></p></td>
-<td><p>Session TTL in seconds (JSON mode only, 6 hours)</p></td>
+<td><p>Session TTL in JSON mode</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SESSION_CLEANUP_INTERVAL</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1800</span></code></p></td>
-<td><p>Cleanup interval in seconds (JSON mode only, 30 minutes)</p></td>
+<td><p>Cleanup interval in JSON mode</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;localhost&quot;</span></code></p></td>
-<td><p>Redis server host (Redis mode only)</p></td>
+<td><p>Redis host in Redis mode</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">6379</span></code></p></td>
-<td><p>Redis server port (Redis mode only)</p></td>
+<td><p>Redis port in Redis mode</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
-<td><p>Redis database number (Redis mode only)</p></td>
+<td><p>Redis database number</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code></p></td>
 <td><p>❌ No</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>Redis password (Redis mode only, optional)</p></td>
+<td><p>unset</p></td>
+<td><p>Redis password</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REDIS_MAX_CONNECTIONS</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
-<td><p>Redis max connections (Redis mode only)</p></td>
+<td><p>Redis max connections</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">QDRANT_HOST</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_HOST</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
-<td><p>Qdrant server host</p></td>
+<td><p>Service host</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">QDRANT_PORT</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_PORT</span></code></p></td>
 <td><p>❌ No</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">6333</span></code></p></td>
-<td><p>Qdrant server port</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code></p></td>
-<td><p>❌ No</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">200000</span></code></p></td>
-<td><p>Maximum tokens for context window (multiplied by 3 for CharTokenCounter)</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_HOST</span></code></p></td>
-<td><p>❌ No</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
-<td><p>Service host address</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8080</span></code></p></td>
+<td><p>Service port</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_ENABLE_LOGGING</span></code></p></td>
 <td><p>❌ No</p></td>
@@ -893,107 +829,50 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_LOG_DIR</span></code></p></td>
 <td><p>❌ No</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./logs&quot;</span></code></p></td>
-<td><p>Log directory</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">qa-copilot/logs</span></code></p></td>
+<td><p>Log directory. If unset, logs are written under the <code class="docutils literal notranslate"><span class="pre">logs</span></code> directory next to <code class="docutils literal notranslate"><span class="pre">session_logger.py</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FASTAPI_CONFIG_PATH</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
-<td><p>Path to FastAPI config JSON file</p></td>
+<td><p>Optional FastAPI config JSON file</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SAFE_CHECK_HANDLER_PATH</span></code></p></td>
 <td><p>❌ No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
-<td><p>Path to custom safe check handler</p></td>
+<td><p>Optional safe-check handler module</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-<section id="model-configuration">
-<h3>Model Configuration<a class="headerlink" href="#model-configuration" title="Link to this heading">#</a></h3>
-<p>In <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code>, you can configure the language model to use:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">=</span><span class="n">DashScopeChatModel</span><span class="p">(</span>
-    <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">,</span>  <span class="c1"># Model name</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
-    <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable streaming response</span>
-    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable thinking mode</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>The formatter uses <code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code> environment variable (default: 200000) to limit the context window size. Since <code class="docutils literal notranslate"><span class="pre">CharTokenCounter</span></code> counts characters and approximately 3 characters ≈ 1 token for mixed Chinese and English text, the value is multiplied by 3 when passed to <code class="docutils literal notranslate"><span class="pre">DashScopeChatFormatter</span></code>.</p>
-</section>
-<section id="session-storage-configuration">
-<h3>Session Storage Configuration<a class="headerlink" href="#session-storage-configuration" title="Link to this heading">#</a></h3>
-<p><strong>JSON Mode (Default):</strong></p>
-<ul class="simple">
-<li><p>Session history is stored as JSON files in <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_DIR</span></code> directory</p></li>
-<li><p>Automatic TTL-based cleanup runs every <code class="docutils literal notranslate"><span class="pre">SESSION_CLEANUP_INTERVAL</span></code> seconds</p></li>
-<li><p>Sessions expire after <code class="docutils literal notranslate"><span class="pre">SESSION_TTL_SECONDS</span></code> seconds of inactivity</p></li>
-<li><p>No external dependencies required</p></li>
-</ul>
-<p><strong>Redis Mode:</strong></p>
-<ul class="simple">
-<li><p>Session history is stored in Redis</p></li>
-<li><p>Session state is automatically managed by <code class="docutils literal notranslate"><span class="pre">RedisMemory</span></code></p></li>
-<li><p>TTL is handled by Redis server configuration (not application-level)</p></li>
-<li><p>Requires Redis server to be running</p></li>
-</ul>
-</section>
-<section id="faq-rag-configuration">
-<h3>FAQ RAG Configuration<a class="headerlink" href="#faq-rag-configuration" title="Link to this heading">#</a></h3>
-<p>The FAQ RAG system uses the following configuration:</p>
-<ul class="simple">
-<li><p><strong>Vector Database</strong>: Qdrant (running in Docker container)</p></li>
-<li><p><strong>Embedding Model</strong>: DashScope text-embedding-v4</p></li>
-<li><p><strong>Vector Dimension</strong>: 1024</p></li>
-<li><p><strong>Data Source</strong>: <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code></p></li>
-<li><p><strong>Storage Location</strong>: <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code></p></li>
-<li><p><strong>Qdrant Host</strong>: Configurable via <code class="docutils literal notranslate"><span class="pre">QDRANT_HOST</span></code> (default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>)</p></li>
-<li><p><strong>Qdrant Port</strong>: Configurable via <code class="docutils literal notranslate"><span class="pre">QDRANT_PORT</span></code> (default: <code class="docutils literal notranslate"><span class="pre">6333</span></code>)</p></li>
-</ul>
-<p>The system automatically checks if RAG data is initialized on startup. If not initialized, it will automatically read the FAQ file and create vector indexes.</p>
-</section>
 </section>
 <section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
 <section id="common-issues">
 <h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p><strong>Docker/Qdrant Issues</strong></p>
+<li><p>Redis connection failure in <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code></p>
 <ul class="simple">
-<li><p>Ensure Docker service is running: <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">--version</span></code></p></li>
-<li><p>Check Qdrant container status: <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">qdrant</span></code></p></li>
-<li><p>Manually start Qdrant container: <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">start</span> <span class="pre">qdrant</span></code></p></li>
-<li><p>Check if Qdrant port is occupied: <code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6333</span></code></p></li>
-<li><p>To reinitialize RAG data, delete the <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/qdrant_storage</span></code> directory and restart the service</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">redis-cli</span> <span class="pre">ping</span></code></p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code>, <code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>, <code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code>, and <code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code></p></li>
 </ul>
 </li>
-<li><p><strong>Redis connection failure</strong> (when using <code class="docutils literal notranslate"><span class="pre">SESSION_STORE_TYPE=redis</span></code>)</p>
+<li><p>MCP startup failure</p>
 <ul class="simple">
-<li><p>Ensure Redis service is running: <code class="docutils literal notranslate"><span class="pre">redis-cli</span> <span class="pre">ping</span></code></p></li>
-<li><p>Check if Redis port is occupied: <code class="docutils literal notranslate"><span class="pre">netstat</span> <span class="pre">-tlnp</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">6379</span></code> (or your configured <code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>)</p></li>
-<li><p>Verify Redis configuration: Check <code class="docutils literal notranslate"><span class="pre">REDIS_HOST</span></code>, <code class="docutils literal notranslate"><span class="pre">REDIS_PORT</span></code>, <code class="docutils literal notranslate"><span class="pre">REDIS_DB</span></code>, and <code class="docutils literal notranslate"><span class="pre">REDIS_PASSWORD</span></code> environment variables</p></li>
-<li><p>Note: Redis TTL is managed by Redis server, not by the application</p></li>
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> is exported</p></li>
+<li><p>Confirm the token has the required access for GitHub MCP</p></li>
 </ul>
 </li>
-<li><p><strong>MCP service startup failure</strong></p>
+<li><p>DashScope authentication or quota failure</p>
 <ul class="simple">
-<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> is set and correct (required environment variable)</p></li>
-<li><p>Verify GitHub token has necessary permissions for MCP integration</p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code></p></li>
+<li><p>Check Model Studio quota and model availability</p></li>
 </ul>
 </li>
-<li><p><strong>API Key error</strong></p>
+<li><p>Custom config or safe-check handler not loading</p>
 <ul class="simple">
-<li><p>Verify <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> environment variable is correctly set</p></li>
-<li><p>Confirm API Key is valid and has sufficient quota</p></li>
-</ul>
-</li>
-<li><p><strong>FAQ retrieval returns no results</strong></p>
-<ul class="simple">
-<li><p>Confirm FAQ file <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> exists and is properly formatted</p></li>
-<li><p>Check if Qdrant container is running normally</p></li>
-<li><p>Review logs to confirm RAG data was successfully initialized</p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">FASTAPI_CONFIG_PATH</span></code> points to a valid JSON file</p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">SAFE_CHECK_HANDLER_PATH</span></code> points to an importable Python module</p></li>
 </ul>
 </li>
 </ol>
@@ -1001,22 +880,18 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </section>
 <section id="acknowledgments">
 <h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading">#</a></h2>
-<p>Parts of this project’s code are adapted from the following open-source projects:</p>
-<ul class="simple">
-<li><p><strong>FAQ RAG System &amp; GitHub MCP Integration</strong>: Adapted from the implementation in <a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples/tree/main/alias">AgentScope Samples - Alias</a></p></li>
-</ul>
-<p>Special thanks to the AgentScope team for their excellent framework and sample code!</p>
+<p>Parts of the service scaffolding and MCP integration were adapted from <a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples/tree/main/alias">AgentScope Samples - Alias</a>.</p>
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
-<p>This project uses the same license as the main project. For details, please refer to the <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/LICENSE">LICENSE</a> file.</p>
+<p>This project uses the same license as the main project. See <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/LICENSE">LICENSE</a> for details.</p>
 </section>
 <section id="related-links">
 <h2>Related Links<a class="headerlink" href="#related-links" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer">Data-Juicer Official Repository</a></p></li>
+<li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents">Data-Juicer Agents</a></p></li>
 <li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope Framework</a></p></li>
-<li><p><a class="reference external" href="https://github.com/agentscope-ai/agentscope-samples">AgentScope Samples</a></p></li>
 <li><p><a class="reference external" href="https://github.com/github/github-mcp-server">GitHub MCP Server</a></p></li>
 </ul>
 </section>
@@ -1073,27 +948,22 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#web-api-interfaces">Web API Interfaces</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#q-a-conversation">1. Q&amp;A Conversation</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-session-history">2. Get Session History</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-session-history">3. Clear Session History</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#submit-user-feedback">4. Submit User Feedback</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-behavior">Runtime Behavior</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model">Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mounted-tools">Mounted Tools</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-a-conversation">1. Q&amp;A Conversation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-session-history">2. Get Session History</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-session-history">3. Clear Session History</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#submit-user-feedback">4. Submit User Feedback</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-details">Configuration Details</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables-summary">Environment Variables Summary</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-configuration">Model Configuration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#session-storage-configuration">Session Storage Configuration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#faq-rag-configuration">FAQ RAG Configuration</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#webui">WebUI</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment Variables</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
 </ul>
