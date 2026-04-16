@@ -29,8 +29,6 @@ from typing import Optional, Any, List, Literal, Callable, Awaitable, Dict
 from pydantic import BaseModel, Field
 
 from agentscope.mcp import HttpStatelessClient
-from agentscope.embedding import DashScopeTextEmbedding
-from agentscope.rag import SimpleKnowledge, QdrantStore
 from agentscope.tool import Toolkit
 from agentscope.session import JSONSession
 from agentscope.memory import InMemoryMemory, RedisMemory
@@ -40,8 +38,7 @@ from redis.asyncio import ConnectionPool
 
 from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
 
-from op_manager.dj_op_retriever import DJOperatorRetriever
-from url_verifier.verify_urls import verify_urls
+from operator_tools_adapter import register_qa_operator_tools
 
 
 class SessionLockManager(object):
@@ -424,76 +421,6 @@ class FeedbackRequest(BaseModel):
 async def add_qa_tools(
     toolkit: Toolkit,
 ):
-    try:
-        # Check and initialize RAG data if needed
-        from rag_utils.create_rag_file import (
-            check_rag_initialized,
-            initialize_rag,
-            SCRIPT_DIR,
-        )
-
-        collection_name = "dj_faq"
-        is_initialized = await check_rag_initialized(collection_name)
-
-        if not is_initialized:
-            logger.info("RAG data not found. Initializing RAG data...")
-            # Check for custom FAQ file in the qaagent_tools directory
-            custom_faq_file = SCRIPT_DIR / "faq.txt"
-
-            if custom_faq_file.exists():
-                logger.info(f"Using FAQ file: {custom_faq_file}")
-                await initialize_rag(
-                    faq_file_path=custom_faq_file,
-                    collection_name=collection_name,
-                )
-            else:
-                logger.warning(
-                    f"FAQ file not found at {custom_faq_file}. "
-                    "Please ensure faq.txt exists "
-                    "in the rag_utils directory.",
-                )
-                logger.info("Attempting to use default FAQ file...")
-                await initialize_rag(collection_name=collection_name)
-            logger.info("RAG data initialization completed.")
-        else:
-            logger.info(
-                "RAG data already initialized. Skipping initialization.",
-            )
-
-        knowledge = SimpleKnowledge(
-            embedding_store=QdrantStore(
-                # location=":memory:",
-                location=None,
-                client_kwargs={
-                    "host": os.getenv(
-                        "QDRANT_HOST", "127.0.0.1"
-                    ),  # Qdrant server address
-                    "port": int(os.getenv("QDRANT_PORT", "6333")),  # Qdrant server port
-                },
-                collection_name="dj_faq",
-                dimensions=1024,  # The dimension of the embedding vectors
-            ),
-            embedding_model=DashScopeTextEmbedding(
-                api_key=os.environ["DASHSCOPE_API_KEY"],
-                model_name="text-embedding-v4",
-            ),
-        )
-        toolkit.register_tool_function(
-            knowledge.retrieve_knowledge,
-            func_description=(  # Provide a clear description for the tool
-                "Quickly retrieve answers to questions related to "
-                "the Data-juicer FAQ. The `query` parameter is crucial "
-                "for retrieval quality."
-                "You may try multiple different queries to get the best "
-                "results. Adjust the `limit` and `score_threshold` "
-                "parameters to control the number and relevance of results."
-            ),
-            # group_name="qa_mode",
-        )
-    except Exception as e:
-        print(traceback.format_exc())
-        raise e from None
-
     github_token = os.getenv("GITHUB_TOKEN")
     if not github_token:
         logger.error(
@@ -524,8 +451,4 @@ async def add_qa_tools(
             print(traceback.format_exc())
             raise e from None
 
-    # Initialize and register DJ Operator Retriever tools
-    dj_retriever = DJOperatorRetriever()
-    toolkit.register_tool_function(dj_retriever.search_operators)
-    toolkit.register_tool_function(dj_retriever.get_operator_details)
-    toolkit.register_tool_function(verify_urls)
+    register_qa_operator_tools(toolkit)

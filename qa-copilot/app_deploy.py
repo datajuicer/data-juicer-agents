@@ -10,13 +10,13 @@ from typing import Optional, Tuple, Any, Callable, Awaitable
 
 from session_logger import SessionLogger, ENABLE_SESSION_LOGGING
 
-from agentscope.model import DashScopeChatModel
-from agentscope.formatter import DashScopeChatFormatter
+from agentscope.model import OpenAIChatModel
+from agentscope.formatter import OpenAIChatFormatter
 from agentscope.agent import ReActAgent
 from agentscope.message import Msg
 from agentscope.tool import Toolkit
 from agentscope.pipeline import stream_printing_messages
-from agentscope.token import CharTokenCounter
+from agentscope.token import OpenAITokenCounter
 
 from agentscope_runtime.engine.app import AgentApp
 from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
@@ -41,6 +41,7 @@ else:
 session_lock_manager = SessionLockManager()
 
 session_history_service = None
+AGENT_NAME = "Juicer"
 
 # Allow configuring FastAPI config file.
 FASTAPI_CONFIG_PATH = os.getenv("FASTAPI_CONFIG_PATH", "")
@@ -61,7 +62,7 @@ except (json.JSONDecodeError, IOError) as e:
 
 
 app = AgentApp(
-    agent_name="Juicer",
+    agent_name=AGENT_NAME,
     **fastapi_kwargs,
 )
 
@@ -73,19 +74,25 @@ if SESSION_STORE_TYPE not in ["json", "redis"]:
     raise ValueError(f"❌ Invalid SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 
 model_params = {
-    "model_name": "qwen3-max-2026-01-23",
+    "model_name": "qwen3.6-plus",
     "api_key": os.getenv("DASHSCOPE_API_KEY"),
     "stream": True,
-    "enable_thinking": False,
+    "client_kwargs": {
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    },
+    "generate_kwargs": {
+        "extra_body": {
+            "enable_thinking": False,
+        },
+    },
 }
 # formatter is used to format the messages for the model
-# MAX_TOKENS specifies the maximum token count (default: 200000)
-# CharTokenCounter counts characters, and for mixed CHN & ENG text,
-# approximately 3 characters ≈ 1 token, so we multiply by 3 when passing to formatter
-max_tokens_config = int(os.getenv("MAX_TOKENS", "200000"))
-formatter = DashScopeChatFormatter(
-    token_counter=CharTokenCounter(),
-    max_tokens=max_tokens_config * 3,  # Convert token count to character count (×3)
+# The provider-side context window is 1M tokens. We conservatively cap the
+# local formatter at 0.8M tokens to leave headroom for tokenizer mismatch
+# between DashScope/Qwen serving and the local OpenAI-compatible token counter.
+formatter = OpenAIChatFormatter(
+    token_counter=OpenAITokenCounter(model_name=model_params["model_name"]),
+    max_tokens=800000,
 )
 toolkit = Toolkit()
 
@@ -274,16 +281,17 @@ async def query_func(
         _model_params.update(request_model_params)
 
         # Model Configuration
-        model = DashScopeChatModel(**_model_params)
+        model = OpenAIChatModel(**_model_params)
 
         # Build agent configuration
         agent_config = {
-            "name": "Juicer",
+            "name": AGENT_NAME,
             "formatter": formatter,
             "model": model,
-            "sys_prompt": prompts.QA,
+            "sys_prompt": prompts.QA.replace("{name}", AGENT_NAME),
             "toolkit": toolkit,
             "parallel_tool_calls": True,
+            "max_iters": 20,
             "memory": memory,
         }
 
@@ -491,4 +499,5 @@ async def submit_feedback(request: FeedbackRequest):
 
 if __name__ == "__main__":
     host = os.getenv("DJ_COPILOT_SERVICE_HOST", "127.0.0.1")
-    app.run(host=host, port=8080)
+    port = int(os.getenv("DJ_COPILOT_SERVICE_PORT", "8080"))
+    app.run(host=host, port=port)

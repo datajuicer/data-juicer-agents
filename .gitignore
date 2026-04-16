@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
 
 # C extensions
 *.so
@@ -146,3 +147,4 @@ data/monitor/
 plans/
 data_juicer_agents/tools/retrieve/_shared/backend/vector_index_cache/
 skills/data-juicer-agents-harness/agents/
+qa-copilot/sessions/

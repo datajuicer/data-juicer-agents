@@ -1,146 +1,105 @@
 # Data-Juicer Q&A Copilot
 
-Q&A Copilot is the intelligent question-answering component of the Data-Juicer Agents system, a professional Data-Juicer AI assistant built on the AgentScope framework.
+Q&A Copilot is the question-answering component of Data-Juicer Agents. It runs as an AgentScope-based web service and answers Data-Juicer ecosystem questions with a combination of LLM reasoning, GitHub MCP retrieval, and operator lookup tools.
 
-You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html) of Data-Juicer! Feel free to ask ***Juicer*** anything related to Data-Juicer ecosystem.
+You can chat with ***Juicer*** on the official [Data-Juicer documentation site](https://datajuicer.github.io/data-juicer/en/main/index.html).
 
 <div align="center">
 <img src="https://github.com/user-attachments/assets/d10a95a8-fb7a-494f-b858-f21e5996790b" width=90%>
 </div>
 
-### Core Components
+## Core Components
 
-- **Agent**: Intelligent Q&A agent based on ReActAgent
-- **FAQ RAG System**: Fast and accurate FAQ retrieval powered by Qdrant vector database and DashScope text embedding model
-- **MCP Integration**: Online GitHub search capabilities through GitHub MCP Server
-- **Redis Storage**: Supports session history and feedback data persistence
-- **Web API**: Provides RESTful interfaces for frontend integration
+- **Agent**: ReActAgent-based Q&A service
+- **GitHub MCP Integration**: `search_repositories`, `search_code`, and `get_file_contents`
+- **Operator Tools**: `retrieve_operators_api` (llm mode) and `get_operator_info`
+- **Session Storage**: JSON-based storage by default, Redis optional
+- **Web API**: REST endpoints for chat, memory, clear, and feedback
 
 ## Quick Start
 
 ### Prerequisites
 
-- 3.10 <= Python <= 3.12
-- Docker (for running Qdrant vector database)
-- Redis server (optional, activated by `SESSION_STORE_TYPE=redis`)
-- DashScope API Key (for large language model calls and text embedding)
+- Python `>=3.10, <=3.12`
+- DashScope API key
+- GitHub token
+- Redis server only if you want `SESSION_STORE_TYPE=redis`
 
 ### Installation
 
-1. Install dependencies
+1. Install dependencies.
    ```bash
    cd ..
    uv pip install '.[copilot]'
    cd qa-copilot
    ```
 
-2. Install Docker (for Qdrant vector database)
-   ```bash
-   # Ubuntu/Debian
-   sudo apt-get install docker.io
-   sudo systemctl start docker
-   
-   # macOS
-   brew install docker
-   ```
-
-   **Note**: The system will automatically check and start the Qdrant Docker container on startup. If FAQ data is not initialized, the system will automatically read from `qa-copilot/rag_utils/faq.txt` and initialize the RAG data.
-
-3. Install and start Redis (optional - skip if using the default `SESSION_STORE_TYPE=json`)
-   ```bash
-   # Ubuntu/Debian
-   sudo apt-get install redis-server
-   redis-server --daemonize yes
-   
-   # macOS
-   brew install redis
-   brew services start redis
-   ```
-
-   **Note**: 
-   - If you set `SESSION_STORE_TYPE=json` (default), session history will be stored as JSON files in the `SESSION_STORE_DIR` directory with automatic TTL-based cleanup.
-   - If you set `SESSION_STORE_TYPE=redis`, you need to have Redis server running. Session state is automatically managed by RedisMemory, and TTL is handled by Redis server configuration.
-
-### Configuration
-
-1. Set required environment variables
+2. Export required environment variables.
    ```bash
    export DASHSCOPE_API_KEY="your_dashscope_api_key"
-   export GITHUB_TOKEN="your_github_token"  # Required: for GitHub MCP integration
+   export GITHUB_TOKEN="your_github_token"
    ```
 
-2. Set optional environment variables
-
-   **Session Storage Configuration:**
+3. Optional session storage configuration.
    ```bash
-   # Session store type: "json" (default) or "redis"
    export SESSION_STORE_TYPE="json"  # or "redis"
-   
-   # For JSON mode (default):
-   export SESSION_STORE_DIR="./sessions"  # Session file storage directory (default: "./sessions")
-   export SESSION_TTL_SECONDS="21600"  # Session TTL in seconds (default: 21600 = 6 hours)
-   export SESSION_CLEANUP_INTERVAL="1800"  # Cleanup interval in seconds (default: 1800 = 30 minutes)
-   
-   # For Redis mode:
-   export REDIS_HOST="localhost"  # Redis server host (default: "localhost")
-   export REDIS_PORT="6379"  # Redis server port (default: 6379)
-   export REDIS_DB="0"  # Redis database number (default: 0)
-   export REDIS_PASSWORD=""  # Redis password (default: None, optional)
-   export REDIS_MAX_CONNECTIONS="10"  # Redis max connections (default: 10)
-   # Note: Redis TTL is handled by Redis server configuration, not by application
+
+   # JSON mode
+   export SESSION_STORE_DIR="./sessions"
+   export SESSION_TTL_SECONDS="21600"
+   export SESSION_CLEANUP_INTERVAL="1800"
+
+   # Redis mode
+   export REDIS_HOST="localhost"
+   export REDIS_PORT="6379"
+   export REDIS_DB="0"
+   export REDIS_PASSWORD=""
+   export REDIS_MAX_CONNECTIONS="10"
    ```
 
-   **Model Configuration:**
+4. Optional service configuration.
    ```bash
-   export MAX_TOKENS="200000"  # Maximum tokens for context window (default: 200000)
-   # Note: This value is multiplied by 3 when passed to DashScopeChatFormatter
-   # because CharTokenCounter counts characters, and ~3 chars ≈ 1 token for mixed CHN & ENG text
+   export DJ_COPILOT_SERVICE_HOST="127.0.0.1"
+   export DJ_COPILOT_SERVICE_PORT="8080"
+   export DJ_COPILOT_ENABLE_LOGGING="true"
+   export DJ_COPILOT_LOG_DIR="./logs"
+   export FASTAPI_CONFIG_PATH=""
+   export SAFE_CHECK_HANDLER_PATH=""
    ```
 
-   **Qdrant Vector Database:**
-   ```bash
-   export QDRANT_HOST="127.0.0.1"  # Qdrant server host (default: "127.0.0.1")
-   export QDRANT_PORT="6333"  # Qdrant server port (default: 6333)
-   ```
-
-   **Service Configuration:**
-   ```bash
-   export DJ_COPILOT_SERVICE_HOST="127.0.0.1"  # Service host address (default: "127.0.0.1")
-   export DJ_COPILOT_ENABLE_LOGGING="true"  # Enable session logging (default: "true")
-   export DJ_COPILOT_LOG_DIR="./logs"  # Log directory (default: "./logs")
-   ```
-
-   **Advanced Configuration:**
-   ```bash
-   export FASTAPI_CONFIG_PATH=""  # Path to FastAPI config JSON file (optional)
-   export SAFE_CHECK_HANDLER_PATH=""  # Path to custom safe check handler module (optional)
-   ```
-
-2. Configure FAQ file (optional)
-   
-   The system uses `qa-copilot/rag_utils/faq.txt` as the FAQ data source by default. You can edit this file to customize FAQ content. FAQ file format example:
-   ```
-   'id': 'FAQ_001', 'question': 'What is Data-Juicer?', 'answer': 'Data-Juicer is a...'
-   'id': 'FAQ_002', 'question': 'How to install?', 'answer': 'You can install by...'
-   ```
-
-3. Start the service
+5. Start the service.
    ```bash
    bash setup_server.sh
    ```
-   
-   On first startup, the system will automatically:
-   - Check and start the Qdrant Docker container (port 6333)
-   - Initialize FAQ RAG data (if not already initialized)
-   - Start the Web API service
 
-## Usage
+## Runtime Behavior
 
-### Web API Interfaces
+### Model
 
-After starting the service, the system provides the following API interfaces:
+- Default model: `qwen3.6-plus`
+- Transport: DashScope OpenAI-compatible endpoint
+- Streaming: enabled
+- The runtime applies local formatter-based truncation with `OpenAIChatFormatter`.
+- Provider-side context window is `1M` tokens; the local formatter conservatively truncates at `0.8M` tokens to leave headroom for tokenizer mismatch between DashScope/Qwen serving and the local OpenAI-compatible token counter.
 
-#### 1. Q&A Conversation
+### Mounted Tools
+
+The current QA runtime mounts these tools:
+
+- GitHub MCP:
+  - `search_repositories`
+  - `search_code`
+  - `get_file_contents`
+- Operator tools:
+  - `retrieve_operators_api`
+  - `get_operator_info`
+
+`retrieve_operators_api` is wrapped so that QA always uses `llm` retrieval mode internally.
+
+## API
+
+### 1. Q&A Conversation
+
 ```http
 POST /process
 Content-Type: application/json
@@ -148,8 +107,8 @@ Content-Type: application/json
 {
   "input": [
     {
-      "role": "user", 
-      "content": [{"type": "text", "text": "How to use Data-Juicer for data cleaning?"}]
+      "role": "user",
+      "content": [{"type": "text", "text": "How do I use Data-Juicer for data cleaning?"}]
     }
   ],
   "session_id": "your_session_id",
@@ -157,7 +116,8 @@ Content-Type: application/json
 }
 ```
 
-#### 2. Get Session History
+### 2. Get Session History
+
 ```http
 POST /memory
 Content-Type: application/json
@@ -168,7 +128,8 @@ Content-Type: application/json
 }
 ```
 
-#### 3. Clear Session History
+### 3. Clear Session History
+
 ```http
 POST /clear
 Content-Type: application/json
@@ -179,7 +140,8 @@ Content-Type: application/json
 }
 ```
 
-#### 4. Submit User Feedback
+### 4. Submit User Feedback
+
 ```http
 POST /feedback
 Content-Type: application/json
@@ -195,143 +157,79 @@ Content-Type: application/json
 }
 ```
 
-**Parameters:**
-- `message_id`: The ID of the message to provide feedback on (required)
-- `feedback_type`: Type of feedback, either `"like"` or `"dislike"` (required)
-- `comment`: Optional user comment text (optional)
+Feedback parameters:
 
-**Response example:**
-```json
-{
-  "status": "ok",
-  "message": "Feedback recorded successfully"
-}
-```
+- `message_id`: target message id
+- `feedback_type`: `like` or `dislike`
+- `comment`: optional free-form comment
 
-### WebUI
+## WebUI
 
-you can simply run the following command in your terminal:
+You can launch the Runtime WebUI with:
 
 ```bash
 npx @agentscope-ai/chat agentscope-runtime-webui --url http://localhost:8080/process
 ```
 
-Refer to [AgentScope Runtime WebUI](https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx) for more information.
+If you change `DJ_COPILOT_SERVICE_PORT`, update the WebUI URL accordingly.
 
-## Configuration Details
+See [AgentScope Runtime WebUI](https://runtime.agentscope.io/en/webui.html#method-2-quick-start-via-npx) for more details.
 
-### Environment Variables Summary
+## Environment Variables
+
+JSON session settings only apply when `SESSION_STORE_TYPE=json`. Redis settings only apply when `SESSION_STORE_TYPE=redis`.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `DASHSCOPE_API_KEY` | ✅ Yes | - | DashScope API key for LLM and embedding |
+| `DASHSCOPE_API_KEY` | ✅ Yes | - | DashScope API key |
 | `GITHUB_TOKEN` | ✅ Yes | - | GitHub token for MCP integration |
 | `SESSION_STORE_TYPE` | ❌ No | `"json"` | Session storage type: `"json"` or `"redis"` |
-| `SESSION_STORE_DIR` | ❌ No | `"./sessions"` | Session file directory (JSON mode only) |
-| `SESSION_TTL_SECONDS` | ❌ No | `21600` | Session TTL in seconds (JSON mode only, 6 hours) |
-| `SESSION_CLEANUP_INTERVAL` | ❌ No | `1800` | Cleanup interval in seconds (JSON mode only, 30 minutes) |
-| `REDIS_HOST` | ❌ No | `"localhost"` | Redis server host (Redis mode only) |
-| `REDIS_PORT` | ❌ No | `6379` | Redis server port (Redis mode only) |
-| `REDIS_DB` | ❌ No | `0` | Redis database number (Redis mode only) |
-| `REDIS_PASSWORD` | ❌ No | `None` | Redis password (Redis mode only, optional) |
-| `REDIS_MAX_CONNECTIONS` | ❌ No | `10` | Redis max connections (Redis mode only) |
-| `QDRANT_HOST` | ❌ No | `"127.0.0.1"` | Qdrant server host |
-| `QDRANT_PORT` | ❌ No | `6333` | Qdrant server port |
-| `MAX_TOKENS` | ❌ No | `200000` | Maximum tokens for context window (multiplied by 3 for CharTokenCounter) |
-| `DJ_COPILOT_SERVICE_HOST` | ❌ No | `"127.0.0.1"` | Service host address |
+| `SESSION_STORE_DIR` | ❌ No | `"./sessions"` | Session file directory in JSON mode |
+| `SESSION_TTL_SECONDS` | ❌ No | `21600` | Session TTL in JSON mode |
+| `SESSION_CLEANUP_INTERVAL` | ❌ No | `1800` | Cleanup interval in JSON mode |
+| `REDIS_HOST` | ❌ No | `"localhost"` | Redis host in Redis mode |
+| `REDIS_PORT` | ❌ No | `6379` | Redis port in Redis mode |
+| `REDIS_DB` | ❌ No | `0` | Redis database number |
+| `REDIS_PASSWORD` | ❌ No | unset | Redis password |
+| `REDIS_MAX_CONNECTIONS` | ❌ No | `10` | Redis max connections |
+| `DJ_COPILOT_SERVICE_HOST` | ❌ No | `"127.0.0.1"` | Service host |
+| `DJ_COPILOT_SERVICE_PORT` | ❌ No | `8080` | Service port |
 | `DJ_COPILOT_ENABLE_LOGGING` | ❌ No | `"true"` | Enable session logging |
-| `DJ_COPILOT_LOG_DIR` | ❌ No | `"./logs"` | Log directory |
-| `FASTAPI_CONFIG_PATH` | ❌ No | `""` | Path to FastAPI config JSON file |
-| `SAFE_CHECK_HANDLER_PATH` | ❌ No | `""` | Path to custom safe check handler |
-
-### Model Configuration
-
-In `app_deploy.py`, you can configure the language model to use:
-
-```python
-model=DashScopeChatModel(
-    "qwen3-max-2026-01-23",  # Model name
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    stream=True,  # Enable streaming response
-    enable_thinking=True,  # Enable thinking mode
-)
-```
-
-The formatter uses `MAX_TOKENS` environment variable (default: 200000) to limit the context window size. Since `CharTokenCounter` counts characters and approximately 3 characters ≈ 1 token for mixed Chinese and English text, the value is multiplied by 3 when passed to `DashScopeChatFormatter`.
-
-### Session Storage Configuration
-
-**JSON Mode (Default):**
-- Session history is stored as JSON files in `SESSION_STORE_DIR` directory
-- Automatic TTL-based cleanup runs every `SESSION_CLEANUP_INTERVAL` seconds
-- Sessions expire after `SESSION_TTL_SECONDS` seconds of inactivity
-- No external dependencies required
-
-**Redis Mode:**
-- Session history is stored in Redis
-- Session state is automatically managed by `RedisMemory`
-- TTL is handled by Redis server configuration (not application-level)
-- Requires Redis server to be running
-
-### FAQ RAG Configuration
-
-The FAQ RAG system uses the following configuration:
-
-- **Vector Database**: Qdrant (running in Docker container)
-- **Embedding Model**: DashScope text-embedding-v4
-- **Vector Dimension**: 1024
-- **Data Source**: `qa-copilot/rag_utils/faq.txt`
-- **Storage Location**: `qa-copilot/rag_utils/qdrant_storage`
-- **Qdrant Host**: Configurable via `QDRANT_HOST` (default: `127.0.0.1`)
-- **Qdrant Port**: Configurable via `QDRANT_PORT` (default: `6333`)
-
-The system automatically checks if RAG data is initialized on startup. If not initialized, it will automatically read the FAQ file and create vector indexes.
+| `DJ_COPILOT_LOG_DIR` | ❌ No | `qa-copilot/logs` | Log directory. If unset, logs are written under the `logs` directory next to `session_logger.py` |
+| `FASTAPI_CONFIG_PATH` | ❌ No | `""` | Optional FastAPI config JSON file |
+| `SAFE_CHECK_HANDLER_PATH` | ❌ No | `""` | Optional safe-check handler module |
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Docker/Qdrant Issues**
-   - Ensure Docker service is running: `docker --version`
-   - Check Qdrant container status: `docker ps | grep qdrant`
-   - Manually start Qdrant container: `docker start qdrant`
-   - Check if Qdrant port is occupied: `netstat -tlnp | grep 6333`
-   - To reinitialize RAG data, delete the `qa-copilot/rag_utils/qdrant_storage` directory and restart the service
+1. Redis connection failure in `SESSION_STORE_TYPE=redis`
+   - Check `redis-cli ping`
+   - Verify `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB`, and `REDIS_PASSWORD`
 
-2. **Redis connection failure** (when using `SESSION_STORE_TYPE=redis`)
-   - Ensure Redis service is running: `redis-cli ping`
-   - Check if Redis port is occupied: `netstat -tlnp | grep 6379` (or your configured `REDIS_PORT`)
-   - Verify Redis configuration: Check `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB`, and `REDIS_PASSWORD` environment variables
-   - Note: Redis TTL is managed by Redis server, not by the application
+2. MCP startup failure
+   - Ensure `GITHUB_TOKEN` is exported
+   - Confirm the token has the required access for GitHub MCP
 
-3. **MCP service startup failure**
-   - Ensure `GITHUB_TOKEN` is set and correct (required environment variable)
-   - Verify GitHub token has necessary permissions for MCP integration
+3. DashScope authentication or quota failure
+   - Verify `DASHSCOPE_API_KEY`
+   - Check Model Studio quota and model availability
 
-4. **API Key error**
-   - Verify `DASHSCOPE_API_KEY` environment variable is correctly set
-   - Confirm API Key is valid and has sufficient quota
-
-5. **FAQ retrieval returns no results**
-   - Confirm FAQ file `qa-copilot/rag_utils/faq.txt` exists and is properly formatted
-   - Check if Qdrant container is running normally
-   - Review logs to confirm RAG data was successfully initialized
+4. Custom config or safe-check handler not loading
+   - Verify `FASTAPI_CONFIG_PATH` points to a valid JSON file
+   - Verify `SAFE_CHECK_HANDLER_PATH` points to an importable Python module
 
 ## Acknowledgments
 
-Parts of this project's code are adapted from the following open-source projects:
-
-- **FAQ RAG System & GitHub MCP Integration**: Adapted from the implementation in [AgentScope Samples - Alias](https://github.com/agentscope-ai/agentscope-samples/tree/main/alias)
-
-Special thanks to the AgentScope team for their excellent framework and sample code!
+Parts of the service scaffolding and MCP integration were adapted from [AgentScope Samples - Alias](https://github.com/agentscope-ai/agentscope-samples/tree/main/alias).
 
 ## License
 
-This project uses the same license as the main project. For details, please refer to the [LICENSE](../LICENSE) file.
+This project uses the same license as the main project. See [LICENSE](../LICENSE) for details.
 
 ## Related Links
 
 - [Data-Juicer Official Repository](https://github.com/datajuicer/data-juicer)
+- [Data-Juicer Agents](https://github.com/datajuicer/data-juicer-agents)
 - [AgentScope Framework](https://github.com/agentscope-ai/agentscope)
-- [AgentScope Samples](https://github.com/agentscope-ai/agentscope-samples)
 - [GitHub MCP Server](https://github.com/github/github-mcp-server)

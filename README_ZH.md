@@ -23,7 +23,7 @@
   </div>
 
 
-- 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README_ZH.md) 已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK) 上。欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题！
+- 🚀[2026-01-15] [Q&A Copilot](./qa-copilot/README_ZH.md) 已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK) 上。欢迎向 ***Juicer*** 提出任何与 Data-Juicer 生态相关的问题！
   - 📃 [一键部署代码](./qa-copilot/) | 🎬 [更多演示](./qa-copilot/DEMO_ZH.md) | 🎯 [路线图](#路线图)。
 
 <div align="center">
@@ -56,7 +56,7 @@
 ### 服务&工具
 
 - [x] **Q&A Copilot**: 围绕Data-Juicer生态系统的问答助手
-  - *[2026-01-15]*：已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh/main/index.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK)。
+  - *[2026-01-15]*：已部署在 [Data-Juicer](https://github.com/datajuicer/data-juicer) 的官方 [文档网站](https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html) | [钉钉群聊](https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&_dt_no_comment=1&origin=11?) | [Discord频道](https://discord.gg/ngQbB9hEVK)。
 - [ ] **InteRecipe**：通过自然语言交互式的数据菜谱构建
   - *[2026-03-11]*: 当前`./interactive_recipe`下仅展示基于工作流的样例。目前dj-agents CLI入口已构建完成，支持在TUI中通过自然语言交互式构建数据菜谱，我们正在开发以此为基础构建更多功能的前端工具(studio)作为升级。
 

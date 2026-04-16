@@ -87,7 +87,8 @@ else
 fi
 
 # Logs configuration
-export DJ_COPILOT_ENABLE_LOGGING="${DJ_COPILOT_ENABLE_LOGGING:-false}"
+export DJ_COPILOT_ENABLE_LOGGING="${DJ_COPILOT_ENABLE_LOGGING:-true}"
+export DJ_COPILOT_SERVICE_PORT="${DJ_COPILOT_SERVICE_PORT:-8080}"
 
 echo "🚀 Starting QA Copilot Web Server..."
 python app_deploy.py
