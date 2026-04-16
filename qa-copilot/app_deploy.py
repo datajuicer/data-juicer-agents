@@ -87,11 +87,15 @@ model_params = {
     },
 }
 # formatter is used to format the messages for the model
+# `OpenAITokenCounter` expects a known OpenAI model identifier for tokenizer
+# selection. The serving model here is DashScope/Qwen `qwen3.6-plus`, so we use
+# `gpt-4o` as a proxy because tiktoken maps it to the newer `o200k_base`
+# encoding. We still keep a conservative 0.8M local cap to leave headroom for
+# tokenizer mismatch between DashScope/Qwen serving and this proxy counter.
 # The provider-side context window is 1M tokens. We conservatively cap the
-# local formatter at 0.8M tokens to leave headroom for tokenizer mismatch
-# between DashScope/Qwen serving and the local OpenAI-compatible token counter.
+# local formatter at 0.8M tokens.
 formatter = OpenAIChatFormatter(
-    token_counter=OpenAITokenCounter(model_name=model_params["model_name"]),
+    token_counter=OpenAITokenCounter(model_name="gpt-4o"),
     max_tokens=800000,
 )
 toolkit = Toolkit()
