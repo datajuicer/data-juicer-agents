@@ -82,7 +82,7 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
     inspected = invoke_tool_spec(
         registry.get("inspect_dataset"),
         ctx=ctx,
-        raw_kwargs={"dataset_path": str(dataset), "sample_size": 5},
+        raw_kwargs={"dataset_source": {"path": str(dataset)}, "sample_size": 5},
     )
     assert inspected["ok"] is True
 
@@ -108,7 +108,7 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
         ctx=ctx,
         raw_kwargs={
             "intent": "filter rows longer than 1500 characters",
-            "dataset_path": str(dataset),
+            "dataset_source": {"path": str(dataset)},
             "export_path": str(export_path),
             "dataset_profile": inspected,
         },

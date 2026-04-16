@@ -17,11 +17,13 @@ def test_resolve_retrieval_forwards_dataset_config(monkeypatch):
     monkeypatch.setattr(service_mod, "retrieve_operator_candidates", _fake_retrieve)
     orchestrator = service_mod.PlanOrchestrator(planner_model_name="unit-test")
 
+    from data_juicer_agents.core.tool import DatasetSource
+
     dataset = {"configs": [{"type": "local", "path": "/tmp/data.jsonl"}]}
+    dataset_source = DatasetSource(config=dataset)
     payload = orchestrator._resolve_retrieval(
         user_intent="deduplicate text",
-        dataset_path="",
-        dataset=dataset,
+        dataset_source=dataset_source,
         top_k=7,
         mode="auto",
         retrieved_candidates=None,
@@ -31,6 +33,5 @@ def test_resolve_retrieval_forwards_dataset_config(monkeypatch):
     assert captured["intent"] == "deduplicate text"
     assert captured["top_k"] == 7
     assert captured["mode"] == "auto"
-    assert captured["dataset_path"] is None
-    assert captured["dataset"] == dataset
+    assert captured["dataset_source"] is dataset_source
 

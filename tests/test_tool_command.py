@@ -71,7 +71,7 @@ def test_tool_schema_returns_input_schema(capsys):
     payload = json.loads(capsys.readouterr().out)
     assert payload["ok"] is True
     assert payload["tool"]["name"] == "inspect_dataset"
-    assert payload["input_schema"]["properties"]["dataset_path"]["type"] == "string"
+    assert "dataset_source" in payload["input_schema"]["properties"]
 
 
 def test_tool_schema_unknown_tool_returns_exit_2(capsys):
@@ -145,7 +145,7 @@ def test_tool_run_read_tool_success(tmp_path: Path, capsys):
             "run",
             "inspect_dataset",
             "--input-json",
-            json.dumps({"dataset_path": str(dataset), "sample_size": 1}),
+            json.dumps({"dataset_source": {"path": str(dataset)}, "sample_size": 1}),
         ]
     )
     assert code == 0
