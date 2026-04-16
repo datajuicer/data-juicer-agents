@@ -1,4 +1,5 @@
 import os
+import uuid
 import pandas as pd
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -35,7 +36,8 @@ def main():
     for idx, row in df.iterrows():
         if row.get("result", "") == "":
             # Keep track of the DataFrame index for each task
-            tasks.append((idx, row["query"], url, None))
+            session_id = f"eval_{uuid.uuid4().hex}"
+            tasks.append((idx, row["query"], url, session_id))
 
     # Parallel processing
     print(f"\nStarting parallel query processing, target server: {url}")
@@ -86,4 +88,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

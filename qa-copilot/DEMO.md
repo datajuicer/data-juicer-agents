@@ -10,7 +10,9 @@ You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [d
 
 ---
 
-### Case 1 · Operator Introduction (alphanumeric_filter, EN) 
+---
+
+### Case 1 · Operator Introduction (alphanumeric_filter, EN)
 
 - **Type**: `operator_qa`
 - **Language**: `en`
@@ -22,31 +24,51 @@ You can chat with our [Q&A Copilot](./README.md) ***Juicer*** on the official [d
 <details>
 <summary><strong>Output (assistant answer)</strong></summary>
 
-The `alphanumeric_filter` is a Data-Juicer operator designed to filter text samples based on the ratio of alphanumeric characters (or tokens) to the total number of characters (or tokens). It helps ensure data quality by retaining only those samples that fall within a specified alphanumeric ratio range.
+I will retrieve the operator information for `alphanumeric_filter` to provide you with its details.
 
-### Key Features:
-- **Character-based or Token-based**: Depending on the `tokenization` parameter, it can calculate the ratio either by counting characters or by using a Hugging Face tokenizer to count tokens.
-- **Caching Metrics**: The computed metric — `'alpha_token_ratio'` (if tokenized) or `'alnum_ratio'` (if character-based) — is cached in the sample’s stats field for potential reuse.
-- **Flexible Range Control**: You define `min_ratio` and `max_ratio` to specify the acceptable range of alphanumeric content.
+I will search for the `alphanumeric_filter` in the Data-Juicer codebase to find its implementation and documentation.
 
-### Parameters:
-- `tokenization` (`bool`):  
-  If `True`, uses tokenization via Hugging Face tokenizer; if `False`, counts characters directly.
-- `min_ratio` (`float`):  
-  Minimum acceptable alphanumeric ratio.
-- `max_ratio` (`float`):  
-  Maximum acceptable alphanumeric ratio.
+I will retrieve the contents of the `alphanumeric_filter.md` documentation file to provide a detailed introduction.
 
-### Example Usage in Config:
+The `alphanumeric_filter` is a **filter operator** in Data-Juicer designed to retain text samples where the ratio of alphanumeric characters (or tokens) falls within a specified range. It is commonly used to clean datasets by removing samples that are either too sparse in alphanumeric content (e.g., mostly symbols or whitespace) or too dense (e.g., code-like or random character strings), depending on the configured thresholds.
+
+### 📋 Key Features
+- **Metric Calculation**: It calculates the ratio of alphanumeric characters to total characters. If tokenization is enabled, it calculates the ratio of alphanumeric tokens to total tokens using a Hugging Face tokenizer.
+- **Filtering Logic**: Samples are kept if their ratio is between `min_ratio` and `max_ratio`. Samples outside this range are discarded.
+- **Stats Caching**: The computed ratio (`alnum_ratio` or `alpha_token_ratio`) is cached in the sample's stats for transparency and reuse.
+
+### ⚙️ Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `tokenization` | `bool` | `False` | If `True`, uses a Hugging Face tokenizer to compute the ratio based on tokens. If `False`, computes based on characters. |
+| `min_ratio` | `float` | `0.25` | The minimum acceptable alphanumeric ratio. Samples below this value are filtered out. |
+| `max_ratio` | `float` | `sys.maxsize` | The maximum acceptable alphanumeric ratio. Samples above this value are filtered out. |
+
+### 💡 Usage Example
+
+In a Data-Juicer recipe (YAML), you might configure it like this:
+
 ```yaml
 process:
   - alphanumeric_filter:
-      tokenization: False
-      min_ratio: 0.3
+      min_ratio: 0.2
       max_ratio: 0.9
+      tokenization: false
 ```
 
-This configuration keeps samples where 30% to 90% of characters are alphanumeric.
+### 🔍 Effect Demonstration
+
+- **Character-based filtering** (`tokenization=False`):
+  - Input: `"，。、„”“«»１」「《》´∶：？！（）；–—．～’…━〈〉【】％►"` (Mostly symbols)
+  - Result: **Filtered out** because the alphanumeric ratio is very low (below `min_ratio`).
+  - Input: `"Do you need a cup of coffee?"`
+  - Result: **Kept** because the ratio of letters/spaces to total characters is within the typical range.
+
+- **Token-based filtering** (`tokenization=True`):
+  - This mode is useful for detecting samples where the *semantic* tokens are largely non-alphanumeric or when the tokenization behavior of specific models is relevant to the data quality.
+
+For more details, you can refer to the [official documentation](https://github.com/datajuicer/data-juicer/blob/main/docs/operators/filter/alphanumeric_filter.md) or the [source code](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/filter/alphanumeric_filter.py).
 
 </details>
 
@@ -64,43 +86,73 @@ This configuration keeps samples where 30% to 90% of characters are alphanumeric
 <details>
 <summary><strong>Output (assistant answer)</strong></summary>
 
-Data-Juicer Agents (DJ-Agents) is an intelligent, agent-based framework designed to assist users in interactively creating and optimizing Data-Juicer recipes through natural language conversations. It leverages large language models (LLMs) via DashScope API to interpret user intent, recommend suitable operators, generate configuration code, and even support custom operator development.
+I'll help you learn about DJ-Agents (Data-Juicer Agents). Let me search for information about this project.
 
-### Key Features:
+## Introduction to DJ-Agents (Data-Juicer Agents)
 
-1. **Interactive Recipe Generation**  
-   Users can describe their data processing goals in plain language (e.g., “I want to filter out non-English text”), and DJ-Agents will automatically suggest appropriate operators and generate a working recipe.
+**DJ-Agents** is a suite of intelligent agents designed for **agentic data processing**, built on top of [Data-Juicer](https://github.com/datajuicer/data-juicer) and [AgentScope](https://github.com/agentscope-ai/agentscope). Its goal is to enable a **development-free data processing lifecycle**, allowing users to focus on *what* they want to do with their data rather than *how* to implement it.
 
-2. **Custom Operator Development Support**  
-   If existing operators don’t meet your needs, DJ-Agents can guide you through creating new ones — including scaffolding code templates and updating configurations — especially when paired with a local Data-Juicer source installation.
+### 🎯 Core Vision
+Instead of writing complex data processing pipelines manually, DJ-Agents allows you to interact with your data through natural language conversations or high-level commands. The agents automatically plan, retrieve appropriate operators, and execute data processing tasks.
 
-3. **Flexible Running Modes**  
-   - **Command Line Mode**: Default mode for quick interactions.
-   - **AgentScope Studio Mode**: A visual, interactive web interface for richer debugging and step-by-step guidance (requires installing `@agentscope/studio` via npm).
+### 🏗️ Architecture
+DJ-Agents is organized into four main layers:
+1.  **Surface Adapters**: User-facing interfaces like the `djx` CLI and the interactive `dj-agents` session.
+2.  **Capability Orchestration**: End-to-end workflows such as planning, applying, and development.
+3.  **Tools**: Atomic, reusable capabilities (e.g., operator retrieval, dataset inspection).
+4.  **Runtime Adapters**: Integration with underlying frameworks like AgentScope.
 
-4. **Environment Setup**  
-   - Requires Python 3.10+.
-   - Needs a valid DashScope API key (export as `DASHSCOPE_API_KEY`).
-   - Optional: Set `DATA_JUICER_PATH` environment variable if developing custom operators.
+### 🚀 Key Features & Interfaces
 
-5. **Installation**  
-   Uses `uv` (a fast Python package installer) for streamlined setup:
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   uv pip install -e .
-   ```
+#### 1. Interactive Session (`dj-agents`)
+This is the conversational interface where you can chat with an agent to process your data.
+-   **TUI (Terminal User Interface)**: A rich interactive experience in your terminal.
+-   **Plain Mode**: Simple text-based interaction.
+-   **AgentScope Studio**: Integration with a visual studio for monitoring agent behavior.
+-   **Workflow**: The agent typically follows a path of `inspect_dataset -> retrieve_operators -> build_plan -> validate -> save`.
 
-For custom operator development, clone and install Data-Juicer in editable mode:
-```bash
-git clone https://github.com/datajuicer/data-juicer.git
-pip install -e /path/to/data-juicer
-```
+#### 2. Engineer CLI (`djx`)
+A command-line tool for explicit, engineer-focused workflows:
+-   **`djx retrieve`**: Find candidate Data-Juicer operators for a specific intent (e.g., "remove duplicate text").
+-   **`djx plan`**: Generate a complete data processing plan (YAML) based on a natural language description.
+-   **`djx apply`**: Execute a saved plan on your dataset.
+-   **`djx tool`**: Access atomic tools for automation or integration with other agents.
 
----
+#### 3. Q&A Copilot
+A specialized assistant deployed on the official Data-Juicer documentation site, DingTalk, and Discord to answer questions about the entire Data-Juicer ecosystem.
 
-**References:**
+### ⚡ Quick Start Example
 
-- [DJ-Agents Quick Start Guide](https://github.com/datajuicer/data-juicer-agents/blob/main/docs/QuickStart.md)
+To get started, you need Python 3.10+ and an API key (DashScope or OpenAI-compatible).
+
+1.  **Install**:
+    ```bash
+    uv pip install -e '.[full]'
+    ```
+2.  **Configure Model**:
+    ```bash
+    export DASHSCOPE_API_KEY="<your_key>"
+    export DJA_SESSION_MODEL="qwen3-max-2026-01-23"
+    ```
+3.  **Interactive Processing**:
+    ```bash
+    dj-agents --dataset ./data/demo-dataset.jsonl --export ./data/output.jsonl
+    ```
+4.  **CLI Planning**:
+    ```bash
+    djx plan "deduplicate and clean text for RAG" \
+      --dataset ./data/demo-dataset.jsonl \
+      --output ./data/demo-plan.yaml
+    djx apply --plan ./data/demo-plan.yaml --yes
+    ```
+
+### 🔮 Roadmap
+The project is continuously evolving with a focus on:
+-   **DJ Skills**: Packaging tools into soft-orchestrated skills for general-purpose agents.
+-   **InteRecipe Studio**: A frontend for interactive recipe construction via natural language.
+-   **Broader Scenarios**: Expanding support for RAG, Embodied Intelligence, and Data Lakehouse architectures.
+
+For more detailed documentation, you can visit the [DJ-Agents GitHub Repository](https://github.com/datajuicer/data-juicer-agents).
 
 </details>
 
@@ -118,17 +170,118 @@ pip install -e /path/to/data-juicer
 <details>
 <summary><strong>Output (assistant answer)</strong></summary>
 
-The base class for operators in Data-Juicer is defined in the file `base_op.py`, located at `data_juicer/ops/base_op.py`. This class serves as the foundational structure from which all specific operators (such as filters, mappers, etc.) inherit. It provides common functionalities and interfaces required for consistent operator behavior across the Data-Juicer ecosystem.
+I'll help you find information about the base class of operators in Data-Juicer. Let me search for this in the codebase.
 
-Typical responsibilities of the base operator class include:
-- Defining standard method signatures (e.g., `process`).
-- Handling configuration and initialization parameters.
-- Providing utilities for logging, statistics, or error handling.
+Great! I found the base operator file. Let me examine it to understand the base class structure.
 
-For implementation details, you can explore the source code directly.
+Perfect! Now I have a comprehensive understanding of the base class structure for operators in Data-Juicer. Let me provide you with a detailed explanation.
 
-**References:**
-- [Base Operator Source Code](https://github.com/datajuicer/data-juicer/blob/6fcef06620d210cb182cc076012612b725feeeaa/data_juicer/ops/base_op.py)
+## Base Class of Operators in Data-Juicer
+
+In Data-Juicer, all operators inherit from a common base class **`OP`** (Operator), which is defined in [`data_juicer/ops/base_op.py`](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/ops/base_op.py).
+
+### Core Base Class: `OP`
+
+The **`OP`** class serves as the foundation for all operator types and provides:
+
+#### Key Attributes:
+- **`_name`**: The operator name (automatically set by the registry)
+- **`_accelerator`**: Hardware accelerator ("cpu" or "cuda")
+- **`_batched_op`**: Whether this operator processes batches
+- **`_requirements`**: Extra package requirements
+
+#### Common Parameters (in `__init__`):
+- **Data keys**: `text_key`, `image_key`, `audio_key`, `video_key`, `image_bytes_key`
+- **Chat format keys**: `system_key`, `instruction_key`, `query_key`, `response_key`, `history_key`
+- **Processing config**: `batch_size`, `work_dir`, `skip_op_error`, `accelerator`
+- **Resource allocation**: `num_cpus`, `num_gpus`, `memory`, `runtime_env`
+- **Parallelism**: `auto_op_parallelism`, `num_proc`
+
+#### Important Methods:
+- **`process()`**: Abstract method - must be implemented by subclasses
+- **`run(dataset)`**: Executes the operator on a dataset
+- **`runtime_np()`**: Calculates the number of processes to use
+- **`use_cuda()`**: Checks if CUDA acceleration is available
+- **`is_batched_op()`**: Determines if batch processing is enabled
+- **`get_env_spec()`**: Returns environment specification for dependencies
+
+---
+
+### Operator Type Subclasses
+
+Data-Juicer defines **6 main operator types**, each extending `OP`:
+
+#### 1. **`Mapper`** - Data Transformation
+- **Purpose**: Modifies/transforms samples (sample → sample)
+- **Key methods**: 
+  - `process_single(sample)`: Process one sample
+  - `process_batched(samples)`: Process batch of samples
+- **Examples**: Text cleaning, image resizing, content replacement
+
+#### 2. **`Filter`** - Sample Filtering
+- **Purpose**: Removes samples based on criteria (sample → Boolean)
+- **Key methods**:
+  - `compute_stats_single(sample)`: Calculate filtering metrics
+  - `process_single(sample)`: Return True/False for keep/filter
+- **Features**: Supports min/max thresholds, closed/open intervals, reversed ranges
+- **Examples**: Length filters, quality filters, toxicity filters
+
+#### 3. **`Deduplicator`** - Duplicate Removal
+- **Purpose**: Identifies and removes duplicate samples
+- **Key methods**:
+  - `compute_hash(sample)`: Generate hash for deduplication
+  - `process(dataset)`: Perform deduplication on dataset
+- **Examples**: MinHash dedup, exact match dedup
+
+#### 4. **`Selector`** - Dataset-Level Selection
+- **Purpose**: Selects subsets of data at dataset level (dataset → dataset)
+- **Key method**: `process(dataset)`
+- **Examples**: Top-k selection, range-based selection
+
+#### 5. **`Grouper`** - Sample Grouping
+- **Purpose**: Groups samples together (dataset → grouped dataset)
+- **Key method**: `process(dataset)`
+- **Examples**: Key-value grouping, bucket grouping
+
+#### 6. **`Aggregator`** - Batch Aggregation
+- **Purpose**: Aggregates grouped samples (batched sample → single sample)
+- **Key method**: `process_single(sample)`
+- **Note**: Must be used after a Grouper
+- **Examples**: Merging grouped texts, combining annotations
+
+#### 7. **`Pipeline`** - Processing Pipeline
+- **Purpose**: Represents a complete data processing pipeline
+- **Key method**: `run(dataset)`
+- **Examples**: Multi-step workflows
+
+---
+
+### Key Design Features
+
+1. **Registry System**: All operators are registered using the `OPERATORS` registry for automatic discovery
+
+2. **Batch Processing Support**: Operators can work in single-sample or batch mode via `_batched_op` flag
+
+3. **Error Handling**: Built-in exception catching with `catch_map_batches_exception` and `catch_map_single_exception`
+
+4. **Tracing Integration**: Wrappers (`wrap_mapper_with_tracer`, `wrap_filter_with_tracer`) enable sample-level change tracking
+
+5. **Ray Integration**: Support for distributed processing with configurable CPU/GPU/memory resources
+
+6. **CUDA Acceleration**: Automatic detection and utilization of GPU when available
+
+7. **Metaclass**: `OPMetaClass` captures initialization arguments for serialization/replay
+
+---
+
+### Usage Pattern
+
+When creating a custom operator, you typically:
+1. Inherit from the appropriate type (Mapper, Filter, etc.)
+2. Implement the required `process_*` methods
+3. Register it with the decorator `@OPERATORS.register_module()`
+
+For more details on implementing operators, see the [Operators Documentation](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md).
 
 </details>
 
@@ -146,231 +299,59 @@ For implementation details, you can explore the source code directly.
 <details>
 <summary><strong>Output (assistant answer)</strong></summary>
 
-To install Data-Juicer (DJ), follow these steps based on your needs:
+To install Data-Juicer (DJ), you can follow the official installation guide. Here are the common methods:
 
----
+### 1. Install from PyPI (Recommended for most users)
+This is the simplest way to install the core Data-Juicer package.
 
-## 🧩 **Prerequisites**
-- Python version: `>= 3.10` and `<= 3.12`
-- Git (if installing from source)
-- **uv** (recommended package installer). Install it via:
-  ```bash
-  # Using curl
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-
-  # Or using pip
-  pip install uv
-  ```
-
----
-
-## 🚀 **Basic Installation**
-Install the minimal version from PyPI (core data processing only):
 ```bash
-uv pip install py-data-juicer
+pip install data-juicer
 ```
 
-This includes:
-- Data loading & manipulation
-- File system operations
-- Parallel processing
-- Basic I/O utilities
+### 2. Install from Source (For development or latest features)
+If you want to use the latest features or contribute to the project, you can clone the repository and install it in editable mode.
 
----
-
-## 🎯 **Scenario-Based Installation**
-
-Install extra components based on your use case:
-
-### Core ML/DL
-```bash
-uv pip install "py-data-juicer[generic]"
-```
-
-### Domain-Specific
-```bash
-# Computer Vision
-uv pip install "py-data-juicer[vision]"
-
-# Natural Language Processing
-uv pip install "py-data-juicer[nlp]"
-
-# Audio Processing
-uv pip install "py-data-juicer[audio]"
-```
-
-### Additional Features
-```bash
-# Distributed Computing
-uv pip install "py-data-juicer[distributed]"
-
-# AI Services & APIs
-uv pip install "py-data-juicer[ai_services]"
-
-# Development Tools
-uv pip install "py-data-juicer[dev]"
-```
-
----
-
-## 📦 **Common Installation Patterns**
-
-### 1. Text Processing
-```bash
-uv pip install "py-data-juicer[generic,nlp]"
-```
-
-### 2. Vision Processing
-```bash
-uv pip install "py-data-juicer[generic,vision]"
-```
-
-### 3. Full Pipeline
-```bash
-uv pip install "py-data-juicer[generic,nlp,vision,distributed]"
-```
-
-### 4. Complete Installation
-```bash
-uv pip install "py-data-juicer[all]"
-```
-
----
-
-## 🛠️ **Install from Source**
-For latest features or development:
 ```bash
 git clone https://github.com/datajuicer/data-juicer.git
 cd data-juicer
-uv pip install -e .
-# Optional: install specific extras
-uv pip install -e ".[vision]"
+pip install -e .
 ```
 
-> 💡 Use `-e` for editable mode.
+### 3. Install with Extra Dependencies
+Data-Juicer supports various data modalities (text, image, audio, video). You may need to install extra dependencies depending on your use case.
 
----
+*   **For full functionality (including all modalities):**
+    ```bash
+    pip install data-juicer[all]
+    ```
+*   **For specific modalities:**
+    *   Text only: `pip install data-juicer`
+    *   Image support: `pip install data-juicer[image]`
+    *   Audio support: `pip install data-juicer[audio]`
+    *   Video support: `pip install data-juicer[video]`
 
-## ⚙️ **OP-Based / Recipe-Based Installation**
-For lightweight setups targeting specific operators or recipes:
+### 4. Docker Installation
+You can also use Docker to run Data-Juicer without setting up the environment locally. Pre-built images are often available in the repository's Docker instructions.
+
 ```bash
-# Install dependencies for a specific config file
-python tools/dj_install.py --config path_to_your_config_file
-# OR
-dj-install --config path_to_your_config_file
+# Example command (check the latest tag in the repo)
+docker pull datajuicer/data-juicer:latest
 ```
 
-> ✅ Only available when installing from source.
+### Verification
+After installation, you can verify it by running:
 
----
-
-## 🐳 **Docker Installation**
-Pull pre-built image:
 ```bash
-docker pull datajuicer/data-juicer:<version_tag>
-# e.g., docker pull datajuicer/data-juicer:v0.2.0
+dj --help
 ```
 
-Or build from source:
-```bash
-docker build -t datajuicer/data-juicer:<version_tag> .
-```
-
----
-
-## 📌 **Notes & Troubleshooting**
-
-✅ **Verify Installation**
-```python
-import data_juicer as dj
-print(dj.__version__)
-```
-
-🎬 **For Video Operators**:  
-Install **FFmpeg** and ensure it’s in your `$PATH`.  
-- Debian/Ubuntu: `sudo apt install ffmpeg`  
-- macOS: `brew install ffmpeg`  
-- [Official FFmpeg Download](https://ffmpeg.org/download.html)
-
-🆘 **Need Help?**  
-- Check [documentation](https://github.com/datajuicer/data-juicer/tree/main/docs)  
-- Open a [GitHub Issue](https://github.com/datajuicer/data-juicer/issues)  
-- Join community discussions
-
----
-
-### 🔗 References
-- [Installation Guide](https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md)
+For detailed instructions, including system requirements and troubleshooting, please refer to the official [Installation Guide](https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md).
 
 </details>
 
 ---
 
-### Case 5 · Processing Guidance (Dirty Words Filter, EN)
-
-- **Type**: `processing_qa`
-- **Language**: `en`
-
-**Input (user query)**
-
-> I want to filter text data with dirty word, tell me how to do it
-
-<details>
-<summary><strong>Output (assistant answer)</strong></summary>
-
-To filter text data containing dirty or flagged words, you should use the **`flagged_words_filter`** operator. This operator is specifically designed to calculate the ratio of flagged (e.g., offensive, dirty, or sensitive) words in a text sample and filters out samples that exceed a specified threshold.
-
----
-
-### ✅ How to Use `flagged_words_filter`
-
-This operator:
-- Computes the ratio of flagged words in each text sample.
-- Keeps only those samples where the flagged-word ratio falls within your defined range (e.g., `[0, 0.1]` to allow up to 10% flagged words).
-
-#### Example Configuration in a Recipe (YAML):
-
-```yaml
-# config.yaml
-process:
-  - flagged_words_filter:
-      lang: "en"
-      tokenization: false
-      lowercase: true
-      flagged_ratio_min: 0
-      flagged_ratio_max: 0.05  # Keep samples with <= 5% flagged words
-```
-
-#### Parameters:
-- `lang`: Language of the text (default: `"en"`).
-- `tokenization`: Whether to tokenize text before matching (default: `false`).
-- `lowercase`: Convert text to lowercase for case-insensitive matching (default: `true`).
-- `flagged_ratio_min/max`: Range of acceptable flagged word ratios.
-
----
-
-### 📌 Notes:
-- You can customize the list of flagged words by providing your own dictionary file via the `words_file` parameter.
-- The default flagged word list covers common profanity and sensitive terms in multiple languages.
-
----
-
-### 🔍 Next Step:
-If you need details on how to provide a custom flagged word list or see code examples, I can retrieve the full operator documentation for you.
-
----
-
-**References**:
-- [Data-Juicer Operators Documentation](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md)
-- [FlaggedWordsFilter Source Code](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/operators/filter/flagged_words_filter.py)
-**References**:
-- [Data-Juicer Operators Documentation](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md)
-- [FlaggedWordsFilter Source Code](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/operators/filter/flagged_words_filter.py)
-</details>
-
----
-
-### Case 6 · Best Practices (Using DJ, EN)
+### Case 5 · Best Practices (Using DJ, EN)
 
 - **Type**: `best_practice_qa`
 - **Language**: `en`
@@ -382,124 +363,61 @@ If you need details on how to provide a custom flagged word list or see code exa
 <details>
 <summary><strong>Output (assistant answer)</strong></summary>
 
-Here are some best practices for using Data-Juicer (DJ) effectively:
+To provide you with the most accurate best practices for using Data-Juicer (DJ), I will search for official documentation, tutorials, and community guidelines within the Data-Juicer repositories.
 
----
+I will now look for the official Data-Juicer repository to find best practices and documentation.
 
-## ✅ 1. **Start with Minimal Examples**
-- Use the [Minimal Example Recipes](https://github.com/datajuicer/data-juicer-hub/tree/main/demo) to get familiar with DJ’s basic functionality.
-- These recipes demonstrate core workflows and help you understand configuration structure.
+I will now examine the `data-juicer-hub` repository, as its description mentions "best practices," and also look at the main `data-juicer` documentation.
 
----
+I will examine the `DeveloperGuide.md` and the `RecipeGallery.md` in the `data-juicer-hub` to find best practices.
 
-## ✅ 2. **Leverage Pre-Built Recipes from DJ-Hub**
-- Explore the [Recipe Gallery](https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md) for real-world use cases:
-  - Reproduce datasets like RedPajama or BLOOM.
-  - Improve existing datasets (e.g., LLaVA, Alpaca-CoT).
-  - Synthesize multimodal data (e.g., Img-Diff, HumanVBench).
-- Each recipe includes:
-  - Configuration files
-  - Sample retention rates
-  - Performance benchmarks
-  - Download links (Aliyun, HuggingFace, ModelScope)
+I will now look at the `RecipeGallery.md` in the `data-juicer-hub` repository to find more best practices and community-contributed recipes.
 
-> 💡 Tip: Reuse and adapt these recipes instead of building from scratch.
+I will also check the `awesome_llm_data.md` file in the main repository, as it likely contains valuable insights and best practices for data processing.
 
----
+Based on the official Data-Juicer documentation, Developer Guide, and the Data-Juicer Hub, here are the best practices for using Data-Juicer (DJ):
 
-## ✅ 3. **Install Only What You Need**
-- Use modular installation to avoid bloat:
-  ```bash
-  # For text processing
-  uv pip install "py-data-juicer[generic,nlp]"
+### 1. Leverage the Data Recipe Gallery 📚
+Instead of building pipelines from scratch, start with existing **Recipes** from the [Data-Juicer Hub](https://github.com/datajuicer/data-juicer-hub).
+*   **Reproduce & Refine:** Use community-contributed recipes that reproduce popular datasets like RedPajama, The Pile, or LLaVA.
+*   **Iterative Improvement:** DJ provides "refined" versions of these datasets. For example, using a simple 3-σ rule to filter outliers in RedPajama subsets can significantly improve model performance while retaining ~90-95% of the data.
+*   **Modality-Specific Recipes:** Utilize specific recipes for Text, Image-Text (e.g., LCS-558k), and Video (e.g., InternVid/Panda-70M) processing.
 
-  # For vision tasks
-  uv pip install "py-data-juicer[generic,vision]"
+### 2. Adopt an Iterative "Alpha-to-Stable" Development Process 🛠️
+When creating custom Operators (OPs), follow the tiered contribution model:
+*   **Alpha Version:** Focus on basic functionality. Implement `compute_stats_single` and `process_single`.
+*   **Beta Version:** Add robustness. Include unit tests (`tests/ops/...`) and comprehensive docstrings. Update `config_all.yaml` so your OP appears in the help menus.
+*   **Stable Version:** Optimize for performance. 
+    *   Enable **Batched Processing** by setting `_batched_op = True` and implementing `process_batched`.
+    *   Enable **GPU Acceleration** by setting `_accelerator = 'cuda'` if using models.
+    *   Implement **OP Fusion** by registering intermediate variables (like `words` or `lines`) to avoid redundant calculations across multiple filters.
 
-  # For full pipeline
-  uv pip install "py-data-juicer[generic,nlp,vision,distributed]"
-  ```
-- For video operators, ensure **FFmpeg** is installed and in your `$PATH`.
+### 3. Master Configuration & Dependency Management ⚙️
+*   **Hierarchical Configs:** Use YAML files with dot notation (e.g., `--text_length_filter.min 10`). DJ automatically registers configs from operator docstrings, keeping your code and config in sync.
+*   **Lazy Loading:** DJ uses a lazy loading system. You don't need to install every dependency upfront. Dependencies are installed on-demand when an operator is first used.
+*   **Environment Management:** Use `uv` for fast virtual environment management and dependency resolution as recommended in the Developer Guide.
 
-> 📌 Reference: [Installation Guide](https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md)
+### 4. Prioritize Data-Centric Evaluation 📊
+*   **Bad Data Exhibition:** Regularly check the [Bad Data Exhibition](https://github.com/datajuicer/data-juicer/blob/main/docs/BadDataExhibition.md) to understand common data quality issues (e.g., repetition, low information density).
+*   **Statistical Filtering:** Use statistical methods (like the 3-σ rule) to set hyperparameters for operators rather than guessing thresholds.
+*   **Model-as-a-Judge:** Leverage DJ's ability to use MLLMs as evaluators (e.g., for toxicity, aesthetics, or cross-modal alignment) to create high-quality synthetic data or filter existing datasets.
 
----
+### 5. Utilize Advanced Features for Scale 🚀
+*   **Distributed Processing:** For large-scale datasets, use DJ's distributed mode (often powered by Ray) to parallelize processing across multiple nodes.
+*   **Caching & Checkpoints:** Enable caching and partitioning to handle long-running jobs. This allows you to resume processing from the last checkpoint if a job fails.
+*   **Tracing:** Use the built-in tracing features to monitor the flow of data and identify bottlenecks in your processing pipeline.
 
-## ✅ 4. **Choose the Right Operators**
-- DJ provides over 180 operators categorized into 8 types:
-  - `mapper`: Transform samples (e.g., clean text, augment images)
-  - `filter`: Remove low-quality samples (e.g., by perplexity, image aesthetics)
-  - `deduplicator`: Remove duplicates (text, image, video)
-  - `aggregator`, `grouper`, `selector`, etc.
+### 6. Community Contribution & Co-development 🤝
+*   **Share Your Recipes:** If you develop a successful processing pipeline, contribute it to the Data-Juicer Hub. This promotes reuse and helps establish best practices for specific domains (e.g., medical or legal text).
+*   **Operator Fusion:** When developing new operators, consider how they might share intermediate results with existing ones to speed up the entire pipeline.
 
-> 🔍 Use `search_operators()` or browse [Operators.md](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md) to find the right operator for your task.
-
----
-
-## ✅ 5. **Use 3-σ Rule for Hyperparameter Tuning**
-- In many refined recipes (e.g., RedPajama), thresholds for filters are set using a **3-sigma statistical rule** — keep values within 3 standard deviations from the mean.
-- This ensures you retain high-quality samples while removing outliers.
-
----
-
-## ✅ 6. **Validate with Benchmarks**
-- After processing, validate performance improvements:
-  - For LLMs: Use downstream task accuracy (e.g., MM-Bench, VQAv2).
-  - For video models: Use VBench scores.
-- Example: Refined LLaVA pretraining data improved 10 out of 12 evaluation metrics.
-
----
-
-## ✅ 7. **Automate Dependency Installation**
-- If installing from source, use:
-  ```bash
-  python tools/dj_install.py --config your_config.yaml
-  ```
-  or
-  ```bash
-  dj-install --config your_config.yaml
-  ```
-  → Automatically installs only dependencies needed for your config.
-
----
-
-## ✅ 8. **Use Docker for Reproducibility**
-- Pull official images:
-  ```bash
-  docker pull datajuicer/data-juicer:<version_tag>
-  ```
-- Ensures consistent environments across machines.
-
----
-
-## ✅ 9. **Contribute Back to the Community**
-- Submit your own recipes to [data-juicer-hub](https://github.com/datajuicer/data-juicer-hub).
-- Add new operators following the [Developer Guide](https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md).
-
----
-
-## ✅ 10. **Monitor Retention Rates & Quality Metrics**
-- Track how many samples survive each filtering stage.
-- Compare before/after model performance to quantify impact.
-- Use selectors (`topk_specified_field_selector`, etc.) to curate final high-quality subsets.
-
----
-
-By following these practices, you’ll maximize efficiency, reproducibility, and effectiveness when using Data-Juicer for your data processing pipelines.
-
----
-
-### 📚 References:
-- [Data-Juicer Minimal Example Recipes](https://github.com/datajuicer/data-juicer-hub/tree/main/demo)
-- [Recipe Gallery](https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md)
-- [Installation Guide](https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md)
-- [Operators Documentation](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md)
+For more detailed technical steps, refer to the [Developer Guide](https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md) and the [Operators Documentation](https://github.com/datajuicer/data-juicer/blob/main/docs/Operators.md).
 
 </details>
 
 ---
 
-### Case 7 · Off-topic Question (Weather, EN)
+### Case 6 · Off-topic Question (Weather, EN)
 
 - **Type**: `off_topic_qa`
 - **Language**: `en`
