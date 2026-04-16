@@ -22,6 +22,12 @@ def _format_dataset_source(recipe: dict) -> str:
         bool(recipe.get("dataset_path")),
     ])
 
+    if source_count == 0:
+        raise ValueError(
+            "Plan contains no dataset source. "
+            "Exactly one of dataset_path, dataset, or generated_dataset_config "
+            "is required. Please regenerate the plan."
+        )
     if source_count > 1:
         raise ValueError(
             "Plan contains multiple dataset sources. "
@@ -59,11 +65,10 @@ def _format_dataset_source(recipe: dict) -> str:
 def _confirm(plan_data: dict, dataset_summary: str | None = None) -> bool:
     print(f"About to execute plan: {str(plan_data.get('plan_id', '')).strip()}")
     print(f"Modality: {str(plan_data.get('modality', '')).strip()}")
+    recipe = plan_data.get("recipe", {})
     if dataset_summary is None:
-        recipe = plan_data.get("recipe", {})
         dataset_summary = _format_dataset_source(recipe)
     print(f"Dataset: {dataset_summary}")
-    recipe = plan_data.get("recipe", {})
     print(f"Export: {str(recipe.get('export_path', '')).strip()}")
     answer = input("Proceed? [y/N]: ").strip().lower()
     return answer in {"y", "yes"}

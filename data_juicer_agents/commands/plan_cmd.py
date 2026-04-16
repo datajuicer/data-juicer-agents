@@ -10,6 +10,7 @@ import yaml
 
 from data_juicer_agents.capabilities.plan.service import PlanOrchestrator
 from data_juicer_agents.commands.output_control import emit, emit_json, enabled
+from data_juicer_agents.core.tool import DatasetSource
 
 
 def _parse_json_object_arg(raw_value: Any, *, arg_name: str) -> tuple[Dict[str, Any] | None, Dict[str, Any] | None]:
@@ -102,6 +103,20 @@ def execute_plan(args) -> Dict[str, Any]:
             stage="input_validation",
         )
 
+    # Construct DatasetSource from legacy arguments
+    try:
+        dataset_source = DatasetSource.from_legacy(
+            dataset_path=dataset_path,
+            dataset=dataset_config,
+            generated_dataset_config=generated_dataset_config,
+        )
+    except ValueError as exc:
+        return _error_result(
+            str(exc),
+            error_type="conflicting_arguments",
+            stage="input_validation",
+        )
+
     custom_operator_paths = list(getattr(args, "custom_operator_paths", []) or [])
     orchestrator = PlanOrchestrator(
         planner_model_name=getattr(args, "planner_model", None),
@@ -113,10 +128,8 @@ def execute_plan(args) -> Dict[str, Any]:
     try:
         payload = orchestrator.generate_plan(
             user_intent=str(args.intent).strip(),
-            dataset_path=dataset_path,
+            dataset_source=dataset_source,
             export_path=export_path,
-            dataset=dataset_config,
-            generated_dataset_config=generated_dataset_config,
             custom_operator_paths=custom_operator_paths,
         )
     except Exception as exc:

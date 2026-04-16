@@ -192,23 +192,22 @@ def test_retrieval_service_normalization_empty_updates_lexical_source(monkeypatc
 
 
 def test_prepare_retrieval_inputs_uses_dataset_config_when_dataset_path_missing(monkeypatch):
+    from data_juicer_agents.core.tool import DatasetSource
     from data_juicer_agents.tools.retrieve._shared import logic as svc
 
     captured: dict = {}
 
-    def _fake_infer(dataset_path: str, dataset: dict | None = None):
-        captured["dataset_path"] = dataset_path
-        captured["dataset"] = dataset
+    def _fake_infer(dataset_source: DatasetSource):
+        captured["dataset_source"] = dataset_source
         return ["image"]
 
     monkeypatch.setattr(svc, "_load_op_retrieval_funcs", lambda: None)
     monkeypatch.setattr(svc, "_infer_tags_from_dataset", _fake_infer)
 
     dataset = {"configs": [{"type": "local", "path": "/tmp/sample.jsonl"}]}
-    prepared = svc._prepare_retrieval_inputs(top_k=5, tags=["cpu"], dataset=dataset)
+    prepared = svc._prepare_retrieval_inputs(top_k=5, tags=["cpu"], dataset_source=DatasetSource(config=dataset))
 
-    assert captured["dataset_path"] == ""
-    assert captured["dataset"] == dataset
+    assert captured["dataset_source"].config == dataset
     assert prepared["inferred_tags"] == ["image"]
     assert prepared["effective_tags"] == ["cpu", "image"]
 
@@ -216,15 +215,12 @@ def test_prepare_retrieval_inputs_uses_dataset_config_when_dataset_path_missing(
 def test_prepare_retrieval_inputs_rejects_multiple_sources(monkeypatch):
     # Only one of dataset_path or dataset is allowed at a time.
     import pytest
-    from data_juicer_agents.tools.retrieve._shared import logic as svc
+    from data_juicer_agents.core.tool import DatasetSource
 
-    monkeypatch.setattr(svc, "_load_op_retrieval_funcs", lambda: None)
-
-    with pytest.raises(ValueError, match="Only one dataset source"):
-        svc._prepare_retrieval_inputs(
-            top_k=5,
-            dataset_path="/tmp/primary.jsonl",
-            dataset={"configs": [{"type": "local", "path": "/tmp/secondary.jsonl"}]},
+    with pytest.raises(ValueError, match="Only one"):
+        DatasetSource(
+            path="/tmp/primary.jsonl",
+            config={"configs": [{"type": "local", "path": "/tmp/secondary.jsonl"}]},
         )
 
 

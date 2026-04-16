@@ -192,17 +192,22 @@ def _pick_inspectable_path(dataset_config: Dict[str, Any]) -> str | None:
 
 
 def inspect_dataset_schema(
-    dataset_path: str = "",
+    dataset_source=None,
     sample_size: int = 20,
-    dataset: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     """Inspect a small sample of a dataset and infer keys/modality for planning.
 
-    Accepts either a plain *dataset_path* or a structured *dataset* config
-    (the ``{"configs": [...]}`` format).  When *dataset_path* is provided it
-    is automatically converted to the standard dataset config format so that
-    all sources are handled uniformly.
+    Accepts a DatasetSource object that encapsulates the dataset path and config.
+    When dataset_source is None, it is treated as an empty dataset source.
     """
+    from data_juicer_agents.core.tool import DatasetSource
+    
+    if dataset_source is None:
+        dataset_source = DatasetSource(path="")
+    legacy = dataset_source.to_legacy_args()
+    dataset_path = legacy["dataset_path"]
+    dataset = legacy["dataset"]
+    
     resolved_config = _resolve_dataset_config(dataset_path, dataset)
     inspectable_path = _pick_inspectable_path(resolved_config)
 

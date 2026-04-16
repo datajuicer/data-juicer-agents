@@ -7,13 +7,10 @@ from .._shared.dataset_spec import infer_modality, validate_dataset_spec_payload
 from .._shared.normalize import normalize_string_list
 from .._shared.schema import DatasetSpec
 
-
 def build_dataset_spec(
     *,
     user_intent: str,
-    dataset_path: str = "",
-    dataset: Dict[str, Any] | None = None,
-    generated_dataset_config: Dict[str, Any] | None = None,
+    dataset_source: "DatasetSource | None" = None,
     export_path: str,
     dataset_profile: Dict[str, Any] | None = None,
     modality_hint: str = "",
@@ -39,10 +36,8 @@ def build_dataset_spec(
                 "requires": [],
             }
 
-    dataset_path = str(dataset_path or "").strip()
-    export_path = str(export_path or "").strip()
-    source_count = int(bool(dataset_path)) + int(bool(dataset)) + int(bool(generated_dataset_config))
-    if source_count == 0:
+    from data_juicer_agents.core.tool import DatasetSource
+    if dataset_source is None:
         return {
             "ok": False,
             "error_type": "missing_required",
@@ -50,26 +45,14 @@ def build_dataset_spec(
                 "Exactly one dataset source is required: "
                 "dataset_path, dataset, or generated_dataset_config."
             ),
-            "requires": ["dataset_path", "dataset", "generated_dataset_config"],
+            "requires": ["dataset_source"],
         }
-    if source_count > 1:
-        provided = [
-            name for name, present in [
-                ("dataset_path", bool(dataset_path)),
-                ("dataset", bool(dataset)),
-                ("generated_dataset_config", bool(generated_dataset_config)),
-            ] if present
-        ]
-        return {
-            "ok": False,
-            "error_type": "conflicting_arguments",
-            "message": (
-                f"Only one dataset source can be specified at a time, "
-                f"but got {len(provided)}: {', '.join(provided)}. "
-                f"Please use either dataset_path, dataset, or generated_dataset_config."
-            ),
-            "requires": [],
-        }
+    legacy = dataset_source.to_legacy_args()
+    dataset_path = str(legacy["dataset_path"] or "").strip()
+    dataset = legacy["dataset"]
+    generated_dataset_config = legacy["generated_dataset_config"]
+
+    export_path = str(export_path or "").strip()
     if not export_path:
         return {
             "ok": False,

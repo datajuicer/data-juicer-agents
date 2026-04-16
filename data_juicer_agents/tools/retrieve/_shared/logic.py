@@ -8,7 +8,10 @@ import inspect
 import logging
 import re
 import threading
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
+
+if TYPE_CHECKING:
+    from data_juicer_agents.core.tool import DatasetSource
 
 from .operator_registry import (
     get_available_operator_names,
@@ -254,12 +257,11 @@ _MODALITY_TAG_MAP: Dict[str, List[str]] = {
 }
 
 def _infer_tags_from_dataset(
-    dataset_path: str,
-    dataset: dict | None = None,
+    dataset_source: "DatasetSource",
 ) -> List[str]:
     """Probe dataset and return modality tags inferred from its schema.
 
-    Accepts either a plain *dataset_path* or a structured *dataset* config.
+    Accepts a DatasetSource object that encapsulates the dataset path and config.
     Returns an empty list when the dataset cannot be inspected or the modality
     is unknown, so the caller can fall back to unfiltered retrieval.
     """
@@ -267,33 +269,25 @@ def _infer_tags_from_dataset(
         from data_juicer_agents.tools.context.inspect_dataset.logic import (
             inspect_dataset_schema,
         )
-        result = inspect_dataset_schema(dataset_path=dataset_path, sample_size=20, dataset=dataset)
+        result = inspect_dataset_schema(dataset_source=dataset_source, sample_size=20)
         if not result.get("ok"):
             return []
         modality = str(result.get("modality", "")).strip().lower()
         return list(_MODALITY_TAG_MAP.get(modality, []))
     except Exception as exc:
-        _logger.debug("infer_tags_from_dataset failed for %s: %s", dataset_path, exc)
+        _logger.debug("infer_tags_from_dataset failed: %s", exc)
         return []
 
 
 def _prepare_retrieval_inputs(
     top_k: int,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
+    dataset_source: "DatasetSource" | None = None,
 ) -> Dict[str, Any]:
-    if dataset and dataset_path:
-        raise ValueError(
-            "Only one dataset source can be specified at a time: "
-            "pass either dataset_path or dataset, not both."
-        )
     requested_tags = [str(tag).strip() for tag in (tags or []) if str(tag).strip()]
     inferred_tags: List[str] = []
-    if dataset:
-        inferred_tags = _infer_tags_from_dataset(dataset_path="", dataset=dataset)
-    elif dataset_path:
-        inferred_tags = _infer_tags_from_dataset(dataset_path=dataset_path, dataset=None)
+    if dataset_source is not None:
+        inferred_tags = _infer_tags_from_dataset(dataset_source)
 
     effective_tags = list(requested_tags)
     for tag in inferred_tags:
@@ -447,8 +441,7 @@ def retrieve_operator_candidates(
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
+    dataset_source: "DatasetSource" | None = None,
 ) -> Dict[str, Any]:
     """Retrieve operators and return a structured payload for CLI/agent usage.
 
@@ -460,17 +453,14 @@ def retrieve_operator_candidates(
                  "deduplicator"). Propagated to retrieval backends for early
                  filtering.
         tags: Explicit modality/resource tags for filtering (match-all semantics).
-        dataset_path: Optional dataset path; when provided, the dataset modality
-                      is probed via ``inspect_dataset_schema`` and the inferred
-                      tags are merged with any explicit *tags*.
-        dataset: Optional structured dataset config (``{"configs": [...]}``).
-                 Used for modality probing when *dataset_path* is not provided.
+        dataset_source: Optional DatasetSource object; when provided, the dataset modality
+                        is probed via ``inspect_dataset_schema`` and the inferred
+                        tags are merged with any explicit *tags*.
     """
     prepared = _prepare_retrieval_inputs(
         top_k=top_k,
         tags=tags,
-        dataset_path=dataset_path,
-        dataset=dataset,
+        dataset_source=dataset_source,
     )
     effective_tags = prepared["effective_tags"] or None
     retrieve_meta = _safe_async_retrieve(
@@ -501,8 +491,7 @@ def retrieve_operator_candidates_local(
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
+    dataset_source: "DatasetSource" | None = None,
 ) -> Dict[str, Any]:
     normalized_mode = str(mode or "auto").strip().lower() or "auto"
     if normalized_mode not in _LOCAL_RETRIEVAL_MODES:
@@ -513,8 +502,7 @@ def retrieve_operator_candidates_local(
     prepared = _prepare_retrieval_inputs(
         top_k=top_k,
         tags=tags,
-        dataset_path=dataset_path,
-        dataset=dataset,
+        dataset_source=dataset_source,
     )
     effective_tags = prepared["effective_tags"] or None
     effective_mode = normalized_mode
@@ -549,8 +537,7 @@ def retrieve_operator_candidates_api(
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
+    dataset_source: "DatasetSource" | None = None,
 ) -> Dict[str, Any]:
     normalized_mode = str(mode or "auto").strip().lower() or "auto"
     if normalized_mode not in _API_RETRIEVAL_MODES:
@@ -561,8 +548,7 @@ def retrieve_operator_candidates_api(
     prepared = _prepare_retrieval_inputs(
         top_k=top_k,
         tags=tags,
-        dataset_path=dataset_path,
-        dataset=dataset,
+        dataset_source=dataset_source,
     )
     effective_tags = prepared["effective_tags"] or None
 

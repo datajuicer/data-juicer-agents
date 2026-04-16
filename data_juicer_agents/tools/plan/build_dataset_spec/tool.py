@@ -18,9 +18,7 @@ class GenericOutput(BaseModel):
 def _build_dataset_spec(_ctx: ToolContext, args: BuildDatasetSpecInput) -> ToolResult:
     result = build_dataset_spec(
         user_intent=args.intent,
-        dataset_path=args.dataset_path,
-        dataset=args.dataset,
-        generated_dataset_config=args.generated_dataset_config,
+        dataset_source=args.dataset_source,
         export_path=args.export_path,
         dataset_profile=args.dataset_profile,
         modality_hint=args.modality_hint,
@@ -44,8 +42,9 @@ BUILD_DATASET_SPEC = ToolSpec(
     name="build_dataset_spec",
     description=(
         "Build a deterministic dataset spec from an explicit user intent and export_path. "
-        "Accepts dataset_path (shortcut for a single local file), dataset (YAML-style complex config "
-        "for mixed sources/weights/max_sample_num), or generated_dataset_config (dynamic formatter config). "
+        "Accepts a unified dataset_source with exactly one of: path (single local file shortcut), "
+        "config (structured load config for remote/multi-source/max_sample_num), or generated "
+        "(dynamic formatter config). "
         "For advanced dataset options (e.g., export_type, export_shard_size, export_in_parallel, "
         "load_dataset_kwargs, suffixes, modality special tokens), call list_dataset_fields first to "
         "discover available parameters and their defaults. "
@@ -55,7 +54,7 @@ BUILD_DATASET_SPEC = ToolSpec(
     ),
     input_model=BuildDatasetSpecInput,
     output_model=GenericOutput,
-    executor=_build_dataset_spec,
+    executor=_build_dataset_spec,  # type: ignore[arg-type]
     tags=("plan",),
     effects="write",
     confirmation="none",

@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 from typing import List
 
+from data_juicer_agents.core.tool import DatasetSource
 from data_juicer_agents.tools.retrieve import retrieve_operator_candidates
 
 
@@ -46,7 +47,8 @@ def run_retrieve(args) -> int:
         return 2
 
     tags: List[str] = list(getattr(args, "tags", None) or [])
-    dataset_path: str | None = getattr(args, "dataset", None)
+    raw_dataset_path: str | None = getattr(args, "dataset", None)
+    dataset_source = DatasetSource(path=raw_dataset_path) if raw_dataset_path else None
     op_type: str | None = getattr(args, "op_type", None)
 
     try:
@@ -56,7 +58,7 @@ def run_retrieve(args) -> int:
             mode=args.mode,
             op_type=op_type,
             tags=tags if tags else None,
-            dataset_path=dataset_path,
+            dataset_source=dataset_source,
         )
     except Exception as exc:
         print(f"Retrieve failed: {exc}")
