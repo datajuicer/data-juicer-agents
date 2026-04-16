@@ -24,6 +24,7 @@ def _retrieve_operators(_ctx: ToolContext, args: RetrieveOperatorsInput) -> Tool
 
     parsed_tags = [t.strip() for t in (args.tags or []) if t.strip()] or None
     dataset_path = (args.dataset_path.strip() if getattr(args, "dataset_path", None) else None) or None
+    dataset = args.dataset if isinstance(getattr(args, "dataset", None), dict) else None
 
     try:
         payload = retrieve_operator_candidates_local(
@@ -33,6 +34,7 @@ def _retrieve_operators(_ctx: ToolContext, args: RetrieveOperatorsInput) -> Tool
             op_type=(args.op_type.strip() or None),
             tags=parsed_tags,
             dataset_path=dataset_path,
+            dataset=dataset,
         )
     except Exception as exc:
         return ToolResult.failure(

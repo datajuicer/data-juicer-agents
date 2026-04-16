@@ -56,16 +56,14 @@ def _format_dataset_source(recipe: dict) -> str:
     return "(none)"
 
 
-def _confirm(plan_data: dict) -> bool:
+def _confirm(plan_data: dict, dataset_summary: str | None = None) -> bool:
     print(f"About to execute plan: {str(plan_data.get('plan_id', '')).strip()}")
     print(f"Modality: {str(plan_data.get('modality', '')).strip()}")
-    recipe = plan_data.get("recipe", {})
-    try:
+    if dataset_summary is None:
+        recipe = plan_data.get("recipe", {})
         dataset_summary = _format_dataset_source(recipe)
-    except ValueError as exc:
-        print(f"Error: {exc}")
-        return False
     print(f"Dataset: {dataset_summary}")
+    recipe = plan_data.get("recipe", {})
     print(f"Export: {str(recipe.get('export_path', '')).strip()}")
     answer = input("Proceed? [y/N]: ").strip().lower()
     return answer in {"y", "yes"}
@@ -88,7 +86,18 @@ def run_apply(args) -> int:
         print(f"Plan file is not a mapping: {plan_path}")
         return 2
 
-    if not args.yes and not _confirm(plan_data):
+    recipe = plan_data.get("recipe", {})
+    if not isinstance(recipe, dict):
+        print("Plan recipe is not a mapping")
+        return 2
+
+    try:
+        dataset_summary = _format_dataset_source(recipe)
+    except ValueError as exc:
+        print(f"Error: {exc}")
+        return 2
+
+    if not args.yes and not _confirm(plan_data, dataset_summary):
         print("Execution canceled")
         return 1
 

@@ -155,3 +155,36 @@ def test_format_dataset_source_rejects_multiple_sources():
     }
     with pytest.raises(ValueError, match="multiple dataset sources"):
         _format_dataset_source(recipe)
+
+
+def test_run_apply_rejects_multiple_dataset_sources_with_yes(tmp_path: Path, capsys):
+    plan_path = tmp_path / "plan.yaml"
+    plan_payload = {
+        "plan_id": "plan_conflict_dataset_source",
+        "modality": "text",
+        "recipe": {
+            "dataset_path": str(tmp_path / "primary.jsonl"),
+            "dataset": {
+                "configs": [
+                    {"type": "local", "path": str(tmp_path / "secondary.jsonl")},
+                ]
+            },
+            "export_path": str(tmp_path / "out.jsonl"),
+        },
+    }
+    with open(plan_path, "w", encoding="utf-8") as handle:
+        yaml.safe_dump(plan_payload, handle, allow_unicode=False, sort_keys=False)
+
+    args = SimpleNamespace(
+        plan=str(plan_path),
+        yes=True,
+        dry_run=True,
+        timeout=30,
+        output_level="debug",
+    )
+
+    code = run_apply(args)
+    output = capsys.readouterr().out
+
+    assert code == 2
+    assert "multiple dataset sources" in output
