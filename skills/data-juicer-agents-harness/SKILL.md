@@ -93,8 +93,8 @@ Stay within these groups in harness mode.
   - Example: `djx tool run apply_recipe --yes --input-json '{"plan_path":"./plan.yaml","dry_run":false,"confirm":true}'`
 
 ### `context`
-- `inspect_dataset`: inspect a dataset path and return schema, sampling, and profile information for planning.
-  - Example: `djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo.jsonl","sample_size":20}'`
+- `inspect_dataset`: inspect a dataset source and return schema, sampling, and profile information for planning.
+  - Example: `djx tool run inspect_dataset --input-json '{"dataset_source":{"path":"./data/demo.jsonl"},"sample_size":20}'`
 - `list_dataset_fields`: list supported dataset-spec fields and their defaults.
   - Example: `djx tool run list_dataset_fields --input-json '{}'`
 - `list_dataset_formatters`: list available dataset formatter names.

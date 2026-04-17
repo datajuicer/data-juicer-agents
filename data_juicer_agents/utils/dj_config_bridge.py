@@ -32,11 +32,12 @@ agent_managed_fields = [
     "config",  # This is for passing the full config dict to the agent for internal use, not for LLM configuration.
 ]
 
-# Dataset-related field names
+# Dataset-related advanced field names.
+# NOTE:
+# Source selector fields (`dataset_path` / `dataset` / `generated_dataset_config`)
+# are intentionally excluded. Source selection must be provided only through
+# `dataset_source` at the tool input boundary to preserve mutual exclusivity.
 dataset_fields = [
-    "dataset_path",
-    "dataset",
-    "generated_dataset_config",
     "validators",
     "load_dataset_kwargs",
     "export_path",

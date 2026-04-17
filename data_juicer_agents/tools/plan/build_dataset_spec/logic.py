@@ -6,6 +6,7 @@ from typing import Any, Dict
 from .._shared.dataset_spec import infer_modality, validate_dataset_spec_payload
 from .._shared.normalize import normalize_string_list
 from .._shared.schema import DatasetSpec
+from data_juicer_agents.core.tool import DatasetSource
 
 def build_dataset_spec(
     *,
@@ -36,14 +37,13 @@ def build_dataset_spec(
                 "requires": [],
             }
 
-    from data_juicer_agents.core.tool import DatasetSource
     if dataset_source is None:
         return {
             "ok": False,
             "error_type": "missing_required",
             "message": (
                 "Exactly one dataset source is required: "
-                "dataset_path, dataset, or generated_dataset_config."
+                "dataset_source.path, dataset_source.config, or dataset_source.generated."
             ),
             "requires": ["dataset_source"],
         }

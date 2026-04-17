@@ -47,8 +47,8 @@ LIST_DATASET_FIELDS = ToolSpec(
         "such as export_type, export_shard_size, export_in_parallel, "
         "load_dataset_kwargs, suffixes, or modality special tokens "
         "(image_special_token, audio_special_token, video_special_token, eoc_special_token). "
-        "Do NOT confuse this with the 'dataset' field in build_dataset_spec, "
-        "which configures multi-source dataset loading."
+        "This list is for filling dataset_source.config only. "
+        "Do not use these keys as dataset_source.path or dataset_source.generated."
     ),
     input_model=ListDatasetFieldsInput,
     output_model=ListDatasetFieldsOutput,

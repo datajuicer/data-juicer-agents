@@ -207,7 +207,7 @@ djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--
 djx tool list --tag plan
 djx tool schema inspect_dataset
 djx tool run list_system_config --input-json '{}'
-djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo-dataset.jsonl","sample_size":5}'
+djx tool run inspect_dataset --input-json '{"dataset_source":{"path":"./data/demo-dataset.jsonl"},"sample_size":5}'
 djx tool run write_text_file --yes --input-json '{"file_path":"./tmp.txt","content":"hello"}'
 djx tool run plan_validate --input-file ./examples/plan_payload.json
 ```

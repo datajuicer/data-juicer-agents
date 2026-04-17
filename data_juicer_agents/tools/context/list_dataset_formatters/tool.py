@@ -45,7 +45,7 @@ LIST_DATASET_FORMATTERS = ToolSpec(
         "in the current Data-Juicer installation. Returns formatter names, descriptions, "
         "and their configuration parameters. "
         "Use this BEFORE build_dataset_spec when you need to configure the "
-        "generated_dataset_config field for dynamic dataset generation "
+        "dataset_source.generated field for dynamic dataset generation "
         "(e.g., EmptyFormatter for creating empty datasets, or file-based formatters "
         "like JsonFormatter, CsvFormatter, TextFormatter, etc.)."
     ),
