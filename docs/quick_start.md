@@ -129,7 +129,7 @@ Notes:
 
 ```bash
 djx --help
-djx retrieve "filter long text" --dataset ./data/demo-dataset.jsonl --json
+djx retrieve "filter long text" --json
 djx plan "filter long text" --dataset ./data/demo-dataset.jsonl --export ./data/out.jsonl --verbose
 djx apply --plan ./data/demo-plan.yaml --yes --dry-run
 dj-agents --help

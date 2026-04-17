@@ -8,7 +8,7 @@ description: >-
   Use when building plans and needing to check detailed parameters, or when spec building fails.
   Related skills: data-juicer (main flow), djx_retrieve (operator retrieval), djx_apply (execution).
 allowed-tools: Bash, Read
-argument-hint: "<intent> <dataset_path> <export_path>"
+argument-hint: "<intent> <dataset_source> <export_path>"
 user-invocable: true
 ---
 
@@ -72,7 +72,7 @@ Build the dataset specification.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `intent` | str | Yes | Processing intent description |
-| `dataset_path` | str | Yes | Input dataset path |
+| `dataset_source` | dict | Yes | Unified dataset source object with exactly one of `path`, `config`, or `generated` |
 | `export_path` | str | Yes | Output dataset path |
 | `dataset_profile` | dict | Yes | Complete output from `inspect_dataset` |
 
@@ -91,7 +91,7 @@ Build the dataset specification.
 ```bash
 djx tool run build_dataset_spec --input-json '{
   "intent": "<PROCESSING_GOAL>",
-  "dataset_path": "<INPUT_PATH>",
+  "dataset_source": {"path": "<INPUT_PATH>"},
   "export_path": "<OUTPUT_PATH>",
   "dataset_profile": <PASTE_FULL_INSPECT_OUTPUT>
 }'

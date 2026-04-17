@@ -63,6 +63,8 @@ def test_extract_dataset_config_returns_dataset_fields():
 
     config = {
         "dataset_path": "/path/to/data",
+        "dataset": {"configs": [{"type": "local", "path": "/path/to/data"}]},
+        "generated_dataset_config": {"type": "TextFormatter"},
         "export_path": "/path/to/export",
         "np": 4,
         "text_keys": "text",
@@ -71,11 +73,13 @@ def test_extract_dataset_config_returns_dataset_fields():
 
     dataset_config = bridge.extract_dataset_config(config)
 
-    assert dataset_config["dataset_path"] == "/path/to/data"
     assert dataset_config["export_path"] == "/path/to/export"
     assert dataset_config["text_keys"] == "text"
     assert dataset_config["image_key"] == "image"
     assert "np" not in dataset_config
+    assert "dataset_path" not in dataset_config
+    assert "dataset" not in dataset_config
+    assert "generated_dataset_config" not in dataset_config
 
 
 def test_extract_process_config_returns_process_list():

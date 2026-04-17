@@ -6,6 +6,7 @@ from __future__ import annotations
 import os
 from typing import Any, Dict, Iterable
 
+from data_juicer_agents.core.tool import DatasetSource
 from data_juicer_agents.tools.context import inspect_dataset_schema
 from data_juicer_agents.tools.retrieve import (
     extract_candidate_names,
@@ -56,8 +57,6 @@ class PlanOrchestrator:
         self,
         *,
         user_intent: str,
-        dataset_path: str,
-        dataset: Dict[str, Any] | None = None,
         top_k: int = 5,
         mode: str = "auto",
         retrieved_candidates: Dict[str, Any] | None = None,
@@ -69,18 +68,14 @@ class PlanOrchestrator:
             intent=user_intent,
             top_k=top_k,
             mode=mode,
-            dataset_path=dataset_path or None,
-            dataset=dataset,
         )
 
     def generate_plan(
         self,
         *,
         user_intent: str,
-        dataset_path: str,
+        dataset_source: DatasetSource,
         export_path: str,
-        dataset: Dict[str, Any] | None = None,
-        generated_dataset_config: Dict[str, Any] | None = None,
         custom_operator_paths: Iterable[Any] | None = None,
         retrieved_candidates: Dict[str, Any] | None = None,
         retrieval_top_k: int = 5,
@@ -88,8 +83,6 @@ class PlanOrchestrator:
     ) -> Dict[str, Any]:
         retrieval = self._resolve_retrieval(
             user_intent=user_intent,
-            dataset_path=dataset_path,
-            dataset=dataset,
             top_k=retrieval_top_k,
             mode=retrieval_mode,
             retrieved_candidates=retrieved_candidates,
@@ -97,22 +90,19 @@ class PlanOrchestrator:
         # Skip schema probing when a generated dataset is the effective runtime
         # source (highest priority).  Probing a lower-priority dataset_path/dataset
         # would imprint the wrong modality and key bindings into the final plan.
-        if generated_dataset_config:
+        if dataset_source.generated:
             dataset_profile: Dict[str, Any] = {}
-        elif dataset_path or dataset:
+        elif dataset_source.path or dataset_source.config:
             dataset_profile = inspect_dataset_schema(
-                dataset_path=dataset_path,
+                dataset_source=dataset_source,
                 sample_size=20,
-                dataset=dataset,
             )
         else:
             dataset_profile = {}
 
         dataset_result = build_dataset_spec(
             user_intent=user_intent,
-            dataset_path=dataset_path,
-            dataset=dataset,
-            generated_dataset_config=generated_dataset_config,
+            dataset_source=dataset_source,
             export_path=export_path,
             dataset_profile=dataset_profile,
         )

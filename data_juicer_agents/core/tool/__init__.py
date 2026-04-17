@@ -9,6 +9,7 @@ from .contracts import (
     ToolResult,
     ToolSpec,
 )
+from .dataset_source import DatasetSource
 from .profiles import (
     HARNESS_TOOL_GROUPS,
     TOOL_PROFILE_ENV_VAR,
@@ -20,6 +21,7 @@ from .profiles import (
 from .registry import ToolRegistry, build_default_tool_registry, get_tool_spec, list_tool_specs
 
 __all__ = [
+    "DatasetSource",
     "ToolArtifact",
     "ToolConfirmation",
     "ToolContext",

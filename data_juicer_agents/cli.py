@@ -100,10 +100,15 @@ def build_parser() -> argparse.ArgumentParser:
         parents=[output_parent],
     )
     plan.add_argument("intent", type=str, help="Natural language task intent")
-    plan.add_argument("--dataset", default=None, help="Input dataset path")
-    plan.add_argument("--export", default=None, help="Output jsonl path")
-    plan.add_argument("--output", default=None, help="Output plan yaml path")
-    plan.add_argument(
+    
+    # Dataset source: mutually exclusive options
+    dataset_group = plan.add_mutually_exclusive_group(required=True)
+    dataset_group.add_argument(
+        "--dataset",
+        default=None,
+        help="Input dataset path (single local file)"
+    )
+    dataset_group.add_argument(
         "--dataset-config",
         default=None,
         help=(
@@ -112,7 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
             'Example: \'{"configs": [{"type": "local", "path": "/data/a.jsonl", "weight": 0.7}]}\''
         ),
     )
-    plan.add_argument(
+    dataset_group.add_argument(
         "--generated-dataset-config",
         default=None,
         help=(
@@ -121,6 +126,9 @@ def build_parser() -> argparse.ArgumentParser:
             'Example: \'{"type": "EmptyFormatter", "length": 1000}\''
         ),
     )
+    
+    plan.add_argument("--export", default=None, help="Output jsonl path")
+    plan.add_argument("--output", default=None, help="Output plan yaml path")
     plan.add_argument(
         "--custom-operator-paths",
         nargs="+",
@@ -162,11 +170,6 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["auto", "llm", "vector", "bm25", "regex"],
         default="auto",
         help="Retrieval backend mode",
-    )
-    retrieve.add_argument(
-        "--dataset",
-        default=None,
-        help="Optional dataset path for schema/modality probing",
     )
     retrieve.add_argument(
         "--type",

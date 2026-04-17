@@ -10,6 +10,7 @@ import yaml
 
 from data_juicer_agents.capabilities.plan.service import PlanOrchestrator
 from data_juicer_agents.commands.output_control import emit, emit_json, enabled
+from data_juicer_agents.core.tool import DatasetSource
 
 
 def _parse_json_object_arg(raw_value: Any, *, arg_name: str) -> tuple[Dict[str, Any] | None, Dict[str, Any] | None]:
@@ -69,30 +70,52 @@ def execute_plan(args) -> Dict[str, Any]:
     if parse_error:
         return parse_error
 
-    # At least one dataset source is required
-    has_source = bool(dataset_path) or bool(dataset_config) or bool(generated_dataset_config)
-    if not has_source or not export_path:
-        return _error_result(
-            "--export is required, and at least one dataset source must be provided "
-            "(--dataset, --dataset-config, or --generated-dataset-config).",
-            error_type="missing_required",
-            stage="input_validation",
-        )
-
-    # Warn when multiple sources are provided so users understand which one wins.
-    # Priority: generated_dataset_config > dataset-config (multi-source) > dataset (plain path)
+    # Validate that exactly one dataset source is provided.
+    # Note: argparse's mutually_exclusive_group already enforces this at the
+    # CLI layer.  This check is defense-in-depth for non-CLI callers that
+    # invoke execute_plan() directly (e.g. tests, session agent).
     active_sources = sum([
         bool(generated_dataset_config),
         bool(dataset_config),
         bool(dataset_path),
     ])
+    
+    if active_sources == 0:
+        return _error_result(
+            "Exactly one dataset source must be provided: "
+            "--dataset, --dataset-config, or --generated-dataset-config.",
+            error_type="missing_required",
+            stage="input_validation",
+        )
+    
     if active_sources > 1:
-        import logging as _logging
-        _logging.warning(
-            "Multiple dataset sources provided (%d). "
-            "Effective priority: --generated-dataset-config > --dataset-config > --dataset. "
-            "Only the highest-priority source will be used; lower-priority sources are ignored.",
-            active_sources,
+        return _error_result(
+            "Only one dataset source can be specified at a time. "
+            "Please use either --dataset, --dataset-config, or --generated-dataset-config, but not multiple.",
+            error_type="conflicting_arguments",
+            stage="input_validation",
+        )
+    
+    if not export_path:
+        return _error_result(
+            "--export is required.",
+            error_type="missing_required",
+            stage="input_validation",
+        )
+
+    # Construct DatasetSource from legacy arguments
+    try:
+        dataset_source = DatasetSource.from_legacy(
+            dataset_path=dataset_path,
+            dataset=dataset_config,
+            generated_dataset_config=generated_dataset_config,
+        )
+    except ValueError as exc:
+        error_type = "conflicting_arguments" if active_sources > 1 else "missing_required"
+        return _error_result(
+            str(exc),
+            error_type=error_type,
+            stage="input_validation",
         )
 
     custom_operator_paths = list(getattr(args, "custom_operator_paths", []) or [])
@@ -106,10 +129,8 @@ def execute_plan(args) -> Dict[str, Any]:
     try:
         payload = orchestrator.generate_plan(
             user_intent=str(args.intent).strip(),
-            dataset_path=dataset_path,
+            dataset_source=dataset_source,
             export_path=export_path,
-            dataset=dataset_config,
-            generated_dataset_config=generated_dataset_config,
             custom_operator_paths=custom_operator_paths,
         )
     except Exception as exc:

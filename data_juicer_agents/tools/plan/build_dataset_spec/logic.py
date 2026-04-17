@@ -6,14 +6,12 @@ from typing import Any, Dict
 from .._shared.dataset_spec import infer_modality, validate_dataset_spec_payload
 from .._shared.normalize import normalize_string_list
 from .._shared.schema import DatasetSpec
-
+from data_juicer_agents.core.tool import DatasetSource
 
 def build_dataset_spec(
     *,
     user_intent: str,
-    dataset_path: str = "",
-    dataset: Dict[str, Any] | None = None,
-    generated_dataset_config: Dict[str, Any] | None = None,
+    dataset_source: "DatasetSource | None" = None,
     export_path: str,
     dataset_profile: Dict[str, Any] | None = None,
     modality_hint: str = "",
@@ -39,16 +37,22 @@ def build_dataset_spec(
                 "requires": [],
             }
 
-    dataset_path = str(dataset_path or "").strip()
-    export_path = str(export_path or "").strip()
-    source_count = int(bool(dataset_path)) + int(bool(dataset)) + int(bool(generated_dataset_config))
-    if source_count == 0:
+    if dataset_source is None:
         return {
             "ok": False,
             "error_type": "missing_required",
-            "message": "at least one dataset source is required: dataset_path, dataset, or generated_dataset_config",
-            "requires": ["dataset_path", "dataset", "generated_dataset_config"],
+            "message": (
+                "Exactly one dataset source is required: "
+                "dataset_source.path, dataset_source.config, or dataset_source.generated."
+            ),
+            "requires": ["dataset_source"],
         }
+    legacy = dataset_source.to_legacy_args()
+    dataset_path = str(legacy["dataset_path"] or "").strip()
+    dataset = legacy["dataset"]
+    generated_dataset_config = legacy["generated_dataset_config"]
+
+    export_path = str(export_path or "").strip()
     if not export_path:
         return {
             "ok": False,

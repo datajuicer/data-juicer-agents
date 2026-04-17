@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
+from data_juicer_agents.core.tool import DatasetSource
 from data_juicer_agents.tools.context import inspect_dataset_schema
 
 
@@ -17,7 +18,7 @@ def test_inspect_dataset_schema_text(tmp_path: Path):
         encoding="utf-8",
     )
 
-    out = inspect_dataset_schema(str(dataset), sample_size=5)
+    out = inspect_dataset_schema(dataset_source=DatasetSource(path=str(dataset)), sample_size=5)
     assert out["ok"] is True
     assert out["modality"] == "text"
     assert "text" in out["candidate_text_keys"]
@@ -35,7 +36,7 @@ def test_inspect_dataset_schema_multimodal(tmp_path: Path):
         encoding="utf-8",
     )
 
-    out = inspect_dataset_schema(str(dataset), sample_size=5)
+    out = inspect_dataset_schema(dataset_source=DatasetSource(path=str(dataset)), sample_size=5)
     assert out["ok"] is True
     assert out["modality"] == "multimodal"
     assert "text" in out["candidate_text_keys"]
@@ -52,7 +53,7 @@ def test_inspect_dataset_schema_json(tmp_path: Path):
     rows = [{"text": f"row {i}", "id": i} for i in range(10)]
     dataset.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
 
-    out = inspect_dataset_schema(str(dataset), sample_size=5)
+    out = inspect_dataset_schema(dataset_source=DatasetSource(path=str(dataset)), sample_size=5)
     assert out["ok"] is True
     assert out["modality"] == "text"
     assert "text" in out["candidate_text_keys"]
@@ -64,7 +65,7 @@ def test_inspect_dataset_schema_csv(tmp_path: Path):
     lines = ["text,id"] + [f"row {i},{i}" for i in range(10)]
     dataset.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    out = inspect_dataset_schema(str(dataset), sample_size=5)
+    out = inspect_dataset_schema(dataset_source=DatasetSource(path=str(dataset)), sample_size=5)
     assert out["ok"] is True
     assert out["modality"] == "text"
     assert "text" in out["candidate_text_keys"]
@@ -76,7 +77,7 @@ def test_inspect_dataset_schema_tsv(tmp_path: Path):
     lines = ["text\tid"] + [f"row {i}\t{i}" for i in range(10)]
     dataset.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    out = inspect_dataset_schema(str(dataset), sample_size=5)
+    out = inspect_dataset_schema(dataset_source=DatasetSource(path=str(dataset)), sample_size=5)
     assert out["ok"] is True
     assert out["modality"] == "text"
     assert "text" in out["candidate_text_keys"]
@@ -97,7 +98,7 @@ def test_inspect_dataset_schema_parquet(tmp_path: Path):
     dataset = tmp_path / "data.parquet"
     pq.write_table(table, str(dataset))
 
-    out = inspect_dataset_schema(str(dataset), sample_size=5)
+    out = inspect_dataset_schema(dataset_source=DatasetSource(path=str(dataset)), sample_size=5)
     assert out["ok"] is True
     assert out["modality"] == "text"
     assert "text" in out["candidate_text_keys"]

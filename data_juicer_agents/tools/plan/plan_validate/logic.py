@@ -63,10 +63,23 @@ class PlanValidator:
         has_dataset_path = bool(plan.recipe.get("dataset_path"))
         has_dataset = bool(plan.recipe.get("dataset"))
         has_generated_config = bool(plan.recipe.get("generated_dataset_config"))
+        source_count = sum([has_dataset_path, has_dataset, has_generated_config])
 
-        if not (has_dataset_path or has_dataset or has_generated_config):
+        if source_count == 0:
             errors.append(
-                "recipe must have at least one dataset source: dataset_path, dataset, or generated_dataset_config"
+                "recipe must have exactly one dataset source: dataset_path, dataset, or generated_dataset_config"
+            )
+        elif source_count > 1:
+            provided = [
+                name for name, present in [
+                    ("dataset_path", has_dataset_path),
+                    ("dataset", has_dataset),
+                    ("generated_dataset_config", has_generated_config),
+                ] if present
+            ]
+            errors.append(
+                f"recipe has multiple dataset sources ({', '.join(provided)}); "
+                f"exactly one of dataset_path, dataset, or generated_dataset_config is allowed"
             )
         elif has_dataset_path:
             dataset_path = Path(str(plan.recipe["dataset_path"])).expanduser()

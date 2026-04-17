@@ -152,15 +152,20 @@ def _resolve_dataset_config(
     dataset_path: str,
     dataset: Dict[str, Any] | None,
 ) -> Dict[str, Any]:
-    """Merge dataset_path and dataset into a single standard dataset config.
+    """Convert a single dataset source into the standard dataset config format.
 
-    Priority matches the runtime execution convention used across all consumers:
-      generated_dataset_config > dataset (multi-source config) > dataset_path
+    Exactly one of *dataset_path* or *dataset* must be provided; passing both
+    is an error because the caller should have already enforced the single-source
+    constraint before reaching this point.
 
-    A structured *dataset* config wins over a plain *dataset_path* because it
-    carries richer multi-source information.  *dataset_path* is converted to
-    the standard format as the lowest-priority fallback.
+    Raises:
+        ValueError: When both dataset_path and dataset are provided simultaneously.
     """
+    if dataset and isinstance(dataset, dict) and dataset_path:
+        raise ValueError(
+            "Only one dataset source can be specified at a time: "
+            "pass either dataset_path or dataset, not both."
+        )
     if dataset and isinstance(dataset, dict):
         return dict(dataset)
     if dataset_path:
@@ -187,17 +192,42 @@ def _pick_inspectable_path(dataset_config: Dict[str, Any]) -> str | None:
 
 
 def inspect_dataset_schema(
-    dataset_path: str = "",
+    dataset_source=None,
     sample_size: int = 20,
-    dataset: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     """Inspect a small sample of a dataset and infer keys/modality for planning.
 
-    Accepts either a plain *dataset_path* or a structured *dataset* config
-    (the ``{"configs": [...]}`` format).  When *dataset_path* is provided it
-    is automatically converted to the standard dataset config format so that
-    all sources are handled uniformly.
+    Accepts a DatasetSource object that encapsulates the dataset path and config.
+    When dataset_source is None, returns a friendly error dict instead of raising.
     """
+    if dataset_source is None:
+        return {
+            "ok": False,
+            "error_type": "missing_dataset_source",
+            "error": "No dataset source provided. Pass a DatasetSource with path or config.",
+            "message": "No dataset source provided.",
+        }
+
+    legacy = dataset_source.to_legacy_args()
+    dataset_path = legacy["dataset_path"]
+    dataset = legacy["dataset"]
+    generated_dataset_config = legacy["generated_dataset_config"]
+
+    if generated_dataset_config:
+        return {
+            "ok": False,
+            "error_type": "unsupported_input_source",
+            "error": (
+                "inspect_dataset does not support generated dataset sources. "
+                "Generated datasets are created dynamically at runtime and "
+                "cannot be inspected ahead of time."
+            ),
+            "message": (
+                "Cannot inspect a generated dataset source. "
+                "Schema probing is only supported for path or config sources."
+            ),
+        }
+
     resolved_config = _resolve_dataset_config(dataset_path, dataset)
     inspectable_path = _pick_inspectable_path(resolved_config)
 
@@ -234,6 +264,26 @@ def inspect_dataset_schema(
             "error": f"dataset_path does not exist: {inspectable_path}",
             "message": f"dataset_path does not exist: {inspectable_path}",
             "dataset": resolved_config,
+        }
+    if path.is_dir():
+        # Directory paths cannot be sampled directly; skip schema probing.
+        # Data-Juicer will auto-detect the format at runtime.
+        # TODO: support directory sampling by picking a representative file from the directory
+        #       (e.g. first file matching a known suffix) so that modality and key hints
+        #       can still be inferred when dataset_path points to a directory.
+        return {
+            "ok": True,
+            "message": "dataset is a directory; schema probing skipped",
+            "dataset": resolved_config,
+            "inspected_path": inspectable_path,
+            "sampled_records": 0,
+            "scanned_lines": 0,
+            "modality": "unknown",
+            "keys": [],
+            "candidate_text_keys": [],
+            "candidate_image_keys": [],
+            "key_stats": {},
+            "sample_preview": [],
         }
     if sample_size <= 0:
         sample_size = 20

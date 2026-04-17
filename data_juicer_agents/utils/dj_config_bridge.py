@@ -11,7 +11,7 @@ Public API:
 Field classification lists:
     dataset_fields          → dataset I/O and binding fields
     system_fields           → runtime/executor system fields
-    agent_managed_fields    → fields auto-set by the agent (not by LLM)
+    agent_managed_fields    → fields managed at agent/tool boundary (not by LLM)
 """
 
 import logging
@@ -25,18 +25,24 @@ logger = logging.getLogger(__name__)
 
 # Fields automatically managed by the agent layer (not exposed to LLM).
 # These are set programmatically during apply (e.g. project_name ← plan_id).
+# Dataset source selectors are also managed at the tool boundary via
+# DatasetSource and should not be exposed through list_dataset_fields.
 agent_managed_fields = [
     "project_name",
     "job_id",
     "auto",  # This is for auto-analyze mode, temporarily added here to avoid LLM exposure until we decide how to handle it.
     "config",  # This is for passing the full config dict to the agent for internal use, not for LLM configuration.
-]
-
-# Dataset-related field names
-dataset_fields = [
     "dataset_path",
     "dataset",
     "generated_dataset_config",
+]
+
+# Dataset-related advanced field names.
+# NOTE:
+# Source selector fields (`dataset_path` / `dataset` / `generated_dataset_config`)
+# are intentionally excluded. Source selection must be provided only through
+# `dataset_source` at the tool input boundary to preserve mutual exclusivity.
+dataset_fields = [
     "validators",
     "load_dataset_kwargs",
     "export_path",

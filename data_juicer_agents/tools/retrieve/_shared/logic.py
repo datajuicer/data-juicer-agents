@@ -245,56 +245,11 @@ def _build_candidate_row(
     }
 
 
-_MODALITY_TAG_MAP: Dict[str, List[str]] = {
-    "text": ["text"],
-    "image": ["image"],
-    "multimodal": ["multimodal"],
-    "audio": ["audio"],
-    "video": ["video"],
-}
-
-def _infer_tags_from_dataset(
-    dataset_path: str,
-    dataset: dict | None = None,
-) -> List[str]:
-    """Probe dataset and return modality tags inferred from its schema.
-
-    Accepts either a plain *dataset_path* or a structured *dataset* config.
-    Returns an empty list when the dataset cannot be inspected or the modality
-    is unknown, so the caller can fall back to unfiltered retrieval.
-    """
-    try:
-        from data_juicer_agents.tools.context.inspect_dataset.logic import (
-            inspect_dataset_schema,
-        )
-        result = inspect_dataset_schema(dataset_path=dataset_path, sample_size=20, dataset=dataset)
-        if not result.get("ok"):
-            return []
-        modality = str(result.get("modality", "")).strip().lower()
-        return list(_MODALITY_TAG_MAP.get(modality, []))
-    except Exception as exc:
-        _logger.debug("infer_tags_from_dataset failed for %s: %s", dataset_path, exc)
-        return []
-
-
 def _prepare_retrieval_inputs(
     top_k: int,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     requested_tags = [str(tag).strip() for tag in (tags or []) if str(tag).strip()]
-    inferred_tags: List[str] = []
-    # Priority: dataset (multi-source config) > dataset_path (plain path)
-    if dataset:
-        inferred_tags = _infer_tags_from_dataset(dataset_path="", dataset=dataset)
-    elif dataset_path:
-        inferred_tags = _infer_tags_from_dataset(dataset_path=dataset_path, dataset=None)
-
-    effective_tags = list(requested_tags)
-    for tag in inferred_tags:
-        if tag not in effective_tags:
-            effective_tags.append(tag)
 
     normalized_top_k = int(top_k) if isinstance(top_k, int) or str(top_k).isdigit() else 10
     if normalized_top_k <= 0:
@@ -318,8 +273,6 @@ def _prepare_retrieval_inputs(
     return {
         "top_k": normalized_top_k,
         "requested_tags": requested_tags,
-        "inferred_tags": inferred_tags,
-        "effective_tags": effective_tags,
         "info_rows": info_rows,
         "info_map": {str(item.get("class_name", "")).strip(): item for item in info_rows},
     }
@@ -353,8 +306,6 @@ def _finalize_candidate_payload(
     requested_mode: str,
     op_type: str | None,
     requested_tags: List[str],
-    inferred_tags: List[str],
-    effective_tags: List[str],
     info_rows: List[Dict[str, Any]],
     info_map: Dict[str, Dict[str, Any]],
     retrieve_meta: Dict[str, Any],
@@ -428,8 +379,6 @@ def _finalize_candidate_payload(
         "candidate_names": candidate_names,
         "gap_detected": len(candidates) == 0,
         "requested_tags": requested_tags,
-        "inferred_tags": inferred_tags,
-        "effective_tags": effective_tags,
         "candidates": candidates,
         "notes": notes,
     }
@@ -443,8 +392,6 @@ def retrieve_operator_candidates(
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     """Retrieve operators and return a structured payload for CLI/agent usage.
 
@@ -456,25 +403,18 @@ def retrieve_operator_candidates(
                  "deduplicator"). Propagated to retrieval backends for early
                  filtering.
         tags: Explicit modality/resource tags for filtering (match-all semantics).
-        dataset_path: Optional dataset path; when provided, the dataset modality
-                      is probed via ``inspect_dataset_schema`` and the inferred
-                      tags are merged with any explicit *tags*.
-        dataset: Optional structured dataset config (``{"configs": [...]}``).
-                 Used for modality probing when *dataset_path* is not provided.
     """
     prepared = _prepare_retrieval_inputs(
         top_k=top_k,
         tags=tags,
-        dataset_path=dataset_path,
-        dataset=dataset,
     )
-    effective_tags = prepared["effective_tags"] or None
+    requested_tags = prepared["requested_tags"] or None
     retrieve_meta = _safe_async_retrieve(
         intent,
         top_k=prepared["top_k"],
         mode=mode,
         op_type=op_type,
-        tags=effective_tags,
+        tags=requested_tags,
     )
     return _finalize_candidate_payload(
         intent=intent,
@@ -482,8 +422,6 @@ def retrieve_operator_candidates(
         requested_mode=mode,
         op_type=op_type,
         requested_tags=prepared["requested_tags"],
-        inferred_tags=prepared["inferred_tags"],
-        effective_tags=prepared["effective_tags"],
         info_rows=prepared["info_rows"],
         info_map=prepared["info_map"],
         retrieve_meta=retrieve_meta,
@@ -497,8 +435,6 @@ def retrieve_operator_candidates_local(
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     normalized_mode = str(mode or "auto").strip().lower() or "auto"
     if normalized_mode not in _LOCAL_RETRIEVAL_MODES:
@@ -509,10 +445,8 @@ def retrieve_operator_candidates_local(
     prepared = _prepare_retrieval_inputs(
         top_k=top_k,
         tags=tags,
-        dataset_path=dataset_path,
-        dataset=dataset,
     )
-    effective_tags = prepared["effective_tags"] or None
+    requested_tags = prepared["requested_tags"] or None
     effective_mode = normalized_mode
     if normalized_mode == "auto":
         effective_mode = "regex" if _looks_like_regex_pattern(intent) else "bm25"
@@ -522,7 +456,7 @@ def retrieve_operator_candidates_local(
         top_k=prepared["top_k"],
         mode=effective_mode,
         op_type=op_type,
-        tags=effective_tags,
+        tags=requested_tags,
     )
     return _finalize_candidate_payload(
         intent=intent,
@@ -530,8 +464,6 @@ def retrieve_operator_candidates_local(
         requested_mode=normalized_mode,
         op_type=op_type,
         requested_tags=prepared["requested_tags"],
-        inferred_tags=prepared["inferred_tags"],
-        effective_tags=prepared["effective_tags"],
         info_rows=prepared["info_rows"],
         info_map=prepared["info_map"],
         retrieve_meta=retrieve_meta,
@@ -545,8 +477,6 @@ def retrieve_operator_candidates_api(
     mode: str = "auto",
     op_type: str | None = None,
     tags: list | None = None,
-    dataset_path: str | None = None,
-    dataset: dict | None = None,
 ) -> Dict[str, Any]:
     normalized_mode = str(mode or "auto").strip().lower() or "auto"
     if normalized_mode not in _API_RETRIEVAL_MODES:
@@ -557,10 +487,8 @@ def retrieve_operator_candidates_api(
     prepared = _prepare_retrieval_inputs(
         top_k=top_k,
         tags=tags,
-        dataset_path=dataset_path,
-        dataset=dataset,
     )
-    effective_tags = prepared["effective_tags"] or None
+    requested_tags = prepared["requested_tags"] or None
 
     if normalized_mode == "auto":
         llm_meta = _safe_async_retrieve(
@@ -568,7 +496,7 @@ def retrieve_operator_candidates_api(
             top_k=prepared["top_k"],
             mode="llm",
             op_type=op_type,
-            tags=effective_tags,
+            tags=requested_tags,
         )
         if llm_meta.get("names"):
             retrieve_meta = llm_meta
@@ -578,7 +506,7 @@ def retrieve_operator_candidates_api(
                 top_k=prepared["top_k"],
                 mode="vector",
                 op_type=op_type,
-                tags=effective_tags,
+                tags=requested_tags,
             )
             retrieve_meta = {
                 "names": list(vector_meta.get("names", [])),
@@ -592,7 +520,7 @@ def retrieve_operator_candidates_api(
             top_k=prepared["top_k"],
             mode=normalized_mode,
             op_type=op_type,
-            tags=effective_tags,
+            tags=requested_tags,
         )
 
     return _finalize_candidate_payload(
@@ -601,8 +529,6 @@ def retrieve_operator_candidates_api(
         requested_mode=normalized_mode,
         op_type=op_type,
         requested_tags=prepared["requested_tags"],
-        inferred_tags=prepared["inferred_tags"],
-        effective_tags=prepared["effective_tags"],
         info_rows=prepared["info_rows"],
         info_map=prepared["info_map"],
         retrieve_meta=retrieve_meta,

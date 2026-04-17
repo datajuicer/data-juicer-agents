@@ -16,10 +16,6 @@ def _print_human_readable(payload: dict) -> None:
     print(f"Source: {payload.get('retrieval_source', '')}")
     print(f"Candidates: {payload.get('candidate_count', 0)}")
 
-    inferred_tags = payload.get("inferred_tags")
-    if inferred_tags:
-        print(f"Dataset modality tags: {inferred_tags}")
-
     candidates = payload.get("candidates", [])
     if not candidates:
         print("No candidate operators found.")
@@ -46,7 +42,6 @@ def run_retrieve(args) -> int:
         return 2
 
     tags: List[str] = list(getattr(args, "tags", None) or [])
-    dataset_path: str | None = getattr(args, "dataset", None)
     op_type: str | None = getattr(args, "op_type", None)
 
     try:
@@ -56,7 +51,6 @@ def run_retrieve(args) -> int:
             mode=args.mode,
             op_type=op_type,
             tags=tags if tags else None,
-            dataset_path=dataset_path,
         )
     except Exception as exc:
         print(f"Retrieve failed: {exc}")

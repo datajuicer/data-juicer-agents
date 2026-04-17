@@ -42,13 +42,5 @@ class RetrieveOperatorsInput(BaseModel):
             "Only operators whose tag set contains ALL of the specified tags are returned (match-all semantics)."
         ),
     )
-    dataset_path: str = Field(
-        default="",
-        description=(
-            "Optional dataset file path. When provided, the dataset modality is probed "
-            "via inspect_dataset_schema and the inferred tags are merged with any explicit tags."
-        ),
-    )
-
 class GenericOutput(BaseModel):
     ok: bool = True

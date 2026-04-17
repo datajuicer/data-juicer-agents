@@ -49,7 +49,7 @@ LIST_DATASET_LOAD_STRATEGIES = ToolSpec(
         "required and optional config fields. "
         "Use this BEFORE build_dataset_spec when you need to configure non-trivial dataset "
         "sources (e.g., remote S3, mixed-weight local files). "
-        "For simple single local files, use dataset_path directly in build_dataset_spec."
+        "For simple single local files, use dataset_source.path directly in build_dataset_spec."
     ),
     input_model=ListDatasetLoadStrategiesInput,
     output_model=ListDatasetLoadStrategiesOutput,

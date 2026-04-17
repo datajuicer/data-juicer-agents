@@ -12,9 +12,8 @@ from .logic import inspect_dataset_schema
 
 def _inspect_dataset(_ctx: ToolContext, args: InspectDatasetInput) -> ToolResult:
     payload = inspect_dataset_schema(
-        dataset_path=args.dataset_path.strip(),
+        dataset_source=args.dataset_source,
         sample_size=max(to_int(args.sample_size, 20), 1),
-        dataset=args.dataset,
     )
     if payload.get("ok"):
         return ToolResult.success(summary=str(payload.get("message", "dataset inspected")), data=payload)

@@ -80,7 +80,6 @@ djx tool run list_operator_catalog --input-json '{"include_parameters": false}'
 | `mode` | str | No | `auto` | `auto`, `bm25`, `regex` |
 | `op_type` | str | No | — | Type filter: `mapper`, `filter`, `deduplicator`, etc. |
 | `tags` | list | No | `[]` | Modality/resource tags (`text`, `image`, etc.), match-all semantics |
-| `dataset_path` | str | No | — | Dataset path for automatic modality detection |
 
 ### retrieve_operators_api (API)
 
@@ -91,7 +90,6 @@ djx tool run list_operator_catalog --input-json '{"include_parameters": false}'
 | `mode` | str | No | `auto` | `auto`, `llm`, `vector` |
 | `op_type` | str | No | — | Type filter: `mapper`, `filter`, `deduplicator`, etc. |
 | `tags` | list | No | `[]` | Modality/resource tags, match-all semantics |
-| `dataset_path` | str | No | — | Dataset path for automatic modality detection |
 
 ### get_operator_info
 
@@ -342,9 +340,6 @@ djx tool run get_operator_info --input-json '{"operator_name": "text_length_filt
 
 # Browse catalog (fallback when retrieval is insufficient)
 djx tool run list_operator_catalog --input-json '{"op_type": "filter", "include_parameters": false, "limit": 20}'
-
-# Combined with dataset modality
-djx tool run retrieve_operators --input-json '{"intent": "filter images", "dataset_path": "/data/images.jsonl"}'
 
 # API-backed retrieval (full surface only, requires API key)
 djx tool run retrieve_operators_api --input-json '{

@@ -47,8 +47,9 @@ LIST_DATASET_FIELDS = ToolSpec(
         "such as export_type, export_shard_size, export_in_parallel, "
         "load_dataset_kwargs, suffixes, or modality special tokens "
         "(image_special_token, audio_special_token, video_special_token, eoc_special_token). "
-        "Do NOT confuse this with the 'dataset' field in build_dataset_spec, "
-        "which configures multi-source dataset loading."
+        "Do NOT confuse these advanced dataset fields with dataset_source itself: "
+        "dataset_source.path/config/generated selects the input source, while the fields "
+        "returned here tweak the dataset spec around that source."
     ),
     input_model=ListDatasetFieldsInput,
     output_model=ListDatasetFieldsOutput,

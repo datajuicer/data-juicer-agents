@@ -40,7 +40,10 @@ def list_system_config(
         # haven't categorised yet.
         all_parser_fields = set(bridge.get_default_config().keys())
         classified_fields = (
-            set(system_fields) | set(dataset_fields) | set(agent_managed_fields) | {"process"}
+            set(system_fields)
+            | set(dataset_fields)
+            | set(agent_managed_fields)
+            | {"process"}
         )
         unclassified_fields = sorted(all_parser_fields - classified_fields)
 
