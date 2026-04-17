@@ -2,7 +2,7 @@
 """Shared helpers for building retrieval results and trace entries.
 
 Extracted from backend.py and logic.py to eliminate duplicated code across
-the four retrieval backends (LLM, Vector, BM25, Regex).
+the retrieval backends (LLM, BM25, Regex).
 """
 
 from __future__ import annotations

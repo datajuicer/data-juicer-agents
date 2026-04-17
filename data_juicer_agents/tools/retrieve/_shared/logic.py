@@ -30,7 +30,7 @@ _OP_TYPES = {
     "formatter",
 }
 _LOCAL_RETRIEVAL_MODES = {"auto", "bm25", "regex"}
-_API_RETRIEVAL_MODES = {"auto", "llm", "vector"}
+_API_RETRIEVAL_MODES = {"auto", "llm"}
 
 
 def _load_op_retrieval_funcs():
@@ -451,7 +451,7 @@ def retrieve_operator_candidates(
     Args:
         intent: Natural-language description of the desired operators.
         top_k: Maximum number of candidates to return.
-        mode: Retrieval backend mode ("llm", "vector", "bm25", "regex", or "auto").
+        mode: Retrieval backend mode ("llm", "bm25", "regex", or "auto").
         op_type: Optional operator type filter (e.g. "filter", "mapper",
                  "deduplicator"). Propagated to retrieval backends for early
                  filtering.
@@ -570,22 +570,7 @@ def retrieve_operator_candidates_api(
             op_type=op_type,
             tags=effective_tags,
         )
-        if llm_meta.get("names"):
-            retrieve_meta = llm_meta
-        else:
-            vector_meta = _safe_async_retrieve(
-                intent,
-                top_k=prepared["top_k"],
-                mode="vector",
-                op_type=op_type,
-                tags=effective_tags,
-            )
-            retrieve_meta = {
-                "names": list(vector_meta.get("names", [])),
-                "source": str(vector_meta.get("source", "")).strip(),
-                "trace": list(llm_meta.get("trace", [])) + list(vector_meta.get("trace", [])),
-                "items": list(vector_meta.get("items", [])),
-            }
+        retrieve_meta = llm_meta
     else:
         retrieve_meta = _safe_async_retrieve(
             intent,
@@ -661,7 +646,9 @@ def list_operator_catalog(
     requested_tags = [str(item).strip().lower() for item in (tags or []) if str(item).strip()]
 
     try:
-        from .backend.catalog import searcher
+        from .backend import get_op_searcher
+
+        searcher = get_op_searcher()
     except Exception as exc:
         _logger.debug("catalog import failed: %s", exc)
         return {
@@ -738,7 +725,9 @@ def get_operator_info(operator_name: str) -> Dict[str, Any]:
         }
 
     try:
-        from .backend.catalog import searcher
+        from .backend import get_op_searcher
+
+        searcher = get_op_searcher()
     except Exception as exc:
         _logger.debug("catalog import failed: %s", exc)
         return {

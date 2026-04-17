@@ -76,10 +76,10 @@
   - `retrieve/_shared/operator_registry.py`
   - `retrieve/_shared/backend/`（子包）：
     - `backend.py`：共享检索入口（`retrieve_ops_with_meta`、`retrieve_ops`、`get_op_catalog` 等）
-    - `cache.py`：`RetrievalCacheManager`，管理向量索引、工具信息和目录缓存
+    - `cache.py`：`RetrievalCacheManager`，管理检索器和算子目录缓存
     - `catalog.py`：算子目录构建器（采集 `class_name`、`class_desc`、`class_type`、`class_tags`）
     - `result_builder.py`：共享检索结果整形辅助和 `trace_step`
-    - `retriever.py`：`RetrieverBackend` 抽象基类及具体后端（`LLMRetriever`、`VectorRetriever`、`BM25Retriever`、`RegexRetriever`）
+    - `retriever.py`：`RetrieverBackend` 抽象基类及具体后端（`LLMRetriever`、`BM25Retriever`、`RegexRetriever`）
   - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
   - `retrieve/retrieve_operators_api/{input.py,logic.py,tool.py}`
   - `retrieve/get_operator_info/{input.py,logic.py,tool.py}`
@@ -96,7 +96,7 @@
 工具拆分：
 
 - `retrieve_operators`：本地检索面（`auto|bm25|regex`）
-- `retrieve_operators_api`：API 检索面（`auto|llm|vector`）
+- `retrieve_operators_api`：API 检索面（`auto|llm`）
 - `get_operator_info`：解析单个算子并返回 schema / 详情
 - `list_operator_catalog`：按需列出当前算子目录
 

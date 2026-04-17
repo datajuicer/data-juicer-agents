@@ -3,7 +3,7 @@ name: djx_retrieve
 description: >-
   Data-Juicer operator retrieval reference: retrieve_operators (local), retrieve_operators_api (API), get_operator_info, list_operator_catalog.
   Trigger keywords: retrieve_operators, retrieve_operators_api, search operators, find operator,
-  which operator, intent, retrieval, bm25, regex, LLM mode, vector mode, operator info, operator catalog.
+  which operator, intent, retrieval, bm25, regex, LLM mode, operator info, operator catalog.
   Use when searching for suitable operators, unsure which operator to use, or retrieve errors occur.
   Related skills: data-juicer (main flow), djx_auth (authentication), djx_local_model (local mode).
 allowed-tools: Bash, Read
@@ -22,7 +22,7 @@ user-invocable: true
 | Tool | Surface | Modes | Use Case |
 |------|---------|-------|----------|
 | `retrieve_operators` | Harness (default) | `auto`, `bm25`, `regex` | Local retrieval, no API needed |
-| `retrieve_operators_api` | Full (not in harness) | `auto`, `llm`, `vector` | API-backed semantic retrieval |
+| `retrieve_operators_api` | Full (not in harness) | `auto`, `llm` | API-backed semantic retrieval |
 | `get_operator_info` | Harness | — | Inspect one operator's parameter schema |
 | `list_operator_catalog` | Harness | — | Browse full operator catalog (fallback) |
 
@@ -43,7 +43,7 @@ user-invocable: true
 |---------|-------------|
 | **intent** | Natural language description of the processing goal, used to retrieve matching operators |
 | **mode (local)** | `retrieve_operators` modes: `auto` (routes to bm25/regex), `bm25`, `regex` |
-| **mode (API)** | `retrieve_operators_api` modes: `auto` (tries llm→vector), `llm`, `vector` |
+| **mode (API)** | `retrieve_operators_api` modes: `auto` (uses llm), `llm` |
 | **top_k** | Maximum number of candidates to return |
 | **operator** | Data processing unit containing name, type, description, params |
 
@@ -88,7 +88,7 @@ djx tool run list_operator_catalog --input-json '{"include_parameters": false}'
 |-----------|------|----------|---------|-------------|
 | `intent` | str | Yes | — | Plain-text description of the desired operators |
 | `top_k` | int | No | 10 | Maximum number of candidates to return |
-| `mode` | str | No | `auto` | `auto`, `llm`, `vector` |
+| `mode` | str | No | `auto` | `auto`, `llm` |
 | `op_type` | str | No | — | Type filter: `mapper`, `filter`, `deduplicator`, etc. |
 | `tags` | list | No | `[]` | Modality/resource tags, match-all semantics |
 | `dataset_path` | str | No | — | Dataset path for automatic modality detection |
@@ -126,9 +126,8 @@ djx tool run list_operator_catalog --input-json '{"include_parameters": false}'
 
 | Mode | Requires API | Behavior | Use Case |
 |------|-------------|----------|----------|
-| `auto` | Yes | Tries `llm` first, falls back to `vector` | Highest accuracy when API available |
+| `auto` | Yes | Tries `llm` first, returns empty when llm is unavailable or returns no candidates | Highest accuracy when API available |
 | `llm` | Yes | LLM semantic ranking | Best semantic relevance |
-| `vector` | Yes | FAISS vector similarity | Semantic search without LLM ranking |
 
 **Mode selection decision**:
 
@@ -239,7 +238,7 @@ djx tool run retrieve_operators --input-json '{"intent": "remove HTML tags, norm
 | `401 Unauthorized` | API key issue; use `retrieve_operators` (local) instead, or verify `DASHSCOPE_API_KEY` |
 | Empty results | Retry with a broader intent, or use `list_operator_catalog` as fallback |
 | `input_validation_failed` | Use `intent` instead of `query` |
-| `invalid local retrieval mode` | `retrieve_operators` only accepts `auto`, `bm25`, `regex`; for `llm`/`vector`, use `retrieve_operators_api` |
+| `invalid local retrieval mode` | `retrieve_operators` only accepts `auto`, `bm25`, `regex`; for `llm`, use `retrieve_operators_api` |
 | Operator results are not ideal | Use a more specific description in retrieval, e.g., `normalize all whitespace including internal spaces` instead of just `normalize whitespace` |
 
 ---
@@ -306,7 +305,7 @@ djx tool run retrieve_operators --input-json '{"intent": "...", "mode": "auto"}'
 For API-backed semantic retrieval (outside harness), use `retrieve_operators_api`:
 
 ```bash
-djx tool run retrieve_operators_api --input-json '{"intent": "...", "mode": "vector"}'
+djx tool run retrieve_operators_api --input-json '{"intent": "...", "mode": "llm"}'
 ```
 
 ---

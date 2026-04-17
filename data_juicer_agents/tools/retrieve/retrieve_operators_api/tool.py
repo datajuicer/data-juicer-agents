@@ -60,7 +60,7 @@ def _retrieve_operators_api(_ctx: ToolContext, args: RetrieveOperatorsAPIInput) 
         )
 
     if _api_retrieval_is_unavailable(payload):
-        message = "API retrieval unavailable: missing API key for llm/vector backends"
+        message = "API retrieval unavailable: missing API key for llm backend"
         failure_payload = dict(payload)
         failure_payload.update(
             {
@@ -82,7 +82,7 @@ RETRIEVE_OPERATORS_API = ToolSpec(
     name="retrieve_operators_api",
     description=(
         "Retrieve candidate Data-Juicer operators using API-backed semantic retrieval. "
-        "Supports semantic LLM ranking (llm) and vector similarity retrieval (vector)."
+        "Supports semantic LLM ranking (llm)."
     ),
     input_model=RetrieveOperatorsAPIInput,
     output_model=GenericOutput,

@@ -263,5 +263,5 @@ def test_retrieve_operator_candidates_api_without_api_key_returns_empty(monkeypa
     assert payload["candidate_names"] == []
     assert payload["retrieval_source"] == ""
     assert payload["retrieval_trace"][0]["backend"] == "llm"
-    assert payload["retrieval_trace"][-1]["backend"] == "vector"
+    assert payload["retrieval_trace"][-1]["backend"] == "llm"
     assert payload["notes"] == ["No operator candidates were found from API retrieval."]

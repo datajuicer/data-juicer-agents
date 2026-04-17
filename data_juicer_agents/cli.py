@@ -159,7 +159,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     retrieve.add_argument(
         "--mode",
-        choices=["auto", "llm", "vector", "bm25", "regex"],
+        choices=["auto", "llm", "bm25", "regex"],
         default="auto",
         help="Retrieval backend mode",
     )

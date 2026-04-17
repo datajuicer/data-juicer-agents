@@ -15,7 +15,7 @@ _skip_no_api_key = pytest.mark.skipif(
 )
 
 # ---------------------------------------------------------------------------
-# Real LLM / vector tests (skipped in GHA)
+# Real LLM tests (skipped in GHA)
 # ---------------------------------------------------------------------------
 
 @_skip_no_api_key
@@ -31,17 +31,6 @@ def test_retrieve_ops_with_meta_llm():
     assert "text_length_filter" in payload["names"]
 
 @_skip_no_api_key
-def test_retrieve_ops_with_meta_vector():
-    """Real vector retrieval - requires DASHSCOPE_API_KEY."""
-    import data_juicer_agents.tools.retrieve._shared.backend as mod
-
-    payload = asyncio.run(
-        mod.retrieve_ops_with_meta("deduplicate documents", limit=5, mode="vector")
-    )
-    assert payload["source"] == "vector"
-    assert len(payload["names"]) > 0
-
-@_skip_no_api_key
 def test_retrieve_ops_with_meta_auto():
     """Real auto retrieval - requires DASHSCOPE_API_KEY."""
     import data_juicer_agents.tools.retrieve._shared.backend as mod
@@ -49,7 +38,7 @@ def test_retrieve_ops_with_meta_auto():
     payload = asyncio.run(
         mod.retrieve_ops_with_meta("filter text by length", limit=5, mode="auto")
     )
-    assert payload["source"] in ("llm", "vector", "bm25")
+    assert payload["source"] in ("llm", "bm25")
     assert len(payload["names"]) > 0
 
 # ---------------------------------------------------------------------------
@@ -64,15 +53,11 @@ def test_retrieve_ops_with_meta_auto_mock_all_fail(monkeypatch):
     async def fail_llm_retrieve_items(_self, _query, limit=20, op_type=None, tags=None):  # noqa: ARG001
         raise RuntimeError("llm unavailable")
 
-    async def fail_vector_retrieve_items(_self, _query, limit=20, op_type=None, tags=None):  # noqa: ARG001
-        raise RuntimeError("vector unavailable")
-
     async def fail_bm25_retrieve_items(_self, _query, limit=20, op_type=None, tags=None):  # noqa: ARG001
         raise RuntimeError("bm25 unavailable")
 
     monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
     monkeypatch.setattr(type(_strategy.backends["llm"]), "retrieve_items", fail_llm_retrieve_items)
-    monkeypatch.setattr(type(_strategy.backends["vector"]), "retrieve_items", fail_vector_retrieve_items)
     monkeypatch.setattr(type(_strategy.backends["bm25"]), "retrieve_items", fail_bm25_retrieve_items)
 
     payload = asyncio.run(
@@ -87,7 +72,6 @@ def test_retrieve_ops_with_meta_auto_mock_all_fail(monkeypatch):
     assert payload["source"] == ""
     assert payload["trace"] == [
         {"backend": "llm", "status": "failed", "error": "llm unavailable"},
-        {"backend": "vector", "status": "failed", "error": "vector unavailable"},
         {"backend": "bm25", "status": "failed", "error": "bm25 unavailable"},
     ]
 
@@ -136,51 +120,6 @@ def test_refresh_op_catalog_updates_cache():
     assert isinstance(refreshed, list)
     assert len(refreshed) > 0
     assert refreshed[0]["class_name"] == original[0]["class_name"]
-
-# ---------------------------------------------------------------------------
-# Vector cache behavior (must use mock for vector store)
-# ---------------------------------------------------------------------------
-
-def test_retrieve_ops_vector_skips_disk_when_memory_cached(monkeypatch):
-    """Vector retrieval uses memory cache and skips disk loading."""
-    import data_juicer_agents.tools.retrieve._shared.backend as mod
-    from data_juicer_agents.tools.retrieve._shared.backend.cache import (
-        CK_TOOLS_INFO,
-        CK_VECTOR_STORE,
-        cache_manager,
-    )
-    from data_juicer_agents.tools.retrieve._shared.backend.retriever import VectorRetriever
-
-    fake_tools_info = [
-        {"class_name": "text_length_filter", "class_desc": "Filter by length", "class_type": "filter"},
-        {"class_name": "document_deduplicator", "class_desc": "Dedup docs", "class_type": "deduplicator"},
-    ]
-
-    class FakeVectorStore:
-        def similarity_search(self, query, k=10):
-            class FakeDoc:
-                def __init__(self, idx):
-                    self.metadata = {"index": idx}
-            return [FakeDoc(i) for i in range(min(k, len(fake_tools_info)))]
-
-    cache_manager.set(CK_VECTOR_STORE, FakeVectorStore())
-    cache_manager.set(CK_TOOLS_INFO, fake_tools_info)
-
-    load_called = {"value": False}
-
-    def fail_load():
-        load_called["value"] = True
-        raise AssertionError("_load_cached_index should not be called when memory cache is populated")
-
-    monkeypatch.setattr(VectorRetriever, "_load_cached_index", lambda self: fail_load())
-
-    items = asyncio.run(mod.retrieve_ops_vector_items("filter text", limit=5))
-    result = [item["tool_name"] for item in items]
-    assert load_called["value"] is False
-    assert "text_length_filter" in result
-
-    cache_manager.invalidate(CK_VECTOR_STORE)
-    cache_manager.invalidate(CK_TOOLS_INFO)
 
 # ---------------------------------------------------------------------------
 # BM25 retrieval (real tests - no API key needed)

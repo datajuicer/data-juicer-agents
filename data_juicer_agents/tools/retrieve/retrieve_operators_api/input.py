@@ -16,13 +16,12 @@ class RetrieveOperatorsAPIInput(BaseModel):
         )
     )
     top_k: int = Field(default=10, ge=1, description="Maximum number of operator candidates to return.")
-    mode: Literal["auto", "llm", "vector"] = Field(
+    mode: Literal["auto", "llm"] = Field(
         default="auto",
         description=(
             "API-backed retrieval mode. "
-            "'auto': tries llm -> vector. "
+            "'auto': uses llm. "
             "'llm': semantic ranking via LLM. "
-            "'vector': FAISS vector similarity."
         ),
     )
     op_type: str = Field(

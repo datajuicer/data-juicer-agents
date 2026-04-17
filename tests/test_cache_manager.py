@@ -8,8 +8,6 @@ import pytest
 from data_juicer_agents.tools.retrieve._shared.backend.cache import (
     CK_OP_CATALOG,
     CK_OP_SEARCHER,
-    CK_TOOLS_INFO,
-    CK_VECTOR_STORE,
     RetrievalCacheManager,
 )
 
@@ -121,12 +119,10 @@ def test_invalidate_does_not_affect_other_keys(mgr):
 
 
 def test_invalidate_all_clears_everything(mgr):
-    mgr.set(CK_VECTOR_STORE, "vs", content_hash="h1")
-    mgr.set(CK_TOOLS_INFO, "ti")
     mgr.set(CK_OP_SEARCHER, "os")
     mgr.set(CK_OP_CATALOG, "dfi")
     mgr.invalidate_all()
-    for key in (CK_VECTOR_STORE, CK_TOOLS_INFO, CK_OP_SEARCHER, CK_OP_CATALOG):
+    for key in (CK_OP_SEARCHER, CK_OP_CATALOG):
         assert mgr.get(key) is None
         assert mgr.get_hash(key) == ""
 

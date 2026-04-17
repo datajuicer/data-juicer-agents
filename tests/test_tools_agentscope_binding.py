@@ -28,7 +28,7 @@ def test_build_agentscope_json_schema_for_retrieve_operators_api():
 
     assert schema["type"] == "function"
     assert schema["function"]["name"] == "retrieve_operators_api"
-    assert schema["function"]["parameters"]["properties"]["mode"]["enum"] == ["auto", "llm", "vector"]
+    assert schema["function"]["parameters"]["properties"]["mode"]["enum"] == ["auto", "llm"]
 
 
 def test_build_process_spec_schema_stays_shallow_for_agent_calls():

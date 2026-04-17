@@ -10,8 +10,7 @@ class RetrievalCacheManager:
     """Thread-safe cache for retrieval backends.
 
     Replaces the scattered module-level global variables previously used in
-    backend.py (``_cached_vector_store``, ``_cached_tools_info``,
-    ``_cached_content_hash``, ``_cached_op_searcher``,
+    backend.py (``_cached_op_searcher``,
     ``_global_op_catalog``).
     """
 
@@ -62,8 +61,6 @@ class RetrievalCacheManager:
 # Cache key constants
 # ---------------------------------------------------------------------------
 
-CK_VECTOR_STORE = "vector_store"
-CK_TOOLS_INFO = "tools_info"
 CK_OP_SEARCHER = "op_searcher"
 CK_OP_CATALOG = "op_catalog"
 
