@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.process.execute\_shell\_command.tool module
+======================================================================
+
+.. automodule:: data_juicer_agents.tools.process.execute_shell_command.tool
+   :members:
+   :show-inheritance:
+   :undoc-members:

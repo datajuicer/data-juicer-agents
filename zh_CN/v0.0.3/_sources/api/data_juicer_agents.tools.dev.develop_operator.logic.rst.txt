@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.dev.develop\_operator.logic module
+=============================================================
+
+.. automodule:: data_juicer_agents.tools.dev.develop_operator.logic
+   :members:
+   :show-inheritance:
+   :undoc-members:

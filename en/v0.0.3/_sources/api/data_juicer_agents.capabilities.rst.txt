@@ -1,0 +1,7 @@
+data_juicer_agents.capabilities
+===============================
+
+.. automodule:: data_juicer_agents.capabilities
+   :members:
+   :show-inheritance:
+   :undoc-members:

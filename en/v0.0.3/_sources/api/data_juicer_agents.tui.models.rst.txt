@@ -1,0 +1,7 @@
+data\_juicer\_agents.tui.models module
+======================================
+
+.. automodule:: data_juicer_agents.tui.models
+   :members:
+   :show-inheritance:
+   :undoc-members:

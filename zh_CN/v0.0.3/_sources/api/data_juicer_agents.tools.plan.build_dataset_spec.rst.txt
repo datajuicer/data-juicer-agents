@@ -1,0 +1,7 @@
+data_juicer_agents.tools.plan.build_dataset_spec
+================================================
+
+.. automodule:: data_juicer_agents.tools.plan.build_dataset_spec
+   :members:
+   :show-inheritance:
+   :undoc-members:

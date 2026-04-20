@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.plan.build\_system\_spec.logic module
+================================================================
+
+.. automodule:: data_juicer_agents.tools.plan.build_system_spec.logic
+   :members:
+   :show-inheritance:
+   :undoc-members:

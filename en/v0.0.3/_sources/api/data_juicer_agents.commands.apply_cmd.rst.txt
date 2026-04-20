@@ -1,0 +1,7 @@
+data\_juicer\_agents.commands.apply\_cmd module
+===============================================
+
+.. automodule:: data_juicer_agents.commands.apply_cmd
+   :members:
+   :show-inheritance:
+   :undoc-members:

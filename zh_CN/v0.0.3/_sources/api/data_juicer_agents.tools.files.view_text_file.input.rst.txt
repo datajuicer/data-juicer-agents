@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.files.view\_text\_file.input module
+==============================================================
+
+.. automodule:: data_juicer_agents.tools.files.view_text_file.input
+   :members:
+   :show-inheritance:
+   :undoc-members:

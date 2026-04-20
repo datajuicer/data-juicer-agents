@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.retrieve.registry module
+===================================================
+
+.. automodule:: data_juicer_agents.tools.retrieve.registry
+   :members:
+   :show-inheritance:
+   :undoc-members:

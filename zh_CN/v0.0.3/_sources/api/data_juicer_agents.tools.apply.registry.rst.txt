@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.apply.registry module
+================================================
+
+.. automodule:: data_juicer_agents.tools.apply.registry
+   :members:
+   :show-inheritance:
+   :undoc-members:

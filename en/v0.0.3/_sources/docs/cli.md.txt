@@ -1,0 +1,246 @@
+# DJX CLI Reference
+
+## Command Map
+
+| Command | Purpose | Source |
+|---|---|---|
+| `djx plan` | Generate a plan YAML from intent, retrieval evidence, staged specs, and an LLM-generated operator list | `data_juicer_agents/commands/plan_cmd.py` |
+| `djx apply` | Load a saved plan, materialize a recipe, and execute or dry-run `dj-process` | `data_juicer_agents/commands/apply_cmd.py` |
+| `djx retrieve` | Retrieve candidate operators by intent | `data_juicer_agents/commands/retrieve_cmd.py` |
+| `djx dev` | Generate a non-invasive custom operator scaffold | `data_juicer_agents/commands/dev_cmd.py` |
+| `djx tool` | Inspect or execute any registered atomic tool through a generic JSON-first wrapper | `data_juicer_agents/commands/tool_cmd.py` |
+
+Additional entry:
+- `dj-agents`: `data_juicer_agents/session_cli.py`
+- `djx --version`: print the installed package version
+
+The CLI does not include `trace`, `templates`, or `evaluate`.
+
+## Global Output Levels (`djx`)
+
+All `djx` subcommands support:
+- `--quiet` (default): summary output
+- `--verbose`: expanded execution output
+- `--debug`: raw structured payloads useful for debugging
+
+Examples:
+
+```bash
+djx plan "deduplicate text" --dataset ./data.jsonl --export ./out.jsonl --quiet
+djx plan "deduplicate text" --dataset ./data.jsonl --export ./out.jsonl --verbose
+djx --debug retrieve "deduplicate text" --tags text
+```
+
+## `djx plan`
+
+```bash
+djx plan "<intent>" (--dataset <path> | --dataset-config '<json>' | --generated-dataset-config '<json>') --export <output.jsonl> [options]
+```
+
+Key options:
+- `--output`: output plan path (default: `plans/<plan_id>.yaml`)
+- `--custom-operator-paths`: custom operator dirs/files used for validation and later execution
+
+### Dataset Source
+
+The three dataset source options are **mutually exclusive** — exactly one must be specified.
+
+#### `--dataset` — Local file or directory
+
+Process an existing local dataset. Accepts a file path or directory (Data-Juicer auto-detects the format).
+
+```bash
+djx plan "deduplicate text" --dataset ./data/my-dataset.jsonl --export ./out.jsonl
+```
+
+Corresponds to [`dataset_path`](https://github.com/modelscope/data-juicer/blob/main/data_juicer/config/schema.py) in a Data-Juicer recipe config.
+
+#### `--dataset-config` — Multi-source dataset config
+
+Mix multiple sources, set per-source weights, or cap total samples with `max_sample_num`. Run `djx tool run list_dataset_load_strategies --input-json '{}'` to discover available source types (e.g. `local`, `s3`) and their fields.
+
+```bash
+djx plan "mix and deduplicate" \
+  --dataset-config '{"configs": [{"type": "local", "path": "/data/a.jsonl", "weight": 0.7}, {"type": "local", "path": "/data/b.jsonl", "weight": 0.3}], "max_sample_num": 50000}' \
+  --export ./out.jsonl
+```
+
+Corresponds to the [`dataset`](https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html) config block in a Data-Juicer recipe. 
+
+#### `--generated-dataset-config` — Formatter-based dataset loading / generation
+
+Load or generate a dataset via a Data-Juicer [formatter](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format). The JSON must contain a `type` key matching a registered formatter name. Run `djx tool run list_dataset_formatters --input-json '{}'` to discover available formatters and their parameters.
+
+Two typical use cases:
+
+- **File loading**: `TextFormatter`, `JsonFormatter`, `CsvFormatter`, etc. load files from a local path — useful when you need formatter-specific options (e.g. custom suffixes) not available through `--dataset`.
+- **Empty dataset generation**: `EmptyFormatter` creates an empty dataset of a given length, intended for use with custom generation operators supplied via `--custom-operator-paths`.
+
+```bash
+# Load .md files using TextFormatter
+djx plan "deduplicate markdown docs" \
+  --generated-dataset-config '{"type": "TextFormatter", "dataset_path": "/path/to/docs", "suffixes": [".md"]}' \
+  --export ./out.jsonl
+
+# Generate 1000 empty samples, to be filled by a custom generation operator
+djx plan "generate synthetic text samples" \
+  --generated-dataset-config '{"type": "EmptyFormatter", "length": 1000, "feature_keys": ["text"]}' \
+  --custom-operator-paths ./my_operators \
+  --export ./out.jsonl
+```
+
+Corresponds to [`generated_dataset_config`](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/config/config_all.yaml) in a Data-Juicer recipe config. See the [format module](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format) for all available formatters.
+
+### Execution Behavior
+
+The overall execution flow of the `djx plan` command:
+
+1. Internally retrieves operator candidates from the intent and optional dataset-derived modality signals
+2. Builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)
+3. Calls the model once to generate only the operator list for the process spec
+4. Builds the process spec, builds the system spec, and assembles the final plan
+5. Validates the final plan and writes the plan YAML
+
+### CLI Output
+
+- Summary: `Plan generated`, `Modality`, `Operators`
+- `--verbose`: Planning meta (`planner_model`, `retrieval_source`, `retrieval_candidate_count`)
+- `--debug`: Retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload
+
+### Failure Behavior
+
+- Exits non-zero and prints a user-facing error message
+
+## `djx apply`
+
+```bash
+djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
+```
+
+Behavior:
+- loads the saved plan YAML and requires a mapping payload
+- writes a recipe to `.djx/recipes/<plan_id>.yaml`
+- executes `dj-process` unless `--dry-run` is set
+- prints `Execution ID`, `Status`, and generated recipe path
+
+Notes:
+- the CLI does not run a separate `plan_validate` step automatically
+- the CLI does not persist or expose a separate trace query command
+- `--dry-run` also writes the recipe file
+
+## `djx retrieve`
+
+```bash
+djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|bm25|regex] [--json]
+```
+
+Key options:
+- `--type`: filter by operator type (e.g. `filter`, `mapper`, `deduplicator`)
+- `--tags`: filter by operator tags (e.g. `text`, `image`, `multimodal`)
+- `--top-k`: maximum number of candidates (default: 10)
+- `--mode`: retrieval backend selection
+- `--json`: output the full payload as JSON instead of human-readable summary
+
+Returns:
+- ranked operator candidates
+- retrieval source, trace, and notes
+- `auto` uses `llm -> bm25 -> lexical` (without API key: `bm25 -> lexical`)
+- `regex` uses Python regex pattern matching against operator name, description, and parameter fields (standalone mode, not part of auto fallback)
+
+## `djx dev`
+
+```bash
+djx dev "<intent>" \
+  --operator-name <snake_case_name> \
+  --output-dir <dir> \
+  [--type mapper|filter] \
+  [--from-retrieve <json>] \
+  [--smoke-check]
+```
+
+Outputs:
+- operator scaffold
+- test scaffold
+- summary markdown
+- optional smoke-check result
+
+Default behavior is non-invasive: generate code and guidance, but do not auto-install the operator.
+
+## `djx tool`
+
+```bash
+djx tool list [--tag <tag>]
+djx tool schema <tool-name>
+djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--working-dir <path>] [--yes]
+```
+
+Purpose:
+- expose the atomic `ToolSpec` layer directly for agents, skills, and automation
+- keep workflow commands such as `plan`, `apply`, `retrieve`, and `dev` unchanged
+- avoid hand-maintaining one bespoke CLI adapter per tool
+
+Default behavior:
+- output is JSON for `list`, `schema`, and `run`
+- write / execute tools are non-interactive; if a tool declares `confirmation=recommended|required`, you must pass `--yes`
+
+Subcommands:
+- `list`: returns registered tool metadata (`name`, `tags`, `effects`, `confirmation`, input/output model names)
+- `schema`: returns tool metadata plus the input model JSON Schema
+- `run`: loads JSON input, builds a minimal `ToolContext`, executes the tool, and returns the normalized tool payload
+
+Exit codes:
+- `0`: success
+- `2`: CLI misuse, unknown tool, invalid JSON input, or input-model validation failure
+- `3`: explicit confirmation required but not granted
+- `4`: tool executed and returned a failure payload
+
+Examples:
+
+```bash
+djx tool list --tag plan
+djx tool schema inspect_dataset
+djx tool run list_system_config --input-json '{}'
+djx tool run inspect_dataset --input-json '{"dataset_source":{"path":"./data/demo-dataset.jsonl"},"sample_size":5}'
+djx tool run write_text_file --yes --input-json '{"file_path":"./tmp.txt","content":"hello"}'
+djx tool run plan_validate --input-file ./examples/plan_payload.json
+```
+
+Notes:
+- the tool interface is JSON-only; it does not expand tool input fields into per-tool CLI flags
+- the exposed context surface is limited to `--working-dir`
+- `ToolContext.env` and `runtime_values` are not exposed through the CLI
+- `tool run` is suitable for machine-to-machine use; stable JSON output is the primary contract
+- `--quiet`, `--verbose`, and `--debug` are accepted for CLI-shape consistency with other `djx` subcommands, but they do not change `djx tool` output
+- set `DJX_TOOL_PROFILE=harness` after installing `data-juicer-agents[harness]` to restrict `djx tool` to the harness groups (`apply`, `context`, `retrieve`, `plan`)
+- tools outside the active profile return a structured JSON error instead of being exposed by `list`
+
+## `dj-agents`
+
+```bash
+dj-agents [--dataset <path>] [--export <path>] [--verbose] [--ui plain|tui|as_studio] [--studio-url <url>]
+```
+
+Behavior:
+- natural-language conversation over the same planning, retrieval, apply, and dev primitives
+- ReAct agent with a registered session toolkit
+- LLM required at startup
+
+Typical internal planning chain:
+- `inspect_dataset -> retrieve_operators -> build_dataset_spec -> build_process_spec -> build_system_spec -> assemble_plan -> plan_validate -> plan_save`
+- For operator discovery and schema lookup, prefer `retrieve_operators` / `retrieve_operators_api`, then `get_operator_info`.
+
+Interrupt:
+- plain mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
+- tui mode: `Ctrl+C` interrupts the current turn, `Ctrl+D` exits
+- as_studio mode: interaction is driven by AgentScope Studio
+
+## Environment Variables
+
+- `DASHSCOPE_API_KEY` or `MODELSCOPE_API_TOKEN`: API credential
+- `DJA_OPENAI_BASE_URL`: OpenAI-compatible endpoint base URL
+- `DJA_SESSION_MODEL`: model used by `dj-agents`
+- `DJA_STUDIO_URL`: AgentScope Studio URL used by `dj-agents --ui as_studio`
+- `DJA_PLANNER_MODEL`: model used by `djx plan`
+- `DJA_MODEL_FALLBACKS`: comma-separated fallback models for `data_juicer_agents/utils/llm_gateway.py`
+- `DJA_LLM_THINKING`: toggles `enable_thinking` in model requests
+- `DJX_TOOL_PROFILE`: optional tool-catalog profile; set to `harness` to expose only the harness tool set in `djx tool`

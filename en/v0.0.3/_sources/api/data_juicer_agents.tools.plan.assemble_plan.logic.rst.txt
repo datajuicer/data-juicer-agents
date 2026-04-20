@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.plan.assemble\_plan.logic module
+===========================================================
+
+.. automodule:: data_juicer_agents.tools.plan.assemble_plan.logic
+   :members:
+   :show-inheritance:
+   :undoc-members:

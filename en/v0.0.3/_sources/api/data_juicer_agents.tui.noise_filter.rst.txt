@@ -1,0 +1,7 @@
+data\_juicer\_agents.tui.noise\_filter module
+=============================================
+
+.. automodule:: data_juicer_agents.tui.noise_filter
+   :members:
+   :show-inheritance:
+   :undoc-members:

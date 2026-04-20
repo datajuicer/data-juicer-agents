@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.plan.assemble\_plan.tool module
+==========================================================
+
+.. automodule:: data_juicer_agents.tools.plan.assemble_plan.tool
+   :members:
+   :show-inheritance:
+   :undoc-members:
