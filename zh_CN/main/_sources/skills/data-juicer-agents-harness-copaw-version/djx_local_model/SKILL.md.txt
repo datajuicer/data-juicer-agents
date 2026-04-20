@@ -5,7 +5,7 @@ description: >-
   Trigger keywords: local model, Ollama, private data, sensitive data, offline,
   do not send to cloud, local LLM.
   Use when processing sensitive/private data, running offline, or configuring local models.
-  Related skills: djx_auth (authentication), data-juicer (main flow), djx_retrieve (vector mode).
+  Related skills: djx_auth (authentication), data-juicer (main flow), djx_retrieve (local retrieval).
 allowed-tools: Bash, Read
 argument-hint: ""
 user-invocable: true
@@ -198,7 +198,7 @@ curl http://localhost:11434/v1/models
 # 5. Inspect dataset
 djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "/data/sensitive.jsonl"}, "sample_size": 50}'
 
-# 6. Retrieve operators locally (already local, no mode=vector needed)
+# 6. Retrieve operators locally (already local, no API key needed)
 djx tool run retrieve_operators --input-json '{"intent": "clean and filter sensitive data", "top_k": 10}'
 
 # 7. Continue with main flow...

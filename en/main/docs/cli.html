@@ -714,7 +714,7 @@ djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;ge
 </section>
 <section id="djx-retrieve">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code><a class="headerlink" href="#djx-retrieve" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;op_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--tags<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="p">|</span>bm25<span class="p">|</span>regex<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;op_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--tags<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>bm25<span class="p">|</span>regex<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
 </pre></div>
 </div>
 <p>Key options:</p>
@@ -729,7 +729,7 @@ djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;ge
 <ul class="simple">
 <li><p>ranked operator candidates</p></li>
 <li><p>retrieval source, trace, and notes</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> uses <code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">-&gt;</span> <span class="pre">vector</span> <span class="pre">-&gt;</span> <span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code> (without API key: <code class="docutils literal notranslate"><span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> uses <code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">-&gt;</span> <span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code> (without API key: <code class="docutils literal notranslate"><span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">regex</span></code> uses Python regex pattern matching against operator name, description, and parameter fields (standalone mode, not part of auto fallback)</p></li>
 </ul>
 </section>

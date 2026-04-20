@@ -76,10 +76,10 @@ Package-level `__init__.py` files re-export stable helpers, and some groups keep
   - `retrieve/_shared/operator_registry.py`
   - `retrieve/_shared/backend/` (sub-package):
     - `backend.py`: shared retrieval entrypoints (`retrieve_ops_with_meta`, `retrieve_ops`, `get_op_catalog`, etc.)
-    - `cache.py`: `RetrievalCacheManager` for vector store, tool info, and catalog caching
+    - `cache.py`: `RetrievalCacheManager` for searcher and operator catalog caching
     - `catalog.py`: operator catalog builder (collects `class_name`, `class_desc`, `class_type`, `class_tags`)
     - `result_builder.py`: shared retrieval result shaping helpers and `trace_step`
-    - `retriever.py`: `RetrieverBackend` ABC and concrete backends (`LLMRetriever`, `VectorRetriever`, `BM25Retriever`, `RegexRetriever`)
+    - `retriever.py`: `RetrieverBackend` ABC and concrete backends (`LLMRetriever`, `BM25Retriever`, `RegexRetriever`)
   - `retrieve/retrieve_operators/{input.py,logic.py,tool.py}`
   - `retrieve/retrieve_operators_api/{input.py,logic.py,tool.py}`
   - `retrieve/get_operator_info/{input.py,logic.py,tool.py}`
@@ -96,7 +96,7 @@ Package-level `__init__.py` files re-export stable helpers, and some groups keep
 Tool split:
 
 - `retrieve_operators`: local retrieval surface (`auto|bm25|regex`)
-- `retrieve_operators_api`: API-backed retrieval surface (`auto|llm|vector`)
+- `retrieve_operators_api`: API-backed retrieval surface (`auto|llm`)
 - `get_operator_info`: resolve one operator and return its schema/details
 - `list_operator_catalog`: list the current operator catalog with optional filtering
 

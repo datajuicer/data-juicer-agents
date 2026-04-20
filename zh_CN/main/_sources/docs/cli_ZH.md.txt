@@ -130,7 +130,7 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ## `djx retrieve`
 
 ```bash
-djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|vector|bm25|regex] [--json]
+djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|bm25|regex] [--json]
 ```
 
 关键参数：
@@ -143,7 +143,7 @@ djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mo
 返回：
 - 候选算子排序
 - 检索来源、trace 与备注
-- `auto` 顺序为 `llm -> vector -> bm25 -> lexical`（无 API Key 时为 `bm25 -> lexical`）
+- `auto` 顺序为 `llm -> bm25 -> lexical`（无 API Key 时为 `bm25 -> lexical`）
 - `regex` 使用 Python 正则表达式匹配算子名称、描述和参数字段（独立模式，不参与 auto fallback 链）
 
 ## `djx dev`

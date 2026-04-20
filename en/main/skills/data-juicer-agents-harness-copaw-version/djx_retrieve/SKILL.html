@@ -554,7 +554,7 @@
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></td>
 <td><p>Full (not in harness)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">llm</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">llm</span></code></p></td>
 <td><p>API-backed semantic retrieval</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code></p></td>
@@ -611,7 +611,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> modes: <code class="docutils literal notranslate"><span class="pre">auto</span></code> (routes to bm25/regex), <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>mode (API)</strong></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code> modes: <code class="docutils literal notranslate"><span class="pre">auto</span></code> (tries llm→vector), <code class="docutils literal notranslate"><span class="pre">llm</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code> modes: <code class="docutils literal notranslate"><span class="pre">auto</span></code> (uses llm), <code class="docutils literal notranslate"><span class="pre">llm</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>top_k</strong></p></td>
 <td><p>Maximum number of candidates to return</p></td>
@@ -720,7 +720,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <td><p>str</p></td>
 <td><p>No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">llm</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">llm</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code></p></td>
 <td><p>str</p></td>
@@ -850,18 +850,13 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
 <td><p>Yes</p></td>
-<td><p>Tries <code class="docutils literal notranslate"><span class="pre">llm</span></code> first, falls back to <code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p>Tries <code class="docutils literal notranslate"><span class="pre">llm</span></code> first, returns empty when llm is unavailable or returns no candidates</p></td>
 <td><p>Highest accuracy when API available</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">llm</span></code></p></td>
 <td><p>Yes</p></td>
 <td><p>LLM semantic ranking</p></td>
 <td><p>Best semantic relevance</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
-<td><p>Yes</p></td>
-<td><p>FAISS vector similarity</p></td>
-<td><p>Semantic search without LLM ranking</p></td>
 </tr>
 </tbody>
 </table>
@@ -1053,7 +1048,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <td><p>Use <code class="docutils literal notranslate"><span class="pre">intent</span></code> instead of <code class="docutils literal notranslate"><span class="pre">query</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">invalid</span> <span class="pre">local</span> <span class="pre">retrieval</span> <span class="pre">mode</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> only accepts <code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code>; for <code class="docutils literal notranslate"><span class="pre">llm</span></code>/<code class="docutils literal notranslate"><span class="pre">vector</span></code>, use <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> only accepts <code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">bm25</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code>; for <code class="docutils literal notranslate"><span class="pre">llm</span></code>, use <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Operator results are not ideal</p></td>
 <td><p>Use a more specific description in retrieval, e.g., <code class="docutils literal notranslate"><span class="pre">normalize</span> <span class="pre">all</span> <span class="pre">whitespace</span> <span class="pre">including</span> <span class="pre">internal</span> <span class="pre">spaces</span></code> instead of just <code class="docutils literal notranslate"><span class="pre">normalize</span> <span class="pre">whitespace</span></code></p></td>
@@ -1143,7 +1138,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 </pre></div>
 </div>
 <p>For API-backed semantic retrieval (outside harness), use <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;vector&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;llm&quot;}&#39;</span>
 </pre></div>
 </div>
 </section>

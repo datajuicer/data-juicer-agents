@@ -131,7 +131,7 @@ Notes:
 ## `djx retrieve`
 
 ```bash
-djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|vector|bm25|regex] [--json]
+djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|bm25|regex] [--json]
 ```
 
 Key options:
@@ -144,7 +144,7 @@ Key options:
 Returns:
 - ranked operator candidates
 - retrieval source, trace, and notes
-- `auto` uses `llm -> vector -> bm25 -> lexical` (without API key: `bm25 -> lexical`)
+- `auto` uses `llm -> bm25 -> lexical` (without API key: `bm25 -> lexical`)
 - `regex` uses Python regex pattern matching against operator name, description, and parameter fields (standalone mode, not part of auto fallback)
 
 ## `djx dev`

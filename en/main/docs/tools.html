@@ -642,10 +642,10 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve/_shared/backend/</span></code> (sub-package):</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">backend.py</span></code>: shared retrieval entrypoints (<code class="docutils literal notranslate"><span class="pre">retrieve_ops_with_meta</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieve_ops</span></code>, <code class="docutils literal notranslate"><span class="pre">get_op_catalog</span></code>, etc.)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cache.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager</span></code> for vector store, tool info, and catalog caching</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cache.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrievalCacheManager</span></code> for searcher and operator catalog caching</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">catalog.py</span></code>: operator catalog builder (collects <code class="docutils literal notranslate"><span class="pre">class_name</span></code>, <code class="docutils literal notranslate"><span class="pre">class_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">class_type</span></code>, <code class="docutils literal notranslate"><span class="pre">class_tags</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">result_builder.py</span></code>: shared retrieval result shaping helpers and <code class="docutils literal notranslate"><span class="pre">trace_step</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retriever.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrieverBackend</span></code> ABC and concrete backends (<code class="docutils literal notranslate"><span class="pre">LLMRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">VectorRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">BM25Retriever</span></code>, <code class="docutils literal notranslate"><span class="pre">RegexRetriever</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retriever.py</span></code>: <code class="docutils literal notranslate"><span class="pre">RetrieverBackend</span></code> ABC and concrete backends (<code class="docutils literal notranslate"><span class="pre">LLMRetriever</span></code>, <code class="docutils literal notranslate"><span class="pre">BM25Retriever</span></code>, <code class="docutils literal notranslate"><span class="pre">RegexRetriever</span></code>)</p></li>
 </ul>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve/retrieve_operators/{input.py,logic.py,tool.py}</span></code></p></li>
@@ -669,7 +669,7 @@
 <p>Tool split:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code>: local retrieval surface (<code class="docutils literal notranslate"><span class="pre">auto|bm25|regex</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>: API-backed retrieval surface (<code class="docutils literal notranslate"><span class="pre">auto|llm|vector</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>: API-backed retrieval surface (<code class="docutils literal notranslate"><span class="pre">auto|llm</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">get_operator_info</span></code>: resolve one operator and return its schema/details</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">list_operator_catalog</span></code>: list the current operator catalog with optional filtering</p></li>
 </ul>

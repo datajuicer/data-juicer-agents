@@ -59,7 +59,7 @@ uv pip install -e .
 # Development dependencies (pytest, black, etc.)
 uv pip install -e ".[dev]"
 
-# QA / vector search dependencies
+# QA dependencies
 uv pip install -e ".[qa]"
 
 # All optional dependencies
@@ -98,7 +98,6 @@ Base installation includes:
 | `py-data-juicer>=1.4.0` | Core Data-Juicer library |
 | `fastapi` | API server framework |
 | `transformers` | HuggingFace transformers |
-| `faiss-cpu` | Vector similarity search |
 
 ---
 

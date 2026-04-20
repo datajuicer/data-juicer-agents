@@ -418,7 +418,6 @@ The output of `retrieve_operators` is **already complete**, containing operator 
 | Feature | Dependency | Notes |
 |---------|------------|-------|
 | `retrieve_operators` (llm/auto mode) | `DASHSCOPE_API_KEY` | Cloud LLM |
-| `retrieve_operators` (vector mode) | Local faiss | No API needed |
 | `apply_recipe` | `py-data-juicer>=1.4.0` | Core processing engine |
 | LLM-based operators | Model endpoint configuration | e.g., language detection, quality scoring |
 
