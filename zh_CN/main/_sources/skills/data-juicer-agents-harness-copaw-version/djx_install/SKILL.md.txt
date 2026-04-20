@@ -120,7 +120,7 @@ djx tool list  # Should show 8 tools
 python -c "import data_juicer; print('OK')"
 
 # □ 5. Test a simple command
-djx tool run inspect_dataset --input-json '{"dataset_path": "test.jsonl", "sample_size": 5}'
+djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "test.jsonl"}, "sample_size": 5}'
 # If no test file exists, it will report file not found, but confirms the tool is available
 ```
 

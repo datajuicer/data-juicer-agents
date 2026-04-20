@@ -627,10 +627,10 @@ plan_save ──→ plan.yaml
 <td><p>Yes</p></td>
 <td><p>Processing intent description</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
-<td><p>str</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_source</span></code></p></td>
+<td><p>dict</p></td>
 <td><p>Yes</p></td>
-<td><p>Input dataset path</p></td>
+<td><p>Unified dataset source object with exactly one of <code class="docutils literal notranslate"><span class="pre">path</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code>, or <code class="docutils literal notranslate"><span class="pre">generated</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">export_path</span></code></p></td>
 <td><p>str</p></td>
@@ -678,7 +678,7 @@ plan_save ──→ plan.yaml
 <h3>Command<a class="headerlink" href="#command" title="Link to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
 <span class="s1">  &quot;intent&quot;: &quot;&lt;PROCESSING_GOAL&gt;&quot;,</span>
-<span class="s1">  &quot;dataset_path&quot;: &quot;&lt;INPUT_PATH&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;INPUT_PATH&gt;&quot;},</span>
 <span class="s1">  &quot;export_path&quot;: &quot;&lt;OUTPUT_PATH&gt;&quot;,</span>
 <span class="s1">  &quot;dataset_profile&quot;: &lt;PASTE_FULL_INSPECT_OUTPUT&gt;</span>
 <span class="s1">}&#39;</span>

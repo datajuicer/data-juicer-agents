@@ -688,12 +688,6 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
 <td><p>Modality/resource tags (<code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">image</span></code>, etc.), match-all semantics</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
-<td><p>str</p></td>
-<td><p>No</p></td>
-<td><p>—</p></td>
-<td><p>Dataset path for automatic modality detection</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -739,12 +733,6 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <td><p>No</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
 <td><p>Modality/resource tags, match-all semantics</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
-<td><p>str</p></td>
-<td><p>No</p></td>
-<td><p>—</p></td>
-<td><p>Dataset path for automatic modality detection</p></td>
 </tr>
 </tbody>
 </table>
@@ -1201,9 +1189,6 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 
 <span class="c1"># Browse catalog (fallback when retrieval is insufficient)</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;op_type&quot;: &quot;filter&quot;, &quot;include_parameters&quot;: false, &quot;limit&quot;: 20}&#39;</span>
-
-<span class="c1"># Combined with dataset modality</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;filter images&quot;, &quot;dataset_path&quot;: &quot;/data/images.jsonl&quot;}&#39;</span>
 
 <span class="c1"># API-backed retrieval (full surface only, requires API key)</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>

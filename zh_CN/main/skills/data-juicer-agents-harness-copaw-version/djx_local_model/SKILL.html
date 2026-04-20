@@ -786,7 +786,7 @@ ollama<span class="w"> </span>list
 curl<span class="w"> </span>http://localhost:11434/v1/models
 
 <span class="c1"># 5. Inspect dataset</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/sensitive.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/sensitive.jsonl&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
 
 <span class="c1"># 6. Retrieve operators locally (already local, no mode=vector needed)</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean and filter sensitive data&quot;, &quot;top_k&quot;: 10}&#39;</span>

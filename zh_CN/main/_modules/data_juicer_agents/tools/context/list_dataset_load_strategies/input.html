@@ -539,14 +539,15 @@
 
 
 <div class="viewcode-block" id="ListDatasetLoadStrategiesInput">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.list_dataset_load_strategies.input.html#data_juicer_agents.tools.context.list_dataset_load_strategies.ListDatasetLoadStrategiesInput">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.list_dataset_load_strategies.input.html#data_juicer_agents.tools.context.ListDatasetLoadStrategiesInput">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ListDatasetLoadStrategiesInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Input for list_dataset_load_strategies.</span>
 
 <span class="sd">    Discovers which dataset loading strategies are truly implemented in the</span>
 <span class="sd">    current Data-Juicer installation. Use this BEFORE build_dataset_spec when</span>
-<span class="sd">    you need to configure non-trivial dataset sources (e.g., remote S3, mixed</span>
-<span class="sd">    weights). For simple single local files, use dataset_path directly.</span>
+<span class="sd">    you need to configure non-trivial dataset sources via dataset_source.config</span>
+<span class="sd">    (e.g., remote S3, mixed weights). For simple single local files, use</span>
+<span class="sd">    dataset_source.path directly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">executor_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>

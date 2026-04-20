@@ -196,7 +196,7 @@ ollama list
 curl http://localhost:11434/v1/models
 
 # 5. Inspect dataset
-djx tool run inspect_dataset --input-json '{"dataset_path": "/data/sensitive.jsonl", "sample_size": 50}'
+djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "/data/sensitive.jsonl"}, "sample_size": 50}'
 
 # 6. Retrieve operators locally (already local, no mode=vector needed)
 djx tool run retrieve_operators --input-json '{"intent": "clean and filter sensitive data", "top_k": 10}'

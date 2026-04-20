@@ -129,7 +129,7 @@ dj-agents --ui as_studio --studio-url http://localhost:3000 --dataset ./data/dem
 
 ```bash
 djx --help
-djx retrieve "过滤长文本" --dataset ./data/demo-dataset.jsonl --json
+djx retrieve "过滤长文本" --json
 djx plan "过滤长文本" --dataset ./data/demo-dataset.jsonl --export ./data/out.jsonl --verbose
 djx apply --plan ./data/demo-plan.yaml --yes --dry-run
 dj-agents --help

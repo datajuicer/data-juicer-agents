@@ -584,8 +584,8 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>dataset_path</strong></p></td>
-<td><p>Input dataset path</p></td>
+<tr class="row-even"><td><p><strong>dataset_source</strong></p></td>
+<td><p>Unified dataset source object; use <code class="docutils literal notranslate"><span class="pre">{&quot;path&quot;:</span> <span class="pre">...}</span></code> for a simple local file shortcut</p></td>
 <td><p>Provided by user; AskUserQuestion if not specified</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>export_path</strong></p></td>
@@ -768,7 +768,7 @@
 </section>
 <section id="step-1-inspect-the-dataset">
 <h3>Step 1: Inspect the Dataset<a class="headerlink" href="#step-1-inspect-the-dataset" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -795,7 +795,7 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 3: Build dataset spec</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
 <span class="s1">  &quot;intent&quot;: &quot;clean HTML, normalize whitespace, fix unicode, filter short, deduplicate&quot;,</span>
-<span class="s1">  &quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;,</span>
+<span class="s1">  &quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;},</span>
 <span class="s1">  &quot;export_path&quot;: &quot;/data/processed/articles.jsonl&quot;,</span>
 <span class="s1">  &quot;dataset_profile&quot;: &lt;STEP_1_OUTPUT&gt;</span>
 <span class="s1">}&#39;</span>
@@ -832,7 +832,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;.djx/plans/clean_filter_dedup.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
 
 <span class="c1"># Step 9: Verify</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/processed/articles.jsonl&quot;, &quot;sample_size&quot;: 10}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/processed/articles.jsonl&quot;}, &quot;sample_size&quot;: 10}&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -909,8 +909,8 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></td>
-<td><p>dataset_path</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dataset_path&quot;:</span> <span class="pre">&quot;/path/to/data.jsonl&quot;</span></code></p></td>
+<td><p>dataset_source.path</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dataset_source&quot;:</span> <span class="pre">{&quot;path&quot;:</span> <span class="pre">&quot;/path/to/data.jsonl&quot;}</span></code></p></td>
 <td><p><s><code class="docutils literal notranslate"><span class="pre">&quot;input_path&quot;</span></code></s></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_dataset_spec</span></code></p></td>
@@ -960,7 +960,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="command-templates">
 <h3>Command Templates<a class="headerlink" href="#command-templates" title="Link to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect_dataset</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;&lt;INPUT&gt;&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;INPUT&gt;&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
 
 <span class="c1"># retrieve_operators - describe all requirements at once</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;remove HTML, normalize whitespace, fix unicode, filter short text, deduplicate&quot;, &quot;top_k&quot;: 15}&#39;</span>
@@ -968,7 +968,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <span class="c1"># build_dataset_spec</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
 <span class="s1">  &quot;intent&quot;: &quot;&lt;GOAL&gt;&quot;,</span>
-<span class="s1">  &quot;dataset_path&quot;: &quot;&lt;INPUT&gt;&quot;,</span>
+<span class="s1">  &quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;INPUT&gt;&quot;},</span>
 <span class="s1">  &quot;export_path&quot;: &quot;&lt;OUTPUT&gt;&quot;,</span>
 <span class="s1">  &quot;dataset_profile&quot;: &lt;INSPECT_OUTPUT&gt;</span>
 <span class="s1">}&#39;</span>
@@ -1201,7 +1201,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">#</a></h2>
 <p><strong>User request</strong>: “Clean this dataset <code class="docutils literal notranslate"><span class="pre">/data/articles.jsonl</span></code> — remove HTML tags, normalize whitespace, fix encoding, filter entries with fewer than 100 characters, deduplicate.”</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
 <span class="c1"># → dataset_profile</span>
 
 <span class="c1"># Step 2: Retrieve all needed operators at once</span>
@@ -1214,7 +1214,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <span class="c1"># Step 3</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
 <span class="s1">  &quot;intent&quot;: &quot;clean HTML, normalize whitespace, fix unicode, filter short, deduplicate&quot;,</span>
-<span class="s1">  &quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;,</span>
+<span class="s1">  &quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;},</span>
 <span class="s1">  &quot;export_path&quot;: &quot;/data/processed/articles.jsonl&quot;,</span>
 <span class="s1">  &quot;dataset_profile&quot;: &lt;STEP_1_OUTPUT&gt;</span>
 <span class="s1">}&#39;</span>
@@ -1251,7 +1251,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;.djx/plans/clean_filter_dedup.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
 
 <span class="c1"># Step 9</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/processed/articles.jsonl&quot;, &quot;sample_size&quot;: 10}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/processed/articles.jsonl&quot;}, &quot;sample_size&quot;: 10}&#39;</span>
 <span class="c1"># Compare: input count vs output count, spot-check quality</span>
 </pre></div>
 </div>

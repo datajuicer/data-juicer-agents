@@ -542,6 +542,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.plan.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanOrchestrator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.commands.output_control</span><span class="w"> </span><span class="kn">import</span> <span class="n">emit</span><span class="p">,</span> <span class="n">emit_json</span><span class="p">,</span> <span class="n">enabled</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetSource</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_json_object_arg</span><span class="p">(</span><span class="n">raw_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
@@ -603,30 +604,52 @@
     <span class="k">if</span> <span class="n">parse_error</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">parse_error</span>
 
-    <span class="c1"># At least one dataset source is required</span>
-    <span class="n">has_source</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="n">generated_dataset_config</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_source</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">export_path</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_error_result</span><span class="p">(</span>
-            <span class="s2">&quot;--export is required, and at least one dataset source must be provided &quot;</span>
-            <span class="s2">&quot;(--dataset, --dataset-config, or --generated-dataset-config).&quot;</span><span class="p">,</span>
-            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;input_validation&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="c1"># Warn when multiple sources are provided so users understand which one wins.</span>
-    <span class="c1"># Priority: generated_dataset_config &gt; dataset-config (multi-source) &gt; dataset (plain path)</span>
+    <span class="c1"># Validate that exactly one dataset source is provided.</span>
+    <span class="c1"># Note: argparse&#39;s mutually_exclusive_group already enforces this at the</span>
+    <span class="c1"># CLI layer.  This check is defense-in-depth for non-CLI callers that</span>
+    <span class="c1"># invoke execute_plan() directly (e.g. tests, session agent).</span>
     <span class="n">active_sources</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span>
         <span class="nb">bool</span><span class="p">(</span><span class="n">generated_dataset_config</span><span class="p">),</span>
         <span class="nb">bool</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">),</span>
         <span class="nb">bool</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">),</span>
     <span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">active_sources</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_error_result</span><span class="p">(</span>
+            <span class="s2">&quot;Exactly one dataset source must be provided: &quot;</span>
+            <span class="s2">&quot;--dataset, --dataset-config, or --generated-dataset-config.&quot;</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;input_validation&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    
     <span class="k">if</span> <span class="n">active_sources</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_logging</span>
-        <span class="n">_logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;Multiple dataset sources provided (</span><span class="si">%d</span><span class="s2">). &quot;</span>
-            <span class="s2">&quot;Effective priority: --generated-dataset-config &gt; --dataset-config &gt; --dataset. &quot;</span>
-            <span class="s2">&quot;Only the highest-priority source will be used; lower-priority sources are ignored.&quot;</span><span class="p">,</span>
-            <span class="n">active_sources</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">_error_result</span><span class="p">(</span>
+            <span class="s2">&quot;Only one dataset source can be specified at a time. &quot;</span>
+            <span class="s2">&quot;Please use either --dataset, --dataset-config, or --generated-dataset-config, but not multiple.&quot;</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;conflicting_arguments&quot;</span><span class="p">,</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;input_validation&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_error_result</span><span class="p">(</span>
+            <span class="s2">&quot;--export is required.&quot;</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;input_validation&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Construct DatasetSource from legacy arguments</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dataset_source</span> <span class="o">=</span> <span class="n">DatasetSource</span><span class="o">.</span><span class="n">from_legacy</span><span class="p">(</span>
+            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">,</span>
+            <span class="n">generated_dataset_config</span><span class="o">=</span><span class="n">generated_dataset_config</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">error_type</span> <span class="o">=</span> <span class="s2">&quot;conflicting_arguments&quot;</span> <span class="k">if</span> <span class="n">active_sources</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;missing_required&quot;</span>
+        <span class="k">return</span> <span class="n">_error_result</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="n">error_type</span><span class="p">,</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;input_validation&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">custom_operator_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
@@ -640,10 +663,8 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">orchestrator</span><span class="o">.</span><span class="n">generate_plan</span><span class="p">(</span>
             <span class="n">user_intent</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">intent</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
+            <span class="n">dataset_source</span><span class="o">=</span><span class="n">dataset_source</span><span class="p">,</span>
             <span class="n">export_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">,</span>
-            <span class="n">generated_dataset_config</span><span class="o">=</span><span class="n">generated_dataset_config</span><span class="p">,</span>
             <span class="n">custom_operator_paths</span><span class="o">=</span><span class="n">custom_operator_paths</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>

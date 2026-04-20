@@ -609,41 +609,89 @@
 <p>Examples:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl<span class="w"> </span>--quiet
 djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl<span class="w"> </span>--verbose
-djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl
+djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--tags<span class="w"> </span>text
 </pre></div>
 </div>
 </section>
 <section id="djx-plan">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code><a class="headerlink" href="#djx-plan" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>&lt;input.jsonl&gt;<span class="w"> </span>--export<span class="w"> </span>&lt;output.jsonl&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">(</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>--dataset-config<span class="w"> </span><span class="s1">&#39;&lt;json&gt;&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--generated-dataset-config<span class="w"> </span><span class="s1">&#39;&lt;json&gt;&#39;</span><span class="o">)</span><span class="w"> </span>--export<span class="w"> </span>&lt;output.jsonl&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
 </pre></div>
 </div>
 <p>Key options:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code>: output plan path (default: <code class="docutils literal notranslate"><span class="pre">plans/&lt;plan_id&gt;.yaml</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code>: JSON string for complex multi-source dataset config (mixed sources, per-source weights, <code class="docutils literal notranslate"><span class="pre">max_sample_num</span></code>); use instead of <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> for advanced loading strategies discovered via <code class="docutils literal notranslate"><span class="pre">list_dataset_load_strategies</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code>: JSON string for dynamically generated datasets via Data-Juicer formatters; must contain a <code class="docutils literal notranslate"><span class="pre">type</span></code> key matching a registered formatter name discovered via <code class="docutils literal notranslate"><span class="pre">list_dataset_formatters</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--custom-operator-paths</span></code>: custom operator dirs/files used for validation and later execution</p></li>
 </ul>
-<p>At least one dataset source must be provided: <code class="docutils literal notranslate"><span class="pre">--dataset</span></code>, <code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code>, or <code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code>.</p>
-<p>Behavior:</p>
+<section id="dataset-source">
+<h3>Dataset Source<a class="headerlink" href="#dataset-source" title="Link to this heading">#</a></h3>
+<p>The three dataset source options are <strong>mutually exclusive</strong> — exactly one must be specified.</p>
+<section id="dataset-local-file-or-directory">
+<h4><code class="docutils literal notranslate"><span class="pre">--dataset</span></code> — Local file or directory<a class="headerlink" href="#dataset-local-file-or-directory" title="Link to this heading">#</a></h4>
+<p>Process an existing local dataset. Accepts a file path or directory (Data-Juicer auto-detects the format).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data/my-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl
+</pre></div>
+</div>
+<p>Corresponds to <a class="reference external" href="https://github.com/modelscope/data-juicer/blob/main/data_juicer/config/schema.py"><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></a> in a Data-Juicer recipe config.</p>
+</section>
+<section id="dataset-config-multi-source-dataset-config">
+<h4><code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code> — Multi-source dataset config<a class="headerlink" href="#dataset-config-multi-source-dataset-config" title="Link to this heading">#</a></h4>
+<p>Mix multiple sources, set per-source weights, or cap total samples with <code class="docutils literal notranslate"><span class="pre">max_sample_num</span></code>. Run <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_dataset_load_strategies</span> <span class="pre">--input-json</span> <span class="pre">'{}'</span></code> to discover available source types (e.g. <code class="docutils literal notranslate"><span class="pre">local</span></code>, <code class="docutils literal notranslate"><span class="pre">s3</span></code>) and their fields.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;mix and deduplicate&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dataset-config<span class="w"> </span><span class="s1">&#39;{&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/a.jsonl&quot;, &quot;weight&quot;: 0.7}, {&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/b.jsonl&quot;, &quot;weight&quot;: 0.3}], &quot;max_sample_num&quot;: 50000}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--export<span class="w"> </span>./out.jsonl
+</pre></div>
+</div>
+<p>Corresponds to the <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html"><code class="docutils literal notranslate"><span class="pre">dataset</span></code></a> config block in a Data-Juicer recipe.</p>
+</section>
+<section id="generated-dataset-config-formatter-based-dataset-loading-generation">
+<h4><code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code> — Formatter-based dataset loading / generation<a class="headerlink" href="#generated-dataset-config-formatter-based-dataset-loading-generation" title="Link to this heading">#</a></h4>
+<p>Load or generate a dataset via a Data-Juicer <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format">formatter</a>. The JSON must contain a <code class="docutils literal notranslate"><span class="pre">type</span></code> key matching a registered formatter name. Run <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">list_dataset_formatters</span> <span class="pre">--input-json</span> <span class="pre">'{}'</span></code> to discover available formatters and their parameters.</p>
+<p>Two typical use cases:</p>
+<ul class="simple">
+<li><p><strong>File loading</strong>: <code class="docutils literal notranslate"><span class="pre">TextFormatter</span></code>, <code class="docutils literal notranslate"><span class="pre">JsonFormatter</span></code>, <code class="docutils literal notranslate"><span class="pre">CsvFormatter</span></code>, etc. load files from a local path — useful when you need formatter-specific options (e.g. custom suffixes) not available through <code class="docutils literal notranslate"><span class="pre">--dataset</span></code>.</p></li>
+<li><p><strong>Empty dataset generation</strong>: <code class="docutils literal notranslate"><span class="pre">EmptyFormatter</span></code> creates an empty dataset of a given length, intended for use with custom generation operators supplied via <code class="docutils literal notranslate"><span class="pre">--custom-operator-paths</span></code>.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load .md files using TextFormatter</span>
+djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate markdown docs&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--generated-dataset-config<span class="w"> </span><span class="s1">&#39;{&quot;type&quot;: &quot;TextFormatter&quot;, &quot;dataset_path&quot;: &quot;/path/to/docs&quot;, &quot;suffixes&quot;: [&quot;.md&quot;]}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--export<span class="w"> </span>./out.jsonl
+
+<span class="c1"># Generate 1000 empty samples, to be filled by a custom generation operator</span>
+djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;generate synthetic text samples&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--generated-dataset-config<span class="w"> </span><span class="s1">&#39;{&quot;type&quot;: &quot;EmptyFormatter&quot;, &quot;length&quot;: 1000, &quot;feature_keys&quot;: [&quot;text&quot;]}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--custom-operator-paths<span class="w"> </span>./my_operators<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--export<span class="w"> </span>./out.jsonl
+</pre></div>
+</div>
+<p>Corresponds to <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/config/config_all.yaml"><code class="docutils literal notranslate"><span class="pre">generated_dataset_config</span></code></a> in a Data-Juicer recipe config. See the <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format">format module</a> for all available formatters.</p>
+</section>
+</section>
+<section id="execution-behavior">
+<h3>Execution Behavior<a class="headerlink" href="#execution-behavior" title="Link to this heading">#</a></h3>
+<p>The overall execution flow of the <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code> command:</p>
 <ol class="arabic simple">
-<li><p>internally retrieves operator candidates from the intent and optional dataset-derived modality signals</p></li>
-<li><p>builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)</p></li>
-<li><p>calls the model once to generate only the operator list for the process spec</p></li>
-<li><p>builds the process spec, builds the system spec, and assembles the final plan</p></li>
-<li><p>validates the final plan and writes the plan YAML</p></li>
+<li><p>Internally retrieves operator candidates from the intent and optional dataset-derived modality signals</p></li>
+<li><p>Builds a deterministic dataset spec from dataset IO and profile signals (supports simple path, multi-source config, and dynamic formatter config)</p></li>
+<li><p>Calls the model once to generate only the operator list for the process spec</p></li>
+<li><p>Builds the process spec, builds the system spec, and assembles the final plan</p></li>
+<li><p>Validates the final plan and writes the plan YAML</p></li>
 </ol>
-<p>CLI output:</p>
+</section>
+<section id="cli-output">
+<h3>CLI Output<a class="headerlink" href="#cli-output" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>summary: <code class="docutils literal notranslate"><span class="pre">Plan</span> <span class="pre">generated</span></code>, <code class="docutils literal notranslate"><span class="pre">Modality</span></code>, <code class="docutils literal notranslate"><span class="pre">Operators</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--verbose</span></code>: planning meta (<code class="docutils literal notranslate"><span class="pre">planner_model</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieval_source</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieval_candidate_count</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>: retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload</p></li>
+<li><p>Summary: <code class="docutils literal notranslate"><span class="pre">Plan</span> <span class="pre">generated</span></code>, <code class="docutils literal notranslate"><span class="pre">Modality</span></code>, <code class="docutils literal notranslate"><span class="pre">Operators</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--verbose</span></code>: Planning meta (<code class="docutils literal notranslate"><span class="pre">planner_model</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieval_source</span></code>, <code class="docutils literal notranslate"><span class="pre">retrieval_candidate_count</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>: Retrieval payload, dataset spec, process spec, system spec, validation payload, and planning meta payload</p></li>
 </ul>
-<p>Failure behavior:</p>
+</section>
+<section id="failure-behavior">
+<h3>Failure Behavior<a class="headerlink" href="#failure-behavior" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>exits non-zero and prints a user-facing error message</p></li>
+<li><p>Exits non-zero and prints a user-facing error message</p></li>
 </ul>
+</section>
 </section>
 <section id="djx-apply">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code><a class="headerlink" href="#djx-apply" title="Link to this heading">#</a></h2>
@@ -666,14 +714,13 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </section>
 <section id="djx-retrieve">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code><a class="headerlink" href="#djx-retrieve" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;op_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--tags<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="p">|</span>bm25<span class="p">|</span>regex<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;op_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--tags<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="p">|</span>bm25<span class="p">|</span>regex<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
 </pre></div>
 </div>
 <p>Key options:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>: optional dataset path; when provided, the CLI probes the dataset through the retrieval layer’s dataset inspection logic to infer modality (text / image / multimodal / audio / video) and converts it into operator tags for filtering</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code>: filter by operator type (e.g. <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicator</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--tags</span></code>: filter by operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">image</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code>); can be combined with <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> (tags are merged)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tags</span></code>: filter by operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">image</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--top-k</span></code>: maximum number of candidates (default: 10)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--mode</span></code>: retrieval backend selection</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--json</span></code>: output the full payload as JSON instead of human-readable summary</p></li>
@@ -682,16 +729,8 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <ul class="simple">
 <li><p>ranked operator candidates</p></li>
 <li><p>retrieval source, trace, and notes</p></li>
-<li><p>when <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> is provided and modality is detected, the payload includes <code class="docutils literal notranslate"><span class="pre">inferred_tags</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> uses <code class="docutils literal notranslate"><span class="pre">llm</span> <span class="pre">-&gt;</span> <span class="pre">vector</span> <span class="pre">-&gt;</span> <span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code> (without API key: <code class="docutils literal notranslate"><span class="pre">bm25</span> <span class="pre">-&gt;</span> <span class="pre">lexical</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">regex</span></code> uses Python regex pattern matching against operator name, description, and parameter fields (standalone mode, not part of auto fallback)</p></li>
-</ul>
-<p>Dataset-aware filtering:</p>
-<ul class="simple">
-<li><p>when <code class="docutils literal notranslate"><span class="pre">--dataset</span></code> is provided, the CLI runs dataset inspection logic inside the retrieval layer to detect the dataset modality</p></li>
-<li><p>the detected modality is mapped to operator tags (e.g. <code class="docutils literal notranslate"><span class="pre">image</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;image&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">multimodal</span></code> → <code class="docutils literal notranslate"><span class="pre">[&quot;multimodal&quot;]</span></code>)</p></li>
-<li><p>these tags are passed to the retrieval backends, which filter the operator catalog so that only operators tagged with matching modalities are returned</p></li>
-<li><p>if modality detection fails, retrieval proceeds without tag filtering</p></li>
 </ul>
 </section>
 <section id="djx-dev">
@@ -748,7 +787,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;:&quot;./data/demo-dataset.jsonl&quot;,&quot;sample_size&quot;:5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;:{&quot;path&quot;:&quot;./data/demo-dataset.jsonl&quot;},&quot;sample_size&quot;:5}&#39;</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;:&quot;./tmp.txt&quot;,&quot;content&quot;:&quot;hello&quot;}&#39;</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_validate<span class="w"> </span>--input-file<span class="w"> </span>./examples/plan_payload.json
 </pre></div>
@@ -851,7 +890,18 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
     <ul class="nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#command-map">Command Map</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#global-output-levels-djx">Global Output Levels (<code class="docutils literal notranslate"><span class="pre">djx</span></code>)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-plan"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-plan"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-source">Dataset Source</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-local-file-or-directory"><code class="docutils literal notranslate"><span class="pre">--dataset</span></code> — Local file or directory</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-config-multi-source-dataset-config"><code class="docutils literal notranslate"><span class="pre">--dataset-config</span></code> — Multi-source dataset config</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#generated-dataset-config-formatter-based-dataset-loading-generation"><code class="docutils literal notranslate"><span class="pre">--generated-dataset-config</span></code> — Formatter-based dataset loading / generation</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-behavior">Execution Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cli-output">CLI Output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#failure-behavior">Failure Behavior</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-apply"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">apply</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-retrieve"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#djx-dev"><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code></a></li>

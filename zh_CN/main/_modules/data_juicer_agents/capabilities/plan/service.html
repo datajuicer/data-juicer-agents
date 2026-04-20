@@ -538,6 +538,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetSource</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_dataset_schema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.retrieve</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">extract_candidate_names</span><span class="p">,</span>
@@ -593,8 +594,6 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
         <span class="n">retrieved_candidates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -606,8 +605,6 @@
             <span class="n">intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="PlanOrchestrator.generate_plan">
@@ -616,10 +613,8 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dataset_source</span><span class="p">:</span> <span class="n">DatasetSource</span><span class="p">,</span>
         <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">generated_dataset_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">custom_operator_paths</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">retrieved_candidates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">retrieval_top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
@@ -627,8 +622,6 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">retrieval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_retrieval</span><span class="p">(</span>
             <span class="n">user_intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">retrieval_top_k</span><span class="p">,</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">retrieval_mode</span><span class="p">,</span>
             <span class="n">retrieved_candidates</span><span class="o">=</span><span class="n">retrieved_candidates</span><span class="p">,</span>
@@ -636,22 +629,19 @@
         <span class="c1"># Skip schema probing when a generated dataset is the effective runtime</span>
         <span class="c1"># source (highest priority).  Probing a lower-priority dataset_path/dataset</span>
         <span class="c1"># would imprint the wrong modality and key bindings into the final plan.</span>
-        <span class="k">if</span> <span class="n">generated_dataset_config</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dataset_source</span><span class="o">.</span><span class="n">generated</span><span class="p">:</span>
             <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">elif</span> <span class="n">dataset_path</span> <span class="ow">or</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">dataset_source</span><span class="o">.</span><span class="n">path</span> <span class="ow">or</span> <span class="n">dataset_source</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
             <span class="n">dataset_profile</span> <span class="o">=</span> <span class="n">inspect_dataset_schema</span><span class="p">(</span>
-                <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
+                <span class="n">dataset_source</span><span class="o">=</span><span class="n">dataset_source</span><span class="p">,</span>
                 <span class="n">sample_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-                <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dataset_profile</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">dataset_result</span> <span class="o">=</span> <span class="n">build_dataset_spec</span><span class="p">(</span>
             <span class="n">user_intent</span><span class="o">=</span><span class="n">user_intent</span><span class="p">,</span>
-            <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-            <span class="n">generated_dataset_config</span><span class="o">=</span><span class="n">generated_dataset_config</span><span class="p">,</span>
+            <span class="n">dataset_source</span><span class="o">=</span><span class="n">dataset_source</span><span class="p">,</span>
             <span class="n">export_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span>
             <span class="n">dataset_profile</span><span class="o">=</span><span class="n">dataset_profile</span><span class="p">,</span>
         <span class="p">)</span>

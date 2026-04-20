@@ -155,7 +155,7 @@ djx tool run apply_recipe --yes --input-json '{
 }'
 
 # 3. Verify output
-djx tool run inspect_dataset --input-json '{"dataset_path": "<output_path>", "sample_size": 10}'
+djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "<output_path>"}, "sample_size": 10}'
 ```
 
 ---

@@ -601,11 +601,11 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code></p></td>
-<td><p>str</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_source</span></code></p></td>
+<td><p>dict</p></td>
 <td><p>Yes</p></td>
 <td><p>—</p></td>
-<td><p>Dataset file path (JSONL format)</p></td>
+<td><p>Unified dataset source object with exactly one of <code class="docutils literal notranslate"><span class="pre">path</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code>, or <code class="docutils literal notranslate"><span class="pre">generated</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sample_size</span></code></p></td>
 <td><p>int</p></td>
@@ -619,7 +619,7 @@
 </section>
 <section id="command">
 <h3>Command<a class="headerlink" href="#command" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;&lt;path&gt;&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;path&gt;&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -758,10 +758,10 @@
 <section id="typical-usage">
 <h2>Typical Usage<a class="headerlink" href="#typical-usage" title="链接到此标题。">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Regular inspection</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;, &quot;sample_size&quot;: 50}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
 
 <span class="c1"># Quick check</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;: &quot;/data/articles.jsonl&quot;, &quot;sample_size&quot;: 5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;}, &quot;sample_size&quot;: 5}&#39;</span>
 
 <span class="c1"># View full schema</span>
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset

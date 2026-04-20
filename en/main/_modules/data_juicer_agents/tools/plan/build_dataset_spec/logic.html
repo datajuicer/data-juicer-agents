@@ -537,16 +537,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.dataset_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">infer_modality</span><span class="p">,</span> <span class="n">validate_dataset_spec_payload</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.normalize</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_string_list</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetSpec</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetSource</span>
 
 <div class="viewcode-block" id="build_dataset_spec">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.build_dataset_spec.logic.html#data_juicer_agents.tools.plan.build_dataset_spec">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_dataset_spec</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">generated_dataset_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset_source</span><span class="p">:</span> <span class="s2">&quot;DatasetSource | None&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">modality_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -572,16 +570,22 @@
                 <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="p">}</span>
 
-    <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">export_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">export_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">source_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">))</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">generated_dataset_config</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">source_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dataset_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;at least one dataset source is required: dataset_path, dataset, or generated_dataset_config&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;Exactly one dataset source is required: &quot;</span>
+                <span class="s2">&quot;dataset_source.path, dataset_source.config, or dataset_source.generated.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dataset_source&quot;</span><span class="p">],</span>
         <span class="p">}</span>
+    <span class="n">legacy</span> <span class="o">=</span> <span class="n">dataset_source</span><span class="o">.</span><span class="n">to_legacy_args</span><span class="p">()</span>
+    <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">legacy</span><span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">legacy</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">generated_dataset_config</span> <span class="o">=</span> <span class="n">legacy</span><span class="p">[</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">]</span>
+
+    <span class="n">export_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">export_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>

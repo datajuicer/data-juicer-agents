@@ -28,36 +28,86 @@ CLI 不包含 `trace`、`templates`、`evaluate`。
 ```bash
 djx plan "文本去重" --dataset ./data.jsonl --export ./out.jsonl --quiet
 djx plan "文本去重" --dataset ./data.jsonl --export ./out.jsonl --verbose
-djx --debug retrieve "文本去重" --dataset ./data.jsonl
+djx --debug retrieve "文本去重" --tags text
 ```
 
 ## `djx plan`
 
 ```bash
-djx plan "<intent>" --dataset <input.jsonl> --export <output.jsonl> [options]
+djx plan "<intent>" (--dataset <path> | --dataset-config '<json>' | --generated-dataset-config '<json>') --export <output.jsonl> [options]
 ```
 
 关键参数：
 - `--output`：计划输出路径（默认 `plans/<plan_id>.yaml`）
-- `--dataset-config`：JSON 字符串，用于复杂多源数据集配置（混合数据源、按源权重、`max_sample_num`）；当需要使用 `list_dataset_load_strategies` 发现的高级加载策略时，用此参数代替 `--dataset`
-- `--generated-dataset-config`：JSON 字符串，用于通过 Data-Juicer formatter 动态生成数据集；必须包含 `type` 键，值为通过 `list_dataset_formatters` 发现的已注册 formatter 名称
 - `--custom-operator-paths`：校验和后续执行时可用的自定义算子目录或文件
+### 数据集来源
 
-至少需要提供一个数据集来源：`--dataset`、`--dataset-config` 或 `--generated-dataset-config`。
+以下三个数据集来源参数**互斥**——必须且只能指定其中一个。
 
-执行行为：
+#### `--dataset` — 本地文件或目录
+
+处理已有的本地数据集，接受文件路径或目录（Data-Juicer 自动探测格式）。
+
+```bash
+djx plan "文本去重" --dataset ./data/my-dataset.jsonl --export ./out.jsonl
+```
+
+对应 Data-Juicer recipe 配置中的 [`dataset_path`](https://github.com/modelscope/data-juicer/blob/main/data_juicer/config/schema.py) 字段。
+
+#### `--dataset-config` — 多源数据集配置
+
+混合多个数据源、按源设置权重、或通过 `max_sample_num` 限制总样本数。可先运行 `djx tool run list_dataset_load_strategies --input-json '{}'` 发现可用的数据源类型（如 `local`、`s3`）及其字段。
+
+```bash
+djx plan "去重" \
+  --dataset-config '{"configs": [{"type": "local", "path": "/data/a.jsonl", "weight": 0.7}, {"type": "local", "path": "/data/b.jsonl", "weight": 0.3}], "max_sample_num": 50000}' \
+  --export ./out.jsonl
+```
+
+对应 Data-Juicer recipe 中的 [`dataset`](https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html) 配置块。
+
+#### `--generated-dataset-config` — 基于 formatter 的数据集加载 / 生成
+
+通过 Data-Juicer [formatter](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format) 加载或生成数据集。JSON 中必须包含 `type` 键，值为已注册的 formatter 名称。可先运行 `djx tool run list_dataset_formatters --input-json '{}'` 发现可用的 formatter 及其参数。
+
+两种典型用法：
+
+- **文件加载**：`TextFormatter`、`JsonFormatter`、`CsvFormatter` 等从本地路径加载文件——适用于需要从底层 Formatter 加载数据的场景。
+- **空数据集生成**：`EmptyFormatter` 创建指定长度的空数据集，配合通过 `--custom-operator-paths` 引入的自定义生成算子使用。
+
+```bash
+# 使用 TextFormatter 加载目录下的 .md 文件
+djx plan "对文档进行去重" \
+  --generated-dataset-config '{"type": "TextFormatter", "dataset_path": "/path/to/docs", "suffixes": [".md"]}' \
+  --export ./out.jsonl
+
+# 生成 1000 条空样本，由自定义生成算子填充内容
+djx plan "生成合成 text 数据" \
+  --generated-dataset-config '{"type": "EmptyFormatter", "length": 1000, "feature_keys": ["text"]}' \
+  --custom-operator-paths ./my_operators \
+  --export ./out.jsonl
+```
+
+对应 Data-Juicer recipe 配置中的 [`generated_dataset_config`](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/config/config_all.yaml) 字段。完整 formatter 列表参见 [format 模块](https://github.com/datajuicer/data-juicer/blob/main/data_juicer/format)。
+
+### 执行行为
+
+`djx plan` 命令的整体执行流程：
+
 1. 内部先根据 intent 和可选数据集模态信号做算子检索
 2. 根据数据集 IO 和画像信息构建确定性的 dataset spec（支持简单路径、多源配置和动态 formatter 配置）
 3. 调用模型只生成 process spec 所需的 operator list
 4. 依次构建 process spec、system spec，并 assemble 为最终 plan
 5. 校验最终 plan，并将 plan 以 YAML 落盘
 
-CLI 输出：
+### CLI 输出
+
 - 摘要输出：`Plan generated`、`Modality`、`Operators`
 - `--verbose`：输出 planning meta（`planner_model`、`retrieval_source`、`retrieval_candidate_count`）
 - `--debug`：输出 retrieval payload、dataset spec、process spec、system spec、validation payload 和 planning meta payload
 
-失败行为：
+### 失败行为
+
 - 非零退出，并打印面向用户的错误信息
 
 ## `djx apply`
@@ -80,13 +130,12 @@ djx apply --plan <plan.yaml> [--yes] [--dry-run] [--timeout 300]
 ## `djx retrieve`
 
 ```bash
-djx retrieve "<intent>" [--dataset <path>] [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|vector|bm25|regex] [--json]
+djx retrieve "<intent>" [--type <op_type>] [--tags <tag> ...] [--top-k 10] [--mode auto|llm|vector|bm25|regex] [--json]
 ```
 
 关键参数：
-- `--dataset`：可选数据集路径；提供后，CLI 会通过 retrieval 层内的数据集探测逻辑识别数据集模态（text / image / multimodal / audio / video），并将其转换为算子标签用于过滤
 - `--type`：按算子类型过滤（如 `filter`、`mapper`、`deduplicator`）
-- `--tags`：按算子标签过滤（如 `text`、`image`、`multimodal`）；可与 `--dataset` 组合使用（标签会合并）
+- `--tags`：按算子标签过滤（如 `text`、`image`、`multimodal`）
 - `--top-k`：最大候选数量（默认 10）
 - `--mode`：检索后端选择
 - `--json`：以 JSON 格式输出完整 payload，而非人类可读摘要
@@ -94,15 +143,8 @@ djx retrieve "<intent>" [--dataset <path>] [--type <op_type>] [--tags <tag> ...]
 返回：
 - 候选算子排序
 - 检索来源、trace 与备注
-- 当提供 `--dataset` 且成功检测到模态时，payload 中包含 `inferred_tags`
 - `auto` 顺序为 `llm -> vector -> bm25 -> lexical`（无 API Key 时为 `bm25 -> lexical`）
 - `regex` 使用 Python 正则表达式匹配算子名称、描述和参数字段（独立模式，不参与 auto fallback 链）
-
-基于数据集的过滤：
-- 当提供 `--dataset` 时，CLI 会在 retrieval 层内部运行数据集探测逻辑来识别数据集模态
-- 检测到的模态会映射为算子标签（如 `image` → `["image"]`，`multimodal` → `["multimodal"]`）
-- 这些标签会传递给检索后端，后端据此过滤算子目录，仅返回标签匹配的算子
-- 如果模态检测失败，检索将不带标签过滤继续执行
 
 ## `djx dev`
 
@@ -157,7 +199,7 @@ djx tool run <tool-name> (--input-json '<json>' | --input-file <input.json>) [--
 djx tool list --tag plan
 djx tool schema inspect_dataset
 djx tool run list_system_config --input-json '{}'
-djx tool run inspect_dataset --input-json '{"dataset_path":"./data/demo-dataset.jsonl","sample_size":5}'
+djx tool run inspect_dataset --input-json '{"dataset_source":{"path":"./data/demo-dataset.jsonl"},"sample_size":5}'
 djx tool run write_text_file --yes --input-json '{"file_path":"./tmp.txt","content":"hello"}'
 djx tool run plan_validate --input-file ./examples/plan_payload.json
 ```

@@ -542,7 +542,7 @@
 <span class="sd">Field classification lists:</span>
 <span class="sd">    dataset_fields          → dataset I/O and binding fields</span>
 <span class="sd">    system_fields           → runtime/executor system fields</span>
-<span class="sd">    agent_managed_fields    → fields auto-set by the agent (not by LLM)</span>
+<span class="sd">    agent_managed_fields    → fields managed at agent/tool boundary (not by LLM)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
@@ -556,18 +556,24 @@
 
 <span class="c1"># Fields automatically managed by the agent layer (not exposed to LLM).</span>
 <span class="c1"># These are set programmatically during apply (e.g. project_name ← plan_id).</span>
+<span class="c1"># Dataset source selectors are also managed at the tool boundary via</span>
+<span class="c1"># DatasetSource and should not be exposed through list_dataset_fields.</span>
 <span class="n">agent_managed_fields</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;project_name&quot;</span><span class="p">,</span>
     <span class="s2">&quot;job_id&quot;</span><span class="p">,</span>
     <span class="s2">&quot;auto&quot;</span><span class="p">,</span>  <span class="c1"># This is for auto-analyze mode, temporarily added here to avoid LLM exposure until we decide how to handle it.</span>
     <span class="s2">&quot;config&quot;</span><span class="p">,</span>  <span class="c1"># This is for passing the full config dict to the agent for internal use, not for LLM configuration.</span>
-<span class="p">]</span>
-
-<span class="c1"># Dataset-related field names</span>
-<span class="n">dataset_fields</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
     <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Dataset-related advanced field names.</span>
+<span class="c1"># NOTE:</span>
+<span class="c1"># Source selector fields (`dataset_path` / `dataset` / `generated_dataset_config`)</span>
+<span class="c1"># are intentionally excluded. Source selection must be provided only through</span>
+<span class="c1"># `dataset_source` at the tool input boundary to preserve mutual exclusivity.</span>
+<span class="n">dataset_fields</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;validators&quot;</span><span class="p">,</span>
     <span class="s2">&quot;load_dataset_kwargs&quot;</span><span class="p">,</span>
     <span class="s2">&quot;export_path&quot;</span><span class="p">,</span>

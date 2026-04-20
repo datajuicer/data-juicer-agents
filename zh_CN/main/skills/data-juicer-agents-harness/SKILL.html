@@ -622,9 +622,9 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="context">
 <h3><code class="docutils literal notranslate"><span class="pre">context</span></code><a class="headerlink" href="#context" title="链接到此标题。">#</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code>: inspect a dataset path and return schema, sampling, and profile information for planning.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">inspect_dataset</span></code>: inspect a dataset source and return schema, sampling, and profile information for planning.</p>
 <ul>
-<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">inspect_dataset</span> <span class="pre">--input-json</span> <span class="pre">'{&quot;dataset_path&quot;:&quot;./data/demo.jsonl&quot;,&quot;sample_size&quot;:20}'</span></code></p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span> <span class="pre">run</span> <span class="pre">inspect_dataset</span> <span class="pre">--input-json</span> <span class="pre">'{&quot;dataset_source&quot;:{&quot;path&quot;:&quot;./data/demo.jsonl&quot;},&quot;sample_size&quot;:20}'</span></code></p></li>
 </ul>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">list_dataset_fields</span></code>: list supported dataset-spec fields and their defaults.</p>

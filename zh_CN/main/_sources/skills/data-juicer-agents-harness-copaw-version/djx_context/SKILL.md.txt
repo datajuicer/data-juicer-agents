@@ -7,7 +7,7 @@ description: >-
   Use when you need to understand dataset structure, view fields, detect modality, or get statistics.
   Related skills: data-juicer (main flow), djx_plan (plan building).
 allowed-tools: Bash, Read
-argument-hint: "<dataset_path>"
+argument-hint: "<dataset_source>"
 user-invocable: true
 ---
 
@@ -51,13 +51,13 @@ Analyzes dataset metadata, field types, modality, statistics, and sample content
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `dataset_path` | str | Yes | — | Dataset file path (JSONL format) |
+| `dataset_source` | dict | Yes | — | Unified dataset source object with exactly one of `path`, `config`, or `generated` |
 | `sample_size` | int | No | 20 | Number of samples for analysis |
 
 ### Command
 
 ```bash
-djx tool run inspect_dataset --input-json '{"dataset_path": "<path>", "sample_size": 50}'
+djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "<path>"}, "sample_size": 50}'
 ```
 
 ### Output Fields
@@ -130,10 +130,10 @@ The detected modality determines which operators are available:
 
 ```bash
 # Regular inspection
-djx tool run inspect_dataset --input-json '{"dataset_path": "/data/articles.jsonl", "sample_size": 50}'
+djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "/data/articles.jsonl"}, "sample_size": 50}'
 
 # Quick check
-djx tool run inspect_dataset --input-json '{"dataset_path": "/data/articles.jsonl", "sample_size": 5}'
+djx tool run inspect_dataset --input-json '{"dataset_source": {"path": "/data/articles.jsonl"}, "sample_size": 5}'
 
 # View full schema
 djx tool schema inspect_dataset

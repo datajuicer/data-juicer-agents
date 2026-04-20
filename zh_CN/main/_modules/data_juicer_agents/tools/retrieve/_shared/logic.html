@@ -777,56 +777,11 @@
     <span class="p">}</span>
 
 
-<span class="n">_MODALITY_TAG_MAP</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;multimodal&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;multimodal&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;audio&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;audio&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;video&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">],</span>
-<span class="p">}</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_infer_tags_from_dataset</span><span class="p">(</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probe dataset and return modality tags inferred from its schema.</span>
-
-<span class="sd">    Accepts either a plain *dataset_path* or a structured *dataset* config.</span>
-<span class="sd">    Returns an empty list when the dataset cannot be inspected or the modality</span>
-<span class="sd">    is unknown, so the caller can fall back to unfiltered retrieval.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.tools.context.inspect_dataset.logic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-            <span class="n">inspect_dataset_schema</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">inspect_dataset_schema</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[]</span>
-        <span class="n">modality</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_MODALITY_TAG_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">modality</span><span class="p">,</span> <span class="p">[]))</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;infer_tags_from_dataset failed for </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[]</span>
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_retrieval_inputs</span><span class="p">(</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">requested_tags</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">(</span><span class="n">tags</span> <span class="ow">or</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-    <span class="n">inferred_tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># Priority: dataset (multi-source config) &gt; dataset_path (plain path)</span>
-    <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
-        <span class="n">inferred_tags</span> <span class="o">=</span> <span class="n">_infer_tags_from_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">dataset_path</span><span class="p">:</span>
-        <span class="n">inferred_tags</span> <span class="o">=</span> <span class="n">_infer_tags_from_dataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="n">effective_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">requested_tags</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">inferred_tags</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">effective_tags</span><span class="p">:</span>
-            <span class="n">effective_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
 
     <span class="n">normalized_top_k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">top_k</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">top_k</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">top_k</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">10</span>
     <span class="k">if</span> <span class="n">normalized_top_k</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -850,8 +805,6 @@
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;top_k&quot;</span><span class="p">:</span> <span class="n">normalized_top_k</span><span class="p">,</span>
         <span class="s2">&quot;requested_tags&quot;</span><span class="p">:</span> <span class="n">requested_tags</span><span class="p">,</span>
-        <span class="s2">&quot;inferred_tags&quot;</span><span class="p">:</span> <span class="n">inferred_tags</span><span class="p">,</span>
-        <span class="s2">&quot;effective_tags&quot;</span><span class="p">:</span> <span class="n">effective_tags</span><span class="p">,</span>
         <span class="s2">&quot;info_rows&quot;</span><span class="p">:</span> <span class="n">info_rows</span><span class="p">,</span>
         <span class="s2">&quot;info_map&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">info_rows</span><span class="p">},</span>
     <span class="p">}</span>
@@ -885,8 +838,6 @@
     <span class="n">requested_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">requested_tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">inferred_tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">effective_tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">info_rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">info_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">retrieve_meta</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -960,8 +911,6 @@
         <span class="s2">&quot;candidate_names&quot;</span><span class="p">:</span> <span class="n">candidate_names</span><span class="p">,</span>
         <span class="s2">&quot;gap_detected&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;requested_tags&quot;</span><span class="p">:</span> <span class="n">requested_tags</span><span class="p">,</span>
-        <span class="s2">&quot;inferred_tags&quot;</span><span class="p">:</span> <span class="n">inferred_tags</span><span class="p">,</span>
-        <span class="s2">&quot;effective_tags&quot;</span><span class="p">:</span> <span class="n">effective_tags</span><span class="p">,</span>
         <span class="s2">&quot;candidates&quot;</span><span class="p">:</span> <span class="n">candidates</span><span class="p">,</span>
         <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">notes</span><span class="p">,</span>
     <span class="p">}</span>
@@ -970,15 +919,13 @@
     <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="retrieve_operator_candidates">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.retrieve_operator_candidates">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.retrieve_operator_candidates">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve operators and return a structured payload for CLI/agent usage.</span>
 
@@ -990,25 +937,18 @@
 <span class="sd">                 &quot;deduplicator&quot;). Propagated to retrieval backends for early</span>
 <span class="sd">                 filtering.</span>
 <span class="sd">        tags: Explicit modality/resource tags for filtering (match-all semantics).</span>
-<span class="sd">        dataset_path: Optional dataset path; when provided, the dataset modality</span>
-<span class="sd">                      is probed via ``inspect_dataset_schema`` and the inferred</span>
-<span class="sd">                      tags are merged with any explicit *tags*.</span>
-<span class="sd">        dataset: Optional structured dataset config (``{&quot;configs&quot;: [...]}``).</span>
-<span class="sd">                 Used for modality probing when *dataset_path* is not provided.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span>
         <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
         <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">effective_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
+    <span class="n">requested_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;requested_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
     <span class="n">retrieve_meta</span> <span class="o">=</span> <span class="n">_safe_async_retrieve</span><span class="p">(</span>
         <span class="n">intent</span><span class="p">,</span>
         <span class="n">top_k</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">],</span>
         <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
         <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
-        <span class="n">tags</span><span class="o">=</span><span class="n">effective_tags</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="n">requested_tags</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">_finalize_candidate_payload</span><span class="p">(</span>
         <span class="n">intent</span><span class="o">=</span><span class="n">intent</span><span class="p">,</span>
@@ -1016,8 +956,6 @@
         <span class="n">requested_mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
         <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
         <span class="n">requested_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;requested_tags&quot;</span><span class="p">],</span>
-        <span class="n">inferred_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;inferred_tags&quot;</span><span class="p">],</span>
-        <span class="n">effective_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">],</span>
         <span class="n">info_rows</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;info_rows&quot;</span><span class="p">],</span>
         <span class="n">info_map</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;info_map&quot;</span><span class="p">],</span>
         <span class="n">retrieve_meta</span><span class="o">=</span><span class="n">retrieve_meta</span><span class="p">,</span>
@@ -1027,15 +965,13 @@
 
 
 <div class="viewcode-block" id="retrieve_operator_candidates_local">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.retrieve_operator_candidates_local">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.retrieve_operator_candidates_local">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates_local</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">normalized_mode</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span>
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_LOCAL_RETRIEVAL_MODES</span><span class="p">:</span>
@@ -1046,10 +982,8 @@
     <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span>
         <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
         <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">effective_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
+    <span class="n">requested_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;requested_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
     <span class="n">effective_mode</span> <span class="o">=</span> <span class="n">normalized_mode</span>
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
         <span class="n">effective_mode</span> <span class="o">=</span> <span class="s2">&quot;regex&quot;</span> <span class="k">if</span> <span class="n">_looks_like_regex_pattern</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;bm25&quot;</span>
@@ -1059,7 +993,7 @@
         <span class="n">top_k</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">],</span>
         <span class="n">mode</span><span class="o">=</span><span class="n">effective_mode</span><span class="p">,</span>
         <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
-        <span class="n">tags</span><span class="o">=</span><span class="n">effective_tags</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="n">requested_tags</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">_finalize_candidate_payload</span><span class="p">(</span>
         <span class="n">intent</span><span class="o">=</span><span class="n">intent</span><span class="p">,</span>
@@ -1067,8 +1001,6 @@
         <span class="n">requested_mode</span><span class="o">=</span><span class="n">normalized_mode</span><span class="p">,</span>
         <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
         <span class="n">requested_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;requested_tags&quot;</span><span class="p">],</span>
-        <span class="n">inferred_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;inferred_tags&quot;</span><span class="p">],</span>
-        <span class="n">effective_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">],</span>
         <span class="n">info_rows</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;info_rows&quot;</span><span class="p">],</span>
         <span class="n">info_map</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;info_map&quot;</span><span class="p">],</span>
         <span class="n">retrieve_meta</span><span class="o">=</span><span class="n">retrieve_meta</span><span class="p">,</span>
@@ -1078,15 +1010,13 @@
 
 
 <div class="viewcode-block" id="retrieve_operator_candidates_api">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.retrieve_operator_candidates_api">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.retrieve_operator_candidates_api">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_operator_candidates_api</span><span class="p">(</span>
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">normalized_mode</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;auto&quot;</span>
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_API_RETRIEVAL_MODES</span><span class="p">:</span>
@@ -1097,10 +1027,8 @@
     <span class="n">prepared</span> <span class="o">=</span> <span class="n">_prepare_retrieval_inputs</span><span class="p">(</span>
         <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
         <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">,</span>
-        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">effective_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
+    <span class="n">requested_tags</span> <span class="o">=</span> <span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;requested_tags&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">normalized_mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
         <span class="n">llm_meta</span> <span class="o">=</span> <span class="n">_safe_async_retrieve</span><span class="p">(</span>
@@ -1108,7 +1036,7 @@
             <span class="n">top_k</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">],</span>
             <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;llm&quot;</span><span class="p">,</span>
             <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
-            <span class="n">tags</span><span class="o">=</span><span class="n">effective_tags</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">requested_tags</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">llm_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">):</span>
             <span class="n">retrieve_meta</span> <span class="o">=</span> <span class="n">llm_meta</span>
@@ -1118,7 +1046,7 @@
                 <span class="n">top_k</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">],</span>
                 <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;vector&quot;</span><span class="p">,</span>
                 <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
-                <span class="n">tags</span><span class="o">=</span><span class="n">effective_tags</span><span class="p">,</span>
+                <span class="n">tags</span><span class="o">=</span><span class="n">requested_tags</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">retrieve_meta</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">vector_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">,</span> <span class="p">[])),</span>
@@ -1132,7 +1060,7 @@
             <span class="n">top_k</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">],</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">normalized_mode</span><span class="p">,</span>
             <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
-            <span class="n">tags</span><span class="o">=</span><span class="n">effective_tags</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">requested_tags</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_finalize_candidate_payload</span><span class="p">(</span>
@@ -1141,8 +1069,6 @@
         <span class="n">requested_mode</span><span class="o">=</span><span class="n">normalized_mode</span><span class="p">,</span>
         <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
         <span class="n">requested_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;requested_tags&quot;</span><span class="p">],</span>
-        <span class="n">inferred_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;inferred_tags&quot;</span><span class="p">],</span>
-        <span class="n">effective_tags</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;effective_tags&quot;</span><span class="p">],</span>
         <span class="n">info_rows</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;info_rows&quot;</span><span class="p">],</span>
         <span class="n">info_map</span><span class="o">=</span><span class="n">prepared</span><span class="p">[</span><span class="s2">&quot;info_map&quot;</span><span class="p">],</span>
         <span class="n">retrieve_meta</span><span class="o">=</span><span class="n">retrieve_meta</span><span class="p">,</span>
@@ -1192,7 +1118,7 @@
 
 
 <div class="viewcode-block" id="list_operator_catalog">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.list_operator_catalog.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.list_operator_catalog">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.list_operator_catalog.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.list_operator_catalog">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_operator_catalog</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1269,7 +1195,7 @@
 
 
 <div class="viewcode-block" id="get_operator_info">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.get_operator_info.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.get_operator_info">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.get_operator_info.logic.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.get_operator_info">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_info</span><span class="p">(</span><span class="n">operator_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">raw_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">operator_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_name</span><span class="p">:</span>
@@ -1330,7 +1256,7 @@
 
 
 <div class="viewcode-block" id="extract_candidate_names">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.logic.extract_candidate_names">[文档]</a>
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.html#data_juicer_agents.tools.retrieve.retrieve_operators_api.extract_candidate_names">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_candidate_names</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]:</span>
