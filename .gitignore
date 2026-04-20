@@ -98,6 +98,7 @@ __pypackages__/
 
 # Claude AI
 .claude/
+AGENTS.md
 
 # Celery stuff
 celerybeat-schedule
