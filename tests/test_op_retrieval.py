@@ -56,9 +56,13 @@ def test_retrieve_ops_with_meta_auto_mock_all_fail(monkeypatch):
     async def fail_bm25_retrieve_items(_self, _query, limit=20, op_type=None, tags=None):  # noqa: ARG001
         raise RuntimeError("bm25 unavailable")
 
+    async def fail_grep_retrieve_items(_self, _query, limit=20, op_type=None, tags=None):  # noqa: ARG001
+        raise RuntimeError("grep unavailable")
+
     monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
     monkeypatch.setattr(type(_strategy.backends["llm"]), "retrieve_items", fail_llm_retrieve_items)
     monkeypatch.setattr(type(_strategy.backends["bm25"]), "retrieve_items", fail_bm25_retrieve_items)
+    monkeypatch.setattr(type(_strategy.backends["grep"]), "retrieve_items", fail_grep_retrieve_items)
 
     payload = asyncio.run(
         retrieval_mod.retrieve_ops_with_meta(
@@ -73,6 +77,7 @@ def test_retrieve_ops_with_meta_auto_mock_all_fail(monkeypatch):
     assert payload["trace"] == [
         {"backend": "llm", "status": "failed", "error": "llm unavailable"},
         {"backend": "bm25", "status": "failed", "error": "bm25 unavailable"},
+        {"backend": "grep", "status": "failed", "error": "grep unavailable"},
     ]
 
 # ---------------------------------------------------------------------------
