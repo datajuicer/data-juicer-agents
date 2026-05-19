@@ -3,19 +3,7 @@
 
 from __future__ import annotations
 
-import sys
-from unittest.mock import MagicMock
-
 import pytest
-
-# ---------------------------------------------------------------------------
-# Mock data_juicer.tools.op_search BEFORE any data_juicer_agents imports
-# ---------------------------------------------------------------------------
-_fake_op_search = MagicMock()
-_fake_op_search.OPSearcher = MagicMock
-sys.modules["data_juicer"] = MagicMock()
-sys.modules["data_juicer.tools"] = MagicMock()
-sys.modules["data_juicer.tools.op_search"] = _fake_op_search
 
 from data_juicer_agents.tools.retrieve._shared.backend.retriever import (
     GrepRetriever,
