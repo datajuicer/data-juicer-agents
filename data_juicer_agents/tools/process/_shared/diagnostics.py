@@ -45,13 +45,15 @@ _EMPTY_STDOUT_HINTS = {
 }
 
 
-def _diagnose_by_exit_code(returncode: int, stderr: str) -> Tuple[str, str]:
+def _diagnose_by_exit_code(flavour: str, returncode: int, stderr: str) -> Tuple[str, str]:
     rc = int(returncode or 0)
     err = str(stderr or "")
     if rc == 0:
         return ("command succeeded but no output", "check whether the command is correct")
     if rc == 1:
-        if "grep" in err.lower() or "No such file" not in err:
+        # Only emit the grep-specific hint when the command actually is grep;
+        # other commands also use rc=1 for generic errors and would be misdiagnosed.
+        if flavour == "grep" or "grep" in err.lower():
             return (
                 "grep returned no matches (exit 1)",
                 "broaden pattern, remove -w flag, or search a different path",
@@ -99,7 +101,7 @@ def diagnose(*, flavour: str, returncode: int, stdout: str, stderr: str) -> Tupl
     if stderr_diag:
         return stderr_diag
 
-    diag, sugg = _diagnose_by_exit_code(returncode, stderr)
+    diag, sugg = _diagnose_by_exit_code(flavour, returncode, stderr)
 
     # For benign exit codes (0/1) without stdout, try a more specific flavour hint.
     if returncode in (0, 1) and not (stdout or "").strip():

@@ -7,6 +7,7 @@ and converts raw stdout into a compact, LLM-friendly structured result.
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Tuple
@@ -15,16 +16,39 @@ from typing import Callable, Dict, List, Tuple
 # Flavour detection
 # ---------------------------------------------------------------------------
 
-# Strip well-known prefixes (sudo, env, ...) and capture the first executable.
-_COMMAND_RE = re.compile(
-    r"^(?:(?:sudo|env|nice|nohup|time|ionice|taskset|chroot)\s+)?"
-    r"(?P<cmd>[a-zA-Z0-9_][a-zA-Z0-9_.-]*)",
-)
+# Well-known prefix words that wrap the real command (sudo, env, ...).
+_PREFIX_WORDS = frozenset({
+    "sudo", "env", "nice", "nohup", "time", "ionice", "taskset", "chroot",
+})
+# Match a leading executable token: first char letter/digit/underscore.
+_CMD_RE = re.compile(r"^(?P<cmd>[a-zA-Z0-9_][a-zA-Z0-9_.-]*)")
 
 
 def detect_flavour(command: str) -> str:
-    """Return a canonical flavour name for ``command`` (e.g. ``"grep"``)."""
-    m = _COMMAND_RE.search(str(command or "").strip())
+    """Return a canonical flavour name for ``command`` (e.g. ``"grep"``).
+
+    Handles plain commands (``grep ...``), absolute paths (``/usr/bin/grep ...``),
+    relative paths (``./tool ...``), and well-known prefix wrappers
+    (``sudo grep ...``, ``env FOO=bar grep ...``).
+    """
+    tokens = str(command or "").strip().split()
+    # Skip prefix words (sudo, env, ...) and any KEY=VAL assignments after env.
+    i = 0
+    while i < len(tokens):
+        tok = tokens[i]
+        bare = os.path.basename(tok)
+        if bare in _PREFIX_WORDS:
+            i += 1
+            # `env` may be followed by KEY=VAL pairs.
+            if bare == "env":
+                while i < len(tokens) and "=" in tokens[i] and not tokens[i].startswith("-"):
+                    i += 1
+            continue
+        break
+    if i >= len(tokens):
+        return "unknown"
+    base = os.path.basename(tokens[i])
+    m = _CMD_RE.match(base)
     if not m:
         return "unknown"
     return (m.group("cmd") or "").strip().lower() or "unknown"
