@@ -473,7 +473,7 @@ class GrepRetriever(RetrieverBackend):
 class RetrievalStrategy:
     """Manages retrieval backend selection and fallback chain.
 
-    For ``mode="auto"``, backends are tried in order: llm → bm25.
+    For ``mode="auto"``, backends are tried in order: llm → bm25 → grep.
     Unavailable backends are skipped (recorded in trace); failed backends
     trigger fallback to the next one.
     """

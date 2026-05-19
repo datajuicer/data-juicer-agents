@@ -60,7 +60,7 @@ def test_tool_list_harness_profile_excludes_non_harness_groups(monkeypatch, caps
     assert "retrieve_operators_api" not in names
     assert "develop_operator" not in names
     assert "write_text_file" not in names
-    assert "execute_shell_command" not in names
+    assert "execute_bash" not in names
     assert "execute_python_code" not in names
 
 
@@ -105,7 +105,7 @@ def test_tool_schema_harness_profile_allows_local_retrieve_tool(monkeypatch, cap
     assert payload["ok"] is True
     assert payload["profile"] == "harness"
     assert payload["tool"]["name"] == "retrieve_operators"
-    assert payload["input_schema"]["properties"]["mode"]["enum"] == ["auto", "bm25", "regex"]
+    assert payload["input_schema"]["properties"]["mode"]["enum"] == ["auto", "bm25", "regex", "grep"]
 
 
 def test_tool_schema_harness_profile_allows_list_operator_catalog(monkeypatch, capsys):
@@ -186,7 +186,7 @@ def test_tool_run_harness_profile_blocks_process_tool(monkeypatch, capsys):
         [
             "tool",
             "run",
-            "execute_shell_command",
+            "execute_bash",
             "--yes",
             "--input-json",
             json.dumps({"command": "printf hello", "timeout": 5}),
@@ -247,7 +247,7 @@ def test_tool_run_execute_tool_succeeds_with_yes(capsys):
         [
             "tool",
             "run",
-            "execute_shell_command",
+            "execute_bash",
             "--yes",
             "--input-json",
             json.dumps({"command": "printf hello", "timeout": 5}),

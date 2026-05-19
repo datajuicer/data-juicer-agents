@@ -1,0 +1,175 @@
+# -*- coding: utf-8 -*-
+r"""Command-flavour detection and structured stdout parsing.
+
+Detects which command was executed (grep, find, tail, head, cat, wc, ls, ...)
+and converts raw stdout into a compact, LLM-friendly structured result.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from typing import Callable, Dict, List, Tuple
+
+# ---------------------------------------------------------------------------
+# Flavour detection
+# ---------------------------------------------------------------------------
+
+# Strip well-known prefixes (sudo, env, ...) and capture the first executable.
+_COMMAND_RE = re.compile(
+    r"^(?:(?:sudo|env|nice|nohup|time|ionice|taskset|chroot)\s+)?"
+    r"(?P<cmd>[a-zA-Z0-9_][a-zA-Z0-9_.-]*)",
+)
+
+
+def detect_flavour(command: str) -> str:
+    """Return a canonical flavour name for ``command`` (e.g. ``"grep"``)."""
+    m = _COMMAND_RE.search(str(command or "").strip())
+    if not m:
+        return "unknown"
+    return (m.group("cmd") or "").strip().lower() or "unknown"
+
+
+# ---------------------------------------------------------------------------
+# Result + truncation
+# ---------------------------------------------------------------------------
+
+_MAX_LINES = 50
+_MAX_ITEMS = 30
+_MAX_CHARS = 8000
+
+
+@dataclass
+class ParsedResult:
+    flavour: str
+    ok: bool
+    returncode: int
+    stdout: str
+    stderr: str
+    summary: str = ""
+    items: List[str] = field(default_factory=list)
+    count: int = 0
+    truncated: bool = False
+
+
+def _truncate(text: str) -> Tuple[str, bool]:
+    """Cap ``text`` at ``_MAX_CHARS`` characters AND ``_MAX_LINES`` lines."""
+    if len(text) > _MAX_CHARS:
+        return text[:_MAX_CHARS], True
+    lines = text.splitlines()
+    if len(lines) > _MAX_LINES:
+        return "\n".join(lines[:_MAX_LINES]), True
+    return text, False
+
+
+def _nonempty_lines(text: str) -> List[str]:
+    return [ln for ln in text.splitlines() if ln.strip()]
+
+
+def _wrap(
+    flavour: str,
+    stdout: str,
+    stderr: str,
+    *,
+    summary: str,
+    items: List[str],
+    returncode: int = 0,
+    ok: bool = True,
+) -> ParsedResult:
+    truncated_out, truncated = _truncate(stdout)
+    return ParsedResult(
+        flavour=flavour,
+        ok=ok,
+        returncode=returncode,
+        stdout=truncated_out,
+        stderr=stderr,
+        summary=summary,
+        items=items[:_MAX_ITEMS],
+        count=len(stdout.splitlines()) if stdout else 0,
+        truncated=truncated,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Per-flavour parsers
+# ---------------------------------------------------------------------------
+
+
+def _parse_grep(stdout: str, stderr: str, _command: str) -> ParsedResult:
+    lines = _nonempty_lines(stdout)
+    total = len(stdout.splitlines()) if stdout else 0
+    has_match = bool(lines)
+    return _wrap(
+        "grep", stdout, stderr,
+        ok=has_match,
+        returncode=0 if has_match else 1,
+        summary=f"grep matched {total} line(s)" if total else "grep: no matches",
+        items=lines,
+    )
+
+
+def _parse_find(stdout: str, stderr: str, _command: str) -> ParsedResult:
+    lines = _nonempty_lines(stdout)
+    total = len(lines)
+    return _wrap(
+        "find", stdout, stderr,
+        summary=f"find returned {total} file(s)" if total else "find: no files matched",
+        items=lines,
+    )
+
+
+def _parse_listing(flavour: str, stdout: str, stderr: str, _command: str) -> ParsedResult:
+    """Generic line-oriented parser shared by tail / head / cat / ls."""
+    lines = stdout.splitlines()
+    total = len(lines)
+    if flavour == "tail":
+        items = lines[-_MAX_ITEMS:]
+    elif flavour == "ls":
+        items = _nonempty_lines(stdout)
+    else:  # head, cat
+        items = lines
+    if total:
+        summary = f"{flavour} returned {total} line(s)"
+    else:
+        summary = f"{flavour}: empty output"
+    return _wrap(flavour, stdout, stderr, summary=summary, items=items)
+
+
+def _parse_wc(stdout: str, stderr: str, _command: str) -> ParsedResult:
+    text = stdout.strip()
+    return _wrap("wc", text, stderr, summary=f"wc: {text}", items=[text] if text else [])
+
+
+def _parse_generic(stdout: str, stderr: str, returncode: int, command: str) -> ParsedResult:
+    return _wrap(
+        detect_flavour(command), stdout, stderr,
+        returncode=returncode,
+        ok=(returncode == 0),
+        summary=f"command exited with code {returncode}",
+        items=_nonempty_lines(stdout),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Dispatcher
+# ---------------------------------------------------------------------------
+
+_PARSERS: Dict[str, Callable[[str, str, str], ParsedResult]] = {
+    "grep": _parse_grep,
+    "egrep": _parse_grep,
+    "rg": _parse_grep,
+    "find": _parse_find,
+    "fd": _parse_find,
+    "tail": lambda o, e, c: _parse_listing("tail", o, e, c),
+    "head": lambda o, e, c: _parse_listing("head", o, e, c),
+    "cat": lambda o, e, c: _parse_listing("cat", o, e, c),
+    "ls": lambda o, e, c: _parse_listing("ls", o, e, c),
+    "wc": _parse_wc,
+}
+
+
+def parse_output(*, command: str, returncode: int, stdout: str, stderr: str) -> ParsedResult:
+    parser = _PARSERS.get(detect_flavour(command))
+    if parser is not None:
+        return parser(stdout, stderr, command)
+    return _parse_generic(stdout, stderr, returncode, command)

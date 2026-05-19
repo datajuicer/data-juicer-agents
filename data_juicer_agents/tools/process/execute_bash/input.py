@@ -11,19 +11,15 @@ class ExecuteBashInput(BaseModel):
         description=(
             "Shell command to execute. Supports any standard Unix command "
             "(grep, find, tail, head, cat, wc, ls, etc.). "
-            "The output will be automatically parsed based on the command type: "
-            "grep returns match count + lines, find returns file list, "
-            "tail/head return line snippets, etc. "
-            "Results are truncated to avoid overwhelming the context window."
+            "The output is automatically parsed based on the command type "
+            "(grep returns match count + lines, find returns file list, etc.) "
+            "and truncated to keep the context window small."
         )
     )
     timeout: int = Field(
-        default=120, ge=1,
+        default=120,
+        ge=1,
         description="Maximum execution time in seconds.",
-    )
-    working_dir: str = Field(
-        default="",
-        description="Optional working directory for the command.",
     )
 
 

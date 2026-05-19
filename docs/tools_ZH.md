@@ -143,7 +143,7 @@
 
 - 文件：
   - `process/registry.py`
-  - `process/{execute_shell_command,execute_python_code}/...`
+  - `process/{execute_bash,execute_python_code}/...`
 - 主要职责：
   - shell 执行
   - Python 代码片段执行
@@ -215,7 +215,7 @@ session toolkit 当前直接使用默认 registry，并按功能组优先级排�
 - `view_text_file`
 - `write_text_file`
 - `insert_text_file`
-- `execute_shell_command`
+- `execute_bash`
 - `execute_python_code`
 
 这些工具保持通用语义。session 编排必须基于上一步工具输出，显式传入下一步所需参数。

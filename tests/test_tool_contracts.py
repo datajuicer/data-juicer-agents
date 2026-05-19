@@ -16,7 +16,7 @@ def test_default_tool_registry_contains_core_specs():
     assert "build_process_spec" in names
     assert "assemble_plan" in names
     assert "apply_recipe" in names
-    assert "execute_shell_command" in names
+    assert "execute_bash" in names
     assert "get_session_context" not in names
     assert "set_session_context" not in names
     assert "plan_build" not in names

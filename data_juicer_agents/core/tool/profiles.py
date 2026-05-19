@@ -15,14 +15,11 @@ HARNESS_TOOL_GROUPS: Tuple[str, ...] = (
     "retrieve",
     "plan",
 )
+# Tools that live inside HARNESS_TOOL_GROUPS but are still hidden from
+# the harness profile. Tools outside HARNESS_TOOL_GROUPS are already
+# filtered out by group selection and do not need to be listed here.
 HARNESS_EXCLUDED_TOOL_NAMES: Tuple[str, ...] = (
-    "develop_operator",
-    "execute_python_code",
-    "execute_shell_command",
-    "insert_text_file",
     "retrieve_operators_api",
-    "view_text_file",
-    "write_text_file",
 )
 
 _UNRESTRICTED_PROFILES = {"", "all", "core", "default", "full"}

@@ -8,15 +8,10 @@ from typing import Any, Dict
 from data_juicer_agents.utils.runtime_helpers import run_interruptible_subprocess, to_int
 
 from .._shared.diagnostics import diagnose
-from .._shared.parser import detect_flavour, parse_output
+from .._shared.parser import parse_output
 
 
-def execute_bash(
-    *,
-    command: str,
-    timeout: int = 120,
-    working_dir: str = "",
-) -> Dict[str, Any]:
+def execute_bash(*, command: str, timeout: int = 120) -> Dict[str, Any]:
     cmd = str(command or "").strip()
     if not cmd:
         return {
@@ -34,12 +29,8 @@ def execute_bash(
     stderr = str(raw.get("stderr", ""))
 
     parsed = parse_output(command=cmd, returncode=returncode, stdout=stdout, stderr=stderr)
-
     diag, suggestion = diagnose(
-        flavour=parsed.flavour,
-        returncode=returncode,
-        stdout=stdout,
-        stderr=stderr,
+        flavour=parsed.flavour, returncode=returncode, stdout=stdout, stderr=stderr,
     )
 
     return {
@@ -50,7 +41,7 @@ def execute_bash(
         "stdout": parsed.stdout,
         "stderr": stderr,
         "summary": parsed.summary,
-        "items": parsed.items[:30],
+        "items": parsed.items,
         "count": parsed.count,
         "truncated": parsed.truncated,
         "diagnosis": diag,

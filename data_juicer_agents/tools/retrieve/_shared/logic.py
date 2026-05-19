@@ -398,7 +398,7 @@ def retrieve_operator_candidates(
     Args:
         intent: Natural-language description of the desired operators.
         top_k: Maximum number of candidates to return.
-        mode: Retrieval backend mode ("llm", "bm25", "regex", or "auto").
+        mode: Retrieval backend mode ("llm", "bm25", "regex", "grep", or "auto").
         op_type: Optional operator type filter (e.g. "filter", "mapper",
                  "deduplicator"). Propagated to retrieval backends for early
                  filtering.
