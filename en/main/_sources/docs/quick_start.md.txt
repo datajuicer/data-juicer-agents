@@ -55,7 +55,6 @@ Optional inspection step:
 
 ```bash
 djx retrieve "remove duplicate text records" \
-  --dataset ./data/demo-dataset.jsonl \
   --top-k 8
 ```
 
