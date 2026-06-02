@@ -55,7 +55,6 @@ export DJA_LLM_THINKING="true"
 
 ```bash
 djx retrieve "去除重复文本" \
-  --dataset ./data/demo-dataset.jsonl \
   --top-k 8
 ```
 
