@@ -63,7 +63,7 @@ def _build_tool_detail(call: ToolCallState) -> str:
             return failure_preview
     summary = str(call.summary or "").strip()
     args_preview = str(call.args_preview or "").strip()
-    if call.tool in {"execute_shell_command", "execute_python_code"}:
+    if call.tool in {"execute_bash", "execute_python_code"}:
         if args_preview and summary:
             return f"{args_preview} | {summary}"
         if args_preview:

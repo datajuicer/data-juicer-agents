@@ -19,7 +19,7 @@ def test_build_agentscope_json_schema_uses_input_model():
     assert schema["function"]["name"] == "retrieve_operators"
     assert "intent" in schema["function"]["parameters"]["properties"]
     assert "top_k" in schema["function"]["parameters"]["properties"]
-    assert schema["function"]["parameters"]["properties"]["mode"]["enum"] == ["auto", "bm25", "regex"]
+    assert schema["function"]["parameters"]["properties"]["mode"]["enum"] == ["auto", "bm25", "regex", "grep"]
 
 
 def test_build_agentscope_json_schema_for_retrieve_operators_api():

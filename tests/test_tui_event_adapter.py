@@ -126,7 +126,7 @@ def test_apply_event_shell_tool_detail_includes_command_and_summary():
         {
             "type": "tool_start",
             "timestamp": "2026-03-03T10:10:00.000Z",
-            "tool": "execute_shell_command",
+            "tool": "execute_bash",
             "call_id": "tool_shell_1",
             "args": {"command": "echo hello_djx", "timeout": 5},
         },
@@ -136,7 +136,7 @@ def test_apply_event_shell_tool_detail_includes_command_and_summary():
         {
             "type": "tool_end",
             "timestamp": "2026-03-03T10:10:00.300Z",
-            "tool": "execute_shell_command",
+            "tool": "execute_bash",
             "call_id": "tool_shell_1",
             "ok": True,
             "summary": "process finished with returncode=0",

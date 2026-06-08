@@ -40,7 +40,7 @@ Execution tools (shell/Python) and file management tools (read/write/insert).
 | Count dataset lines | No | Run `wc -l <file>` directly |
 | View first few lines of dataset | No | Run `head -n 5 <file>` directly |
 | Quick data analysis | Yes | `execute_python_code` |
-| System diagnostics | Yes | `execute_shell_command` |
+| System diagnostics | Yes | `execute_bash` |
 | Manipulate plan/recipe files | Yes | `view_text_file` / `write_text_file` |
 | **Data processing** | No | Use the **data-juicer** main flow |
 
@@ -50,19 +50,21 @@ Execution tools (shell/Python) and file management tools (read/write/insert).
 
 ## 1. Execution Tools
 
-### execute_shell_command
+### execute_bash
 
-Execute a shell command on the host.
+Execute a shell command on the host. Output is auto-parsed by command flavour
+(grep / find / tail / head / cat / wc / ls, ...) into structured `summary`,
+`items`, `count` fields, with built-in error diagnosis on failure.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `command` | str | Yes | — | Shell command |
 | `timeout` | int | No | 120 | Timeout in seconds |
 
-**Output**: `{stdout, stderr, exit_code}`
+**Output**: `{ok, action, flavour, returncode, stdout, stderr, summary, items, count, truncated, diagnosis, suggestion}`
 
 ```bash
-djx tool run execute_shell_command --input-json '{"command": "ls -la", "timeout": 30}'
+djx tool run execute_bash --input-json '{"command": "ls -la", "timeout": 30}'
 ```
 
 ### execute_python_code
@@ -147,16 +149,16 @@ djx tool run insert_text_file --yes --input-json '{"file_path": "/path/to/file.t
 
 ```bash
 # List files
-djx tool run execute_shell_command --input-json '{"command": "ls -la /data"}'
+djx tool run execute_bash --input-json '{"command": "ls -la /data"}'
 
 # Count lines
-djx tool run execute_shell_command --input-json '{"command": "wc -l /data/dataset.jsonl"}'
+djx tool run execute_bash --input-json '{"command": "wc -l /data/dataset.jsonl"}'
 
 # View first few lines
-djx tool run execute_shell_command --input-json '{"command": "head -n 5 /data/dataset.jsonl"}'
+djx tool run execute_bash --input-json '{"command": "head -n 5 /data/dataset.jsonl"}'
 
 # Check environment
-djx tool run execute_shell_command --input-json '{"command": "env | grep DJA_"}'
+djx tool run execute_bash --input-json '{"command": "env | grep DJA_"}'
 ```
 
 ### Python Analysis
@@ -198,7 +200,7 @@ When handling sensitive data:
 
 ## Key Principles
 
-1. **Choose the right tool**: `execute_shell_command` for system tasks, `execute_python_code` for data analysis, file tools for config file operations
+1. **Choose the right tool**: `execute_bash` for system tasks, `execute_python_code` for data analysis, file tools for config file operations
 2. **Always check results**: Verify `exit_code` and `stderr` after execution
 3. **Read before write**: Check file content with `view_text_file` before modifying
 4. **Use --yes for write operations**: write/insert operations require `--yes` in automated workflows

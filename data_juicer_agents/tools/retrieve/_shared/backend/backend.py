@@ -174,7 +174,7 @@ async def retrieve_ops_with_meta(
     Args:
         user_query: User query string.
         limit: Maximum number of tools to retrieve.
-        mode: Retrieval mode – "llm", "bm25", "regex", or "auto".
+        mode: Retrieval mode – "llm", "bm25", "regex", "grep", or "auto".
         op_type: Optional operator type filter (e.g. "filter", "mapper").
         tags: List of tags to match.
     """
@@ -191,7 +191,7 @@ async def retrieve_ops(
     Args:
         user_query: User query string.
         limit: Maximum number of tools to retrieve.
-        mode: Retrieval mode – "llm", "bm25", "regex", or "auto".
+        mode: Retrieval mode – "llm", "bm25", "regex", "grep", or "auto".
         op_type: Optional operator type filter.
     """
     meta = await retrieve_ops_with_meta(

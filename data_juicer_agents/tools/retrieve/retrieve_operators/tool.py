@@ -50,7 +50,8 @@ RETRIEVE_OPERATORS = ToolSpec(
     name="retrieve_operators",
     description=(
         "Retrieve candidate Data-Juicer operators using local retrieval. "
-        "Supports natural-language search (auto, bm25) and regex matching on operator names (regex)."
+        "Supports natural-language search (auto, bm25), regex matching on operator names (regex), "
+        "and pure-Python grep through name + description (grep)."
     ),
     input_model=RetrieveOperatorsInput,
     output_model=GenericOutput,

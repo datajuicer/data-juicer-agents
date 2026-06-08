@@ -6,11 +6,12 @@ Architecture
 RetrieverBackend (ABC)
     ├── LLMRetriever      – uses DashScope LLM for semantic ranking
     ├── BM25Retriever     – uses Data-Juicer OPSearcher BM25
-    └── RegexRetriever    – uses Data-Juicer OPSearcher regex
+    ├── RegexRetriever    – uses Data-Juicer OPSearcher regex
+    └── GrepRetriever     – pure-Python grep through operator name + description
 
 RetrievalStrategy
     Holds a registry of backends and implements the "auto" fallback chain
-    (llm → bm25), replacing the large if/elif block that was
+    (llm → bm25 → grep), replacing the large if/elif block that was
     previously in ``retrieve_ops_with_meta``.
 """
 
@@ -353,6 +354,112 @@ class RegexRetriever(RetrieverBackend):
 
 
 # ---------------------------------------------------------------------------
+# Grep backend
+# ---------------------------------------------------------------------------
+
+
+def _normalize_grep_score(n_matches: int, match_in_name: bool, match_in_desc: bool) -> float:
+    if match_in_name and match_in_desc:
+        return min(0.95, 0.5 + 0.05 * n_matches)
+    if match_in_name:
+        return min(0.85, 0.45 + 0.05 * n_matches)
+    if match_in_desc:
+        return min(0.70, 0.35 + 0.05 * n_matches)
+    return 0.0
+
+
+class GrepRetriever(RetrieverBackend):
+    """Pure-Python grep retrieval through operator name + description.
+
+    Unlike RegexRetriever which delegates to OPSearcher and only searches
+    operator names, this backend greps directly through the local operator
+    catalog (name + description fields), providing deterministic, offline
+    pattern matching similar to how Claude Code uses grep for code search.
+    """
+
+    @property
+    def name(self) -> str:
+        return "grep"
+
+    def is_available(self) -> bool:
+        return True  # Always available, no external deps
+
+    def _get_catalog(self):
+        from .backend import get_op_catalog
+        return get_op_catalog()
+
+    async def retrieve_items(
+        self,
+        query: str,
+        limit: int = 20,
+        op_type: str | None = None,
+        tags: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
+        catalog = self._get_catalog()
+
+        filtered = filter_by_op_type(catalog, op_type, type_key="class_type")
+        filtered = filter_by_tags(filtered, tags, tags_key="class_tags")
+
+        # Always escape: this is a substring grep backend, not regex.
+        # Users who want regex matching should use --mode regex instead.
+        pattern_str = str(query).strip()
+        if not pattern_str:
+            return []
+        pattern = re.compile(re.escape(pattern_str), re.IGNORECASE)
+
+        scored: list[tuple[float, str, dict]] = []
+        for entry in filtered:
+            class_name = str(entry.get("class_name", "")).strip()
+            class_desc = str(entry.get("class_desc", "")).strip()
+            if not class_name:
+                continue
+
+            matches_name = list(pattern.finditer(class_name))
+            matches_desc = list(pattern.finditer(class_desc))
+            total_matches = len(matches_name) + len(matches_desc)
+
+            if total_matches == 0:
+                continue
+
+            score = _normalize_grep_score(
+                total_matches,
+                match_in_name=bool(matches_name),
+                match_in_desc=bool(matches_desc),
+            )
+
+            key_match: list[str] = []
+            for m in matches_name:
+                key_match.append(f"name:{m.group()}")
+            for m in matches_desc[:5]:  # Cap description snippets
+                key_match.append(f"desc:{m.group()}")
+
+            scored.append((score, class_name, {
+                "class_name": class_name,
+                "class_desc": class_desc,
+                "class_type": str(entry.get("class_type", "")).strip(),
+                "class_tags": list(entry.get("class_tags", [])),
+                "key_match": key_match,
+            }))
+
+        scored.sort(key=lambda x: (-x[0], x[1]))
+
+        items: list[dict[str, Any]] = []
+        for rank, (score, _name, info) in enumerate(scored[:limit], start=1):
+            items.append(
+                build_retrieval_item(
+                    tool_name=info["class_name"],
+                    description=info["class_desc"],
+                    relevance_score=score,
+                    score_source="grep",
+                    operator_type=info["class_type"],
+                    key_match=info["key_match"],
+                )
+            )
+
+        return items
+
+
+# ---------------------------------------------------------------------------
 # Strategy manager
 # ---------------------------------------------------------------------------
 
@@ -360,7 +467,8 @@ class RegexRetriever(RetrieverBackend):
 class RetrievalStrategy:
     """Manages retrieval backend selection and fallback chain.
 
-    For ``mode="auto"``, backends are tried in order: llm → bm25.
+    For ``mode="auto"``, backends are tried in order: llm → bm25 → grep.
+    For ``mode="local_auto"``, the chain is bm25 → grep (no remote calls).
     Unavailable backends are skipped (recorded in trace); failed backends
     trigger fallback to the next one.
     """
@@ -370,8 +478,10 @@ class RetrievalStrategy:
             "llm": LLMRetriever(),
             "bm25": BM25Retriever(),
             "regex": RegexRetriever(),
+            "grep": GrepRetriever(),
         }
-        self.auto_chain: list[str] = ["llm", "bm25"]
+        self.auto_chain: list[str] = ["llm", "bm25", "grep"]
+        self.local_chain: list[str] = ["bm25", "grep"]
 
     async def execute(
         self,
@@ -383,7 +493,9 @@ class RetrievalStrategy:
     ) -> dict[str, Any]:
         """Execute retrieval with the specified mode and return a metadata dict."""
         if mode == "auto":
-            return await self._run_auto(query, limit, op_type, tags)
+            return await self._run_auto(query, limit, op_type, tags, self.auto_chain)
+        if mode == "local_auto":
+            return await self._run_auto(query, limit, op_type, tags, self.local_chain)
         return await self._run_single(mode, query, limit, op_type, tags)
 
     async def _run_single(
@@ -426,9 +538,10 @@ class RetrievalStrategy:
         limit: int,
         op_type: str | None,
         tags: list | None,
+        chain: list[str] | None = None,
     ) -> dict[str, Any]:
         trace: list[dict] = []
-        for backend_name in self.auto_chain:
+        for backend_name in (chain or self.auto_chain):
             backend = self.backends[backend_name]
             if not backend.is_available():
                 reason = (

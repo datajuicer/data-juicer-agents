@@ -44,7 +44,7 @@ def test_session_toolkit_selects_explicit_tools_without_session_tags():
     assert "build_system_spec" in names
     assert "assemble_plan" in names
     assert "apply_recipe" in names
-    assert "execute_shell_command" in names
+    assert "execute_bash" in names
     assert "plan_build" not in names
     assert "trace_run" not in names
 

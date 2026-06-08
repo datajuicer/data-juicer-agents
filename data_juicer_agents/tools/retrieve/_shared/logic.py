@@ -29,7 +29,7 @@ _OP_TYPES = {
     "pipeline",
     "formatter",
 }
-_LOCAL_RETRIEVAL_MODES = {"auto", "bm25", "regex"}
+_LOCAL_RETRIEVAL_MODES = {"auto", "bm25", "regex", "grep"}
 _API_RETRIEVAL_MODES = {"auto", "llm"}
 
 
@@ -398,7 +398,7 @@ def retrieve_operator_candidates(
     Args:
         intent: Natural-language description of the desired operators.
         top_k: Maximum number of candidates to return.
-        mode: Retrieval backend mode ("llm", "bm25", "regex", or "auto").
+        mode: Retrieval backend mode ("llm", "bm25", "regex", "grep", or "auto").
         op_type: Optional operator type filter (e.g. "filter", "mapper",
                  "deduplicator"). Propagated to retrieval backends for early
                  filtering.
@@ -449,7 +449,11 @@ def retrieve_operator_candidates_local(
     requested_tags = prepared["requested_tags"] or None
     effective_mode = normalized_mode
     if normalized_mode == "auto":
-        effective_mode = "regex" if _looks_like_regex_pattern(intent) else "bm25"
+        if _looks_like_regex_pattern(intent):
+            effective_mode = "regex"
+        else:
+            # Use "local_auto" which runs bm25 → grep (no LLM).
+            effective_mode = "local_auto"
 
     retrieve_meta = _safe_async_retrieve(
         intent,
