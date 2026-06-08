@@ -468,6 +468,7 @@ class RetrievalStrategy:
     """Manages retrieval backend selection and fallback chain.
 
     For ``mode="auto"``, backends are tried in order: llm → bm25 → grep.
+    For ``mode="local_auto"``, the chain is bm25 → grep (no remote calls).
     Unavailable backends are skipped (recorded in trace); failed backends
     trigger fallback to the next one.
     """
@@ -480,6 +481,7 @@ class RetrievalStrategy:
             "grep": GrepRetriever(),
         }
         self.auto_chain: list[str] = ["llm", "bm25", "grep"]
+        self.local_chain: list[str] = ["bm25", "grep"]
 
     async def execute(
         self,
@@ -491,7 +493,9 @@ class RetrievalStrategy:
     ) -> dict[str, Any]:
         """Execute retrieval with the specified mode and return a metadata dict."""
         if mode == "auto":
-            return await self._run_auto(query, limit, op_type, tags)
+            return await self._run_auto(query, limit, op_type, tags, self.auto_chain)
+        if mode == "local_auto":
+            return await self._run_auto(query, limit, op_type, tags, self.local_chain)
         return await self._run_single(mode, query, limit, op_type, tags)
 
     async def _run_single(
@@ -534,9 +538,10 @@ class RetrievalStrategy:
         limit: int,
         op_type: str | None,
         tags: list | None,
+        chain: list[str] | None = None,
     ) -> dict[str, Any]:
         trace: list[dict] = []
-        for backend_name in self.auto_chain:
+        for backend_name in (chain or self.auto_chain):
             backend = self.backends[backend_name]
             if not backend.is_available():
                 reason = (

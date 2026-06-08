@@ -449,13 +449,11 @@ def retrieve_operator_candidates_local(
     requested_tags = prepared["requested_tags"] or None
     effective_mode = normalized_mode
     if normalized_mode == "auto":
-        # Pass 'auto' through to the RetrievalStrategy chain
-        # (llm → bm25 → grep), which handles fallbacks internally.
-        # Only short-circuit to regex when the intent looks like a
-        # deliberate regex pattern; otherwise let the chain decide.
         if _looks_like_regex_pattern(intent):
             effective_mode = "regex"
-        # else: keep "auto" to use the full fallback chain
+        else:
+            # Use "local_auto" which runs bm25 → grep (no LLM).
+            effective_mode = "local_auto"
 
     retrieve_meta = _safe_async_retrieve(
         intent,
