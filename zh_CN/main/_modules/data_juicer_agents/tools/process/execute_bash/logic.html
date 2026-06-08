@@ -2,12 +2,12 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="../../../../../" >
+<html lang="zh-CN" data-content_root="../../../../../" >
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>data_juicer_agents.tools.process.execute_shell_command.logic &#8212; Data Juicer Agents</title>
+    <title>data_juicer_agents.tools.process.execute_bash.logic &#8212; Data Juicer Agents</title>
   
   
   
@@ -41,21 +41,22 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
-    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/documentation_options.js?v=91bfbbb6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer_agents/tools/process/execute_shell_command/logic';</script>
+    <script src="../../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer_agents/tools/process/execute_bash/logic';</script>
     <script src="../../../../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../../../../_static/switcher-mobile.js?v=07875724"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="../../../../../_static/ask-ai-widget.js?v=7a5b498f"></script>
     <link rel="icon" href="../../../../../_static/icon.png"/>
-    <link rel="index" title="Index" href="../../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="zh-CN"/>
   <meta name="docsearch:version" content="" />
   </head>
   
@@ -64,12 +65,12 @@
 
   
   
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
 
   
   <dialog id="pst-search-dialog">
@@ -92,13 +93,13 @@
   </dialog>
 
   <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
 </div>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -111,7 +112,7 @@
     
   
 
-<a class="navbar-brand logo" href="../../../../../index.html">
+<a class="navbar-brand logo" href="../../../../../index_ZH.html">
   
   
   
@@ -141,8 +142,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../docs_index.html">
-    DOCS
+  <a class="nav-link nav-internal" href="../../../../../docs_index_ZH.html">
+    文档
   </a>
 </li>
 
@@ -155,21 +156,21 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
     Core
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
     Sandbox
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
     Hub
   </a>
 </li>
@@ -185,7 +186,7 @@
         <div class="navbar-item navbar-persistent--container">
           
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
         </div>
@@ -210,8 +211,8 @@
         <div class="navbar-item">
 
 <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
   <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
 </button></div>
       
@@ -222,9 +223,9 @@
             class="navbar-dropdown-trigger" 
             aria-haspopup="true"
             aria-expanded="false"
-            aria-label="Select language: en">
+            aria-label="Select language: zh-CN">
       <span class="switcher-icon" aria-hidden="true">🌐</span>
-      <span class="switcher-text">en</span>
+      <span class="switcher-text">zh-CN</span>
       <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
     </button>
     <div class="navbar-dropdown-panel" role="menu">
@@ -232,19 +233,19 @@
         
           
           
-          <a href="../../../../../../../en/main/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
-             class="dropdown-item active"
+          <a href="../../../../../../../en/main/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
+             class="dropdown-item "
              role="menuitem"
-             aria-current="true">
+             >
             English
           </a>
         
           
           
-          <a href="../../../../../../../zh_CN/main/_modules/data_juicer_agents/tools/process/execute_shell_command/logic_ZH.html"
-             class="dropdown-item "
+          <a href="../../../../../../../zh_CN/main/_modules/data_juicer_agents/tools/process/execute_bash/logic_ZH.html"
+             class="dropdown-item active"
              role="menuitem"
-             >
+             aria-current="true">
             简体中文
           </a>
         
@@ -267,21 +268,21 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../../main/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
+        <a href="../../../../../../main/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
            class="dropdown-item active"
            role="menuitem"
            aria-current="true">
           main
         </a>
         
-        <a href="../../../../../../v0.0.3/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
+        <a href="../../../../../../v0.0.3/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
            class="dropdown-item "
            role="menuitem"
            >
           v0.0.3
         </a>
         
-        <a href="../../../../../../v0.0.2/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
+        <a href="../../../../../../v0.0.2/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
            class="dropdown-item "
            role="menuitem"
            >
@@ -301,7 +302,7 @@
   
     <div class="navbar-persistent--mobile">
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
     </div>
@@ -337,8 +338,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../docs_index.html">
-    DOCS
+  <a class="nav-link nav-internal" href="../../../../../docs_index_ZH.html">
+    文档
   </a>
 </li>
 
@@ -351,21 +352,21 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
     Core
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
     Sandbox
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
     Hub
   </a>
 </li>
@@ -399,8 +400,8 @@
           <div class="navbar-item">
 
 <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
   <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
 </button></div>
         
@@ -411,9 +412,9 @@
             class="navbar-dropdown-trigger" 
             aria-haspopup="true"
             aria-expanded="false"
-            aria-label="Select language: en">
+            aria-label="Select language: zh-CN">
       <span class="switcher-icon" aria-hidden="true">🌐</span>
-      <span class="switcher-text">en</span>
+      <span class="switcher-text">zh-CN</span>
       <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
     </button>
     <div class="navbar-dropdown-panel" role="menu">
@@ -421,19 +422,19 @@
         
           
           
-          <a href="../../../../../../../en/main/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
-             class="dropdown-item active"
+          <a href="../../../../../../../en/main/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
+             class="dropdown-item "
              role="menuitem"
-             aria-current="true">
+             >
             English
           </a>
         
           
           
-          <a href="../../../../../../../zh_CN/main/_modules/data_juicer_agents/tools/process/execute_shell_command/logic_ZH.html"
-             class="dropdown-item "
+          <a href="../../../../../../../zh_CN/main/_modules/data_juicer_agents/tools/process/execute_bash/logic_ZH.html"
+             class="dropdown-item active"
              role="menuitem"
-             >
+             aria-current="true">
             简体中文
           </a>
         
@@ -456,21 +457,21 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../../main/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
+        <a href="../../../../../../main/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
            class="dropdown-item active"
            role="menuitem"
            aria-current="true">
           main
         </a>
         
-        <a href="../../../../../../v0.0.3/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
+        <a href="../../../../../../v0.0.3/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
            class="dropdown-item "
            role="menuitem"
            >
           v0.0.3
         </a>
         
-        <a href="../../../../../../v0.0.2/_modules/data_juicer_agents/tools/process/execute_shell_command/logic.html"
+        <a href="../../../../../../v0.0.2/_modules/data_juicer_agents/tools/process/execute_bash/logic.html"
            class="dropdown-item "
            role="menuitem"
            >
@@ -518,14 +519,14 @@
   <ul class="bd-breadcrumbs">
     
     <li class="breadcrumb-item breadcrumb-home">
-      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+      <a href="../../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">模块代码</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.process.execute_shell_command.logic</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.process.execute_bash.logic</span></li>
   </ul>
 </nav>
 </div>
@@ -542,9 +543,9 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for data_juicer_agents.tools.process.execute_shell_command.logic</h1><div class="highlight"><pre>
+  <h1>data_juicer_agents.tools.process.execute_bash.logic 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Pure logic for execute_shell_command.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Pure logic for execute_bash — SmartBash execution with structured parsing.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -552,22 +553,50 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.runtime_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_interruptible_subprocess</span><span class="p">,</span> <span class="n">to_int</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.diagnostics</span><span class="w"> </span><span class="kn">import</span> <span class="n">diagnose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_output</span>
 
-<div class="viewcode-block" id="execute_shell_command">
-<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.process.execute_shell_command.logic.html#data_juicer_agents.tools.process.execute_shell_command.execute_shell_command">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">execute_shell_command</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="execute_bash">
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.process.execute_bash.logic.html#data_juicer_agents.tools.process.execute_bash.logic.execute_bash">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_bash</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
             <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;command&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;command is required for execute_shell_command&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;command is required&quot;</span><span class="p">,</span>
         <span class="p">}</span>
+
     <span class="n">timeout_sec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">to_int</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="n">run_interruptible_subprocess</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout_sec</span><span class="o">=</span><span class="n">timeout_sec</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;execute_shell_command&quot;</span>
-    <span class="k">return</span> <span class="n">payload</span></div>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">run_interruptible_subprocess</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout_sec</span><span class="o">=</span><span class="n">timeout_sec</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">returncode</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;returncode&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stdout&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">stderr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stderr&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">cmd</span><span class="p">,</span> <span class="n">returncode</span><span class="o">=</span><span class="n">returncode</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
+    <span class="n">diag</span><span class="p">,</span> <span class="n">suggestion</span> <span class="o">=</span> <span class="n">diagnose</span><span class="p">(</span>
+        <span class="n">flavour</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">flavour</span><span class="p">,</span> <span class="n">returncode</span><span class="o">=</span><span class="n">returncode</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">ok</span><span class="p">,</span>
+        <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;execute_bash&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;flavour&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">flavour</span><span class="p">,</span>
+        <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="n">returncode</span><span class="p">,</span>
+        <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+        <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">stderr</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">summary</span><span class="p">,</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+        <span class="s2">&quot;truncated&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">truncated</span><span class="p">,</span>
+        <span class="s2">&quot;diagnosis&quot;</span><span class="p">:</span> <span class="n">diag</span><span class="p">,</span>
+        <span class="s2">&quot;suggestion&quot;</span><span class="p">:</span> <span class="n">suggestion</span><span class="p">,</span>
+        <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">cmd</span><span class="p">,</span>
+        <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="n">timeout_sec</span><span class="p">,</span>
+    <span class="p">}</span></div>
 
 </pre></div>
 
@@ -625,7 +654,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>
@@ -633,7 +662,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
 </p></div>
       
     </div>

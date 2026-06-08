@@ -561,14 +561,11 @@
     <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
     <span class="s2">&quot;plan&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="c1"># Tools that live inside HARNESS_TOOL_GROUPS but are still hidden from</span>
+<span class="c1"># the harness profile. Tools outside HARNESS_TOOL_GROUPS are already</span>
+<span class="c1"># filtered out by group selection and do not need to be listed here.</span>
 <span class="n">HARNESS_EXCLUDED_TOOL_NAMES</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;develop_operator&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;execute_python_code&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;execute_shell_command&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;insert_text_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;retrieve_operators_api&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;view_text_file&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;write_text_file&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">_UNRESTRICTED_PROFILES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">}</span>

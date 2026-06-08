@@ -143,9 +143,9 @@ Tool split:
 
 - Files:
   - `process/registry.py`
-  - `process/{execute_shell_command,execute_python_code}/...`
+  - `process/{execute_bash,execute_python_code}/...`
 - Main responsibilities:
-  - shell execution
+  - shell execution (with structured stdout parsing + diagnosis)
   - python snippet execution
 
 ## 4. Runtime Adapters
@@ -215,7 +215,7 @@ The default registry currently exposes these tools to the session runtime:
 - `view_text_file`
 - `write_text_file`
 - `insert_text_file`
-- `execute_shell_command`
+- `execute_bash`
 - `execute_python_code`
 
 These tools stay generic. Session orchestration must call them with explicit arguments based on prior tool outputs.

@@ -1,7 +1,0 @@
-data\_juicer\_agents.tools.process.execute\_shell\_command.input module
-=======================================================================
-
-.. automodule:: data_juicer_agents.tools.process.execute_shell_command.input
-   :members:
-   :show-inheritance:
-   :undoc-members:

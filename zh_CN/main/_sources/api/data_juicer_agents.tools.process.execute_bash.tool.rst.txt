@@ -1,0 +1,7 @@
+data\_juicer\_agents.tools.process.execute\_bash.tool module
+============================================================
+
+.. automodule:: data_juicer_agents.tools.process.execute_bash.tool
+   :members:
+   :show-inheritance:
+   :undoc-members:
