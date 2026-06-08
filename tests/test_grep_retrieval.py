@@ -154,42 +154,33 @@ class TestGrepRetrieverKeywordMatching:
         assert items[0]["tool_name"] == "text_length_filter"
 
 
-class TestGrepRetrieverRegexMatching:
-    def test_regex_metacharacters_used_as_pattern(self):
-        r = _make_grep()
-        items = r._gather(r.retrieve_items("text.*filter"))
-        names = [i["tool_name"] for i in items]
-        # text.*filter matches names containing "text" then "filter"
-        assert "text_length_filter" in names
-        # alphanumeric_filter has no "text" → excluded (correct)
-        assert "alphanumeric_filter" not in names
+class TestGrepRetrieverLiteralMatching:
+    """GrepRetriever always does literal (escaped) matching.
+    Regex patterns should be used via --mode regex instead."""
 
-    def test_alternation_regex(self):
+    def test_metacharacters_treated_as_literal(self):
+        r = _make_grep()
+        # "text.*filter" is treated as literal substring, not regex
+        items = r._gather(r.retrieve_items("text.*filter"))
+        assert items == []  # no operator name contains literal "text.*filter"
+
+    def test_pipe_char_treated_as_literal(self):
         r = _make_grep()
         items = r._gather(r.retrieve_items("image|video"))
-        names = [i["tool_name"] for i in items]
-        assert "image_resize_mapper" in names
-        assert "video_frame_selector" in names
-
-    def test_anchor_start(self):
-        r = _make_grep()
-        items = r._gather(r.retrieve_items("^text_"))
-        names = [i["tool_name"] for i in items]
-        assert "text_length_filter" in names
-        assert "text_normalizer" in names
-
-    def test_invalid_regex_falls_back_to_escaped_literal(self):
-        r = _make_grep()
-        items = r._gather(r.retrieve_items("[unclosed"))
-        # Should not raise; treats as escaped literal
-        # [unclosed won't match normal operator names
+        # Treated as literal "image|video", not alternation
         assert items == []
 
-    def test_regex_with_description(self):
+    def test_brackets_treated_as_literal(self):
         r = _make_grep()
-        items = r._gather(r.retrieve_items(r"lowercase|accent"))
-        names = [i["tool_name"] for i in items]
-        assert "text_normalizer" in names
+        items = r._gather(r.retrieve_items("[unclosed"))
+        # Should not raise; treated as literal "[unclosed"
+        assert items == []
+
+    def test_parentheses_treated_as_literal(self):
+        r = _make_grep()
+        items = r._gather(r.retrieve_items("filter (text)"))
+        # Literal "filter (text)" — won't match any operator name/desc
+        assert items == []
 
 
 class TestGrepRetrieverFiltering:

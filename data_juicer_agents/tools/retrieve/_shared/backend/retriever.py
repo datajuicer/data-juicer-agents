@@ -400,18 +400,12 @@ class GrepRetriever(RetrieverBackend):
         filtered = filter_by_op_type(catalog, op_type, type_key="class_type")
         filtered = filter_by_tags(filtered, tags, tags_key="class_tags")
 
-        # Compile regex (case-insensitive).  Escape if query looks like
-        # plain text rather than an intentional regex pattern.
+        # Always escape: this is a substring grep backend, not regex.
+        # Users who want regex matching should use --mode regex instead.
         pattern_str = str(query).strip()
         if not pattern_str:
             return []
-        try:
-            if re.search(r'[\^\$\[\]\(\)\|\*\+\?\\]', pattern_str):
-                pattern = re.compile(pattern_str, re.IGNORECASE)
-            else:
-                pattern = re.compile(re.escape(pattern_str), re.IGNORECASE)
-        except re.error:
-            pattern = re.compile(re.escape(pattern_str), re.IGNORECASE)
+        pattern = re.compile(re.escape(pattern_str), re.IGNORECASE)
 
         scored: list[tuple[float, str, dict]] = []
         for entry in filtered:

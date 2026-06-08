@@ -30,6 +30,12 @@ class TestDetectFlavour:
         assert detect_flavour("sudo grep pattern /var/log/syslog") == "grep"
         assert detect_flavour("sudo find / -name foo") == "find"
 
+    def test_pipe_uses_last_command(self):
+        from data_juicer_agents.tools.process._shared.parser import detect_flavour
+        assert detect_flavour("grep foo | wc -l") == "wc"
+        assert detect_flavour("cat log.txt | grep ERROR | head -20") == "head"
+        assert detect_flavour("find . -name '*.py' | xargs grep TODO") == "grep"
+
     def test_unknown_and_empty(self):
         from data_juicer_agents.tools.process._shared.parser import detect_flavour
         assert detect_flavour("mycustomtool --flag") == "mycustomtool"
@@ -59,6 +65,18 @@ class TestParseOutput:
         assert r.ok is False
         assert r.count == 0
         assert "no matches" in r.summary
+
+    def test_grep_error_returncode_preserved(self):
+        from data_juicer_agents.tools.process._shared.parser import parse_output
+        r = parse_output(
+            command="grep '[invalid' *.py",
+            returncode=2,
+            stdout="",
+            stderr="grep: Invalid regular expression",
+        )
+        assert r.flavour == "grep"
+        assert r.ok is False
+        assert r.returncode == 2
 
     def test_grep_truncation(self):
         from data_juicer_agents.tools.process._shared.parser import parse_output

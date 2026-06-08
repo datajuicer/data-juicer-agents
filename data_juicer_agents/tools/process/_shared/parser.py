@@ -19,6 +19,7 @@ from typing import Callable, Dict, List, Tuple
 # Well-known prefix words that wrap the real command (sudo, env, ...).
 _PREFIX_WORDS = frozenset({
     "sudo", "env", "nice", "nohup", "time", "ionice", "taskset", "chroot",
+    "xargs",
 })
 # Match a leading executable token: first char letter/digit/underscore.
 _CMD_RE = re.compile(r"^(?P<cmd>[a-zA-Z0-9_][a-zA-Z0-9_.-]*)")
@@ -30,8 +31,16 @@ def detect_flavour(command: str) -> str:
     Handles plain commands (``grep ...``), absolute paths (``/usr/bin/grep ...``),
     relative paths (``./tool ...``), and well-known prefix wrappers
     (``sudo grep ...``, ``env FOO=bar grep ...``).
+
+    For pipelines (``grep ... | wc -l``), returns the flavour of the **last**
+    command, since that determines stdout format.
     """
-    tokens = str(command or "").strip().split()
+    cmd = str(command or "").strip()
+    # For pipelines, use the last segment (it determines stdout format).
+    if "|" in cmd:
+        segments = cmd.split("|")
+        cmd = segments[-1].strip()
+    tokens = cmd.split()
     # Skip prefix words (sudo, env, ...) and any KEY=VAL assignments after env.
     i = 0
     while i < len(tokens):
@@ -119,30 +128,38 @@ def _wrap(
 # ---------------------------------------------------------------------------
 
 
-def _parse_grep(stdout: str, stderr: str, _command: str) -> ParsedResult:
+def _parse_grep(stdout: str, stderr: str, _command: str, returncode: int = 0) -> ParsedResult:
     lines = _nonempty_lines(stdout)
     total = len(stdout.splitlines()) if stdout else 0
     has_match = bool(lines)
+    # Respect the real returncode: rc>=2 means an actual error (syntax, permission, …),
+    # not just "no matches" (rc=1).  Only synthesize ok from content when rc∈{0,1}.
+    if returncode >= 2:
+        ok = False
+    else:
+        ok = has_match
     return _wrap(
         "grep", stdout, stderr,
-        ok=has_match,
-        returncode=0 if has_match else 1,
+        ok=ok,
+        returncode=returncode,
         summary=f"grep matched {total} line(s)" if total else "grep: no matches",
         items=lines,
     )
 
 
-def _parse_find(stdout: str, stderr: str, _command: str) -> ParsedResult:
+def _parse_find(stdout: str, stderr: str, _command: str, returncode: int = 0) -> ParsedResult:
     lines = _nonempty_lines(stdout)
     total = len(lines)
     return _wrap(
         "find", stdout, stderr,
+        returncode=returncode,
+        ok=(returncode == 0),
         summary=f"find returned {total} file(s)" if total else "find: no files matched",
         items=lines,
     )
 
 
-def _parse_listing(flavour: str, stdout: str, stderr: str, _command: str) -> ParsedResult:
+def _parse_listing(flavour: str, stdout: str, stderr: str, _command: str, returncode: int = 0) -> ParsedResult:
     """Generic line-oriented parser shared by tail / head / cat / ls."""
     lines = stdout.splitlines()
     total = len(lines)
@@ -156,12 +173,14 @@ def _parse_listing(flavour: str, stdout: str, stderr: str, _command: str) -> Par
         summary = f"{flavour} returned {total} line(s)"
     else:
         summary = f"{flavour}: empty output"
-    return _wrap(flavour, stdout, stderr, summary=summary, items=items)
+    return _wrap(flavour, stdout, stderr, returncode=returncode, ok=(returncode == 0),
+                 summary=summary, items=items)
 
 
-def _parse_wc(stdout: str, stderr: str, _command: str) -> ParsedResult:
+def _parse_wc(stdout: str, stderr: str, _command: str, returncode: int = 0) -> ParsedResult:
     text = stdout.strip()
-    return _wrap("wc", text, stderr, summary=f"wc: {text}", items=[text] if text else [])
+    return _wrap("wc", text, stderr, returncode=returncode, ok=(returncode == 0),
+                 summary=f"wc: {text}", items=[text] if text else [])
 
 
 def _parse_generic(stdout: str, stderr: str, returncode: int, command: str) -> ParsedResult:
@@ -178,16 +197,16 @@ def _parse_generic(stdout: str, stderr: str, returncode: int, command: str) -> P
 # Dispatcher
 # ---------------------------------------------------------------------------
 
-_PARSERS: Dict[str, Callable[[str, str, str], ParsedResult]] = {
+_PARSERS: Dict[str, Callable[[str, str, str, int], ParsedResult]] = {
     "grep": _parse_grep,
     "egrep": _parse_grep,
     "rg": _parse_grep,
     "find": _parse_find,
     "fd": _parse_find,
-    "tail": lambda o, e, c: _parse_listing("tail", o, e, c),
-    "head": lambda o, e, c: _parse_listing("head", o, e, c),
-    "cat": lambda o, e, c: _parse_listing("cat", o, e, c),
-    "ls": lambda o, e, c: _parse_listing("ls", o, e, c),
+    "tail": lambda o, e, c, rc: _parse_listing("tail", o, e, c, rc),
+    "head": lambda o, e, c, rc: _parse_listing("head", o, e, c, rc),
+    "cat": lambda o, e, c, rc: _parse_listing("cat", o, e, c, rc),
+    "ls": lambda o, e, c, rc: _parse_listing("ls", o, e, c, rc),
     "wc": _parse_wc,
 }
 
@@ -195,5 +214,5 @@ _PARSERS: Dict[str, Callable[[str, str, str], ParsedResult]] = {
 def parse_output(*, command: str, returncode: int, stdout: str, stderr: str) -> ParsedResult:
     parser = _PARSERS.get(detect_flavour(command))
     if parser is not None:
-        return parser(stdout, stderr, command)
+        return parser(stdout, stderr, command, returncode)
     return _parse_generic(stdout, stderr, returncode, command)
