@@ -115,18 +115,25 @@ def scan_media_folder(
 
     for p in paths:
         ext = os.path.splitext(p)[1].lower()
-        if ext in IMAGE_SUFFIXES:
-            records.append({
-                "text": f"{_IMAGE_TOKEN} {_EOC_TOKEN}",
-                "images": [p],
-            })
-            image_count += 1
-        elif ext in VIDEO_SUFFIXES:
+        # A file reaches this loop only if its suffix was scanned for, so an
+        # extension outside the standard sets must be a user-supplied custom
+        # suffix. Classify those by media_type instead of dropping them
+        # silently: 'video' -> video record, 'image'/'auto' -> image record.
+        is_video = ext in VIDEO_SUFFIXES or (
+            ext not in IMAGE_SUFFIXES and media_type == "video"
+        )
+        if is_video:
             records.append({
                 "text": f"{_VIDEO_TOKEN} {_EOC_TOKEN}",
                 "videos": [p],
             })
             video_count += 1
+        else:
+            records.append({
+                "text": f"{_IMAGE_TOKEN} {_EOC_TOKEN}",
+                "images": [p],
+            })
+            image_count += 1
 
     # Write JSONL
     try:
