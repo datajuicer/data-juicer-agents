@@ -8,7 +8,8 @@ from typing import List
 from data_juicer_agents.core.tool import ToolSpec
 
 from .apply_recipe.tool import APPLY_RECIPE
+from .submit_ray_job.tool import SUBMIT_RAY_JOB
 
-TOOL_SPECS: List[ToolSpec] = [APPLY_RECIPE]
+TOOL_SPECS: List[ToolSpec] = [APPLY_RECIPE, SUBMIT_RAY_JOB]
 
-__all__ = ["APPLY_RECIPE", "TOOL_SPECS"]
+__all__ = ["APPLY_RECIPE", "SUBMIT_RAY_JOB", "TOOL_SPECS"]
