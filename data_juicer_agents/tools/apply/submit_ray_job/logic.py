@@ -7,7 +7,9 @@ import logging
 import os
 import re
 import shlex
+import shutil
 import subprocess
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -261,7 +263,11 @@ def submit_ray_job(
 
     # 3. Prepare working directory and recipe
     exec_id = f"ray_{uuid4().hex[:8]}"
-    working_dir = Path(plan_path).parent.resolve() / f".ray_submit_{exec_id}"
+    # Staging dir for `ray job submit --working-dir` (holds the recipe YAML that
+    # gets packaged and uploaded to the cluster). Keep it on Worker-local /tmp
+    # rather than next to the plan: the plan often lives on an OSS FUSE mount
+    # that forbids deletion, which would both litter the mount and break cleanup.
+    working_dir = Path(tempfile.gettempdir()) / f".ray_submit_{exec_id}"
     dj_export_path = ""
 
     # Submit as a dj-process job with executor_type=ray. Uniquify export_path
@@ -277,6 +283,7 @@ def submit_ray_job(
     try:
         recipe_path = _write_recipe(plan_payload, working_dir)
     except ValueError as exc:
+        shutil.rmtree(working_dir, ignore_errors=True)
         return {
             "ok": False,
             "error_type": "invalid_plan",
@@ -301,38 +308,44 @@ def submit_ray_job(
     # 5. Execute
     start_dt = datetime.now(timezone.utc)
     try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout_seconds,
-        )
-        returncode = result.returncode
-        stdout = result.stdout
-        stderr = result.stderr
-    except subprocess.TimeoutExpired:
-        end_dt = datetime.now(timezone.utc)
-        return {
-            "ok": False,
-            "error_type": "timeout",
-            "message": f"Ray job submission timed out after {timeout_seconds}s",
-            "command": command_display,
-            "duration_seconds": (end_dt - start_dt).total_seconds(),
-        }
-    except FileNotFoundError:
-        return {
-            "ok": False,
-            "error_type": "command_not_found",
-            "message": "ray CLI not found. Ensure ray package is installed.",
-            "command": command_display,
-        }
-    except Exception as exc:
-        return {
-            "ok": False,
-            "error_type": "unexpected_error",
-            "message": f"Unexpected error during submission: {exc}",
-            "command": command_display,
-        }
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds,
+            )
+            returncode = result.returncode
+            stdout = result.stdout
+            stderr = result.stderr
+        except subprocess.TimeoutExpired:
+            end_dt = datetime.now(timezone.utc)
+            return {
+                "ok": False,
+                "error_type": "timeout",
+                "message": f"Ray job submission timed out after {timeout_seconds}s",
+                "command": command_display,
+                "duration_seconds": (end_dt - start_dt).total_seconds(),
+            }
+        except FileNotFoundError:
+            return {
+                "ok": False,
+                "error_type": "command_not_found",
+                "message": "ray CLI not found. Ensure ray package is installed.",
+                "command": command_display,
+            }
+        except Exception as exc:
+            return {
+                "ok": False,
+                "error_type": "unexpected_error",
+                "message": f"Unexpected error during submission: {exc}",
+                "command": command_display,
+            }
+    finally:
+        # working_dir has already been packaged/uploaded to the cluster by the
+        # time `ray job submit` returns, so it is safe to remove. ignore_errors
+        # ensures cleanup never breaks an otherwise successful submission.
+        shutil.rmtree(working_dir, ignore_errors=True)
 
     end_dt = datetime.now(timezone.utc)
     duration = (end_dt - start_dt).total_seconds()
@@ -357,9 +370,15 @@ def submit_ray_job(
             "duration_seconds": duration,
         }
 
-    # Determine job status from output
-    succeeded = "succeeded" in stdout.lower()
-    failed = "failed" in stdout.lower() and not succeeded
+    # Determine job status from output. Match Ray's specific final-status line
+    # (which embeds job_id) to avoid false positives from "succeeded"/"failed"
+    # appearing in the job's own logs that `ray job submit` tails into stdout.
+    if job_id:
+        succeeded = bool(re.search(rf"Job '{re.escape(job_id)}' succeeded", stdout, re.IGNORECASE))
+        failed = bool(re.search(rf"Job '{re.escape(job_id)}' failed", stdout, re.IGNORECASE))
+    else:
+        succeeded = "succeeded" in stdout.lower()
+        failed = "failed" in stdout.lower() and not succeeded
 
     status = "succeeded" if succeeded else ("failed" if failed else "submitted")
 
