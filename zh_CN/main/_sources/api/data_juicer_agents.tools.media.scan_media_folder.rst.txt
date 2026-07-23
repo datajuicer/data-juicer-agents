@@ -1,0 +1,7 @@
+data_juicer_agents.tools.media.scan_media_folder
+================================================
+
+.. automodule:: data_juicer_agents.tools.media.scan_media_folder
+   :members:
+   :show-inheritance:
+   :undoc-members:
