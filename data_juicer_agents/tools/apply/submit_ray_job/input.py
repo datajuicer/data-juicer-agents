@@ -27,3 +27,23 @@ class SubmitRayJobInput(BaseModel):
 
 class SubmitRayJobOutput(BaseModel):
     ok: bool = True
+    job_id: str = Field(default="", description="Ray job id (raysubmit_*), empty if unknown.")
+    status: str = Field(
+        default="",
+        description="Final job status: 'succeeded', 'failed', or 'submitted' (no_wait).",
+    )
+    error_type: Optional[str] = Field(
+        default=None, description="Error category when ok is false."
+    )
+    message: str = Field(default="", description="Human-readable result summary.")
+    ray_address: Optional[str] = Field(default=None, description="Ray Job API address used.")
+    command: Optional[str] = Field(default=None, description="The `ray job submit` command executed.")
+    export_path: Optional[str] = Field(
+        default=None,
+        description="Per-run uniquified export path (a directory of shards in ray mode).",
+    )
+    stdout: Optional[str] = Field(default=None, description="Tail of the submission stdout.")
+    stderr: Optional[str] = Field(default=None, description="Tail of the submission stderr.")
+    duration_seconds: Optional[float] = Field(
+        default=None, description="Wall-clock seconds spent on submission/waiting."
+    )

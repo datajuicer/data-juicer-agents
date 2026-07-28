@@ -132,7 +132,9 @@ def _rewrite_dedup_ops_for_ray(process: list) -> list:
     return rewritten
 
 
-def _write_recipe(plan_payload: Dict[str, Any], output_dir: Path) -> Path:
+def _write_recipe(
+    plan_payload: Dict[str, Any], output_dir: Path, exec_id: str
+) -> Path:
     """Write a minimal DJ recipe YAML from plan payload.
 
     Key decisions:
@@ -145,14 +147,17 @@ def _write_recipe(plan_payload: Dict[str, Any], output_dir: Path) -> Path:
       the existing cluster; it does NOT use the blocked Ray Client port
       10001. Note: in ray mode the exporter treats export_path as a
       directory of shard files rather than a single file.
-    - work_dir is forced to a Worker-local path (/tmp/...). Otherwise
+    - work_dir is forced to a Worker-local path (/tmp/...) keyed by the
+      per-submission exec_id, so concurrent or repeated runs of the same
+      plan never share logs/checkpoints. Otherwise
       data-juicer defaults it to os.path.dirname(export_path); when
       export_path is on an OSS FUSE mount, loguru's gz log compression
       calls os.remove() on the mount at shutdown, which the mount rejects
       (PermissionError -> job exits 1). Keeping logs/checkpoints/tmp on
       local disk avoids this; results still land at export_path.
     - Only emit fields known to be compatible with the Worker's older
-      dj-process version to avoid 'Option not accepted' errors.
+      dj-process version; unsupported fields are dropped with a warning
+      to avoid 'Option not accepted' errors.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     plan_id = str(plan_payload.get("plan_id", "")).strip() or "ray_job"
@@ -171,7 +176,9 @@ def _write_recipe(plan_payload: Dict[str, Any], output_dir: Path) -> Path:
 
     # Force work_dir onto Worker-local disk so loguru's gz log compression
     # never runs os.remove() on an OSS FUSE mount (see docstring above).
-    recipe["work_dir"] = f"/tmp/dj_work_{plan_id}"
+    # Keyed by exec_id (unique per submission) rather than plan_id, so
+    # overlapping runs of the same plan cannot stomp each other's state.
+    recipe["work_dir"] = f"/tmp/dj_work_{plan_id}_{exec_id}"
 
     # Normalise process to DJ-native form [{op_name: params}] and rewrite
     # single-machine dedup ops to ray-native equivalents. The plan may store
@@ -184,6 +191,14 @@ def _write_recipe(plan_payload: Dict[str, Any], output_dir: Path) -> Path:
         recipe["process"] = _rewrite_dedup_ops_for_ray(_to_dj_process(raw_process))
 
     # Strip fields not supported by the Worker's older dj-process version.
+    # Surface what gets dropped: a silently vanishing option (e.g.
+    # eoc_special_token) is very hard to debug from the Ray side.
+    dropped_keys = sorted(k for k in recipe if k not in _RECIPE_ALLOWED_KEYS)
+    if dropped_keys:
+        _logger.warning(
+            "Recipe keys unsupported by the Worker's dj-process were dropped: %s",
+            dropped_keys,
+        )
     minimal_recipe = {
         k: v for k, v in recipe.items() if k in _RECIPE_ALLOWED_KEYS
     }
@@ -274,14 +289,18 @@ def submit_ray_job(
     # per submission: in ray mode RayExporter runs os.makedirs(export_path);
     # reusing a path collides with a prior run's file/dir on the OSS mount
     # (which forbids deletion). A fresh path per run avoids FileExistsError
-    # and stale-shard accumulation entirely.
+    # and stale-shard accumulation entirely. Work on a copy of the recipe so
+    # the caller's plan payload is never mutated in place.
     _recipe = plan_payload.get("recipe")
-    if isinstance(_recipe, dict) and str(_recipe.get("export_path", "")).strip():
-        _recipe["export_path"] = _uniquify_export_path(
-            str(_recipe["export_path"]).strip(), exec_id
-        )
+    if isinstance(_recipe, dict):
+        _recipe = dict(_recipe)
+        if str(_recipe.get("export_path", "")).strip():
+            _recipe["export_path"] = _uniquify_export_path(
+                str(_recipe["export_path"]).strip(), exec_id
+            )
+        plan_payload = {**plan_payload, "recipe": _recipe}
     try:
-        recipe_path = _write_recipe(plan_payload, working_dir)
+        recipe_path = _write_recipe(plan_payload, working_dir, exec_id)
     except ValueError as exc:
         shutil.rmtree(working_dir, ignore_errors=True)
         return {
