@@ -1,0 +1,1046 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer_agents.tools.apply.submit_ray_job.logic &#8212; Data Juicer Agents</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34d13042" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ask-ai-widget.css?v=028e49fc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+    <script src="../../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer_agents/tools/apply/submit_ray_job/logic';</script>
+    <script src="../../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../../../../_static/ask-ai-widget.js?v=7a5b498f"></script>
+    <link rel="icon" href="../../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer Agents</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../../en/main/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../../zh_CN/main/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../../main/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../../../v0.0.3/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.3
+        </a>
+        
+        <a href="../../../../../../v0.0.2/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/zh_CN/main/">
+    Core
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../../en/main/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../../zh_CN/main/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../../main/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+        <a href="../../../../../../v0.0.3/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.3
+        </a>
+        
+        <a href="../../../../../../v0.0.2/_modules/data_juicer_agents/tools/apply/submit_ray_job/logic.html"
+           class="dropdown-item "
+           role="menuitem"
+           >
+          v0.0.2
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer_agents.tools.apply.submit_ray_job.logic</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer_agents.tools.apply.submit_ray_job.logic 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Pure logic for submit_ray_job — runtime-agnostic.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_JOB_ID_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Job &#39;(raysubmit_\w+)&#39; submitted successfully&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_plan</span><span class="p">(</span><span class="n">plan_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load and validate a plan YAML file.&quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plan_path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+<span class="c1"># Fields known to be compatible with the older dj-process on Ray Worker.</span>
+<span class="n">_RECIPE_ALLOWED_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;work_dir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;executor_type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;np&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;text_keys&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;audio_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;video_key&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;project_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;open_tracer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;op_fusion&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># When executor_type=ray, single-machine deduplicators are incompatible with</span>
+<span class="c1"># Ray&#39;s streaming DAG (they raise TypeError). Map them to their ray-native</span>
+<span class="c1"># equivalents. Only 1:1 equivalents whose params migrate safely are listed;</span>
+<span class="c1"># the minhash family is intentionally excluded (param signatures differ).</span>
+<span class="n">_RAY_DEDUP_REWRITE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;image_deduplicator&quot;</span><span class="p">:</span> <span class="s2">&quot;ray_image_deduplicator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;document_deduplicator&quot;</span><span class="p">:</span> <span class="s2">&quot;ray_document_deduplicator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;video_deduplicator&quot;</span><span class="p">:</span> <span class="s2">&quot;ray_video_deduplicator&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Params accepted by the single-machine op but NOT by the ray-native variant;</span>
+<span class="c1"># they must be dropped on rewrite to avoid a constructor TypeError.</span>
+<span class="n">_RAY_DEDUP_DROP_PARAMS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ray_image_deduplicator&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;consider_text&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;ray_video_deduplicator&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;consider_text&quot;</span><span class="p">},</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_dj_process</span><span class="p">(</span><span class="n">raw_process</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalise a process list to DJ-native form ``[{op_name: params}, ...]``.</span>
+
+<span class="sd">    The plan may carry ``process`` in either representation:</span>
+<span class="sd">    - agent-internal ``[{&quot;name&quot;: op, &quot;params&quot;: {...}}, ...]``</span>
+<span class="sd">    - DJ-native ``[{op_name: {...}}, ...]`` (what assemble_plan emits)</span>
+<span class="sd">    Both are accepted and DJ-native form is returned, so downstream rewriting</span>
+<span class="sd">    is form-independent and can never be silently skipped.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dj</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">raw_process</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">step</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">dj</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;params&quot;</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{}})</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dj</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rewrite_dedup_ops_for_ray</span><span class="p">(</span><span class="n">process</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rewrite single-machine dedup ops to ray-native versions (executor=ray).</span>
+
+<span class="sd">    ``process`` must be DJ-native form ``[{op_name: params}, ...]`` (run it</span>
+<span class="sd">    through _to_dj_process first).</span>
+<span class="sd">    - Only ops whose name is in _RAY_DEDUP_REWRITE are changed; everything else</span>
+<span class="sd">      (mappers, filters, already-ray_ ops) is passed through untouched.</span>
+<span class="sd">    - Params unsupported by the ray-native variant are dropped (with a warning)</span>
+<span class="sd">      to avoid a constructor TypeError.</span>
+<span class="sd">    - Idempotent: ops already using a ray_ prefix are not in the map, so they</span>
+<span class="sd">      are left as-is.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rewritten</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">process</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">rewritten</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+        <span class="n">new_name</span> <span class="o">=</span> <span class="n">_RAY_DEDUP_REWRITE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_name</span><span class="p">:</span>
+            <span class="n">rewritten</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">dropped</span> <span class="o">=</span> <span class="n">_RAY_DEDUP_DROP_PARAMS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span> <span class="o">&amp;</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dropped</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dropped</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Ray dedup rewrite: </span><span class="si">%s</span><span class="s2"> -&gt; </span><span class="si">%s</span><span class="s2">, dropped incompatible params </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">new_name</span><span class="p">,</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">dropped</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ray dedup rewrite: </span><span class="si">%s</span><span class="s2"> -&gt; </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
+        <span class="n">rewritten</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">new_name</span><span class="p">:</span> <span class="n">params</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">rewritten</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_recipe</span><span class="p">(</span>
+    <span class="n">plan_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">exec_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a minimal DJ recipe YAML from plan payload.</span>
+
+<span class="sd">    Key decisions:</span>
+<span class="sd">    - executor_type is set to &#39;ray&#39; so the job runs distributed on the</span>
+<span class="sd">      cluster AND Ray is guaranteed to be initialized: RayExecutor.__init__</span>
+<span class="sd">      calls initialize_ray(force=True), which lets both plain CPU ops</span>
+<span class="sd">      (parallelized via Ray Data) and ray-native ops (e.g.</span>
+<span class="sd">      ray_image_deduplicator, which needs ray.init()) run correctly.</span>
+<span class="sd">      Inside a `ray job submit` job, ray.init(address=&quot;auto&quot;) attaches to</span>
+<span class="sd">      the existing cluster; it does NOT use the blocked Ray Client port</span>
+<span class="sd">      10001. Note: in ray mode the exporter treats export_path as a</span>
+<span class="sd">      directory of shard files rather than a single file.</span>
+<span class="sd">    - work_dir is forced to a Worker-local path (/tmp/...) keyed by the</span>
+<span class="sd">      per-submission exec_id, so concurrent or repeated runs of the same</span>
+<span class="sd">      plan never share logs/checkpoints. Otherwise</span>
+<span class="sd">      data-juicer defaults it to os.path.dirname(export_path); when</span>
+<span class="sd">      export_path is on an OSS FUSE mount, loguru&#39;s gz log compression</span>
+<span class="sd">      calls os.remove() on the mount at shutdown, which the mount rejects</span>
+<span class="sd">      (PermissionError -&gt; job exits 1). Keeping logs/checkpoints/tmp on</span>
+<span class="sd">      local disk avoids this; results still land at export_path.</span>
+<span class="sd">    - Only emit fields known to be compatible with the Worker&#39;s older</span>
+<span class="sd">      dj-process version; unsupported fields are dropped with a warning</span>
+<span class="sd">      to avoid &#39;Option not accepted&#39; errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plan_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">plan_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plan_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;ray_job&quot;</span>
+    <span class="n">recipe_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+
+    <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;plan must contain a &#39;recipe&#39; dict&quot;</span><span class="p">)</span>
+
+    <span class="n">recipe</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
+
+    <span class="c1"># Use ray executor: runs distributed on the cluster and guarantees Ray</span>
+    <span class="c1"># initialization for ray-native ops (see docstring above).</span>
+    <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;executor_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ray&quot;</span>
+    <span class="n">recipe</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;project_name&quot;</span><span class="p">,</span> <span class="n">plan_id</span><span class="p">)</span>
+
+    <span class="c1"># Force work_dir onto Worker-local disk so loguru&#39;s gz log compression</span>
+    <span class="c1"># never runs os.remove() on an OSS FUSE mount (see docstring above).</span>
+    <span class="c1"># Keyed by exec_id (unique per submission) rather than plan_id, so</span>
+    <span class="c1"># overlapping runs of the same plan cannot stomp each other&#39;s state.</span>
+    <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;work_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/tmp/dj_work_</span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">exec_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Normalise process to DJ-native form [{op_name: params}] and rewrite</span>
+    <span class="c1"># single-machine dedup ops to ray-native equivalents. The plan may store</span>
+    <span class="c1"># process either as [{name, params}] (agent-internal) or as DJ-native</span>
+    <span class="c1"># [{op_name: params}] (what assemble_plan emits); handle both so the</span>
+    <span class="c1"># rewrite is never silently skipped. executor_type is forced to ray above</span>
+    <span class="c1"># and Ray&#39;s streaming DAG cannot run single-machine deduplicators.</span>
+    <span class="n">raw_process</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_process</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">raw_process</span><span class="p">:</span>
+        <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;process&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_dedup_ops_for_ray</span><span class="p">(</span><span class="n">_to_dj_process</span><span class="p">(</span><span class="n">raw_process</span><span class="p">))</span>
+
+    <span class="c1"># Strip fields not supported by the Worker&#39;s older dj-process version.</span>
+    <span class="c1"># Surface what gets dropped: a silently vanishing option (e.g.</span>
+    <span class="c1"># eoc_special_token) is very hard to debug from the Ray side.</span>
+    <span class="n">dropped_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">recipe</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_RECIPE_ALLOWED_KEYS</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dropped_keys</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Recipe keys unsupported by the Worker&#39;s dj-process were dropped: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">dropped_keys</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">minimal_recipe</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_RECIPE_ALLOWED_KEYS</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">minimal_recipe</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">recipe_path</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_classify_ray_error</span><span class="p">(</span><span class="n">returncode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stderr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify Ray job submission error.&quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;connectionerror&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;failed to connect&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;connection refused&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;connection_failed&quot;</span><span class="p">,</span> <span class="s2">&quot;Cannot connect to Ray cluster. Verify RAY_ADDRESS and cluster status.&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;no such file&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;not found&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;command_not_found&quot;</span><span class="p">,</span> <span class="s2">&quot;ray CLI not found. Ensure ray is installed in PATH.&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;runtime_env&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;package&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;packaging_failed&quot;</span><span class="p">,</span> <span class="s2">&quot;Failed to package working directory for Ray cluster.&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;timeout&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;timeout&quot;</span><span class="p">,</span> <span class="s2">&quot;Job execution timed out.&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;submission_failed&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Ray job submission failed (exit code </span><span class="si">{</span><span class="n">returncode</span><span class="si">}</span><span class="s2">).&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_uniquify_export_path</span><span class="p">(</span><span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert a per-run ``token`` before the file extension of ``export_path``.</span>
+
+<span class="sd">    In ray executor mode RayExporter runs ``os.makedirs(export_path)`` and</span>
+<span class="sd">    writes shard files inside that directory. Reusing the same path across runs</span>
+<span class="sd">    is unsafe on an OSS FUSE mount: a pre-existing file there triggers</span>
+<span class="sd">    ``FileExistsError`` and the mount usually forbids deleting it, while a</span>
+<span class="sd">    pre-existing directory would accumulate stale shards from earlier runs.</span>
+<span class="sd">    Giving every submission a fresh, unique path sidesteps both problems and</span>
+<span class="sd">    needs no deletion. Example:</span>
+<span class="sd">    ``.../car_cleaned.jsonl`` -&gt; ``.../car_cleaned_ray_a1b2c3d4.jsonl``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">export_path</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">export_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">token</span><span class="si">}{</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="submit_ray_job">
+<a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.submit_ray_job.logic.html#data_juicer_agents.tools.apply.submit_ray_job.logic.submit_ray_job">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">submit_ray_job</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">plan_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ray_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span>
+    <span class="n">no_wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Submit a dj-process job to a Ray cluster via the Ray Job API.</span>
+
+<span class="sd">    The plan&#39;s recipe is written with executor_type=ray and submitted via</span>
+<span class="sd">    ``ray job submit -- dj-process --config &lt;recipe&gt;.yaml``. Returns a summary</span>
+<span class="sd">    dict with job_id, status, and output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. Resolve Ray address</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="n">ray_address</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RAY_ADDRESS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">address</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_ray_address&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;No Ray address provided. Set RAY_ADDRESS environment variable &quot;</span>
+                <span class="s2">&quot;or pass ray_address parameter explicitly.&quot;</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+
+    <span class="c1"># 2. Load plan</span>
+    <span class="n">plan_payload</span> <span class="o">=</span> <span class="n">_load_plan</span><span class="p">(</span><span class="n">plan_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan_payload</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;plan_not_found&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Failed to load plan file: </span><span class="si">{</span><span class="n">plan_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># 3. Prepare working directory and recipe</span>
+    <span class="n">exec_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ray_</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Staging dir for `ray job submit --working-dir` (holds the recipe YAML that</span>
+    <span class="c1"># gets packaged and uploaded to the cluster). Keep it on Worker-local /tmp</span>
+    <span class="c1"># rather than next to the plan: the plan often lives on an OSS FUSE mount</span>
+    <span class="c1"># that forbids deletion, which would both litter the mount and break cleanup.</span>
+    <span class="n">working_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">())</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;.ray_submit_</span><span class="si">{</span><span class="n">exec_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">dj_export_path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Submit as a dj-process job with executor_type=ray. Uniquify export_path</span>
+    <span class="c1"># per submission: in ray mode RayExporter runs os.makedirs(export_path);</span>
+    <span class="c1"># reusing a path collides with a prior run&#39;s file/dir on the OSS mount</span>
+    <span class="c1"># (which forbids deletion). A fresh path per run avoids FileExistsError</span>
+    <span class="c1"># and stale-shard accumulation entirely. Work on a copy of the recipe so</span>
+    <span class="c1"># the caller&#39;s plan payload is never mutated in place.</span>
+    <span class="n">_recipe</span> <span class="o">=</span> <span class="n">plan_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_recipe</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">_recipe</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_recipe</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">_recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">_recipe</span><span class="p">[</span><span class="s2">&quot;export_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_uniquify_export_path</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">_recipe</span><span class="p">[</span><span class="s2">&quot;export_path&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">exec_id</span>
+            <span class="p">)</span>
+        <span class="n">plan_payload</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">plan_payload</span><span class="p">,</span> <span class="s2">&quot;recipe&quot;</span><span class="p">:</span> <span class="n">_recipe</span><span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">recipe_path</span> <span class="o">=</span> <span class="n">_write_recipe</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">,</span> <span class="n">exec_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid_plan&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
+        <span class="p">}</span>
+
+    <span class="n">recipe_filename</span> <span class="o">=</span> <span class="n">recipe_path</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">dj_export_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">((</span><span class="n">plan_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;ray&quot;</span><span class="p">,</span> <span class="s2">&quot;job&quot;</span><span class="p">,</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--address&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span>
+        <span class="s2">&quot;--working-dir&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">working_dir</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">no_wait</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--no-wait&quot;</span><span class="p">)</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;dj-process&quot;</span><span class="p">,</span> <span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">recipe_filename</span><span class="p">])</span>
+
+    <span class="n">command_display</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Submitting Ray job: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">command_display</span><span class="p">)</span>
+
+    <span class="c1"># 5. Execute</span>
+    <span class="n">start_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">cmd</span><span class="p">,</span>
+                <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_seconds</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">returncode</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="n">stderr</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+            <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;timeout&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Ray job submission timed out after </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">command_display</span><span class="p">,</span>
+                <span class="s2">&quot;duration_seconds&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">end_dt</span> <span class="o">-</span> <span class="n">start_dt</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;command_not_found&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;ray CLI not found. Ensure ray package is installed.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">command_display</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;unexpected_error&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Unexpected error during submission: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">command_display</span><span class="p">,</span>
+            <span class="p">}</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># working_dir has already been packaged/uploaded to the cluster by the</span>
+        <span class="c1"># time `ray job submit` returns, so it is safe to remove. ignore_errors</span>
+        <span class="c1"># ensures cleanup never breaks an otherwise successful submission.</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_dt</span> <span class="o">-</span> <span class="n">start_dt</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+
+    <span class="c1"># 6. Parse job_id</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_JOB_ID_PATTERN</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># 7. Classify result</span>
+    <span class="k">if</span> <span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_type</span><span class="p">,</span> <span class="n">error_msg</span> <span class="o">=</span> <span class="n">_classify_ray_error</span><span class="p">(</span><span class="n">returncode</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="n">error_type</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">error_msg</span><span class="p">,</span>
+            <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="n">job_id</span><span class="p">,</span>
+            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">command_display</span><span class="p">,</span>
+            <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">stdout</span><span class="p">[</span><span class="o">-</span><span class="mi">2000</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2000</span> <span class="k">else</span> <span class="n">stdout</span><span class="p">,</span>
+            <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">stderr</span><span class="p">[</span><span class="o">-</span><span class="mi">2000</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2000</span> <span class="k">else</span> <span class="n">stderr</span><span class="p">,</span>
+            <span class="s2">&quot;duration_seconds&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Determine job status from output. Match Ray&#39;s specific final-status line</span>
+    <span class="c1"># (which embeds job_id) to avoid false positives from &quot;succeeded&quot;/&quot;failed&quot;</span>
+    <span class="c1"># appearing in the job&#39;s own logs that `ray job submit` tails into stdout.</span>
+    <span class="k">if</span> <span class="n">job_id</span><span class="p">:</span>
+        <span class="n">succeeded</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;Job &#39;</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; succeeded&quot;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">))</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;Job &#39;</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; failed&quot;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">succeeded</span> <span class="o">=</span> <span class="s2">&quot;succeeded&quot;</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="s2">&quot;failed&quot;</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">succeeded</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;succeeded&quot;</span> <span class="k">if</span> <span class="n">succeeded</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;failed&quot;</span> <span class="k">if</span> <span class="n">failed</span> <span class="k">else</span> <span class="s2">&quot;submitted&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="ow">not</span> <span class="n">failed</span><span class="p">,</span>
+        <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="n">job_id</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+        <span class="s2">&quot;ray_address&quot;</span><span class="p">:</span> <span class="n">address</span><span class="p">,</span>
+        <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">command_display</span><span class="p">,</span>
+        <span class="s2">&quot;working_dir&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">working_dir</span><span class="p">),</span>
+        <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="n">dj_export_path</span><span class="p">,</span>
+        <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">stdout</span><span class="p">[</span><span class="o">-</span><span class="mi">3000</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3000</span> <span class="k">else</span> <span class="n">stdout</span><span class="p">,</span>
+        <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">stderr</span><span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="k">else</span> <span class="n">stderr</span><span class="p">,</span>
+        <span class="s2">&quot;duration_seconds&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Ray job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2"> (took </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s)&quot;</span>
+            <span class="k">if</span> <span class="n">job_id</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Ray job </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2"> (took </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s)&quot;</span>
+        <span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;submit_ray_job&quot;</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
