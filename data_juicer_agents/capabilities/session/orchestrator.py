@@ -16,10 +16,36 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from data_juicer_agents.capabilities.session.runtime import SessionState, SessionToolRuntime
 from data_juicer_agents.capabilities.session.toolkit import build_session_toolkit
+from data_juicer_agents.utils.runtime_helpers import to_bool, to_float, to_int
 
 _logger = logging.getLogger(__name__)
 
 _SESSION_MODEL = "qwen3-max-2026-01-23"
+_CONTEXT_WINDOW_TOKENS = 40000
+_CONTEXT_TRIGGER_RATIO = 0.65
+_CONTEXT_FORMATTER_RATIO = 0.85
+_CONTEXT_KEEP_RECENT = 10
+_CONTEXT_CHAR_PER_TOKEN = 3
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    return to_bool(os.environ.get(name), default)
+
+
+def _env_int(name: str, default: int) -> int:
+    return to_int(os.environ.get(name), default)
+
+
+def _env_float(name: str, default: float) -> float:
+    return to_float(os.environ.get(name), default)
+
+
+def _context_char_budget(ratio: float) -> int:
+    window = max(_env_int("DJA_CONTEXT_WINDOW_TOKENS", _CONTEXT_WINDOW_TOKENS), 1)
+    chars_per_token = max(
+        _env_int("DJA_CONTEXT_CHAR_PER_TOKEN", _CONTEXT_CHAR_PER_TOKEN), 1
+    )
+    return max(int(window * max(float(ratio), 0.01) * chars_per_token), 1)
 
 _HELP_TEXT = (
     "I can help you orchestrate Data-Juicer workflows conversationally.\n"
@@ -280,10 +306,82 @@ class DJSessionAgent:
         except Exception as exc:  # pragma: no cover - defensive callback guard
             self._debug(f"stream_callback_failed error={exc}")
 
+    def _build_context_controls(
+        self, react_agent_cls: Any, token_counter: Any
+    ) -> tuple[Any, int | None]:
+        trigger_ratio = _env_float("DJA_CONTEXT_TRIGGER_RATIO", _CONTEXT_TRIGGER_RATIO)
+        formatter_ratio = _env_float(
+            "DJA_CONTEXT_FORMATTER_RATIO", _CONTEXT_FORMATTER_RATIO
+        )
+        keep_recent = max(_env_int("DJA_CONTEXT_KEEP_RECENT", _CONTEXT_KEEP_RECENT), 1)
+        formatter_budget = _context_char_budget(formatter_ratio)
+
+        if not _env_bool("DJA_CONTEXT_COMPRESSION_ENABLED", True):
+            return None, formatter_budget
+
+        compression_config_cls = getattr(react_agent_cls, "CompressionConfig", None)
+        if compression_config_cls is None:
+            _logger.warning("AgentScope ReActAgent does not expose CompressionConfig")
+            return None, formatter_budget
+
+        compression_config = compression_config_cls(
+            enable=True,
+            agent_token_counter=token_counter,
+            trigger_threshold=_context_char_budget(trigger_ratio),
+            keep_recent=keep_recent,
+        )
+        return compression_config, formatter_budget
+
+    @staticmethod
+    def _build_context_memory(memory_cls: Any) -> Any:
+        class _ContextMemory(memory_cls):
+            @staticmethod
+            def _is_compressed_mark(mark: Any) -> bool:
+                return (
+                    mark == "compressed"
+                    or getattr(mark, "value", None) == "compressed"
+                )
+
+            async def get_memory(
+                self,
+                mark: str | None = None,
+                exclude_mark: str | None = None,
+                prepend_summary: bool = True,
+                **kwargs: Any,
+            ) -> list[Any]:
+                effective_exclude = exclude_mark
+                effective_prepend = prepend_summary
+                has_summary = bool(getattr(self, "_compressed_summary", ""))
+                if mark is None and exclude_mark is None and has_summary:
+                    effective_exclude = "compressed"
+                if self._is_compressed_mark(exclude_mark):
+                    effective_prepend = False
+                return await super().get_memory(
+                    mark=mark,
+                    exclude_mark=effective_exclude,
+                    prepend_summary=effective_prepend,
+                    **kwargs,
+                )
+
+            def state_dict(self) -> dict:
+                state = super().state_dict()
+                state["_compressed_summary"] = getattr(self, "_compressed_summary", "")
+                return state
+
+            def load_state_dict(self, state_dict: dict, strict: bool = True) -> None:
+                super().load_state_dict(state_dict, strict=strict)
+                self._compressed_summary = str(
+                    state_dict.get("_compressed_summary", "") or ""
+                )
+
+        return _ContextMemory()
+
     def _build_react_agent(self):
         from agentscope.agent import ReActAgent
         from agentscope.formatter import OpenAIChatFormatter
+        from agentscope.memory import InMemoryMemory
         from agentscope.model import OpenAIChatModel
+        from agentscope.token import CharTokenCounter
 
         api_key = self._api_key or os.environ.get("DASHSCOPE_API_KEY") or os.environ.get("MODELSCOPE_API_TOKEN")
         if not api_key:
@@ -314,7 +412,16 @@ class DJSessionAgent:
                 "extra_body": {"enable_thinking": thinking_flag},
             },
         )
-        formatter = OpenAIChatFormatter()
+        token_counter = CharTokenCounter()
+        compression_config, formatter_budget = self._build_context_controls(
+            ReActAgent,
+            token_counter,
+        )
+        formatter = OpenAIChatFormatter(
+            token_counter=token_counter,
+            max_tokens=formatter_budget,
+        )
+        memory = self._build_context_memory(InMemoryMemory)
         toolkit = self._build_toolkit()
         agent = ReActAgent(
             name="DJSessionReActAgent",
@@ -322,8 +429,10 @@ class DJSessionAgent:
             model=model,
             formatter=formatter,
             toolkit=toolkit,
+            memory=memory,
             max_iters=15,
             parallel_tool_calls=False,
+            compression_config=compression_config,
         )
         self._register_react_hooks(agent)
         original_print = agent.print

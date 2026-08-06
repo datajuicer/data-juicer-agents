@@ -19,6 +19,13 @@ def to_int(value: Any, default: int) -> int:
         return default
 
 
+def to_float(value: Any, default: float) -> float:
+    try:
+        return float(value)
+    except Exception:
+        return default
+
+
 def to_bool(value: Any, default: bool = False) -> bool:
     if isinstance(value, bool):
         return value
