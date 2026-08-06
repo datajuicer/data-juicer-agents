@@ -148,6 +148,42 @@ def test_compact_payload_caps_candidates_but_reports_total():
     assert len(compact["candidates"][0]["description"]) < 900
 
 
+def test_compact_catalog_reports_visible_operator_count():
+    operators = [
+        {"operator_name": f"op_{index}", "description": "short"}
+        for index in range(25)
+    ]
+    payload = {
+        "ok": True,
+        "total_count": 40,
+        "returned_count": 25,
+        "operators": operators,
+        "include_parameters": False,
+    }
+
+    compact = compact_payload_for_model("list_operator_catalog", payload)
+
+    assert compact["total_count"] == 40
+    assert compact["returned_count"] == 25
+    assert compact["compacted_count"] == 10
+    assert compact["compacted_count"] == len(compact["operators"])
+
+
+def test_compact_catalog_count_matches_short_operator_list():
+    operators = [{"operator_name": f"op_{index}"} for index in range(3)]
+    payload = {
+        "ok": True,
+        "total_count": 3,
+        "returned_count": 3,
+        "operators": operators,
+    }
+
+    compact = compact_payload_for_model("list_operator_catalog", payload)
+
+    assert compact["compacted_count"] == 3
+    assert compact["compacted_count"] == compact["returned_count"]
+
+
 def test_compact_payload_unknown_tool_falls_back_to_generic_shrink():
     payload = {"ok": True, "blob": "x" * 9000, "nested": {"detail": "y" * 9000}}
 

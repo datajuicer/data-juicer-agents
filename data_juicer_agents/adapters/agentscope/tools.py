@@ -215,6 +215,7 @@ def compact_payload_for_model(
                 _compact_operator(item, include_parameters=include_parameters)
                 for item in payload["operators"][:_MODEL_OPERATOR_LIMIT]
             ]
+            compact["compacted_count"] = len(compact["operators"])
         return compact
 
     if tool_name == "get_operator_info":
