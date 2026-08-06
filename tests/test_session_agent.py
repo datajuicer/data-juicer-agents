@@ -6,7 +6,10 @@ import pytest
 import yaml
 from agentscope.message import Msg
 
-from data_juicer_agents.adapters.agentscope import invoke_tool_spec
+from data_juicer_agents.adapters.agentscope import (
+    compact_payload_for_model,
+    invoke_tool_spec,
+)
 from data_juicer_agents.capabilities.session.orchestrator import DJSessionAgent
 from data_juicer_agents.capabilities.session.runtime import SessionState, SessionToolRuntime
 from data_juicer_agents.capabilities.session.toolkit import get_session_tool_specs
@@ -428,6 +431,96 @@ def test_session_agent_forward_stream_chunk_ignores_callback_failure():
     asyncio.run(agent._forward_stream_chunk(Msg(name="assistant", role="assistant", content="chunk"), True))  # pylint: disable=protected-access
 
 
+def test_compact_payload_for_model_preserves_plan_but_shrinks_dataset_preview():
+    long_text = "x" * 1000
+    inspected = {
+        "ok": True,
+        "message": "dataset inspected",
+        "dataset": {"configs": [{"type": "local", "path": "/tmp/data.jsonl"}]},
+        "inspected_path": "/tmp/data.jsonl",
+        "sampled_records": 5,
+        "scanned_lines": 5,
+        "modality": "text",
+        "keys": ["text", "meta"],
+        "candidate_text_keys": ["text"],
+        "candidate_image_keys": [],
+        "key_stats": {"text": {"count": 5, "kinds": {"text": 5}, "avg_text_len": 1000}},
+        "sample_preview": [
+            {"text": long_text},
+            {"text": long_text},
+            {"text": long_text},
+        ],
+    }
+
+    compact = compact_payload_for_model("inspect_dataset", inspected)
+
+    assert compact["ok"] is True
+    assert compact["candidate_text_keys"] == ["text"]
+    assert len(compact["sample_preview"]) == 2
+    assert len(compact["sample_preview"][0]["text"]) < len(long_text)
+
+    plan_payload = {
+        "ok": True,
+        "action": "assemble_plan",
+        "plan_id": "plan_1",
+        "operator_names": ["text_length_filter"],
+        "modality": "text",
+        "plan": {
+            "plan_id": "plan_1",
+            "user_intent": "filter",
+            "modality": "text",
+            "recipe": {
+                "dataset_path": "/tmp/data.jsonl",
+                "export_path": "/tmp/out.jsonl",
+                "text_keys": ["text"],
+                "process": [{"text_length_filter": {"max_len": 10}}],
+            },
+            "warnings": [],
+            "approval_required": True,
+        },
+    }
+
+    compact_plan = compact_payload_for_model("assemble_plan", plan_payload)
+
+    assert compact_plan["plan"] == plan_payload["plan"]
+    assert compact_plan["plan_summary"]["operator_names"] == ["text_length_filter"]
+
+
+def test_context_memory_excludes_compressed_messages_and_persists_summary():
+    pytest.importorskip("agentscope")
+    from agentscope.memory import InMemoryMemory
+
+    import asyncio
+
+    memory = DJSessionAgent._build_context_memory(
+        InMemoryMemory
+    )  # pylint: disable=protected-access
+    compressed = Msg(name="assistant", role="assistant", content="old details")
+    recent = Msg(name="assistant", role="assistant", content="recent details")
+
+    async def _exercise():
+        await memory.add(compressed, marks="compressed")
+        await memory.add(recent)
+        await memory.update_compressed_summary("summary")
+        visible = await memory.get_memory()
+        state = memory.state_dict()
+        restored = DJSessionAgent._build_context_memory(
+            InMemoryMemory
+        )  # pylint: disable=protected-access
+        restored.load_state_dict(state)
+        restored_visible = await restored.get_memory()
+        return visible, state, restored_visible
+
+    visible, state, restored_visible = asyncio.run(_exercise())
+
+    assert [msg.get_text_content() for msg in visible] == ["summary", "recent details"]
+    assert state["_compressed_summary"] == "summary"
+    assert [msg.get_text_content() for msg in restored_visible] == [
+        "summary",
+        "recent details",
+    ]
+
+
 def test_session_agent_build_react_agent_enables_model_streaming(monkeypatch):
     seen = {}
 
@@ -436,9 +529,22 @@ def test_session_agent_build_react_agent_enables_model_streaming(monkeypatch):
             seen["stream"] = kwargs.get("stream")
 
     class _Formatter:
+        def __init__(self, **kwargs):
+            seen["formatter_kwargs"] = kwargs
+
+    class _TokenCounter:
         pass
 
+    class _Memory:
+        pass
+
+    class _CompressionConfig:
+        def __init__(self, **kwargs):
+            seen["compression_kwargs"] = kwargs
+
     class _Agent:
+        CompressionConfig = _CompressionConfig
+
         def __init__(self, **kwargs):
             self.print = self._print
             seen["agent_kwargs"] = kwargs
@@ -453,13 +559,26 @@ def test_session_agent_build_react_agent_enables_model_streaming(monkeypatch):
             seen["console_enabled"] = enabled
 
     monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
+    monkeypatch.setenv("DJA_CONTEXT_WINDOW_TOKENS", "1000")
+    monkeypatch.setenv("DJA_CONTEXT_TRIGGER_RATIO", "0.5")
+    monkeypatch.setenv("DJA_CONTEXT_FORMATTER_RATIO", "0.75")
+    monkeypatch.setenv("DJA_CONTEXT_KEEP_RECENT", "6")
+    monkeypatch.setenv("DJA_CONTEXT_CHAR_PER_TOKEN", "2")
     monkeypatch.setattr("agentscope.model.OpenAIChatModel", _Model)
     monkeypatch.setattr("agentscope.formatter.OpenAIChatFormatter", _Formatter)
     monkeypatch.setattr("agentscope.agent.ReActAgent", _Agent)
+    monkeypatch.setattr("agentscope.token.CharTokenCounter", _TokenCounter)
+    monkeypatch.setattr("agentscope.memory.InMemoryMemory", _Memory)
 
     agent = DJSessionAgent(use_llm_router=False, enable_streaming=True)
     react_agent = agent._build_react_agent()  # pylint: disable=protected-access
 
     assert seen["stream"] is True
+    assert seen["formatter_kwargs"]["max_tokens"] == 1500
+    assert isinstance(seen["formatter_kwargs"]["token_counter"], _TokenCounter)
+    assert seen["compression_kwargs"]["trigger_threshold"] == 1000
+    assert seen["compression_kwargs"]["keep_recent"] == 6
+    assert seen["agent_kwargs"]["compression_config"] is not None
+    assert seen["agent_kwargs"]["memory"] is not None
     assert seen["console_enabled"] is False
     assert callable(react_agent.print)

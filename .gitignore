@@ -148,3 +148,6 @@ data/monitor/
 plans/
 skills/data-juicer-agents-harness/agents/
 qa-copilot/sessions/
+
+# benchmark outputs
+benchmarks/out/

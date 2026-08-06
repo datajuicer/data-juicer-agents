@@ -74,6 +74,48 @@ We continuously iterate on both directions, and the roadmap may evolve according
   - **Embodied Intelligence**
   - **Data Lakehouse architectures**
 
+## Context Management
+
+Session agents keep full tool results in the ReAct memory, which grows the
+prompt cost every turn and can overflow small-context models. DJ Agents now
+bounds the model context with three layers, all enabled by default:
+
+1. **Tool-result compaction**: deterministic, rule-based shrinking of large
+   tool payloads before they enter memory (full payloads are still emitted
+   through runtime events, so UIs and logs are unaffected).
+2. **Memory compression**: when the visible history exceeds the trigger
+   budget, older messages are summarized and only the recent messages stay
+   intact.
+3. **Formatter hard budget**: a final per-request truncation guarantees a
+   single prompt never exceeds the configured window.
+
+Configure via environment variables:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `DJA_CONTEXT_WINDOW_TOKENS` | `40000` | Model context window size in tokens |
+| `DJA_CONTEXT_TRIGGER_RATIO` | `0.65` | Window fraction that triggers compression |
+| `DJA_CONTEXT_FORMATTER_RATIO` | `0.85` | Window fraction for the formatter budget |
+| `DJA_CONTEXT_KEEP_RECENT` | `10` | Recent messages kept intact on compression |
+| `DJA_CONTEXT_COMPRESSION_ENABLED` | `true` | Toggle memory compression |
+| `DJA_TOOL_RESULT_COMPACTION_ENABLED` | `true` | Toggle tool-result compaction |
+| `DJA_CONTEXT_CHAR_PER_TOKEN` | `3` | Conservative chars-per-token estimate |
+
+For small-context deployments (30k–50k windows), lower the window and ratios,
+e.g. `DJA_CONTEXT_WINDOW_TOKENS=30000 DJA_CONTEXT_TRIGGER_RATIO=0.55
+DJA_CONTEXT_FORMATTER_RATIO=0.80 DJA_CONTEXT_KEEP_RECENT=8`.
+
+To measure how much a specific tool payload saves, use:
+
+```bash
+djx debug token-usage <tool_name> --input-file payload.json --provider char
+djx debug token-usage <tool_name> --input-file payload.json --provider qwen
+```
+
+`--provider char` runs fully offline with the local AgentScope char counter;
+`--provider qwen` reports real `usage.prompt_tokens` from an OpenAI-compatible
+endpoint.
+
 ## Common Issues
 
 **Q: How to get DashScope API key?**

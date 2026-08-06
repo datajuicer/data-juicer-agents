@@ -42,6 +42,12 @@ _COMMAND_HANDLER_SPECS = {
         "feature": "djx tool",
         "extras": ("harness", "core"),
     },
+    "debug": {
+        "module": "data_juicer_agents.commands.debug_cmd",
+        "handler": "run_debug",
+        "feature": "djx debug",
+        "extras": ("harness", "core"),
+    },
 }
 
 
@@ -280,6 +286,59 @@ def build_parser() -> argparse.ArgumentParser:
         help="Explicitly confirm running write/execute tools",
     )
     tool_run.set_defaults(handler_name="tool")
+
+    debug = sub.add_parser(
+        "debug",
+        help="Debug context and token usage",
+        parents=[output_parent],
+    )
+    debug_sub = debug.add_subparsers(dest="debug_action", required=True)
+    token_usage = debug_sub.add_parser(
+        "token-usage",
+        help="Compare full vs compact tool-result token usage",
+        parents=[output_parent],
+    )
+    token_usage.add_argument(
+        "tool_name", type=str, help="Tool name used for compaction rules"
+    )
+    token_input = token_usage.add_mutually_exclusive_group(required=True)
+    token_input.add_argument(
+        "--input-json",
+        default=None,
+        help="Inline JSON object containing the full tool payload",
+    )
+    token_input.add_argument(
+        "--input-file",
+        default=None,
+        help="Path to a JSON file containing the full tool payload",
+    )
+    token_usage.add_argument(
+        "--provider",
+        choices=["char", "qwen"],
+        default="char",
+        help="Token counter: local AgentScope char counter or qwen API usage",
+    )
+    token_usage.add_argument(
+        "--model", default=None, help="Model name for provider=qwen"
+    )
+    token_usage.add_argument(
+        "--base-url",
+        default=None,
+        help="OpenAI-compatible base URL for provider=qwen",
+    )
+    token_usage.add_argument(
+        "--max-tokens",
+        type=int,
+        default=1,
+        help="Completion max_tokens for provider=qwen usage probes",
+    )
+    token_usage.add_argument(
+        "--timeout",
+        type=int,
+        default=120,
+        help="HTTP timeout seconds for provider=qwen",
+    )
+    token_usage.set_defaults(handler_name="debug")
 
     return parser
 
