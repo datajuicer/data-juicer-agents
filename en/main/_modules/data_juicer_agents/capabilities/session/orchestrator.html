@@ -561,10 +561,36 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.session.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionState</span><span class="p">,</span> <span class="n">SessionToolRuntime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.capabilities.session.toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_session_toolkit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.runtime_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">to_float</span><span class="p">,</span> <span class="n">to_int</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">_SESSION_MODEL</span> <span class="o">=</span> <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
+<span class="n">_CONTEXT_WINDOW_TOKENS</span> <span class="o">=</span> <span class="mi">40000</span>
+<span class="n">_CONTEXT_TRIGGER_RATIO</span> <span class="o">=</span> <span class="mf">0.65</span>
+<span class="n">_CONTEXT_FORMATTER_RATIO</span> <span class="o">=</span> <span class="mf">0.85</span>
+<span class="n">_CONTEXT_KEEP_RECENT</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">_CONTEXT_CHAR_PER_TOKEN</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_env_bool</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">to_bool</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">default</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_env_int</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">to_int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">default</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_env_float</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">to_float</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">default</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_context_char_budget</span><span class="p">(</span><span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_env_int</span><span class="p">(</span><span class="s2">&quot;DJA_CONTEXT_WINDOW_TOKENS&quot;</span><span class="p">,</span> <span class="n">_CONTEXT_WINDOW_TOKENS</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">chars_per_token</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="n">_env_int</span><span class="p">(</span><span class="s2">&quot;DJA_CONTEXT_CHAR_PER_TOKEN&quot;</span><span class="p">,</span> <span class="n">_CONTEXT_CHAR_PER_TOKEN</span><span class="p">),</span> <span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">window</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ratio</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">*</span> <span class="n">chars_per_token</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">_HELP_TEXT</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;I can help you orchestrate Data-Juicer workflows conversationally.</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -836,10 +862,82 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - defensive callback guard</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stream_callback_failed error=</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_context_controls</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">react_agent_cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">token_counter</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">trigger_ratio</span> <span class="o">=</span> <span class="n">_env_float</span><span class="p">(</span><span class="s2">&quot;DJA_CONTEXT_TRIGGER_RATIO&quot;</span><span class="p">,</span> <span class="n">_CONTEXT_TRIGGER_RATIO</span><span class="p">)</span>
+        <span class="n">formatter_ratio</span> <span class="o">=</span> <span class="n">_env_float</span><span class="p">(</span>
+            <span class="s2">&quot;DJA_CONTEXT_FORMATTER_RATIO&quot;</span><span class="p">,</span> <span class="n">_CONTEXT_FORMATTER_RATIO</span>
+        <span class="p">)</span>
+        <span class="n">keep_recent</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_env_int</span><span class="p">(</span><span class="s2">&quot;DJA_CONTEXT_KEEP_RECENT&quot;</span><span class="p">,</span> <span class="n">_CONTEXT_KEEP_RECENT</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">formatter_budget</span> <span class="o">=</span> <span class="n">_context_char_budget</span><span class="p">(</span><span class="n">formatter_ratio</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_env_bool</span><span class="p">(</span><span class="s2">&quot;DJA_CONTEXT_COMPRESSION_ENABLED&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">formatter_budget</span>
+
+        <span class="n">compression_config_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">react_agent_cls</span><span class="p">,</span> <span class="s2">&quot;CompressionConfig&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">compression_config_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;AgentScope ReActAgent does not expose CompressionConfig&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">formatter_budget</span>
+
+        <span class="n">compression_config</span> <span class="o">=</span> <span class="n">compression_config_cls</span><span class="p">(</span>
+            <span class="n">enable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">agent_token_counter</span><span class="o">=</span><span class="n">token_counter</span><span class="p">,</span>
+            <span class="n">trigger_threshold</span><span class="o">=</span><span class="n">_context_char_budget</span><span class="p">(</span><span class="n">trigger_ratio</span><span class="p">),</span>
+            <span class="n">keep_recent</span><span class="o">=</span><span class="n">keep_recent</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">compression_config</span><span class="p">,</span> <span class="n">formatter_budget</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_context_memory</span><span class="p">(</span><span class="n">memory_cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">_ContextMemory</span><span class="p">(</span><span class="n">memory_cls</span><span class="p">):</span>
+            <span class="nd">@staticmethod</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_is_compressed_mark</span><span class="p">(</span><span class="n">mark</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="n">mark</span> <span class="o">==</span> <span class="s2">&quot;compressed&quot;</span>
+                    <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;compressed&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_memory</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">mark</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">exclude_mark</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">prepend_summary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+                <span class="n">effective_exclude</span> <span class="o">=</span> <span class="n">exclude_mark</span>
+                <span class="n">effective_prepend</span> <span class="o">=</span> <span class="n">prepend_summary</span>
+                <span class="n">has_summary</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_compressed_summary&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">mark</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exclude_mark</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">has_summary</span><span class="p">:</span>
+                    <span class="n">effective_exclude</span> <span class="o">=</span> <span class="s2">&quot;compressed&quot;</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_compressed_mark</span><span class="p">(</span><span class="n">exclude_mark</span><span class="p">):</span>
+                    <span class="n">effective_prepend</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(</span>
+                    <span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">,</span>
+                    <span class="n">exclude_mark</span><span class="o">=</span><span class="n">effective_exclude</span><span class="p">,</span>
+                    <span class="n">prepend_summary</span><span class="o">=</span><span class="n">effective_prepend</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;_compressed_summary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_compressed_summary&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">state</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_compressed_summary</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                    <span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_compressed_summary&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_ContextMemory</span><span class="p">()</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_react_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReActAgent</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatFormatter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryMemory</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatModel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.token</span><span class="w"> </span><span class="kn">import</span> <span class="n">CharTokenCounter</span>
 
         <span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_key</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MODELSCOPE_API_TOKEN&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
@@ -870,7 +968,16 @@
                 <span class="s2">&quot;extra_body&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;enable_thinking&quot;</span><span class="p">:</span> <span class="n">thinking_flag</span><span class="p">},</span>
             <span class="p">},</span>
         <span class="p">)</span>
-        <span class="n">formatter</span> <span class="o">=</span> <span class="n">OpenAIChatFormatter</span><span class="p">()</span>
+        <span class="n">token_counter</span> <span class="o">=</span> <span class="n">CharTokenCounter</span><span class="p">()</span>
+        <span class="n">compression_config</span><span class="p">,</span> <span class="n">formatter_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_context_controls</span><span class="p">(</span>
+            <span class="n">ReActAgent</span><span class="p">,</span>
+            <span class="n">token_counter</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">OpenAIChatFormatter</span><span class="p">(</span>
+            <span class="n">token_counter</span><span class="o">=</span><span class="n">token_counter</span><span class="p">,</span>
+            <span class="n">max_tokens</span><span class="o">=</span><span class="n">formatter_budget</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_context_memory</span><span class="p">(</span><span class="n">InMemoryMemory</span><span class="p">)</span>
         <span class="n">toolkit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_toolkit</span><span class="p">()</span>
         <span class="n">agent</span> <span class="o">=</span> <span class="n">ReActAgent</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DJSessionReActAgent&quot;</span><span class="p">,</span>
@@ -878,8 +985,10 @@
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">formatter</span><span class="o">=</span><span class="n">formatter</span><span class="p">,</span>
             <span class="n">toolkit</span><span class="o">=</span><span class="n">toolkit</span><span class="p">,</span>
+            <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span>
             <span class="n">max_iters</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
             <span class="n">parallel_tool_calls</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">compression_config</span><span class="o">=</span><span class="n">compression_config</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_react_hooks</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
         <span class="n">original_print</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">print</span>

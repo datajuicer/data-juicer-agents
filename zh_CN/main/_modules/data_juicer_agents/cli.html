@@ -588,6 +588,12 @@
         <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx tool&quot;</span><span class="p">,</span>
         <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
     <span class="p">},</span>
+    <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.debug_cmd&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_debug&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx debug&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
+    <span class="p">},</span>
 <span class="p">}</span>
 
 
@@ -828,6 +834,59 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Explicitly confirm running write/execute tools&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">tool_run</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;tool&quot;</span><span class="p">)</span>
+
+    <span class="n">debug</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Debug context and token usage&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">debug_sub</span> <span class="o">=</span> <span class="n">debug</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;debug_action&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">token_usage</span> <span class="o">=</span> <span class="n">debug_sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;token-usage&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Compare full vs compact tool-result token usage&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Tool name used for compaction rules&quot;</span>
+    <span class="p">)</span>
+    <span class="n">token_input</span> <span class="o">=</span> <span class="n">token_usage</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">token_input</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--input-json&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inline JSON object containing the full tool payload&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">token_input</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--input-file&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a JSON file containing the full tool payload&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--provider&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;char&quot;</span><span class="p">,</span> <span class="s2">&quot;qwen&quot;</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Token counter: local AgentScope char counter or qwen API usage&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--model&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Model name for provider=qwen&quot;</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--base-url&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;OpenAI-compatible base URL for provider=qwen&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max-tokens&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Completion max_tokens for provider=qwen usage probes&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--timeout&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;HTTP timeout seconds for provider=qwen&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
 
