@@ -29,6 +29,7 @@ dj-agents = "data_juicer_agents.session_cli:main"
 [project.optional-dependencies]
 core = [
     "agentscope==1.0.14",
+    "mcp>=1.22,<2",
     "openai",
     "prompt-toolkit>=3.0.36",
     "py-data-juicer>=1.5.1",
@@ -42,6 +43,7 @@ harness = [
 ]
 full = [
     "agentscope==1.0.14",
+    "mcp>=1.22,<2",
     "agentscope-runtime==1.0.5",
     "dashscope",
     "docstring-parser>=0.16",
@@ -64,6 +66,7 @@ full = [
 ]
 copilot = [
     "agentscope==1.0.14",
+    "mcp>=1.22,<2",
     "agentscope-runtime==1.0.5",
     "dashscope",
     "loguru",
@@ -90,6 +93,7 @@ interecipe = [
 ]
 dev = [
     "agentscope==1.0.14",
+    "mcp>=1.22,<2",
     "agentscope-runtime==1.0.5",
     "black",
     "dashscope",
