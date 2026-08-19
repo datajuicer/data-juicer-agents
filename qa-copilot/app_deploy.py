@@ -28,6 +28,11 @@ from agent_helper import (
     FeedbackRequest,
     SessionLockManager,
 )
+from page_context_tools import (
+    is_web_docs_context_request,
+    normalize_context_resources,
+    register_page_context_tool,
+)
 
 
 # Session logging configuration - set DJ_COPILOT_ENABLE_LOGGING=false to disable
@@ -74,7 +79,7 @@ if SESSION_STORE_TYPE not in ["json", "redis"]:
     raise ValueError(f"❌ Invalid SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 
 model_params = {
-    "model_name": "qwen3.6-plus",
+    "model_name": os.getenv("DJ_COPILOT_MODEL_NAME", "qwen3.7-plus"),
     "api_key": os.getenv("DASHSCOPE_API_KEY"),
     "stream": True,
     "client_kwargs": {
@@ -98,7 +103,7 @@ formatter = OpenAIChatFormatter(
     token_counter=OpenAITokenCounter(model_name="gpt-4o"),
     max_tokens=800000,
 )
-toolkit = Toolkit()
+base_toolkit = Toolkit()
 
 
 # Safe Check Dynamic Import
@@ -183,6 +188,17 @@ def _extract_user_text(user_input: Any) -> str:
     return user_text
 
 
+def _clone_toolkit(source: Toolkit) -> Toolkit:
+    """Create a per-request toolkit by shallow-copying base registries."""
+    cloned = Toolkit()
+    cloned.tools = dict(source.tools)
+    cloned.groups = dict(source.groups)
+    cloned.skills = dict(source.skills)
+    cloned._agent_skill_instruction = source._agent_skill_instruction
+    cloned._agent_skill_template = source._agent_skill_template
+    return cloned
+
+
 @app.init
 async def init_resources(self):
     global _check_user_input_safety_func, session_history_service
@@ -221,7 +237,7 @@ async def init_resources(self):
     else:
         raise ValueError(f"❌ Invalid SESSION_STORE_TYPE: {SESSION_STORE_TYPE}")
 
-    await add_qa_tools(toolkit)
+    await add_qa_tools(base_toolkit)
 
 
 @app.shutdown
@@ -245,6 +261,10 @@ async def query_func(
     global _check_user_input_safety_func, session_history_service
     session_id = request.session_id
     request_model_params = getattr(request, "model_params", None) or {}
+    context_resources = normalize_context_resources(
+        getattr(request, "context_resources", None)
+    )
+    request_metadata = getattr(request, "metadata", None)
     user_id = request.user_id or session_id
 
     # Get session lock to ensure sequential processing for the same session
@@ -266,6 +286,17 @@ async def query_func(
             {
                 "type": "user_input",
                 "content": user_text,
+                "context_resources": [
+                    {
+                        "id": resource["id"],
+                        "type": resource["type"],
+                        "title": resource["title"],
+                        "url": resource["url"],
+                        "char_count": resource["char_count"],
+                        "truncated": resource["truncated"],
+                    }
+                    for resource in context_resources
+                ],
             }
         )
 
@@ -286,14 +317,28 @@ async def query_func(
 
         # Model Configuration
         model = OpenAIChatModel(**_model_params)
+        request_toolkit = _clone_toolkit(base_toolkit)
+        sys_prompt = prompts.QA.replace("{name}", AGENT_NAME)
+
+        page_context_tool_enabled = bool(context_resources) and is_web_docs_context_request(
+            request_metadata
+        )
+        if page_context_tool_enabled:
+            register_page_context_tool(request_toolkit, context_resources)
+            sys_prompt += (
+                "\n\nCurrent request environment: the user is asking from a web "
+                "documentation page. A current-page context reader is available "
+                "for this request; use it when the user asks about this page, "
+                "the current page, selected text, or page-local documentation."
+            )
 
         # Build agent configuration
         agent_config = {
             "name": AGENT_NAME,
             "formatter": formatter,
             "model": model,
-            "sys_prompt": prompts.QA.replace("{name}", AGENT_NAME),
-            "toolkit": toolkit,
+            "sys_prompt": sys_prompt,
+            "toolkit": request_toolkit,
             "parallel_tool_calls": True,
             "max_iters": 20,
             "memory": memory,
