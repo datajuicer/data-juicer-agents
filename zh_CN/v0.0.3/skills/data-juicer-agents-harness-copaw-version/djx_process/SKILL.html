@@ -647,7 +647,7 @@
 </table>
 </div>
 <p><strong>Output</strong>: <code class="docutils literal notranslate"><span class="pre">{stdout,</span> <span class="pre">stderr,</span> <span class="pre">exit_code}</span></code></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;command&quot;: &quot;ls -la&quot;, &quot;timeout&quot;: 30}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"command": "ls -la", "timeout": 30}'</span>
 </pre></div>
 </div>
 </section>
@@ -680,7 +680,7 @@
 </table>
 </div>
 <p><strong>Output</strong>: <code class="docutils literal notranslate"><span class="pre">{stdout,</span> <span class="pre">stderr,</span> <span class="pre">exit_code}</span></code></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_python_code<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;code&quot;: &quot;import json; print(json.dumps({\&quot;a\&quot;: 1}))&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_python_code<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"code": "import json; print(json.dumps({\"a\": 1}))"}'</span>
 </pre></div>
 </div>
 </section>
@@ -747,7 +747,7 @@
 </tbody>
 </table>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>view_text_file<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;: &quot;/path/to/file.yaml&quot;, &quot;limit&quot;: 50}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>view_text_file<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"file_path": "/path/to/file.yaml", "limit": 50}'</span>
 </pre></div>
 </div>
 </section>
@@ -786,7 +786,7 @@
 </table>
 </div>
 <p><strong>Requires <code class="docutils literal notranslate"><span class="pre">--yes</span></code> flag</strong>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;: &quot;/path/to/file.txt&quot;, &quot;content&quot;: &quot;Hello World&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"file_path": "/path/to/file.txt", "content": "Hello World"}'</span>
 </pre></div>
 </div>
 </section>
@@ -825,7 +825,7 @@
 </table>
 </div>
 <p><strong>Requires <code class="docutils literal notranslate"><span class="pre">--yes</span></code> flag</strong>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>insert_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;: &quot;/path/to/file.txt&quot;, &quot;content&quot;: &quot;New line&quot;, &quot;line_number&quot;: 10}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>insert_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"file_path": "/path/to/file.txt", "content": "New line", "line_number": 10}'</span>
 </pre></div>
 </div>
 </section>
@@ -836,26 +836,26 @@
 <section id="shell-commands">
 <h3>Shell Commands<a class="headerlink" href="#shell-commands" title="链接到此标题。">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># List files</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;command&quot;: &quot;ls -la /data&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"command": "ls -la /data"}'</span>
 
 <span class="c1"># Count lines</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;command&quot;: &quot;wc -l /data/dataset.jsonl&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"command": "wc -l /data/dataset.jsonl"}'</span>
 
 <span class="c1"># View first few lines</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;command&quot;: &quot;head -n 5 /data/dataset.jsonl&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"command": "head -n 5 /data/dataset.jsonl"}'</span>
 
 <span class="c1"># Check environment</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;command&quot;: &quot;env | grep DJA_&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_shell_command<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"command": "env | grep DJA_"}'</span>
 </pre></div>
 </div>
 </section>
 <section id="python-analysis">
 <h3>Python Analysis<a class="headerlink" href="#python-analysis" title="链接到此标题。">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># JSON parsing</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_python_code<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;code&quot;: &quot;import json; data = json.load(open(\&quot;/data/sample.jsonl\&quot;)); print(len(data))&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_python_code<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"code": "import json; data = json.load(open(\"/data/sample.jsonl\")); print(len(data))"}'</span>
 
 <span class="c1"># Quick statistics</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_python_code<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;code&quot;: &quot;import json; lengths = [len(json.loads(line)) for line in open(\&quot;/data/dataset.jsonl\&quot;)]; print(f\&quot;Avg: {sum(lengths)/len(lengths):.1f}\&quot;)&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>execute_python_code<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"code": "import json; lengths = [len(json.loads(line)) for line in open(\"/data/dataset.jsonl\")]; print(f\"Avg: {sum(lengths)/len(lengths):.1f}\")"}'</span>
 </pre></div>
 </div>
 </section>

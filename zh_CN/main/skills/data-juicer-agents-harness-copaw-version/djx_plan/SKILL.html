@@ -691,12 +691,12 @@ plan_save ──→ plan.yaml
 </section>
 <section id="command">
 <h3>Command<a class="headerlink" href="#command" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;intent&quot;: &quot;&lt;PROCESSING_GOAL&gt;&quot;,</span>
-<span class="s1">  &quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;INPUT_PATH&gt;&quot;},</span>
-<span class="s1">  &quot;export_path&quot;: &quot;&lt;OUTPUT_PATH&gt;&quot;,</span>
-<span class="s1">  &quot;dataset_profile&quot;: &lt;PASTE_FULL_INSPECT_OUTPUT&gt;</span>
-<span class="s1">}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_dataset_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "intent": "&lt;PROCESSING_GOAL&gt;",</span>
+<span class="s1">  "dataset_source": {"path": "&lt;INPUT_PATH&gt;"},</span>
+<span class="s1">  "export_path": "&lt;OUTPUT_PATH&gt;",</span>
+<span class="s1">  "dataset_profile": &lt;PASTE_FULL_INSPECT_OUTPUT&gt;</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>
@@ -727,7 +727,7 @@ plan_save ──→ plan.yaml
 </section>
 <section id="operator-configuration-format">
 <h3>Operator Configuration Format<a class="headerlink" href="#operator-configuration-format" title="链接到此标题。">#</a></h3>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;OPERATOR_NAME&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;OPERATOR_NAME&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
 </pre></div>
 </div>
 </section>
@@ -742,13 +742,13 @@ plan_save ──→ plan.yaml
 </section>
 <section id="id2">
 <h3>Command<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;operators&quot;: [</span>
-<span class="s1">    {&quot;name&quot;: &quot;&lt;MAPPER&gt;&quot;, &quot;params&quot;: {}},</span>
-<span class="s1">    {&quot;name&quot;: &quot;&lt;FILTER&gt;&quot;, &quot;params&quot;: {&quot;min_len&quot;: 100}},</span>
-<span class="s1">    {&quot;name&quot;: &quot;&lt;DEDUP&gt;&quot;, &quot;params&quot;: {}}</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "operators": [</span>
+<span class="s1">    {"name": "&lt;MAPPER&gt;", "params": {}},</span>
+<span class="s1">    {"name": "&lt;FILTER&gt;", "params": {"min_len": 100}},</span>
+<span class="s1">    {"name": "&lt;DEDUP&gt;", "params": {}}</span>
 <span class="s1">  ]</span>
-<span class="s1">}&#39;</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>
@@ -799,10 +799,10 @@ plan_save ──→ plan.yaml
 <section id="id4">
 <h3>Command<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Most cases use empty input</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{}'</span>
 
 <span class="c1"># With custom operators</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"custom_operator_paths": ["./custom_operators"]}'</span>
 </pre></div>
 </div>
 </section>
@@ -848,12 +848,12 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 </section>
 <section id="id6">
 <h3>Command<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>assemble_plan<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;intent&quot;: &quot;&lt;PROCESSING_GOAL&gt;&quot;,</span>
-<span class="s1">  &quot;dataset_spec&quot;: &lt;DATASET_SPEC&gt;,</span>
-<span class="s1">  &quot;process_spec&quot;: &lt;PROCESS_SPEC&gt;,</span>
-<span class="s1">  &quot;system_spec&quot;: &lt;SYSTEM_SPEC&gt;</span>
-<span class="s1">}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>assemble_plan<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "intent": "&lt;PROCESSING_GOAL&gt;",</span>
+<span class="s1">  "dataset_spec": &lt;DATASET_SPEC&gt;,</span>
+<span class="s1">  "process_spec": &lt;PROCESS_SPEC&gt;,</span>
+<span class="s1">  "system_spec": &lt;SYSTEM_SPEC&gt;</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>
@@ -892,10 +892,10 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 </section>
 <section id="id8">
 <h3>Command<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;plan_payload&quot;: &lt;PLAN_PAYLOAD&gt;,</span>
-<span class="s1">  &quot;output_path&quot;: &quot;.djx/plans/my_plan.yaml&quot;</span>
-<span class="s1">}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "plan_payload": &lt;PLAN_PAYLOAD&gt;,</span>
+<span class="s1">  "output_path": ".djx/plans/my_plan.yaml"</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>
@@ -906,11 +906,11 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="plan-save-parameter-is-output-path">
 <h3>1. plan_save Parameter Is output_path<a class="headerlink" href="#plan-save-parameter-is-output-path" title="链接到此标题。">#</a></h3>
 <p><strong>Wrong</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_payload&quot;: ..., &quot;path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_payload": ..., "path": "plan.yaml"}'</span>
 </pre></div>
 </div>
 <p><strong>Correct</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_payload&quot;: ..., &quot;output_path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_save<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_payload": ..., "output_path": "plan.yaml"}'</span>
 </pre></div>
 </div>
 </section>
@@ -922,9 +922,9 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <h3>3. Operators Must Be Ordered by Type<a class="headerlink" href="#operators-must-be-ordered-by-type" title="链接到此标题。">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correct order: Mapper → Filter → Deduplicator</span>
 <span class="o">[</span>
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;clean_html_mapper&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span>,<span class="w">      </span><span class="c1"># Mapper</span>
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;text_length_filter&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{</span>...<span class="o">}}</span>,<span class="w">  </span><span class="c1"># Filter</span>
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;document_deduplicator&quot;</span>,<span class="w"> </span><span class="s2">&quot;params&quot;</span>:<span class="w"> </span><span class="o">{}}</span><span class="w">   </span><span class="c1"># Deduplicator</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">"name"</span>:<span class="w"> </span><span class="s2">"clean_html_mapper"</span>,<span class="w"> </span><span class="s2">"params"</span>:<span class="w"> </span><span class="o">{}}</span>,<span class="w">      </span><span class="c1"># Mapper</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">"name"</span>:<span class="w"> </span><span class="s2">"text_length_filter"</span>,<span class="w"> </span><span class="s2">"params"</span>:<span class="w"> </span><span class="o">{</span>...<span class="o">}}</span>,<span class="w">  </span><span class="c1"># Filter</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">"name"</span>:<span class="w"> </span><span class="s2">"document_deduplicator"</span>,<span class="w"> </span><span class="s2">"params"</span>:<span class="w"> </span><span class="o">{}}</span><span class="w">   </span><span class="c1"># Deduplicator</span>
 <span class="o">]</span>
 </pre></div>
 </div>

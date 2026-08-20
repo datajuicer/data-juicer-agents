@@ -730,13 +730,13 @@
 <p>To get started, you need Python 3.10+ and an API key (DashScope or OpenAI-compatible).</p>
 <ol class="arabic">
 <li><p><strong>Install</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[full]&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[full]'</span>
 </pre></div>
 </div>
 </li>
 <li><p><strong>Configure Model</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;&lt;your_key&gt;&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"&lt;your_key&gt;"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen3-max-2026-01-23"</span>
 </pre></div>
 </div>
 </li>
@@ -746,7 +746,7 @@
 </div>
 </li>
 <li><p><strong>CLI Planning</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate and clean text for RAG&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"deduplicate and clean text for RAG"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--output<span class="w"> </span>./data/demo-plan.yaml
 djx<span class="w"> </span>apply<span class="w"> </span>--plan<span class="w"> </span>./data/demo-plan.yaml<span class="w"> </span>--yes

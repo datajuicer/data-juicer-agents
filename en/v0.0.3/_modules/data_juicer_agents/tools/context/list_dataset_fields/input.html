@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.context.list_dataset_fields.input</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Input models for list_dataset_fields.&quot;&quot;&quot;</span>
+<span class="sd">"""Input models for list_dataset_fields."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -556,26 +556,26 @@
 <div class="viewcode-block" id="ListDatasetFieldsInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.list_dataset_fields.input.html#data_juicer_agents.tools.context.ListDatasetFieldsInput">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ListDatasetFieldsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Input for list_dataset_fields.</span>
+<span class="w">    </span><span class="sd">"""Input for list_dataset_fields.</span>
 
 <span class="sd">    This tool lists all dataset-related configuration fields recognized by</span>
 <span class="sd">    Data-Juicer, including their types, default values, and descriptions.</span>
 <span class="sd">    Use this before build_dataset_spec to discover advanced dataset options</span>
 <span class="sd">    such as export_type, export_shard_size, load_dataset_kwargs, suffixes,</span>
 <span class="sd">    or modality special tokens.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">filter_prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Optional filter to show only parameters matching this prefix &quot;</span>
-            <span class="s2">&quot;(e.g., &#39;export_&#39; for export-related fields, &#39;image_&#39; for image fields).&quot;</span>
+            <span class="s2">"Optional filter to show only parameters matching this prefix "</span>
+            <span class="s2">"(e.g., 'export_' for export-related fields, 'image_' for image fields)."</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
     <span class="n">include_descriptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">True</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether to include parameter descriptions. Default is True.&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Whether to include parameter descriptions. Default is True."</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 </pre></div>

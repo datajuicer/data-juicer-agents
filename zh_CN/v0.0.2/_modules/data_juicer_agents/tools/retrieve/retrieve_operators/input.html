@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.tools.retrieve.retrieve_operators.input 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Input models for retrieve_operators.&quot;&quot;&quot;</span>
+<span class="sd">"""Input models for retrieve_operators."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -555,10 +555,10 @@
 <div class="viewcode-block" id="RetrieveOperatorsInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.retrieve.retrieve_operators.input.html#data_juicer_agents.tools.retrieve.RetrieveOperatorsInput">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RetrieveOperatorsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Natural-language retrieval intent.&quot;</span><span class="p">)</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of operator candidates to return.&quot;</span><span class="p">)</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Retrieval mode: auto, llm, or vector.&quot;</span><span class="p">)</span>
-    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional dataset path used as explicit retrieval context.&quot;</span><span class="p">)</span></div>
+    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Natural-language retrieval intent."</span><span class="p">)</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Maximum number of operator candidates to return."</span><span class="p">)</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Retrieval mode: auto, llm, or vector."</span><span class="p">)</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional dataset path used as explicit retrieval context."</span><span class="p">)</span></div>
 
 
 

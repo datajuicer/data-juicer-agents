@@ -554,11 +554,11 @@
 </section>
 <section id="optional-setting-dj-copilot-test-url">
 <h3>2. (Optional) Setting <code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_TEST_URL</span></code><a class="headerlink" href="#optional-setting-dj-copilot-test-url" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_TEST_URL</span><span class="o">=</span><span class="s2">&quot;your.url.here/process&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_TEST_URL</span><span class="o">=</span><span class="s2">"your.url.here/process"</span>
 </pre></div>
 </div>
 <p>For example,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_TEST_URL</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8080/process&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_TEST_URL</span><span class="o">=</span><span class="s2">"http://127.0.0.1:8080/process"</span>
 </pre></div>
 </div>
 <p>You can skip this step if the serving URL is <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8080/process</span></code></p>
@@ -569,7 +569,7 @@
 </pre></div>
 </div>
 <p>For example,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>single_query_test.py<span class="w"> </span>--query<span class="w"> </span><span class="s2">&quot;Introduce alphanumeric_filter&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>single_query_test.py<span class="w"> </span>--query<span class="w"> </span><span class="s2">"Introduce alphanumeric_filter"</span>
 </pre></div>
 </div>
 <p>You will see a formatted summary</p>
@@ -592,7 +592,7 @@ Total Time: &lt;total time&gt; s
 </pre></div>
 </div>
 <p>Query cases are saved in <code class="docutils literal notranslate"><span class="pre">test_cases.parquet</span></code>. You can customize new test cases by modifying it.</p>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>Columns: [&#39;query&#39;, &#39;type&#39;, &#39;lang&#39;]
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>Columns: ['query', 'type', 'lang']
                                        query          type lang
 0              Introduce alphanumeric_filter   operator_qa   en
 1                     介绍alphanumeric_filter   operator_qa   zh

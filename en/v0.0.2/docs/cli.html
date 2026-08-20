@@ -637,15 +637,15 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>: raw structured payloads useful for debugging</p></li>
 </ul>
 <p>Examples:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl<span class="w"> </span>--quiet
-djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl<span class="w"> </span>--verbose
-djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;deduplicate text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"deduplicate text"</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl<span class="w"> </span>--quiet
+djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"deduplicate text"</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl<span class="w"> </span>--export<span class="w"> </span>./out.jsonl<span class="w"> </span>--verbose
+djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"deduplicate text"</span><span class="w"> </span>--dataset<span class="w"> </span>./data.jsonl
 </pre></div>
 </div>
 </section>
 <section id="djx-plan">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">plan</span></code><a class="headerlink" href="#djx-plan" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>&lt;input.jsonl&gt;<span class="w"> </span>--export<span class="w"> </span>&lt;output.jsonl&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"&lt;intent&gt;"</span><span class="w"> </span>--dataset<span class="w"> </span>&lt;input.jsonl&gt;<span class="w"> </span>--export<span class="w"> </span>&lt;output.jsonl&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
 </pre></div>
 </div>
 <p>Key options:</p>
@@ -693,7 +693,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </section>
 <section id="djx-retrieve">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">retrieve</span></code><a class="headerlink" href="#djx-retrieve" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"&lt;intent&gt;"</span><span class="w"> </span><span class="o">[</span>--dataset<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--top-k<span class="w"> </span><span class="m">10</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--mode<span class="w"> </span>auto<span class="p">|</span>llm<span class="p">|</span>vector<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
 </pre></div>
 </div>
 <p>Returns:</p>
@@ -705,7 +705,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 </section>
 <section id="djx-dev">
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">dev</span></code><a class="headerlink" href="#djx-dev" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>dev<span class="w"> </span><span class="s2">&quot;&lt;intent&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>dev<span class="w"> </span><span class="s2">"&lt;intent&gt;"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--operator-name<span class="w"> </span>&lt;snake_case_name&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--output-dir<span class="w"> </span>&lt;dir&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span><span class="o">[</span>--type<span class="w"> </span>mapper<span class="p">|</span>filter<span class="o">]</span><span class="w"> </span><span class="se">\</span>
@@ -726,7 +726,7 @@ djx<span class="w"> </span>--debug<span class="w"> </span>retrieve<span class="w
 <h2><code class="docutils literal notranslate"><span class="pre">djx</span> <span class="pre">tool</span></code><a class="headerlink" href="#djx-tool" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>--tag<span class="w"> </span>&lt;tag&gt;<span class="o">]</span>
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>&lt;tool-name&gt;
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>&lt;tool-name&gt;<span class="w"> </span><span class="o">(</span>--input-json<span class="w"> </span><span class="s1">&#39;&lt;json&gt;&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--input-file<span class="w"> </span>&lt;input.json&gt;<span class="o">)</span><span class="w"> </span><span class="o">[</span>--working-dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yes<span class="o">]</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>&lt;tool-name&gt;<span class="w"> </span><span class="o">(</span>--input-json<span class="w"> </span><span class="s1">'&lt;json&gt;'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--input-file<span class="w"> </span>&lt;input.json&gt;<span class="o">)</span><span class="w"> </span><span class="o">[</span>--working-dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yes<span class="o">]</span>
 </pre></div>
 </div>
 <p>Purpose:</p>
@@ -756,9 +756,9 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <p>Examples:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_path&quot;:&quot;./data/demo-dataset.jsonl&quot;,&quot;sample_size&quot;:5}&#39;</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;file_path&quot;:&quot;./tmp.txt&quot;,&quot;content&quot;:&quot;hello&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{}'</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"dataset_path":"./data/demo-dataset.jsonl","sample_size":5}'</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>write_text_file<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"file_path":"./tmp.txt","content":"hello"}'</span>
 djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>plan_validate<span class="w"> </span>--input-file<span class="w"> </span>./examples/plan_payload.json
 </pre></div>
 </div>

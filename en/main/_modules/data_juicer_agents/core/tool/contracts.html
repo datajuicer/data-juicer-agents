@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.core.tool.contracts</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Runtime-agnostic tool contracts.&quot;&quot;&quot;</span>
+<span class="sd">"""Runtime-agnostic tool contracts."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -555,17 +555,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ValidationError</span>
 
 
-<span class="n">ToolEffect</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;read&quot;</span><span class="p">,</span> <span class="s2">&quot;write&quot;</span><span class="p">,</span> <span class="s2">&quot;execute&quot;</span><span class="p">,</span> <span class="s2">&quot;external&quot;</span><span class="p">]</span>
-<span class="n">ToolConfirmation</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;recommended&quot;</span><span class="p">,</span> <span class="s2">&quot;required&quot;</span><span class="p">]</span>
+<span class="n">ToolEffect</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"read"</span><span class="p">,</span> <span class="s2">"write"</span><span class="p">,</span> <span class="s2">"execute"</span><span class="p">,</span> <span class="s2">"external"</span><span class="p">]</span>
+<span class="n">ToolConfirmation</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"none"</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">,</span> <span class="s2">"required"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ToolContext">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolContext">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ToolContext</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execution context shared by all tool runtimes.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Execution context shared by all tool runtimes."""</span>
 
-    <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./.djx&quot;</span>
+    <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"./.djx"</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">artifacts_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">runtime_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -573,7 +573,7 @@
 <div class="viewcode-block" id="ToolContext.resolve_artifacts_dir">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolContext.resolve_artifacts_dir">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve_artifacts_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-        <span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="ow">or</span> <span class="s2">&quot;./.djx&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;./.djx&quot;</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="ow">or</span> <span class="s2">"./.djx"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"./.djx"</span>
         <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span></div>
 </div>
 
@@ -583,21 +583,21 @@
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolArtifact">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ToolArtifact</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Named artifact produced by a tool.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Named artifact produced by a tool."""</span>
 
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
-    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"file"</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
 
 <div class="viewcode-block" id="ToolArtifact.to_dict">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolArtifact.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
-            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+            <span class="s2">"path"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s2">"kind"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+            <span class="s2">"label"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
         <span class="p">}</span></div>
 </div>
 
@@ -607,14 +607,14 @@
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolResult">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ToolResult</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalized tool execution result.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Normalized tool execution result."""</span>
 
     <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">artifacts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolArtifact</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">error_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">error_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="n">next_actions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ToolResult.success">
@@ -623,10 +623,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ToolArtifact</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ToolResult&quot;</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ToolResult"</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">summary</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span>
@@ -643,16 +643,16 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">error_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">next_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ToolResult&quot;</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ToolResult"</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">summary</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">data</span> <span class="ow">or</span> <span class="p">{}),</span>
-            <span class="n">error_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">error_type</span> <span class="ow">or</span> <span class="s2">&quot;tool_failed&quot;</span><span class="p">),</span>
-            <span class="n">error_message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">error_message</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">error_type</span> <span class="ow">or</span> <span class="s2">"tool_failed"</span><span class="p">),</span>
+            <span class="n">error_message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">error_message</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="n">next_actions</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">next_actions</span> <span class="ow">or</span> <span class="p">[]),</span>
         <span class="p">)</span></div>
 
@@ -661,19 +661,19 @@
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolResult.to_payload">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">action</span> <span class="ow">and</span> <span class="s2">&quot;action&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span> <span class="ow">and</span> <span class="s2">&quot;message&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span> <span class="ow">and</span> <span class="s2">&quot;error_type&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;error_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span> <span class="ow">and</span> <span class="s2">&quot;error_message&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;error_message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_actions</span> <span class="ow">and</span> <span class="s2">&quot;next_actions&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;next_actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_actions</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span> <span class="ow">and</span> <span class="s2">&quot;artifacts&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;artifacts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span><span class="p">]</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"ok"</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">and</span> <span class="s2">"action"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">"action"</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span> <span class="ow">and</span> <span class="s2">"message"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">"message"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span> <span class="ow">and</span> <span class="s2">"error_type"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">"error_type"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span> <span class="ow">and</span> <span class="s2">"error_message"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">"error_message"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_actions</span> <span class="ow">and</span> <span class="s2">"next_actions"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">"next_actions"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_actions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span> <span class="ow">and</span> <span class="s2">"artifacts"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">"artifacts"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">payload</span></div>
 </div>
 
@@ -686,7 +686,7 @@
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolSpec">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ToolSpec</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Definition of one atomic tool.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Definition of one atomic tool."""</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
@@ -694,8 +694,8 @@
     <span class="n">output_model</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">executor</span><span class="p">:</span> <span class="n">ToolExecutor</span>
     <span class="n">tags</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
-    <span class="n">effects</span><span class="p">:</span> <span class="n">ToolEffect</span> <span class="o">=</span> <span class="s2">&quot;read&quot;</span>
-    <span class="n">confirmation</span><span class="p">:</span> <span class="n">ToolConfirmation</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+    <span class="n">effects</span><span class="p">:</span> <span class="n">ToolEffect</span> <span class="o">=</span> <span class="s2">"read"</span>
+    <span class="n">confirmation</span><span class="p">:</span> <span class="n">ToolConfirmation</span> <span class="o">=</span> <span class="s2">"none"</span>
 
 <div class="viewcode-block" id="ToolSpec.execute">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.contracts.html#data_juicer_agents.core.tool.ToolSpec.execute">[docs]</a>
@@ -710,8 +710,8 @@
             <span class="k">raise</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ToolResult</span><span class="o">.</span><span class="n">failure</span><span class="p">(</span>
-                <span class="n">summary</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;tool &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; raised an unexpected exception: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_exception&quot;</span><span class="p">,</span>
+                <span class="n">summary</span><span class="o">=</span><span class="sa">f</span><span class="s2">"tool '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' raised an unexpected exception: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"tool_exception"</span><span class="p">,</span>
                 <span class="n">error_message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
             <span class="p">)</span></div>
 </div>
@@ -719,13 +719,13 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ToolArtifact&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ToolConfirmation&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ToolContext&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ToolEffect&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ToolExecutor&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ToolResult&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ToolSpec&quot;</span><span class="p">,</span>
+    <span class="s2">"ToolArtifact"</span><span class="p">,</span>
+    <span class="s2">"ToolConfirmation"</span><span class="p">,</span>
+    <span class="s2">"ToolContext"</span><span class="p">,</span>
+    <span class="s2">"ToolEffect"</span><span class="p">,</span>
+    <span class="s2">"ToolExecutor"</span><span class="p">,</span>
+    <span class="s2">"ToolResult"</span><span class="p">,</span>
+    <span class="s2">"ToolSpec"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

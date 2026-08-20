@@ -611,29 +611,29 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </section>
 <section id="id4">
 <h2>3. 配置模型访问<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;&lt;your_key&gt;&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"&lt;your_key&gt;"</span>
 <span class="c1"># 或：</span>
-<span class="c1"># export MODELSCOPE_API_TOKEN=&quot;&lt;your_key&gt;&quot;</span>
+<span class="c1"># export MODELSCOPE_API_TOKEN="&lt;your_key&gt;"</span>
 
 <span class="c1"># 可选覆盖</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_MODEL_FALLBACKS</span><span class="o">=</span><span class="s2">&quot;qwen-max,qwen-plus&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">"https://dashscope.aliyuncs.com/compatible-mode/v1"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen3-max-2026-01-23"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"qwen3-max-2026-01-23"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_MODEL_FALLBACKS</span><span class="o">=</span><span class="s2">"qwen-max,qwen-plus"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">"true"</span>
 </pre></div>
 </div>
 </section>
 <section id="cli">
 <h2>4. 最短 CLI 路径<a class="headerlink" href="#cli" title="链接到此标题。">#</a></h2>
 <p>可选的观察步骤：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;去除重复文本&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"去除重复文本"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--top-k<span class="w"> </span><span class="m">8</span>
 </pre></div>
 </div>
 <p>生成 plan：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;做 RAG 清洗和文本去重&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"做 RAG 清洗和文本去重"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--export<span class="w"> </span>./data/demo-dataset-processed.jsonl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--output<span class="w"> </span>./data/demo-plan.yaml
@@ -655,7 +655,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <p>最短原子工具路径：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{}'</span>
 </pre></div>
 </div>
 <p>说明：</p>
@@ -690,8 +690,8 @@ dj-agents<span class="w"> </span>--ui<span class="w"> </span>as_studio<span clas
 <section id="id5">
 <h2>6. 最小检查<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>--help
-djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;过滤长文本&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--json
-djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;过滤长文本&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/out.jsonl<span class="w"> </span>--verbose
+djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"过滤长文本"</span><span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--json
+djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"过滤长文本"</span><span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/out.jsonl<span class="w"> </span>--verbose
 djx<span class="w"> </span>apply<span class="w"> </span>--plan<span class="w"> </span>./data/demo-plan.yaml<span class="w"> </span>--yes<span class="w"> </span>--dry-run
 dj-agents<span class="w"> </span>--help
 </pre></div>

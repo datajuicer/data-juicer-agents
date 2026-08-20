@@ -591,43 +591,43 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>./data-juicer-agents
 uv<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[core]&#39;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[core]'</span>
 </pre></div>
 </div>
 <p>Harness install:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[harness]&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[harness]'</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
 </pre></div>
 </div>
 <p>Full install:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[full]&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[full]'</span>
 </pre></div>
 </div>
 </section>
 <section id="configure-model-access">
 <h2>3. Configure model access<a class="headerlink" href="#configure-model-access" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;&lt;your_key&gt;&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"&lt;your_key&gt;"</span>
 <span class="c1"># or:</span>
-<span class="c1"># export MODELSCOPE_API_TOKEN=&quot;&lt;your_key&gt;&quot;</span>
+<span class="c1"># export MODELSCOPE_API_TOKEN="&lt;your_key&gt;"</span>
 
 <span class="c1"># Optional overrides</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_MODEL_FALLBACKS</span><span class="o">=</span><span class="s2">&quot;qwen-max,qwen-plus&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">"https://dashscope.aliyuncs.com/compatible-mode/v1"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen3-max-2026-01-23"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"qwen3-max-2026-01-23"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_MODEL_FALLBACKS</span><span class="o">=</span><span class="s2">"qwen-max,qwen-plus"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">"true"</span>
 </pre></div>
 </div>
 </section>
 <section id="minimal-cli-path">
 <h2>4. Minimal CLI path<a class="headerlink" href="#minimal-cli-path" title="Link to this heading">#</a></h2>
 <p>Optional inspection step:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;remove duplicate text records&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"remove duplicate text records"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--top-k<span class="w"> </span><span class="m">8</span>
 </pre></div>
 </div>
 <p>Generate a plan:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;deduplicate and clean text for RAG&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"deduplicate and clean text for RAG"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--export<span class="w"> </span>./data/demo-dataset-processed.jsonl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--output<span class="w"> </span>./data/demo-plan.yaml
@@ -649,7 +649,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <p>Minimal atomic tool path:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>plan
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_system_config<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{}'</span>
 </pre></div>
 </div>
 <p>Notes:</p>
@@ -686,8 +686,8 @@ dj-agents<span class="w"> </span>--ui<span class="w"> </span>as_studio<span clas
 <section id="basic-sanity-checks">
 <h2>6. Basic sanity checks<a class="headerlink" href="#basic-sanity-checks" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>--help
-djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;filter long text&quot;</span><span class="w"> </span>--json
-djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">&quot;filter long text&quot;</span><span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/out.jsonl<span class="w"> </span>--verbose
+djx<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"filter long text"</span><span class="w"> </span>--json
+djx<span class="w"> </span>plan<span class="w"> </span><span class="s2">"filter long text"</span><span class="w"> </span>--dataset<span class="w"> </span>./data/demo-dataset.jsonl<span class="w"> </span>--export<span class="w"> </span>./data/out.jsonl<span class="w"> </span>--verbose
 djx<span class="w"> </span>apply<span class="w"> </span>--plan<span class="w"> </span>./data/demo-plan.yaml<span class="w"> </span>--yes<span class="w"> </span>--dry-run
 dj-agents<span class="w"> </span>--help
 </pre></div>

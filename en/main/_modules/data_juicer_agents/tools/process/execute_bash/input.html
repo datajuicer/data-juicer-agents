@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.process.execute_bash.input</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Input model for execute_bash.&quot;&quot;&quot;</span>
+<span class="sd">"""Input model for execute_bash."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -556,17 +556,17 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ExecuteBashInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">command</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Shell command to execute. Supports any standard Unix command &quot;</span>
-            <span class="s2">&quot;(grep, find, tail, head, cat, wc, ls, etc.). &quot;</span>
-            <span class="s2">&quot;The output is automatically parsed based on the command type &quot;</span>
-            <span class="s2">&quot;(grep returns match count + lines, find returns file list, etc.) &quot;</span>
-            <span class="s2">&quot;and truncated to keep the context window small.&quot;</span>
+            <span class="s2">"Shell command to execute. Supports any standard Unix command "</span>
+            <span class="s2">"(grep, find, tail, head, cat, wc, ls, etc.). "</span>
+            <span class="s2">"The output is automatically parsed based on the command type "</span>
+            <span class="s2">"(grep returns match count + lines, find returns file list, etc.) "</span>
+            <span class="s2">"and truncated to keep the context window small."</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum execution time in seconds.&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Maximum execution time in seconds."</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 

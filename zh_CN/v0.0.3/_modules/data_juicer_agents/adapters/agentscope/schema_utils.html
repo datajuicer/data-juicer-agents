@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.adapters.agentscope.schema_utils 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Utilities for normalizing tool JSON schemas for agent-facing adapters.&quot;&quot;&quot;</span>
+<span class="sd">"""Utilities for normalizing tool JSON schemas for agent-facing adapters."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -553,7 +553,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
 
-<span class="n">_LOCAL_REF_PREFIXES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;#/$defs/&quot;</span><span class="p">,</span> <span class="s2">&quot;#/definitions/&quot;</span><span class="p">)</span>
+<span class="n">_LOCAL_REF_PREFIXES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"#/$defs/"</span><span class="p">,</span> <span class="s2">"#/definitions/"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_local_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">defs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -566,18 +566,18 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_node</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">defs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">stack</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;$ref&quot;</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"$ref"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_local_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">defs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">resolved</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
                     <span class="k">return</span> <span class="p">{}</span>
                 <span class="n">merged</span> <span class="o">=</span> <span class="n">_normalize_node</span><span class="p">(</span><span class="n">resolved</span><span class="p">,</span> <span class="n">defs</span><span class="p">,</span> <span class="n">stack</span> <span class="o">+</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
                 <span class="n">extras</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;$ref&quot;</span><span class="p">,</span> <span class="s2">&quot;$defs&quot;</span><span class="p">,</span> <span class="s2">&quot;definitions&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">}</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"$ref"</span><span class="p">,</span> <span class="s2">"$defs"</span><span class="p">,</span> <span class="s2">"definitions"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">}</span>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="n">extras</span><span class="p">:</span>
                     <span class="n">normalized_extras</span> <span class="o">=</span> <span class="n">_normalize_node</span><span class="p">(</span><span class="n">extras</span><span class="p">,</span> <span class="n">defs</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
@@ -589,7 +589,7 @@
 
         <span class="n">cleaned</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;$defs&quot;</span><span class="p">,</span> <span class="s2">&quot;definitions&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">}:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"$defs"</span><span class="p">,</span> <span class="s2">"definitions"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">}:</span>
                 <span class="k">continue</span>
             <span class="n">cleaned</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_normalize_node</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">defs</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cleaned</span>
@@ -603,7 +603,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">normalize_tool_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">raw</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
     <span class="n">defs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;$defs&quot;</span><span class="p">,</span> <span class="s2">&quot;definitions&quot;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"$defs"</span><span class="p">,</span> <span class="s2">"definitions"</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">defs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -611,7 +611,7 @@
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;normalize_tool_schema&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"normalize_tool_schema"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.core.tool.dataset_source</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Unified dataset source descriptor.</span>
+<span class="sd">"""Unified dataset source descriptor.</span>
 
 <span class="sd">Replaces the scattered ``dataset_path`` / ``dataset`` /</span>
 <span class="sd">``generated_dataset_config`` triple with a single, self-describing envelope</span>
@@ -553,7 +553,7 @@
 <span class="sd">— it stays in :class:`DatasetObjectConfig` and</span>
 <span class="sd">:class:`GeneratedDatasetConfig` respectively and is validated when the</span>
 <span class="sd">envelope is converted to a :class:`DatasetIOSpec` via :meth:`to_io_spec`.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -566,7 +566,7 @@
 <div class="viewcode-block" id="DatasetSource">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.dataset_source.html#data_juicer_agents.core.tool.DatasetSource">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatasetSource</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unified dataset source envelope.</span>
+<span class="w">    </span><span class="sd">"""Unified dataset source envelope.</span>
 
 <span class="sd">    Exactly **one** of ``path``, ``config``, or ``generated`` must be</span>
 <span class="sd">    provided.  Providing zero or more than one raises a validation error.</span>
@@ -574,46 +574,46 @@
 <span class="sd">    Examples::</span>
 
 <span class="sd">        # Simple local file (shortcut)</span>
-<span class="sd">        DatasetSource(path=&quot;/data/train.jsonl&quot;)</span>
+<span class="sd">        DatasetSource(path="/data/train.jsonl")</span>
 
 <span class="sd">        # Structured load config (remote, multi-source, max_sample_num …)</span>
 <span class="sd">        DatasetSource(config={</span>
-<span class="sd">            &quot;configs&quot;: [</span>
-<span class="sd">                {&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/a.jsonl&quot;, &quot;weight&quot;: 0.7},</span>
-<span class="sd">                {&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/b.jsonl&quot;, &quot;weight&quot;: 0.3},</span>
+<span class="sd">            "configs": [</span>
+<span class="sd">                {"type": "local", "path": "/data/a.jsonl", "weight": 0.7},</span>
+<span class="sd">                {"type": "local", "path": "/data/b.jsonl", "weight": 0.3},</span>
 <span class="sd">            ],</span>
-<span class="sd">            &quot;max_sample_num&quot;: 50000,</span>
+<span class="sd">            "max_sample_num": 50000,</span>
 <span class="sd">        })</span>
 
 <span class="sd">        # Dynamic generation via Data-Juicer FORMATTERS</span>
-<span class="sd">        DatasetSource(generated={&quot;type&quot;: &quot;text_formatter&quot;, ...})</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        DatasetSource(generated={"type": "text_formatter", ...})</span>
+<span class="sd">    """</span>
 
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Local file or directory path (shortcut for simple single-source cases). &quot;</span>
-            <span class="s2">&quot;Example: &#39;/data/train.jsonl&#39;&quot;</span>
+            <span class="s2">"Local file or directory path (shortcut for simple single-source cases). "</span>
+            <span class="s2">"Example: '/data/train.jsonl'"</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Structured dataset load config (same schema as the &#39;dataset&#39; block in a &quot;</span>
-            <span class="s2">&quot;Data-Juicer recipe).  Use for remote sources, multi-source mixing, &quot;</span>
-            <span class="s2">&quot;max_sample_num, per-source weights, etc.  &quot;</span>
-            <span class="s2">&quot;Run list_dataset_load_strategies to discover available source types and fields.  &quot;</span>
-            <span class="s1">&#39;Example: {&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;...&quot;, &quot;weight&quot;: 0.7}], &#39;</span>
-            <span class="s1">&#39;&quot;max_sample_num&quot;: 5000}&#39;</span>
+            <span class="s2">"Structured dataset load config (same schema as the 'dataset' block in a "</span>
+            <span class="s2">"Data-Juicer recipe).  Use for remote sources, multi-source mixing, "</span>
+            <span class="s2">"max_sample_num, per-source weights, etc.  "</span>
+            <span class="s2">"Run list_dataset_load_strategies to discover available source types and fields.  "</span>
+            <span class="s1">'Example: {"configs": [{"type": "local", "path": "...", "weight": 0.7}], '</span>
+            <span class="s1">'"max_sample_num": 5000}'</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">generated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Dynamic dataset generator config via Data-Juicer FORMATTERS.  &quot;</span>
-            <span class="s2">&quot;Must contain a &#39;type&#39; key matching a registered formatter name.  &quot;</span>
-            <span class="s2">&quot;Run list_dataset_formatters to discover available formatters and parameters.  &quot;</span>
-            <span class="s1">&#39;Example: {&quot;type&quot;: &quot;text_formatter&quot;, ...}&#39;</span>
+            <span class="s2">"Dynamic dataset generator config via Data-Juicer FORMATTERS.  "</span>
+            <span class="s2">"Must contain a 'type' key matching a registered formatter name.  "</span>
+            <span class="s2">"Run list_dataset_formatters to discover available formatters and parameters.  "</span>
+            <span class="s1">'Example: {"type": "text_formatter", ...}'</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
@@ -621,50 +621,50 @@
     <span class="c1"># Validators</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
-    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;generated&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"config"</span><span class="p">,</span> <span class="s2">"generated"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_json_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow LLMs to pass JSON strings instead of dicts.</span>
+<span class="w">        </span><span class="sd">"""Allow LLMs to pass JSON strings instead of dicts.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: When the string is not valid JSON or does not parse to a dict.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">parsed</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">parsed</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Expected a JSON object (dict), got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Expected a JSON object (dict), got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">"</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Invalid JSON string for dataset config: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Provide a valid JSON object or a dict directly. Details: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Invalid JSON string for dataset config: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">. "</span>
+                    <span class="sa">f</span><span class="s2">"Provide a valid JSON object or a dict directly. Details: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
         <span class="k">return</span> <span class="n">value</span>
 
-    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_exactly_one_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DatasetSource&quot;</span><span class="p">:</span>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_exactly_one_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"DatasetSource"</span><span class="p">:</span>
         <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">name</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">present</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;generated&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"config"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"generated"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
             <span class="p">]</span>
             <span class="k">if</span> <span class="n">present</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Exactly one dataset source is required: &quot;</span>
-                <span class="s2">&quot;provide one of path, config, or generated.&quot;</span>
+                <span class="s2">"Exactly one dataset source is required: "</span>
+                <span class="s2">"provide one of path, config, or generated."</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Only one dataset source can be specified at a time, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Please provide only one of path, config, or generated.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Only one dataset source can be specified at a time, "</span>
+                <span class="sa">f</span><span class="s2">"but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="sa">f</span><span class="s2">"Please provide only one of path, config, or generated."</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
@@ -675,15 +675,15 @@
 <div class="viewcode-block" id="DatasetSource.to_legacy_args">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.dataset_source.html#data_juicer_agents.core.tool.DatasetSource.to_legacy_args">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_legacy_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to the legacy ``(dataset_path, dataset, generated_dataset_config)`` dict.</span>
+<span class="w">        </span><span class="sd">"""Convert to the legacy ``(dataset_path, dataset, generated_dataset_config)`` dict.</span>
 
 <span class="sd">        Returns a dict with exactly the three legacy keys so callers can</span>
 <span class="sd">        unpack with ``**source.to_legacy_args()``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-            <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
-            <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated</span><span class="p">,</span>
+            <span class="s2">"dataset_path"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="s2">"dataset"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+            <span class="s2">"generated_dataset_config"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -692,18 +692,18 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_legacy</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">dataset</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">generated_dataset_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DatasetSource&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a :class:`DatasetSource` from the legacy triple.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"DatasetSource"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a :class:`DatasetSource` from the legacy triple.</span>
 
 <span class="sd">        This is the primary migration bridge: CLI argument parsers and</span>
 <span class="sd">        existing callers can keep their three-parameter interface and</span>
 <span class="sd">        convert to the unified envelope at the boundary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">dataset_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">dataset_path</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="n">config</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
             <span class="n">generated</span><span class="o">=</span><span class="n">generated_dataset_config</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -711,7 +711,7 @@
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DatasetSource&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"DatasetSource"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

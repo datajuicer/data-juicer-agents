@@ -554,39 +554,39 @@
 <div class="viewcode-block" id="BuildDatasetSpecInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.build_dataset_spec.input.html#data_juicer_agents.tools.plan.BuildDatasetSpecInput">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BuildDatasetSpecInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">)</span>  <span class="c1"># Allow advanced dataset fields as extra kwargs</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">"allow"</span><span class="p">)</span>  <span class="c1"># Allow advanced dataset fields as extra kwargs</span>
 
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;User intent for the current planning task. &quot;</span>
-            <span class="s2">&quot;For advanced dataset options (e.g., export_type, export_shard_size, &quot;</span>
-            <span class="s2">&quot;export_in_parallel, load_dataset_kwargs, suffixes, image_special_token, etc.), &quot;</span>
-            <span class="s2">&quot;call list_dataset_fields first to discover available fields, &quot;</span>
-            <span class="s2">&quot;then pass them directly as additional arguments to this tool.&quot;</span>
+            <span class="s2">"User intent for the current planning task. "</span>
+            <span class="s2">"For advanced dataset options (e.g., export_type, export_shard_size, "</span>
+            <span class="s2">"export_in_parallel, load_dataset_kwargs, suffixes, image_special_token, etc.), "</span>
+            <span class="s2">"call list_dataset_fields first to discover available fields, "</span>
+            <span class="s2">"then pass them directly as additional arguments to this tool."</span>
         <span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Output dataset path.&quot;</span><span class="p">)</span>
+    <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Output dataset path."</span><span class="p">)</span>
     <span class="n">dataset_source</span><span class="p">:</span> <span class="n">DatasetSource</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Dataset source specification.  Provide exactly one of: &quot;</span>
-            <span class="s2">&quot;path (local file/directory shortcut), &quot;</span>
-            <span class="s2">&quot;config (structured load config for remote sources, multi-source mixing, &quot;</span>
-            <span class="s2">&quot;max_sample_num, per-source weights — call list_dataset_load_strategies to &quot;</span>
-            <span class="s2">&quot;discover available types/sources), &quot;</span>
-            <span class="s2">&quot;or generated (dynamic formatter config — call list_dataset_formatters to &quot;</span>
-            <span class="s2">&quot;discover available formatters and parameters).&quot;</span>
+            <span class="s2">"Dataset source specification.  Provide exactly one of: "</span>
+            <span class="s2">"path (local file/directory shortcut), "</span>
+            <span class="s2">"config (structured load config for remote sources, multi-source mixing, "</span>
+            <span class="s2">"max_sample_num, per-source weights — call list_dataset_load_strategies to "</span>
+            <span class="s2">"discover available types/sources), "</span>
+            <span class="s2">"or generated (dynamic formatter config — call list_dataset_formatters to "</span>
+            <span class="s2">"discover available formatters and parameters)."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dataset inspection payload returned by inspect_dataset.&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Dataset inspection payload returned by inspect_dataset."</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">modality_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional explicit modality override.&quot;</span><span class="p">)</span>
-    <span class="n">text_keys_hint</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional text key overrides.&quot;</span><span class="p">)</span>
-    <span class="n">image_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional image key override.&quot;</span><span class="p">)</span>
-    <span class="n">audio_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional audio key override.&quot;</span><span class="p">)</span>
-    <span class="n">video_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional video key override.&quot;</span><span class="p">)</span>
-    <span class="n">image_bytes_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional image-bytes key override.&quot;</span><span class="p">)</span></div>
+    <span class="n">modality_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional explicit modality override."</span><span class="p">)</span>
+    <span class="n">text_keys_hint</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional text key overrides."</span><span class="p">)</span>
+    <span class="n">image_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional image key override."</span><span class="p">)</span>
+    <span class="n">audio_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional audio key override."</span><span class="p">)</span>
+    <span class="n">video_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional video key override."</span><span class="p">)</span>
+    <span class="n">image_bytes_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Optional image-bytes key override."</span><span class="p">)</span></div>
 
 </pre></div>
 

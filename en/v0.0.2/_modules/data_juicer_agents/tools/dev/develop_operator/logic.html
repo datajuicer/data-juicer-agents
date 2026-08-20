@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.dev.develop_operator.logic</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Tool-level APIs for custom operator scaffold generation.&quot;&quot;&quot;</span>
+<span class="sd">"""Tool-level APIs for custom operator scaffold generation."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -560,7 +560,7 @@
 <div class="viewcode-block" id="DevUseCase">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.dev.develop_operator.logic.html#data_juicer_agents.tools.dev.DevUseCase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DevUseCase</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate and optionally smoke-check custom operator scaffolds.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Generate and optionally smoke-check custom operator scaffolds."""</span>
 
 <div class="viewcode-block" id="DevUseCase.execute">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.dev.develop_operator.logic.html#data_juicer_agents.tools.dev.DevUseCase.execute">[docs]</a>
@@ -577,18 +577,18 @@
         <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">field</span>
             <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">{</span>
-                <span class="s2">&quot;intent&quot;</span><span class="p">:</span> <span class="n">intent</span><span class="p">,</span>
-                <span class="s2">&quot;operator_name&quot;</span><span class="p">:</span> <span class="n">operator_name</span><span class="p">,</span>
-                <span class="s2">&quot;output_dir&quot;</span><span class="p">:</span> <span class="n">output_dir</span><span class="p">,</span>
+                <span class="s2">"intent"</span><span class="p">:</span> <span class="n">intent</span><span class="p">,</span>
+                <span class="s2">"operator_name"</span><span class="p">:</span> <span class="n">operator_name</span><span class="p">,</span>
+                <span class="s2">"output_dir"</span><span class="p">:</span> <span class="n">output_dir</span><span class="p">,</span>
             <span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">,</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;intent/operator_name/output_dir are required&quot;</span><span class="p">,</span>
+                <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"missing_required"</span><span class="p">,</span>
+                <span class="s2">"requires"</span><span class="p">:</span> <span class="n">missing</span><span class="p">,</span>
+                <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"intent/operator_name/output_dir are required"</span><span class="p">,</span>
             <span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -601,9 +601,9 @@
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dev_failed&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;dev scaffold generation failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"dev_failed"</span><span class="p">,</span>
+                <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"dev scaffold generation failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">DevUseCase</span><span class="o">.</span><span class="n">_serialize_result</span><span class="p">(</span><span class="n">scaffold</span><span class="o">=</span><span class="n">scaffold</span><span class="p">,</span> <span class="n">smoke_check</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">smoke_check</span><span class="p">))</span></div>
@@ -615,27 +615,27 @@
         <span class="k">if</span> <span class="n">smoke_check</span><span class="p">:</span>
             <span class="n">smoke_ok</span><span class="p">,</span> <span class="n">smoke_message</span> <span class="o">=</span> <span class="n">run_smoke_check</span><span class="p">(</span><span class="n">scaffold</span><span class="p">)</span>
             <span class="n">smoke</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">smoke_ok</span><span class="p">),</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">smoke_message</span><span class="p">),</span>
+                <span class="s2">"ok"</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">smoke_ok</span><span class="p">),</span>
+                <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">smoke_message</span><span class="p">),</span>
             <span class="p">}</span>
 
         <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">smoke</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">bool</span><span class="p">(</span><span class="n">smoke</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">)),</span>
-            <span class="s2">&quot;operator_name&quot;</span><span class="p">:</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">operator_name</span><span class="p">,</span>
-            <span class="s2">&quot;operator_type&quot;</span><span class="p">:</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">operator_type</span><span class="p">,</span>
-            <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span>
-            <span class="s2">&quot;output_dir&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">output_dir</span><span class="p">),</span>
-            <span class="s2">&quot;generated_files&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">generated_files</span><span class="p">),</span>
-            <span class="s2">&quot;summary_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">summary_path</span><span class="p">),</span>
-            <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">notes</span><span class="p">),</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">smoke</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">bool</span><span class="p">(</span><span class="n">smoke</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ok"</span><span class="p">)),</span>
+            <span class="s2">"operator_name"</span><span class="p">:</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">operator_name</span><span class="p">,</span>
+            <span class="s2">"operator_type"</span><span class="p">:</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">operator_type</span><span class="p">,</span>
+            <span class="s2">"class_name"</span><span class="p">:</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span>
+            <span class="s2">"output_dir"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">output_dir</span><span class="p">),</span>
+            <span class="s2">"generated_files"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">generated_files</span><span class="p">),</span>
+            <span class="s2">"summary_path"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">summary_path</span><span class="p">),</span>
+            <span class="s2">"notes"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scaffold</span><span class="o">.</span><span class="n">notes</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">smoke</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;smoke_check&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoke</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"smoke_check"</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoke</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DevUseCase&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"DevUseCase"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.commands.debug_cmd 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Debug helpers for context/token evaluation.&quot;&quot;&quot;</span>
+<span class="sd">"""Debug helpers for context/token evaluation."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -562,12 +562,12 @@
 <span class="n">_WINDOW_30K</span> <span class="o">=</span> <span class="mi">30000</span>
 <span class="n">_WINDOW_50K</span> <span class="o">=</span> <span class="mi">50000</span>
 
-<span class="n">_DEFAULT_QWEN_BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;</span>
-<span class="n">_QWEN_PROBE_SYSTEM_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;You only estimate and summarize tool results.&quot;</span>
+<span class="n">_DEFAULT_QWEN_BASE_URL</span> <span class="o">=</span> <span class="s2">"https://dashscope.aliyuncs.com/compatible-mode/v1"</span>
+<span class="n">_QWEN_PROBE_SYSTEM_PROMPT</span> <span class="o">=</span> <span class="s2">"You only estimate and summarize tool results."</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_success_payload</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"ok"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span>
 
@@ -576,10 +576,10 @@
     <span class="o">*</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">error_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span>
-        <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="n">error_type</span><span class="p">,</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"action"</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span>
+        <span class="s2">"error_type"</span><span class="p">:</span> <span class="n">error_type</span><span class="p">,</span>
+        <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span>
     <span class="p">}</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span>
@@ -590,19 +590,19 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_json_text</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">":"</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_payload</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">raw_json</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input_json&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">input_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input_file&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">raw_json</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"input_json"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"input_file"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">raw_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">source</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_json</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;debug token-usage input must decode to a JSON object&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"debug token-usage input must decode to a JSON object"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span>
 
 
@@ -617,57 +617,57 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_qwen_model</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span>
-        <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DJA_SESSION_MODEL&quot;</span><span class="p">)</span>
-        <span class="ow">or</span> <span class="s2">&quot;qwen-plus&quot;</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DJA_SESSION_MODEL"</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="s2">"qwen-plus"</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_qwen_prompt_tokens</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="s2">&quot;MODELSCOPE_API_TOKEN&quot;</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DASHSCOPE_API_KEY"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">"MODELSCOPE_API_TOKEN"</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="s2">&quot;DASHSCOPE_API_KEY or MODELSCOPE_API_TOKEN is required&quot;</span>
-            <span class="s2">&quot; for provider=qwen&quot;</span>
+            <span class="s2">"DASHSCOPE_API_KEY or MODELSCOPE_API_TOKEN is required"</span>
+            <span class="s2">" for provider=qwen"</span>
         <span class="p">)</span>
     <span class="n">base_url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-        <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;base_url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DJA_OPENAI_BASE_URL&quot;</span><span class="p">)</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"base_url"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DJA_OPENAI_BASE_URL"</span><span class="p">)</span>
         <span class="ow">or</span> <span class="n">_DEFAULT_QWEN_BASE_URL</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">_resolve_qwen_model</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
-        <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_QWEN_PROBE_SYSTEM_PROMPT</span><span class="p">},</span>
+        <span class="s2">"model"</span><span class="p">:</span> <span class="n">_resolve_qwen_model</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+        <span class="s2">"messages"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"system"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">_QWEN_PROBE_SYSTEM_PROMPT</span><span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Summarize this </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> tool result in one short sentence:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_json_text</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+                <span class="s2">"content"</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Summarize this </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> tool result in one short sentence:</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_json_text</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">),</span>
             <span class="p">},</span>
         <span class="p">],</span>
-        <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;max_tokens&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"max_tokens"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"temperature"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span>
-        <span class="n">base_url</span> <span class="o">+</span> <span class="s2">&quot;/chat/completions&quot;</span><span class="p">,</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+        <span class="n">base_url</span> <span class="o">+</span> <span class="s2">"/chat/completions"</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">),</span>
         <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+            <span class="s2">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Bearer </span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Content-Type"</span><span class="p">:</span> <span class="s2">"application/json"</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"POST"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">timeout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;timeout&quot;</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">120</span><span class="p">)</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"timeout"</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">120</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-    <span class="n">usage</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;usage&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-    <span class="n">prompt_tokens</span> <span class="o">=</span> <span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"usage"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">prompt_tokens</span> <span class="o">=</span> <span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"prompt_tokens"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">prompt_tokens</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;qwen response did not include usage.prompt_tokens&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"qwen response did not include usage.prompt_tokens"</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">prompt_tokens</span><span class="p">)</span>
 
 
@@ -681,7 +681,7 @@
     <span class="n">full_tokens</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_char_token_count</span><span class="p">(</span><span class="n">full_text</span><span class="p">)</span>
     <span class="n">compact_tokens</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_char_token_count</span><span class="p">(</span><span class="n">compact_text</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_usage_payload</span><span class="p">(</span>
-        <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
+        <span class="n">provider</span><span class="o">=</span><span class="s2">"char"</span><span class="p">,</span>
         <span class="n">full_tokens</span><span class="o">=</span><span class="n">full_tokens</span><span class="p">,</span>
         <span class="n">compact_tokens</span><span class="o">=</span><span class="n">compact_tokens</span><span class="p">,</span>
         <span class="n">full_chars</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">full_text</span><span class="p">),</span>
@@ -697,10 +697,10 @@
     <span class="n">compact_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">full_tokens</span> <span class="o">=</span> <span class="n">_qwen_prompt_tokens</span><span class="p">(</span><span class="n">tool_name</span> <span class="o">+</span> <span class="s2">&quot; full&quot;</span><span class="p">,</span> <span class="n">full_payload</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
-    <span class="n">compact_tokens</span> <span class="o">=</span> <span class="n">_qwen_prompt_tokens</span><span class="p">(</span><span class="n">tool_name</span> <span class="o">+</span> <span class="s2">&quot; compact&quot;</span><span class="p">,</span> <span class="n">compact_payload</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="n">full_tokens</span> <span class="o">=</span> <span class="n">_qwen_prompt_tokens</span><span class="p">(</span><span class="n">tool_name</span> <span class="o">+</span> <span class="s2">" full"</span><span class="p">,</span> <span class="n">full_payload</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="n">compact_tokens</span> <span class="o">=</span> <span class="n">_qwen_prompt_tokens</span><span class="p">(</span><span class="n">tool_name</span> <span class="o">+</span> <span class="s2">" compact"</span><span class="p">,</span> <span class="n">compact_payload</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_usage_payload</span><span class="p">(</span>
-        <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;qwen&quot;</span><span class="p">,</span>
+        <span class="n">provider</span><span class="o">=</span><span class="s2">"qwen"</span><span class="p">,</span>
         <span class="n">full_tokens</span><span class="o">=</span><span class="n">full_tokens</span><span class="p">,</span>
         <span class="n">compact_tokens</span><span class="o">=</span><span class="n">compact_tokens</span><span class="p">,</span>
         <span class="n">full_chars</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">_json_text</span><span class="p">(</span><span class="n">full_payload</span><span class="p">)),</span>
@@ -723,7 +723,7 @@
     <span class="n">saved_tokens</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">full_tokens</span> <span class="o">-</span> <span class="n">compact_tokens</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">saved_pct</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">saved_tokens</span> <span class="o">/</span> <span class="n">full_tokens</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">full_tokens</span> <span class="k">else</span> <span class="mf">0.0</span>
     <span class="k">return</span> <span class="n">_success_payload</span><span class="p">(</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;debug_token_usage&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"debug_token_usage"</span><span class="p">,</span>
         <span class="n">provider</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span>
         <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
@@ -738,47 +738,47 @@
         <span class="n">full_pct_50k</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">full_tokens</span> <span class="o">/</span> <span class="n">_WINDOW_50K</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">compact_pct_50k</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">compact_tokens</span> <span class="o">/</span> <span class="n">_WINDOW_50K</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">compaction_enabled_env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s2">&quot;DJA_TOOL_RESULT_COMPACTION_ENABLED&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span>
+            <span class="s2">"DJA_TOOL_RESULT_COMPACTION_ENABLED"</span><span class="p">,</span> <span class="s2">"true"</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_token_usage</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"tool_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">_load_payload</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">_error_payload</span><span class="p">(</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;debug_token_usage&quot;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"debug_token_usage"</span><span class="p">,</span>
                 <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;invalid_input&quot;</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"invalid_input"</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">compact</span> <span class="o">=</span> <span class="n">compact_payload_for_model</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-    <span class="n">provider</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;provider&quot;</span><span class="p">,</span> <span class="s2">&quot;char&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;char&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"provider"</span><span class="p">,</span> <span class="s2">"char"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"char"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">provider</span> <span class="o">==</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">provider</span> <span class="o">==</span> <span class="s2">"char"</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">_measure_char</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">compact</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">provider</span> <span class="o">==</span> <span class="s2">&quot;qwen&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">provider</span> <span class="o">==</span> <span class="s2">"qwen"</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">_measure_qwen</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">compact</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">_error_payload</span><span class="p">(</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s2">&quot;debug_token_usage&quot;</span><span class="p">,</span>
-                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unsupported token usage provider: </span><span class="si">{</span><span class="n">provider</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;unsupported_provider&quot;</span><span class="p">,</span>
+                    <span class="n">action</span><span class="o">=</span><span class="s2">"debug_token_usage"</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"unsupported token usage provider: </span><span class="si">{</span><span class="n">provider</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                    <span class="n">error_type</span><span class="o">=</span><span class="s2">"unsupported_provider"</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="mi">2</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># debug command must surface failures as JSON</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">_error_payload</span><span class="p">(</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;debug_token_usage&quot;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"debug_token_usage"</span><span class="p">,</span>
                 <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;token_usage_failed&quot;</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"token_usage_failed"</span><span class="p">,</span>
                 <span class="n">provider</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">4</span><span class="p">,</span>
@@ -789,14 +789,14 @@
 <div class="viewcode-block" id="run_debug">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.commands.debug_cmd.html#data_juicer_agents.commands.debug_cmd.run_debug">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_debug</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="n">action</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;debug_action&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;token-usage&quot;</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"debug_action"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">"token-usage"</span><span class="p">:</span>
         <span class="n">payload</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">_execute_token_usage</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">_error_payload</span><span class="p">(</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span>
-            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unsupported debug action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;unsupported_action&quot;</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"debug"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"unsupported debug action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">"unsupported_action"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">code</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">_emit_json</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
@@ -804,7 +804,7 @@
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run_debug&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"run_debug"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

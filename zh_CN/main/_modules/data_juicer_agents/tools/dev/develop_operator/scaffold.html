@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.tools.dev.develop_operator.scaffold 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Utilities for non-invasive custom operator scaffolding.&quot;&quot;&quot;</span>
+<span class="sd">"""Utilities for non-invasive custom operator scaffolding."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -559,9 +559,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.llm_gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_model_json</span>
 
 
-<span class="n">_VALID_NAME_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[a-z][a-z0-9_]*$&quot;</span><span class="p">)</span>
-<span class="n">_SUFFIX_TO_TYPE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_mapper&quot;</span><span class="p">:</span> <span class="s2">&quot;mapper&quot;</span><span class="p">,</span> <span class="s2">&quot;_filter&quot;</span><span class="p">:</span> <span class="s2">&quot;filter&quot;</span><span class="p">}</span>
-<span class="n">_DEFAULT_DEV_MODEL</span> <span class="o">=</span> <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span>
+<span class="n">_VALID_NAME_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[a-z][a-z0-9_]*$"</span><span class="p">)</span>
+<span class="n">_SUFFIX_TO_TYPE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"_mapper"</span><span class="p">:</span> <span class="s2">"mapper"</span><span class="p">,</span> <span class="s2">"_filter"</span><span class="p">:</span> <span class="s2">"filter"</span><span class="p">}</span>
+<span class="n">_DEFAULT_DEV_MODEL</span> <span class="o">=</span> <span class="s2">"qwen3-max-2026-01-23"</span>
 
 
 <div class="viewcode-block" id="ScaffoldResult">
@@ -579,14 +579,14 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_operator_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">normalized</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">normalized</span> <span class="o">=</span> <span class="n">normalized</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
-    <span class="n">normalized</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">normalized</span><span class="p">)</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="n">normalized</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"_+"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">,</span> <span class="n">normalized</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">normalized</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_camel_case</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_operator_name_and_type</span><span class="p">(</span>
@@ -595,10 +595,10 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">_normalize_operator_name</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;operator-name is required&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"operator-name is required"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_VALID_NAME_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;operator-name must match ^[a-z][a-z0-9_]*$ after normalization&quot;</span>
+            <span class="s2">"operator-name must match ^[a-z][a-z0-9_]*$ after normalization"</span>
         <span class="p">)</span>
 
     <span class="n">inferred</span> <span class="o">=</span> <span class="kc">None</span>
@@ -609,17 +609,17 @@
 
     <span class="k">if</span> <span class="n">operator_type</span><span class="p">:</span>
         <span class="n">op_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">operator_type</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">op_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;mapper&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;--type must be mapper or filter&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">op_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"mapper"</span><span class="p">,</span> <span class="s2">"filter"</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"--type must be mapper or filter"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">inferred</span> <span class="ow">and</span> <span class="n">inferred</span> <span class="o">!=</span> <span class="n">op_type</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;operator-name suffix implies </span><span class="si">{</span><span class="n">inferred</span><span class="si">}</span><span class="s2"> but --type=</span><span class="si">{</span><span class="n">op_type</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"operator-name suffix implies </span><span class="si">{</span><span class="n">inferred</span><span class="si">}</span><span class="s2"> but --type=</span><span class="si">{</span><span class="n">op_type</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">op_type</span> <span class="o">=</span> <span class="n">inferred</span> <span class="ow">or</span> <span class="s2">&quot;mapper&quot;</span>
+        <span class="n">op_type</span> <span class="o">=</span> <span class="n">inferred</span> <span class="ow">or</span> <span class="s2">"mapper"</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">inferred</span><span class="p">:</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">op_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">op_type</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">op_type</span>
 
 
@@ -628,14 +628,14 @@
         <span class="k">return</span> <span class="p">[]</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">from_retrieve_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;from-retrieve file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"from-retrieve file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"candidates"</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
     <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">continue</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operator_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"operator_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
             <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">names</span>
@@ -648,32 +648,32 @@
     <span class="n">retrieved_ops</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;You are helping data engineers scaffold a new Data-Juicer operator.</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;Return JSON only with keys: purpose, behavior, default_params, caveats.</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;Each value should be a concise sentence.</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;intent: </span><span class="si">{</span><span class="n">intent</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;operator_name: </span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;operator_type: </span><span class="si">{</span><span class="n">operator_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;retrieved_operators: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">retrieved_ops</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">"You are helping data engineers scaffold a new Data-Juicer operator.</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"Return JSON only with keys: purpose, behavior, default_params, caveats.</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"Each value should be a concise sentence.</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"intent: </span><span class="si">{</span><span class="n">intent</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"operator_name: </span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"operator_type: </span><span class="si">{</span><span class="n">operator_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"retrieved_operators: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">retrieved_ops</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
     <span class="p">)</span>
     <span class="n">model_name</span> <span class="o">=</span> <span class="n">_DEFAULT_DEV_MODEL</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">call_model_json</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;purpose&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-                <span class="s2">&quot;behavior&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;behavior&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-                <span class="s2">&quot;default_params&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default_params&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-                <span class="s2">&quot;caveats&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;caveats&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="s2">"purpose"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"purpose"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="s2">"behavior"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"behavior"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="s2">"default_params"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"default_params"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="s2">"caveats"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"caveats"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="p">}</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">pass</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Implement intent-driven </span><span class="si">{</span><span class="n">operator_type</span><span class="si">}</span><span class="s2"> logic for: </span><span class="si">{</span><span class="n">intent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;behavior&quot;</span><span class="p">:</span> <span class="s2">&quot;Provide a minimal, safe baseline implementation and preserve sample schema.&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;default_params&quot;</span><span class="p">:</span> <span class="s2">&quot;Tune thresholds and keys based on real dataset samples.&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;caveats&quot;</span><span class="p">:</span> <span class="s2">&quot;Generated code is a starting point; review and refine before production.&quot;</span><span class="p">,</span>
+        <span class="s2">"purpose"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Implement intent-driven </span><span class="si">{</span><span class="n">operator_type</span><span class="si">}</span><span class="s2"> logic for: </span><span class="si">{</span><span class="n">intent</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="s2">"behavior"</span><span class="p">:</span> <span class="s2">"Provide a minimal, safe baseline implementation and preserve sample schema."</span><span class="p">,</span>
+        <span class="s2">"default_params"</span><span class="p">:</span> <span class="s2">"Tune thresholds and keys based on real dataset samples."</span><span class="p">,</span>
+        <span class="s2">"caveats"</span><span class="p">:</span> <span class="s2">"Generated code is a starting point; review and refine before production."</span><span class="p">,</span>
     <span class="p">}</span>
 
 
@@ -683,21 +683,21 @@
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">notes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;# -*- coding: utf-8 -*-</span>
-<span class="s1">&quot;&quot;&quot;Custom Data-Juicer mapper generated by djx dev.</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">'''# -*- coding: utf-8 -*-</span>
+<span class="s1">"""Custom Data-Juicer mapper generated by djx dev.</span>
 
 <span class="s1">Intent:</span>
 <span class="s1">    </span><span class="si">{</span><span class="n">intent</span><span class="si">}</span>
 <span class="s1">Purpose:</span>
-<span class="s1">    </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;purpose&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span>
-<span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">    </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"purpose"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span>
+<span class="s1">"""</span>
 
 <span class="s1">from data_juicer.ops.base_op import Mapper, OPERATORS</span>
 
 
-<span class="s1">@OPERATORS.register_module(&quot;</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">&quot;)</span>
+<span class="s1">@OPERATORS.register_module("</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">")</span>
 <span class="s1">class </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s1">(Mapper):</span>
-<span class="s1">    &quot;&quot;&quot;</span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;behavior&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">    """</span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"behavior"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span><span class="s1">"""</span>
 
 <span class="s1">    def __init__(self, enabled: bool = True, *args, **kwargs):</span>
 <span class="s1">        super().__init__(*args, **kwargs)</span>
@@ -708,11 +708,11 @@
 <span class="s1">            return sample</span>
 
 <span class="s1">        # TODO: replace placeholder logic with intent-specific transformation.</span>
-<span class="s1">        text = sample.get(self.text_key, &quot;&quot;)</span>
+<span class="s1">        text = sample.get(self.text_key, "")</span>
 <span class="s1">        if isinstance(text, str):</span>
 <span class="s1">            sample[self.text_key] = text.strip()</span>
 <span class="s1">        return sample</span>
-<span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">'''</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_filter_template</span><span class="p">(</span>
@@ -721,23 +721,23 @@
     <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">notes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">metric_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">_score&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;# -*- coding: utf-8 -*-</span>
-<span class="s1">&quot;&quot;&quot;Custom Data-Juicer filter generated by djx dev.</span>
+    <span class="n">metric_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">_score"</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">'''# -*- coding: utf-8 -*-</span>
+<span class="s1">"""Custom Data-Juicer filter generated by djx dev.</span>
 
 <span class="s1">Intent:</span>
 <span class="s1">    </span><span class="si">{</span><span class="n">intent</span><span class="si">}</span>
 <span class="s1">Purpose:</span>
-<span class="s1">    </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;purpose&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span>
-<span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">    </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"purpose"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span>
+<span class="s1">"""</span>
 
 <span class="s1">from data_juicer.utils.constant import Fields</span>
 <span class="s1">from data_juicer.ops.base_op import Filter, OPERATORS</span>
 
 
-<span class="s1">@OPERATORS.register_module(&quot;</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">&quot;)</span>
+<span class="s1">@OPERATORS.register_module("</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">")</span>
 <span class="s1">class </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s1">(Filter):</span>
-<span class="s1">    &quot;&quot;&quot;</span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;behavior&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">    """</span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"behavior"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span><span class="s1">"""</span>
 
 <span class="s1">    _batched_op = True</span>
 
@@ -750,29 +750,29 @@
 <span class="s1">        texts = samples.get(self.text_key, [])</span>
 <span class="s1">        stats = samples.get(Fields.stats, [])</span>
 <span class="s1">        for idx, stat in enumerate(stats):</span>
-<span class="s1">            text = texts[idx] if idx &lt; len(texts) else &quot;&quot;</span>
+<span class="s1">            text = texts[idx] if idx &lt; len(texts) else ""</span>
 <span class="s1">            # TODO: replace placeholder metric with task-specific score computation.</span>
-<span class="s1">            stat[&quot;</span><span class="si">{</span><span class="n">metric_key</span><span class="si">}</span><span class="s1">&quot;] = float(isinstance(text, str) and len(text.strip()) &gt; 0)</span>
+<span class="s1">            stat["</span><span class="si">{</span><span class="n">metric_key</span><span class="si">}</span><span class="s1">"] = float(isinstance(text, str) and len(text.strip()) &gt; 0)</span>
 <span class="s1">        return samples</span>
 
 <span class="s1">    def process_batched(self, samples):</span>
 <span class="s1">        stats = samples[Fields.stats]</span>
 <span class="s1">        return map(</span>
-<span class="s1">            lambda stat: self.get_keep_boolean(stat[&quot;</span><span class="si">{</span><span class="n">metric_key</span><span class="si">}</span><span class="s1">&quot;], self.min_score, self.max_score),</span>
+<span class="s1">            lambda stat: self.get_keep_boolean(stat["</span><span class="si">{</span><span class="n">metric_key</span><span class="si">}</span><span class="s1">"], self.min_score, self.max_score),</span>
 <span class="s1">            stats,</span>
 <span class="s1">        )</span>
-<span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">'''</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_test_template</span><span class="p">(</span><span class="n">operator_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;# -*- coding: utf-8 -*-</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">'''# -*- coding: utf-8 -*-</span>
 
 <span class="s1">from data_juicer.ops.base_op import OPERATORS</span>
 
 
 <span class="s1">def test_</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">_registered():</span>
-<span class="s1">    assert &quot;</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">&quot; in OPERATORS.modules</span>
-<span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    assert "</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s1">" in OPERATORS.modules</span>
+<span class="s1">'''</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_summary_markdown</span><span class="p">(</span>
@@ -783,8 +783,8 @@
     <span class="n">notes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">retrieved_ops</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">retrieved_line</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">retrieved_ops</span><span class="p">)</span> <span class="k">if</span> <span class="n">retrieved_ops</span> <span class="k">else</span> <span class="s2">&quot;None&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;# DJX Dev Summary</span>
+    <span class="n">retrieved_line</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">retrieved_ops</span><span class="p">)</span> <span class="k">if</span> <span class="n">retrieved_ops</span> <span class="k">else</span> <span class="s2">"None"</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""# DJX Dev Summary</span>
 
 <span class="s2">## Generated Operator</span>
 
@@ -795,10 +795,10 @@
 
 <span class="s2">## Design Notes</span>
 
-<span class="s2">- purpose: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;purpose&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span>
-<span class="s2">- behavior: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;behavior&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span>
-<span class="s2">- default_params: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default_params&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span>
-<span class="s2">- caveats: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;caveats&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">- purpose: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"purpose"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">- behavior: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"behavior"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">- default_params: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"default_params"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">- caveats: </span><span class="si">{</span><span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"caveats"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="si">}</span>
 
 <span class="s2">## Retrieval Context</span>
 
@@ -809,21 +809,21 @@
 <span class="s2">1. Replace placeholder logic in `</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">.py`.</span>
 <span class="s2">2. Run unit tests for the generated operator test module.</span>
 <span class="s2">3. Integrate by adding this directory to Data-Juicer custom operator paths.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_upsert_package_init</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">module_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">init_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;__init__.py&quot;</span>
-    <span class="n">import_line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;from .</span><span class="si">{</span><span class="n">module_file</span><span class="si">}</span><span class="s2"> import </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">init_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"__init__.py"</span>
+    <span class="n">import_line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"from .</span><span class="si">{</span><span class="n">module_file</span><span class="si">}</span><span class="s2"> import </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">init_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">init_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">import_line</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">init_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">import_line</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="n">current</span> <span class="o">=</span> <span class="n">init_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">init_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">import_line</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">current</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">current</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-            <span class="n">current</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">current</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+            <span class="n">current</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">current</span> <span class="o">+=</span> <span class="n">import_line</span>
-        <span class="n">init_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">init_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="generate_operator_scaffold">
@@ -836,7 +836,7 @@
     <span class="n">from_retrieve_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScaffoldResult</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">intent</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;intent is required&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"intent is required"</span><span class="p">)</span>
 
     <span class="n">resolved_name</span><span class="p">,</span> <span class="n">resolved_type</span> <span class="o">=</span> <span class="n">_resolve_operator_name_and_type</span><span class="p">(</span>
         <span class="n">operator_name</span><span class="o">=</span><span class="n">operator_name</span><span class="p">,</span>
@@ -856,17 +856,17 @@
     <span class="p">)</span>
 
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">resolved_name</span>
-    <span class="n">code_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">.py&quot;</span>
-    <span class="n">test_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;test_</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">.py&quot;</span>
-    <span class="n">summary_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">_SUMMARY.md&quot;</span>
+    <span class="n">code_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">.py"</span>
+    <span class="n">test_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"test_</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">.py"</span>
+    <span class="n">summary_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">_SUMMARY.md"</span>
 
-    <span class="k">if</span> <span class="n">resolved_type</span> <span class="o">==</span> <span class="s2">&quot;mapper&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">resolved_type</span> <span class="o">==</span> <span class="s2">"mapper"</span><span class="p">:</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">_mapper_template</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">resolved_name</span><span class="p">,</span> <span class="n">intent</span><span class="p">,</span> <span class="n">notes</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">_filter_template</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">resolved_name</span><span class="p">,</span> <span class="n">intent</span><span class="p">,</span> <span class="n">notes</span><span class="p">)</span>
 
-    <span class="n">code_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-    <span class="n">test_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">_test_template</span><span class="p">(</span><span class="n">resolved_name</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">code_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">test_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">_test_template</span><span class="p">(</span><span class="n">resolved_name</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="n">summary_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
         <span class="n">_summary_markdown</span><span class="p">(</span>
             <span class="n">intent</span><span class="o">=</span><span class="n">intent</span><span class="p">,</span>
@@ -876,7 +876,7 @@
             <span class="n">notes</span><span class="o">=</span><span class="n">notes</span><span class="p">,</span>
             <span class="n">retrieved_ops</span><span class="o">=</span><span class="n">retrieved_ops</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">_upsert_package_init</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
 
@@ -884,7 +884,7 @@
         <span class="nb">str</span><span class="p">(</span><span class="n">code_path</span><span class="p">),</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">test_path</span><span class="p">),</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">summary_path</span><span class="p">),</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">out_dir</span> <span class="o">/</span> <span class="s2">&quot;__init__.py&quot;</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"__init__.py"</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="k">return</span> <span class="n">ScaffoldResult</span><span class="p">(</span>
         <span class="n">operator_name</span><span class="o">=</span><span class="n">resolved_name</span><span class="p">,</span>
@@ -894,8 +894,8 @@
         <span class="n">generated_files</span><span class="o">=</span><span class="n">generated_files</span><span class="p">,</span>
         <span class="n">summary_path</span><span class="o">=</span><span class="n">summary_path</span><span class="p">,</span>
         <span class="n">notes</span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">&quot;Non-invasive mode: no automatic install/registration was performed.&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Use custom_operator_paths to load this operator during dj-process execution.&quot;</span><span class="p">,</span>
+            <span class="s2">"Non-invasive mode: no automatic install/registration was performed."</span><span class="p">,</span>
+            <span class="s2">"Use custom_operator_paths to load this operator during dj-process execution."</span><span class="p">,</span>
         <span class="p">],</span>
     <span class="p">)</span></div>
 
@@ -904,37 +904,37 @@
 <div class="viewcode-block" id="run_smoke_check">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.dev.develop_operator.scaffold.html#data_juicer_agents.tools.dev.run_smoke_check">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_smoke_check</span><span class="p">(</span><span class="n">scaffold</span><span class="p">:</span> <span class="n">ScaffoldResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="n">smoke_dir</span> <span class="o">=</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;.djx_dev_smoke&quot;</span>
+    <span class="n">smoke_dir</span> <span class="o">=</span> <span class="n">scaffold</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">/</span> <span class="s2">".djx_dev_smoke"</span>
     <span class="n">smoke_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">smoke_dir</span> <span class="o">/</span> <span class="s2">&quot;input.jsonl&quot;</span>
-    <span class="n">dataset_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s1">&#39;{&quot;text&quot;: &quot;hello world&quot;}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">smoke_dir</span> <span class="o">/</span> <span class="s2">"input.jsonl"</span>
+    <span class="n">dataset_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s1">'{"text": "hello world"}</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
 
-    <span class="n">recipe_path</span> <span class="o">=</span> <span class="n">smoke_dir</span> <span class="o">/</span> <span class="s2">&quot;recipe.yaml&quot;</span>
+    <span class="n">recipe_path</span> <span class="o">=</span> <span class="n">smoke_dir</span> <span class="o">/</span> <span class="s2">"recipe.yaml"</span>
     <span class="n">recipe_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="s2">&quot;project_name: djx_dev_smoke&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;dataset_path: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;export_path: </span><span class="si">{</span><span class="n">smoke_dir</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s1">&#39;output.jsonl&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;custom_operator_paths:&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">scaffold</span><span class="o">.</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;process:&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">scaffold</span><span class="o">.</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">: </span><span class="se">{{}}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">"project_name: djx_dev_smoke"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"dataset_path: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"export_path: </span><span class="si">{</span><span class="n">smoke_dir</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s1">'output.jsonl'</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">"custom_operator_paths:"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">scaffold</span><span class="o">.</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">"process:"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">scaffold</span><span class="o">.</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">: </span><span class="se">{{}}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">""</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">),</span>
-        <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dj-process&quot;</span><span class="p">,</span> <span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">)]</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"dj-process"</span><span class="p">,</span> <span class="s2">"--config"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">)]</span>
     <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Smoke check passed.&quot;</span>
-    <span class="n">stderr</span> <span class="o">=</span> <span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"Smoke check passed."</span>
+    <span class="n">stderr</span> <span class="o">=</span> <span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3000</span><span class="p">:</span>
         <span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr</span><span class="p">[</span><span class="o">-</span><span class="mi">3000</span><span class="p">:]</span>
-    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Smoke check failed (exit=</span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">).</span><span class="se">\n</span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span></div>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Smoke check failed (exit=</span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">).</span><span class="se">\n</span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">"</span></div>
 
 </pre></div>
 

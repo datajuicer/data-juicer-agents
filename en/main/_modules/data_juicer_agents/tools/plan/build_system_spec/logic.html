@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.plan.build_system_spec.logic</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Pure logic for build_system_spec.&quot;&quot;&quot;</span>
+<span class="sd">"""Pure logic for build_system_spec."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -555,11 +555,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._shared.system_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_system_spec_payload</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_dj_system_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load complete system configuration from Data-Juicer dynamically.</span>
+<span class="w">    </span><span class="sd">"""Load complete system configuration from Data-Juicer dynamically.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Dict of all system parameters with their default values from DJ</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dj_config_bridge</span>
         <span class="n">bridge</span> <span class="o">=</span> <span class="n">get_dj_config_bridge</span><span class="p">()</span>
@@ -567,12 +567,12 @@
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="c1"># Fallback to minimal defaults if DJ is not available</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;open_tracer&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;open_monitor&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;use_cache&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;skip_op_error&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"executor_type"</span><span class="p">:</span> <span class="s2">"default"</span><span class="p">,</span>
+            <span class="s2">"np"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"open_tracer"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"open_monitor"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"use_cache"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"skip_op_error"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
 
 <div class="viewcode-block" id="build_system_spec">
@@ -584,7 +584,7 @@
     <span class="n">executor_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build system spec with complete config dynamically loaded from Data-Juicer.</span>
+<span class="w">    </span><span class="sd">"""Build system spec with complete config dynamically loaded from Data-Juicer.</span>
 <span class="sd">    </span>
 <span class="sd">    This function now loads ALL system configuration fields from Data-Juicer,</span>
 <span class="sd">    ensuring automatic sync with any upstream changes.</span>
@@ -598,27 +598,27 @@
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Dict containing the built system spec and validation results</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Load complete system config from Data-Juicer</span>
     <span class="n">dj_system_config</span> <span class="o">=</span> <span class="n">_load_dj_system_config</span><span class="p">()</span>
 
     <span class="c1"># Override core parameters if provided</span>
     <span class="k">if</span> <span class="n">custom_operator_paths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dj_system_config</span><span class="p">[</span><span class="s1">&#39;custom_operator_paths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">custom_operator_paths</span><span class="p">)</span>
+        <span class="n">dj_system_config</span><span class="p">[</span><span class="s1">'custom_operator_paths'</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">custom_operator_paths</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">np</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dj_system_config</span><span class="p">[</span><span class="s1">&#39;np&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span>
+        <span class="n">dj_system_config</span><span class="p">[</span><span class="s1">'np'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span>
 
     <span class="k">if</span> <span class="n">executor_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dj_system_config</span><span class="p">[</span><span class="s1">&#39;executor_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">executor_type</span>
+        <span class="n">dj_system_config</span><span class="p">[</span><span class="s1">'executor_type'</span><span class="p">]</span> <span class="o">=</span> <span class="n">executor_type</span>
 
     <span class="c1"># Merge kwargs</span>
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">unknown_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dj_system_config</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">unknown_keys</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown system config field(s): </span><span class="si">{</span><span class="n">unknown_keys</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Valid fields are: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dj_system_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Unknown system config field(s): </span><span class="si">{</span><span class="n">unknown_keys</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="sa">f</span><span class="s2">"Valid fields are: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dj_system_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="n">dj_system_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -629,16 +629,16 @@
     <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">validate_system_spec_payload</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;system_spec&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-        <span class="s2">&quot;validation_errors&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
-        <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;system spec built&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">&quot;system spec build failed&quot;</span><span class="p">,</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"system_spec"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="s2">"validation_errors"</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
+        <span class="s2">"warnings"</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
+        <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"system spec built"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">"system spec build failed"</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;build_system_spec&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"build_system_spec"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

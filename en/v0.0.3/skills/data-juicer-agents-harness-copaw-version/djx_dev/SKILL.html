@@ -576,7 +576,7 @@
 <section id="pre-development-check">
 <h2>Pre-Development Check<a class="headerlink" href="#pre-development-check" title="Link to this heading">#</a></h2>
 <p><strong>Always confirm no existing operator meets the need first</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;describe the functionality you need&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "describe the functionality you need"}'</span>
 </pre></div>
 </div>
 <p>Only develop a custom operator if the search results truly cannot satisfy the requirement.</p>
@@ -639,12 +639,12 @@
 </section>
 <section id="command">
 <h3>Command<a class="headerlink" href="#command" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;intent&quot;: &quot;extract email addresses and mask them&quot;,</span>
-<span class="s1">  &quot;operator_name&quot;: &quot;email_mask_mapper&quot;,</span>
-<span class="s1">  &quot;output_dir&quot;: &quot;./custom_operators&quot;,</span>
-<span class="s1">  &quot;smoke_check&quot;: true</span>
-<span class="s1">}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "intent": "extract email addresses and mask them",</span>
+<span class="s1">  "operator_name": "email_mask_mapper",</span>
+<span class="s1">  "output_dir": "./custom_operators",</span>
+<span class="s1">  "smoke_check": true</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>
@@ -703,7 +703,7 @@
 <h2>Pipeline Integration<a class="headerlink" href="#pipeline-integration" title="Link to this heading">#</a></h2>
 <section id="generate-operator-scaffold">
 <h3>1. Generate Operator Scaffold<a class="headerlink" href="#generate-operator-scaffold" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{...}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{...}'</span>
 </pre></div>
 </div>
 </section>
@@ -721,15 +721,15 @@
 <section id="integrate-into-pipeline">
 <h3>4. Integrate into Pipeline<a class="headerlink" href="#integrate-into-pipeline" title="Link to this heading">#</a></h3>
 <p>Pass the custom operator path in <code class="docutils literal notranslate"><span class="pre">build_system_spec</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"custom_operator_paths": ["./custom_operators"]}'</span>
 </pre></div>
 </div>
 <p>Use the operator in <code class="docutils literal notranslate"><span class="pre">build_process_spec</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;operators&quot;: [</span>
-<span class="s1">    {&quot;name&quot;: &quot;email_mask_mapper&quot;, &quot;params&quot;: {}}</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "operators": [</span>
+<span class="s1">    {"name": "email_mask_mapper", "params": {}}</span>
 <span class="s1">  ]</span>
-<span class="s1">}&#39;</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 <blockquote>
@@ -741,16 +741,16 @@
 <section id="complete-development-flow">
 <h2>Complete Development Flow<a class="headerlink" href="#complete-development-flow" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Confirm no existing operator meets the need</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;email masking&quot;}&#39;</span>
-<span class="c1"># Results don&#39;t satisfy the requirement</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "email masking"}'</span>
+<span class="c1"># Results don't satisfy the requirement</span>
 
 <span class="c1"># Step 2: Generate scaffold</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;intent&quot;: &quot;extract email addresses from text and mask them&quot;,</span>
-<span class="s1">  &quot;operator_name&quot;: &quot;email_mask_mapper&quot;,</span>
-<span class="s1">  &quot;output_dir&quot;: &quot;./custom_operators&quot;,</span>
-<span class="s1">  &quot;smoke_check&quot;: true</span>
-<span class="s1">}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>develop_operator<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "intent": "extract email addresses from text and mask them",</span>
+<span class="s1">  "operator_name": "email_mask_mapper",</span>
+<span class="s1">  "output_dir": "./custom_operators",</span>
+<span class="s1">  "smoke_check": true</span>
+<span class="s1">}'</span>
 
 <span class="c1"># Step 3: Review generated files</span>
 cat<span class="w"> </span>./custom_operators/email_mask_mapper.py
@@ -762,12 +762,12 @@ cat<span class="w"> </span>./custom_operators/email_mask_mapper.py
 pytest<span class="w"> </span>./custom_operators/test_email_mask_mapper.py
 
 <span class="c1"># Step 6: Integrate into pipeline</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;custom_operator_paths&quot;: [&quot;./custom_operators&quot;]}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_system_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"custom_operator_paths": ["./custom_operators"]}'</span>
 
 <span class="c1"># Step 7: Use in process_spec</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;operators&quot;: [{&quot;name&quot;: &quot;email_mask_mapper&quot;, &quot;params&quot;: {}}]</span>
-<span class="s1">}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>build_process_spec<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "operators": [{"name": "email_mask_mapper", "params": {}}]</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>

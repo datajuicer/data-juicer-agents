@@ -607,13 +607,13 @@ python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w">
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 
 <span class="c1"># Development dependencies (pytest, black, etc.)</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span>
 
 <span class="c1"># QA dependencies</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[qa]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[qa]"</span>
 
 <span class="c1"># All optional dependencies</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev,qa]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev,qa]"</span>
 </pre></div>
 </div>
 </section>
@@ -629,7 +629,7 @@ djx<span class="w"> </span>tool<span class="w"> </span>list
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset
 
 <span class="c1"># Verify core dependency</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import data_juicer; print(data_juicer.__version__)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import data_juicer; print(data_juicer.__version__)"</span>
 
 <span class="c1"># Check virtual environment</span>
 which<span class="w"> </span>djx
@@ -679,10 +679,10 @@ which<span class="w"> </span>djx<span class="w">  </span><span class="c1"># Shou
 djx<span class="w"> </span>tool<span class="w"> </span>list<span class="w">  </span><span class="c1"># Should show 8 tools</span>
 
 <span class="c1"># □ 4. Check core library</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import data_juicer; print(&#39;OK&#39;)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import data_juicer; print('OK')"</span>
 
 <span class="c1"># □ 5. Test a simple command</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;test.jsonl&quot;}, &quot;sample_size&quot;: 5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"dataset_source": {"path": "test.jsonl"}, "sample_size": 5}'</span>
 <span class="c1"># If no test file exists, it will report file not found, but confirms the tool is available</span>
 </pre></div>
 </div>
@@ -729,7 +729,7 @@ uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> <
 <h3><code class="docutils literal notranslate"><span class="pre">ModuleNotFoundError:</span> <span class="pre">No</span> <span class="pre">module</span> <span class="pre">named</span> <span class="pre">'data_juicer'</span></code><a class="headerlink" href="#modulenotfounderror-no-module-named-data-juicer" title="Link to this heading">#</a></h3>
 <p><strong>Cause</strong>: py-data-juicer not installed or wrong environment.</p>
 <p><strong>Solution</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ensure you&#39;re in the virtual environment</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ensure you're in the virtual environment</span>
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>py-data-juicer
 </pre></div>
@@ -801,11 +801,11 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
 <p>After installation, configure runtime environment variables:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># API Key (for LLM mode)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your-api-key"</span>
 
 <span class="c1"># Model configuration</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen-max"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"qwen-max"</span>
 </pre></div>
 </div>
 <p>See <strong>djx_auth</strong> skill for details.</p>

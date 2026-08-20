@@ -557,28 +557,28 @@
 <p>Recommended setup:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span>python3.11<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span><span class="s1">&#39;data-juicer-agents[harness]&#39;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span><span class="s1">'data-juicer-agents[harness]'</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
 </pre></div>
 </div>
 <p>For unreleased local testing, if the user explicitly provides a local <code class="docutils literal notranslate"><span class="pre">data-juicer-agents</span></code> checkout, prefer a local editable install instead of PyPI:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span>python3.11<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;/path/to/data-juicer-agents[harness]&#39;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>-e<span class="w"> </span><span class="s1">'/path/to/data-juicer-agents[harness]'</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
 </pre></div>
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">venv</span></code> fails in the current environment, fall back to:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span><span class="s1">&#39;data-juicer-agents[harness]&#39;</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span><span class="s1">'data-juicer-agents[harness]'</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
 </pre></div>
 </div>
 <p>For the same unreleased-local-testing case, the fallback install is:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;/path/to/data-juicer-agents[harness]&#39;</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>-e<span class="w"> </span><span class="s1">'/path/to/data-juicer-agents[harness]'</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">DJX_TOOL_PROFILE</span><span class="o">=</span>harness
 </pre></div>
 </div>
@@ -590,7 +590,7 @@ python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </sp
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>--version
 djx<span class="w"> </span>tool<span class="w"> </span>list
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>&lt;tool-name&gt;
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>&lt;tool-name&gt;<span class="w"> </span><span class="o">(</span>--input-json<span class="w"> </span><span class="s1">&#39;&lt;json&gt;&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--input-file<span class="w"> </span>&lt;input.json&gt;<span class="o">)</span><span class="w"> </span><span class="o">[</span>--working-dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yes<span class="o">]</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>&lt;tool-name&gt;<span class="w"> </span><span class="o">(</span>--input-json<span class="w"> </span><span class="s1">'&lt;json&gt;'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--input-file<span class="w"> </span>&lt;input.json&gt;<span class="o">)</span><span class="w"> </span><span class="o">[</span>--working-dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yes<span class="o">]</span>
 </pre></div>
 </div>
 <p>Rules:</p>

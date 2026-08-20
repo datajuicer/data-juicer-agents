@@ -744,8 +744,8 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </section>
 <section id="id8">
 <h3>配置环境变量<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-dashscope-key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_PATH</span><span class="o">=</span><span class="s2">&quot;/path/to/data-juicer&quot;</span><span class="w">  </span><span class="c1"># 可选</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your-dashscope-key"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_PATH</span><span class="o">=</span><span class="s2">"/path/to/data-juicer"</span><span class="w">  </span><span class="c1"># 可选</span>
 </pre></div>
 </div>
 </section>
@@ -984,37 +984,37 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <h1>🧩 场景化安装（按需组合）<a class="headerlink" href="#id22" title="链接到此标题。">#</a></h1>
 <p>根据您的任务类型，可选择安装特定模块：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 通用机器学习/深度学习支持</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic]"</span>
 
 <span class="c1"># 自然语言处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[nlp]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[nlp]"</span>
 
 <span class="c1"># 计算机视觉</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[vision]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[vision]"</span>
 
 <span class="c1"># 音频处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[audio]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[audio]"</span>
 
 <span class="c1"># 分布式计算</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[distributed]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[distributed]"</span>
 
 <span class="c1"># AI服务/API支持</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[ai_services]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[ai_services]"</span>
 
 <span class="c1"># 开发与测试工具</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[dev]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[dev]"</span>
 </pre></div>
 </div>
 <section id="id23">
 <h2>常用组合示例：<a class="headerlink" href="#id23" title="链接到此标题。">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 文本处理完整环境</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic,nlp]"</span>
 
 <span class="c1"># 视觉处理完整环境</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,vision]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic,vision]"</span>
 
 <span class="c1"># 全功能安装（除沙箱外）</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[all]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[all]"</span>
 </pre></div>
 </div>
 <hr class="docutils" />
@@ -1025,7 +1025,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
 <span class="nb">cd</span><span class="w"> </span>data-juicer
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w">                  </span><span class="c1"># 安装核心</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[vision]&quot;</span><span class="w">        </span><span class="c1"># 安装特定模块</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[vision]"</span><span class="w">        </span><span class="c1"># 安装特定模块</span>
 </pre></div>
 </div>
 <blockquote>
@@ -1115,9 +1115,9 @@ brew<span class="w"> </span>install<span class="w"> </span>ffmpeg
 <p>在你的 Data-Juicer 配置文件（如 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>）中添加如下配置：</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">remove_words_with_incorrect_substrings_mapper</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">lang</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;en&quot;</span><span class="w">  </span><span class="c1"># 或 &quot;zh&quot; 等其他语言</span>
+<span class="w">      </span><span class="nt">lang</span><span class="p">:</span><span class="w"> </span><span class="s">"en"</span><span class="w">  </span><span class="c1"># 或 "zh" 等其他语言</span>
 <span class="w">      </span><span class="nt">tokenization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">  </span><span class="c1"># 若无需分词可设为 false</span>
-<span class="w">      </span><span class="nt">substrings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;fuck&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;shit&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bitch&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;asshole&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># 替换为你想过滤的脏话关键词</span>
+<span class="w">      </span><span class="nt">substrings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"fuck"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"shit"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"bitch"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"asshole"</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># 替换为你想过滤的脏话关键词</span>
 </pre></div>
 </div>
 </section>
@@ -1137,11 +1137,11 @@ brew<span class="w"> </span>install<span class="w"> </span>ffmpeg
 <section id="id32">
 <h2>🧪 示例输入/输出<a class="headerlink" href="#id32" title="链接到此标题。">#</a></h2>
 <p><strong>输入文本</strong>：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">fucking</span> <span class="n">bad</span> <span class="n">example</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t be an asshole.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">fucking</span> <span class="n">bad</span> <span class="n">example</span><span class="p">,</span> <span class="n">don</span><span class="s1">'t be an asshole.</span>
 </pre></div>
 </div>
 <p><strong>处理后输出</strong>：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">bad</span> <span class="n">example</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t be .</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">bad</span> <span class="n">example</span><span class="p">,</span> <span class="n">don</span><span class="s1">'t be .</span>
 </pre></div>
 </div>
 </section>
@@ -1178,13 +1178,13 @@ brew<span class="w"> </span>install<span class="w"> </span>ffmpeg
 <ul>
 <li><p><strong>不要一次性安装全部依赖</strong>。DJ 支持按场景安装，避免环境臃肿：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 文本处理基础</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic,nlp]"</span>
 
 <span class="c1"># 图像处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[vision]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[vision]"</span>
 
 <span class="c1"># 分布式处理</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[distributed]&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[distributed]"</span>
 </pre></div>
 </div>
 </li>
@@ -1240,8 +1240,8 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_aspect_ratio_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> min_ratio</span><span class="p">:</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="nt"> max_ratio</span><span class="p">:</span><span class="w"> </span><span class="nv">2.0</span><span class="w"> </span><span class="p p-Indicator">}</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_nsfw_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> score_threshold</span><span class="p">:</span><span class="w"> </span><span class="nv">0.8</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_text_matching_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;clip&quot;</span><span class="p p-Indicator">,</span><span class="nt"> min_score</span><span class="p">:</span><span class="w"> </span><span class="nv">0.2</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_captioning_mapper</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;blip&quot;</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_text_matching_filter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> model</span><span class="p">:</span><span class="w"> </span><span class="s">"clip"</span><span class="p p-Indicator">,</span><span class="nt"> min_score</span><span class="p">:</span><span class="w"> </span><span class="nv">0.2</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_captioning_mapper</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> model</span><span class="p">:</span><span class="w"> </span><span class="s">"blip"</span><span class="w"> </span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <blockquote>
@@ -1288,7 +1288,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <ul>
 <li><p>启用详细日志便于调试：</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
-<span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
+<span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="s">"INFO"</span>
 <span class="nt">save_stats_in_one_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>

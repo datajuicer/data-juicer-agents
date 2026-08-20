@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.adapters.agentscope.tools 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;AgentScope bindings for tool specifications.&quot;&quot;&quot;</span>
+<span class="sd">"""AgentScope bindings for tool specifications."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -565,11 +565,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">build_agentscope_json_schema</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">ToolSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">normalize_tool_schema</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">input_model</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">())</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">parameters</span><span class="p">,</span>
+        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+        <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s2">"parameters"</span><span class="p">:</span> <span class="n">parameters</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span></div>
 
@@ -605,16 +605,16 @@
         <span class="n">result</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">raw_kwargs</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid_arguments&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;invalid arguments for </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;validation_errors&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">json</span><span class="p">()),</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"invalid_arguments"</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"invalid arguments for </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"validation_errors"</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">json</span><span class="p">()),</span>
         <span class="p">}</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_exception&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"tool_exception"</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ToolResult</span><span class="p">):</span>
@@ -622,9 +622,9 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">result</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid_tool_result&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> returned unsupported result type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"invalid_tool_result"</span><span class="p">,</span>
+        <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> returned unsupported result type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
@@ -655,10 +655,10 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;build_agentscope_json_schema&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;build_agentscope_tool_function&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;default_arg_preview&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;invoke_tool_spec&quot;</span><span class="p">,</span>
+    <span class="s2">"build_agentscope_json_schema"</span><span class="p">,</span>
+    <span class="s2">"build_agentscope_tool_function"</span><span class="p">,</span>
+    <span class="s2">"default_arg_preview"</span><span class="p">,</span>
+    <span class="s2">"invoke_tool_spec"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

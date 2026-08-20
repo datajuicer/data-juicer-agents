@@ -558,15 +558,15 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">build_dataset_spec</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">user_intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">dataset_source</span><span class="p">:</span> <span class="s2">&quot;DatasetSource | None&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset_source</span><span class="p">:</span> <span class="s2">"DatasetSource | None"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">modality_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">modality_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">text_keys_hint</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">image_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">audio_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">video_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">image_bytes_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">image_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">audio_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">video_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">image_bytes_key_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="c1"># Validate and collect extra dataset fields from kwargs</span>
@@ -575,65 +575,65 @@
         <span class="n">unknown</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_dataset_fields</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown_dataset_field&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unknown dataset field(s): </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2">. &quot;</span>
-                    <span class="s2">&quot;Call list_dataset_fields to see valid fields.&quot;</span>
+                <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"unknown_dataset_field"</span><span class="p">,</span>
+                <span class="s2">"message"</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Unknown dataset field(s): </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2">. "</span>
+                    <span class="s2">"Call list_dataset_fields to see valid fields."</span>
                 <span class="p">),</span>
-                <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">"requires"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">dataset_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="s2">&quot;Exactly one dataset source is required: &quot;</span>
-                <span class="s2">&quot;dataset_source.path, dataset_source.config, or dataset_source.generated.&quot;</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"missing_required"</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">"Exactly one dataset source is required: "</span>
+                <span class="s2">"dataset_source.path, dataset_source.config, or dataset_source.generated."</span>
             <span class="p">),</span>
-            <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dataset_source&quot;</span><span class="p">],</span>
+            <span class="s2">"requires"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"dataset_source"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="n">legacy</span> <span class="o">=</span> <span class="n">dataset_source</span><span class="o">.</span><span class="n">to_legacy_args</span><span class="p">()</span>
-    <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">legacy</span><span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">legacy</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
-    <span class="n">generated_dataset_config</span> <span class="o">=</span> <span class="n">legacy</span><span class="p">[</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">]</span>
+    <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">legacy</span><span class="p">[</span><span class="s2">"dataset_path"</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">legacy</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">]</span>
+    <span class="n">generated_dataset_config</span> <span class="o">=</span> <span class="n">legacy</span><span class="p">[</span><span class="s2">"generated_dataset_config"</span><span class="p">]</span>
 
-    <span class="n">export_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">export_path</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">export_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">export_path</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;export_path is required for build_dataset_spec&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;export_path&quot;</span><span class="p">],</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"missing_required"</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"export_path is required for build_dataset_spec"</span><span class="p">,</span>
+            <span class="s2">"requires"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"export_path"</span><span class="p">],</span>
         <span class="p">}</span>
 
     <span class="n">profile</span> <span class="o">=</span> <span class="n">dataset_profile</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_profile</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-    <span class="n">candidate_text</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidate_text_keys&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidate_text_keys&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="n">candidate_image</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidate_image_keys&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidate_image_keys&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="n">requested_modality</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">modality_hint</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">candidate_text</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"candidate_text_keys"</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"candidate_text_keys"</span><span class="p">),</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">candidate_image</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"candidate_image_keys"</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"candidate_image_keys"</span><span class="p">),</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">requested_modality</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">modality_hint</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
     <span class="n">text_keys</span> <span class="o">=</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">text_keys_hint</span><span class="p">)</span> <span class="ow">or</span> <span class="n">normalize_string_list</span><span class="p">(</span><span class="n">candidate_text</span><span class="p">)</span>
-    <span class="n">image_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_key_hint</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate_image</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">candidate_image</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">audio_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">audio_key_hint</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">video_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">video_key_hint</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">image_bytes_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_bytes_key_hint</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">image_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_key_hint</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate_image</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">candidate_image</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">audio_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">audio_key_hint</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">video_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">video_key_hint</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">image_bytes_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_bytes_key_hint</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="n">modality</span> <span class="o">=</span> <span class="n">requested_modality</span>
-    <span class="k">if</span> <span class="n">modality</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;multimodal&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">}:</span>
-        <span class="n">modality</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modality&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span>
-    <span class="k">if</span> <span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;unknown&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">modality</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"text"</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">,</span> <span class="s2">"audio"</span><span class="p">,</span> <span class="s2">"video"</span><span class="p">,</span> <span class="s2">"multimodal"</span><span class="p">,</span> <span class="s2">"unknown"</span><span class="p">}:</span>
+        <span class="n">modality</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"modality"</span><span class="p">,</span> <span class="s2">"unknown"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"unknown"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"unknown"</span>
+    <span class="k">if</span> <span class="n">modality</span> <span class="o">==</span> <span class="s2">"unknown"</span><span class="p">:</span>
         <span class="n">modality</span> <span class="o">=</span> <span class="n">infer_modality</span><span class="p">(</span>
             <span class="n">DatasetSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;io&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span> <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="n">export_path</span><span class="p">},</span>
-                    <span class="s2">&quot;binding&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;modality&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;text_keys&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">text_keys</span><span class="p">),</span>
-                        <span class="s2">&quot;image_key&quot;</span><span class="p">:</span> <span class="n">image_key</span><span class="p">,</span>
-                        <span class="s2">&quot;audio_key&quot;</span><span class="p">:</span> <span class="n">audio_key</span><span class="p">,</span>
-                        <span class="s2">&quot;video_key&quot;</span><span class="p">:</span> <span class="n">video_key</span><span class="p">,</span>
-                        <span class="s2">&quot;image_bytes_key&quot;</span><span class="p">:</span> <span class="n">image_bytes_key</span><span class="p">,</span>
+                    <span class="s2">"io"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"dataset_path"</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span> <span class="s2">"export_path"</span><span class="p">:</span> <span class="n">export_path</span><span class="p">},</span>
+                    <span class="s2">"binding"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"modality"</span><span class="p">:</span> <span class="s2">"unknown"</span><span class="p">,</span>
+                        <span class="s2">"text_keys"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">text_keys</span><span class="p">),</span>
+                        <span class="s2">"image_key"</span><span class="p">:</span> <span class="n">image_key</span><span class="p">,</span>
+                        <span class="s2">"audio_key"</span><span class="p">:</span> <span class="n">audio_key</span><span class="p">,</span>
+                        <span class="s2">"video_key"</span><span class="p">:</span> <span class="n">video_key</span><span class="p">,</span>
+                        <span class="s2">"image_bytes_key"</span><span class="p">:</span> <span class="n">image_bytes_key</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">}</span>
             <span class="p">)</span><span class="o">.</span><span class="n">binding</span>
@@ -641,37 +641,37 @@
 
     <span class="n">spec</span> <span class="o">=</span> <span class="n">DatasetSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s2">&quot;io&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
-                <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span>
-                <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">:</span> <span class="n">generated_dataset_config</span><span class="p">,</span>
-                <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="n">export_path</span><span class="p">,</span>
+            <span class="s2">"io"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"dataset_path"</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+                <span class="s2">"dataset"</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span>
+                <span class="s2">"generated_dataset_config"</span><span class="p">:</span> <span class="n">generated_dataset_config</span><span class="p">,</span>
+                <span class="s2">"export_path"</span><span class="p">:</span> <span class="n">export_path</span><span class="p">,</span>
                 <span class="c1"># Extra dataset fields (export_type, export_shard_size, load_dataset_kwargs, etc.)</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;binding&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;modality&quot;</span><span class="p">:</span> <span class="n">modality</span><span class="p">,</span>
-                <span class="s2">&quot;text_keys&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">text_keys</span><span class="p">),</span>
-                <span class="s2">&quot;image_key&quot;</span><span class="p">:</span> <span class="n">image_key</span><span class="p">,</span>
-                <span class="s2">&quot;audio_key&quot;</span><span class="p">:</span> <span class="n">audio_key</span><span class="p">,</span>
-                <span class="s2">&quot;video_key&quot;</span><span class="p">:</span> <span class="n">video_key</span><span class="p">,</span>
-                <span class="s2">&quot;image_bytes_key&quot;</span><span class="p">:</span> <span class="n">image_bytes_key</span><span class="p">,</span>
+            <span class="s2">"binding"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"modality"</span><span class="p">:</span> <span class="n">modality</span><span class="p">,</span>
+                <span class="s2">"text_keys"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">text_keys</span><span class="p">),</span>
+                <span class="s2">"image_key"</span><span class="p">:</span> <span class="n">image_key</span><span class="p">,</span>
+                <span class="s2">"audio_key"</span><span class="p">:</span> <span class="n">audio_key</span><span class="p">,</span>
+                <span class="s2">"video_key"</span><span class="p">:</span> <span class="n">video_key</span><span class="p">,</span>
+                <span class="s2">"image_bytes_key"</span><span class="p">:</span> <span class="n">image_bytes_key</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
     <span class="p">)</span>
     <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">validate_dataset_spec_payload</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dataset_profile</span><span class="o">=</span><span class="n">profile</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;dataset_spec&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-        <span class="s2">&quot;validation_errors&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
-        <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset spec built&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">&quot;dataset spec build failed&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;intent&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_intent</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"dataset_spec"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="s2">"validation_errors"</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
+        <span class="s2">"warnings"</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
+        <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"dataset spec built"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">"dataset spec build failed"</span><span class="p">,</span>
+        <span class="s2">"intent"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_intent</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
     <span class="p">}</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;build_dataset_spec&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"build_dataset_spec"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

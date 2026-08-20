@@ -650,10 +650,10 @@
 <section id="command-format">
 <h2>Command Format<a class="headerlink" href="#command-format" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Dry-run validation (recommended to run first)</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;&lt;plan.yaml&gt;&quot;, &quot;dry_run&quot;: true}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "&lt;plan.yaml&gt;", "dry_run": true}'</span>
 
 <span class="c1"># Actual execution</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;&lt;plan.yaml&gt;&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "&lt;plan.yaml&gt;", "confirm": true, "timeout": 600}'</span>
 </pre></div>
 </div>
 </section>
@@ -769,16 +769,16 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <h3>1. Both –yes and confirm:true Are Required<a class="headerlink" href="#both-yes-and-confirm-true-are-required" title="Link to this heading">#</a></h3>
 <p><strong>Wrong</strong>: Passing only one</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Missing --yes</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;confirm&quot;: true}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "plan.yaml", "confirm": true}'</span>
 <span class="c1"># → confirmation_required (exit 3)</span>
 
 <span class="c1"># Missing confirm</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "plan.yaml"}'</span>
 <span class="c1"># → No response (confirm defaults to false)</span>
 </pre></div>
 </div>
 <p><strong>Correct</strong>: Pass both</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "plan.yaml", "confirm": true, "timeout": 600}'</span>
 </pre></div>
 </div>
 </section>
@@ -786,17 +786,17 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <h3>2. Increase Timeout for Large Datasets<a class="headerlink" href="#increase-timeout-for-large-datasets" title="Link to this heading">#</a></h3>
 <p>Default 300s is insufficient for large datasets:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 100K+ records</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 1800}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "plan.yaml", "confirm": true, "timeout": 1800}'</span>
 </pre></div>
 </div>
 </section>
 <section id="dry-run-before-execution">
 <h3>3. Dry-run Before Execution<a class="headerlink" href="#dry-run-before-execution" title="Link to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Validate</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;dry_run&quot;: true}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "plan.yaml", "dry_run": true}'</span>
 
 <span class="c1"># Step 2: Execute after confirmation</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;plan.yaml&quot;, &quot;confirm&quot;: true, &quot;timeout&quot;: 600}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": "plan.yaml", "confirm": true, "timeout": 600}'</span>
 </pre></div>
 </div>
 </section>
@@ -805,17 +805,17 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="typical-workflow">
 <h2>Typical Workflow<a class="headerlink" href="#typical-workflow" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Validate plan</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;plan_path&quot;: &quot;.djx/plans/my_plan.yaml&quot;, &quot;dry_run&quot;: true}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"plan_path": ".djx/plans/my_plan.yaml", "dry_run": true}'</span>
 
 <span class="c1"># 2. Execute</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;plan_path&quot;: &quot;.djx/plans/my_plan.yaml&quot;,</span>
-<span class="s1">  &quot;confirm&quot;: true,</span>
-<span class="s1">  &quot;timeout&quot;: 600</span>
-<span class="s1">}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>apply_recipe<span class="w"> </span>--yes<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "plan_path": ".djx/plans/my_plan.yaml",</span>
+<span class="s1">  "confirm": true,</span>
+<span class="s1">  "timeout": 600</span>
+<span class="s1">}'</span>
 
 <span class="c1"># 3. Verify output</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;output_path&gt;&quot;}, &quot;sample_size&quot;: 10}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"dataset_source": {"path": "&lt;output_path&gt;"}, "sample_size": 10}'</span>
 </pre></div>
 </div>
 </section>

@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.tools.context.list_system_config.input 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Input models for list_system_config.&quot;&quot;&quot;</span>
+<span class="sd">"""Input models for list_system_config."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -556,21 +556,21 @@
 <div class="viewcode-block" id="ListSystemConfigInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.context.list_system_config.input.html#data_juicer_agents.tools.context.ListSystemConfigInput">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ListSystemConfigInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Input for list_system_config.</span>
+<span class="w">    </span><span class="sd">"""Input for list_system_config.</span>
 <span class="sd">    </span>
 <span class="sd">    This tool lists the complete system configuration from Data-Juicer,</span>
 <span class="sd">    including all available parameters, their types, default values, and descriptions.</span>
 <span class="sd">    Use this before build_system_spec to discover available configuration options.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     
     <span class="n">filter_prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional filter to show only parameters matching this prefix (e.g., &#39;open_&#39;, &#39;checkpoint&#39;).&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Optional filter to show only parameters matching this prefix (e.g., 'open_', 'checkpoint')."</span>
     <span class="p">)</span>
     
     <span class="n">include_descriptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">True</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether to include parameter descriptions. Default is True.&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Whether to include parameter descriptions. Default is True."</span>
     <span class="p">)</span></div>
 
 </pre></div>

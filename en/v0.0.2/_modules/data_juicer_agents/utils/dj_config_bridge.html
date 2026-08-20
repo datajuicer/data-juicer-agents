@@ -544,9 +544,9 @@
                   
   <h1>Source code for data_juicer_agents.utils.dj_config_bridge</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Bridge to Data-Juicer&#39;s native configuration system.</span>
+<span class="sd">"""Bridge to Data-Juicer's native configuration system.</span>
 
-<span class="sd">This module provides a dynamic bridge to Data-Juicer&#39;s configuration,</span>
+<span class="sd">This module provides a dynamic bridge to Data-Juicer's configuration,</span>
 <span class="sd">eliminating the need to manually sync schema definitions.</span>
 
 <span class="sd">Public API:</span>
@@ -557,7 +557,7 @@
 <span class="sd">    dataset_fields          → dataset I/O and binding fields</span>
 <span class="sd">    system_fields           → runtime/executor system fields</span>
 <span class="sd">    agent_managed_fields    → fields auto-set by the agent (not by LLM)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
@@ -571,99 +571,99 @@
 <span class="c1"># Fields automatically managed by the agent layer (not exposed to LLM).</span>
 <span class="c1"># These are set programmatically during apply (e.g. project_name ← plan_id).</span>
 <span class="n">agent_managed_fields</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;project_name&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;job_id&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auto&quot;</span><span class="p">,</span>  <span class="c1"># This is for auto-analyze mode, temporarily added here to avoid LLM exposure until we decide how to handle it.</span>
-    <span class="s2">&quot;config&quot;</span><span class="p">,</span>  <span class="c1"># This is for passing the full config dict to the agent for internal use, not for LLM configuration.</span>
+    <span class="s2">"project_name"</span><span class="p">,</span>
+    <span class="s2">"job_id"</span><span class="p">,</span>
+    <span class="s2">"auto"</span><span class="p">,</span>  <span class="c1"># This is for auto-analyze mode, temporarily added here to avoid LLM exposure until we decide how to handle it.</span>
+    <span class="s2">"config"</span><span class="p">,</span>  <span class="c1"># This is for passing the full config dict to the agent for internal use, not for LLM configuration.</span>
 <span class="p">]</span>
 
 <span class="c1"># Dataset-related field names</span>
 <span class="n">dataset_fields</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;validators&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;load_dataset_kwargs&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_path&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_type&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_shard_size&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_in_parallel&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_extra_args&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_aws_credentials&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;text_keys&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image_key&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image_bytes_key&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image_special_token&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;audio_key&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;audio_special_token&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;video_key&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;video_special_token&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;eoc_special_token&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;suffixes&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;keep_stats_in_res_ds&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;keep_hashes_in_res_ds&quot;</span><span class="p">,</span>
+    <span class="s2">"dataset_path"</span><span class="p">,</span>
+    <span class="s2">"dataset"</span><span class="p">,</span>
+    <span class="s2">"generated_dataset_config"</span><span class="p">,</span>
+    <span class="s2">"validators"</span><span class="p">,</span>
+    <span class="s2">"load_dataset_kwargs"</span><span class="p">,</span>
+    <span class="s2">"export_path"</span><span class="p">,</span>
+    <span class="s2">"export_type"</span><span class="p">,</span>
+    <span class="s2">"export_shard_size"</span><span class="p">,</span>
+    <span class="s2">"export_in_parallel"</span><span class="p">,</span>
+    <span class="s2">"export_extra_args"</span><span class="p">,</span>
+    <span class="s2">"export_aws_credentials"</span><span class="p">,</span>
+    <span class="s2">"text_keys"</span><span class="p">,</span>
+    <span class="s2">"image_key"</span><span class="p">,</span>
+    <span class="s2">"image_bytes_key"</span><span class="p">,</span>
+    <span class="s2">"image_special_token"</span><span class="p">,</span>
+    <span class="s2">"audio_key"</span><span class="p">,</span>
+    <span class="s2">"audio_special_token"</span><span class="p">,</span>
+    <span class="s2">"video_key"</span><span class="p">,</span>
+    <span class="s2">"video_special_token"</span><span class="p">,</span>
+    <span class="s2">"eoc_special_token"</span><span class="p">,</span>
+    <span class="s2">"suffixes"</span><span class="p">,</span>
+    <span class="s2">"keep_stats_in_res_ds"</span><span class="p">,</span>
+    <span class="s2">"keep_hashes_in_res_ds"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># System/runtime-related field names (executor, parallelism, caching, etc.)</span>
 <span class="n">system_fields</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;adaptive_batch_size&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auto_num&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;backup_count&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;cache_compress&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;checkpoint.enabled&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;checkpoint.n_ops&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;checkpoint.op_names&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;checkpoint.strategy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;checkpoint_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;conflict_resolve_strategy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;data_probe_algo&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;data_probe_ratio&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ds_cache_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;event_log_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;event_logging.enabled&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;executor_type&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;export_original_dataset&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fusion_strategy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;hpo_config&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.cleanup_on_success&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.cleanup_temp_files&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.compression&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.format&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.max_retention_days&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.preserve_intermediate_data&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.retention_policy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;intermediate_storage.write_partitions&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;max_log_size_mb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;max_partition_size_mb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;min_common_dep_num_to_combine&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;np&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;op_fusion&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;op_list_to_mine&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;op_list_to_trace&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;open_insight_mining&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;open_monitor&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;open_tracer&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;partition.mode&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;partition.num_of_partitions&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;partition.target_size_mb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;partition_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;partition_size&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;percentiles&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;preserve_intermediate_data&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ray_address&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resource_optimization.auto_configure&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;save_stats_in_one_file&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;skip_op_error&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;temp_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;trace_keys&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;trace_num&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;turbo&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;use_cache&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;use_checkpoint&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;work_dir&quot;</span><span class="p">,</span>
+    <span class="s2">"adaptive_batch_size"</span><span class="p">,</span>
+    <span class="s2">"auto_num"</span><span class="p">,</span>
+    <span class="s2">"auto_op_parallelism"</span><span class="p">,</span>
+    <span class="s2">"backup_count"</span><span class="p">,</span>
+    <span class="s2">"cache_compress"</span><span class="p">,</span>
+    <span class="s2">"checkpoint.enabled"</span><span class="p">,</span>
+    <span class="s2">"checkpoint.n_ops"</span><span class="p">,</span>
+    <span class="s2">"checkpoint.op_names"</span><span class="p">,</span>
+    <span class="s2">"checkpoint.strategy"</span><span class="p">,</span>
+    <span class="s2">"checkpoint_dir"</span><span class="p">,</span>
+    <span class="s2">"conflict_resolve_strategy"</span><span class="p">,</span>
+    <span class="s2">"custom_operator_paths"</span><span class="p">,</span>
+    <span class="s2">"data_probe_algo"</span><span class="p">,</span>
+    <span class="s2">"data_probe_ratio"</span><span class="p">,</span>
+    <span class="s2">"debug"</span><span class="p">,</span>
+    <span class="s2">"ds_cache_dir"</span><span class="p">,</span>
+    <span class="s2">"event_log_dir"</span><span class="p">,</span>
+    <span class="s2">"event_logging.enabled"</span><span class="p">,</span>
+    <span class="s2">"executor_type"</span><span class="p">,</span>
+    <span class="s2">"export_original_dataset"</span><span class="p">,</span>
+    <span class="s2">"fusion_strategy"</span><span class="p">,</span>
+    <span class="s2">"hpo_config"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.cleanup_on_success"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.cleanup_temp_files"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.compression"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.format"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.max_retention_days"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.preserve_intermediate_data"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.retention_policy"</span><span class="p">,</span>
+    <span class="s2">"intermediate_storage.write_partitions"</span><span class="p">,</span>
+    <span class="s2">"max_log_size_mb"</span><span class="p">,</span>
+    <span class="s2">"max_partition_size_mb"</span><span class="p">,</span>
+    <span class="s2">"min_common_dep_num_to_combine"</span><span class="p">,</span>
+    <span class="s2">"np"</span><span class="p">,</span>
+    <span class="s2">"op_fusion"</span><span class="p">,</span>
+    <span class="s2">"op_list_to_mine"</span><span class="p">,</span>
+    <span class="s2">"op_list_to_trace"</span><span class="p">,</span>
+    <span class="s2">"open_insight_mining"</span><span class="p">,</span>
+    <span class="s2">"open_monitor"</span><span class="p">,</span>
+    <span class="s2">"open_tracer"</span><span class="p">,</span>
+    <span class="s2">"partition.mode"</span><span class="p">,</span>
+    <span class="s2">"partition.num_of_partitions"</span><span class="p">,</span>
+    <span class="s2">"partition.target_size_mb"</span><span class="p">,</span>
+    <span class="s2">"partition_dir"</span><span class="p">,</span>
+    <span class="s2">"partition_size"</span><span class="p">,</span>
+    <span class="s2">"percentiles"</span><span class="p">,</span>
+    <span class="s2">"preserve_intermediate_data"</span><span class="p">,</span>
+    <span class="s2">"ray_address"</span><span class="p">,</span>
+    <span class="s2">"resource_optimization.auto_configure"</span><span class="p">,</span>
+    <span class="s2">"save_stats_in_one_file"</span><span class="p">,</span>
+    <span class="s2">"skip_op_error"</span><span class="p">,</span>
+    <span class="s2">"temp_dir"</span><span class="p">,</span>
+    <span class="s2">"trace_keys"</span><span class="p">,</span>
+    <span class="s2">"trace_num"</span><span class="p">,</span>
+    <span class="s2">"turbo"</span><span class="p">,</span>
+    <span class="s2">"use_cache"</span><span class="p">,</span>
+    <span class="s2">"use_checkpoint"</span><span class="p">,</span>
+    <span class="s2">"work_dir"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -674,11 +674,11 @@
 <div class="viewcode-block" id="DJConfigBridge">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DJConfigBridge</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bridge to Data-Juicer&#39;s native configuration and validation.</span>
+<span class="w">    </span><span class="sd">"""Bridge to Data-Juicer's native configuration and validation.</span>
 
 <span class="sd">    All DJ-dependent logic is centralised here.  Callers should obtain</span>
 <span class="sd">    the singleton via ``get_dj_config_bridge()`` and call methods on it.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="DJConfigBridge.__init__">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.__init__">[docs]</a>
@@ -691,7 +691,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lazy load Data-Juicer base parser (no OPs registered).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Lazy load Data-Juicer base parser (no OPs registered)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_base_parser</span>
 
@@ -699,7 +699,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_parser_with_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">used_ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a fresh parser with OP arguments registered.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Build a fresh parser with OP arguments registered."""</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
             <span class="n">build_base_parser</span><span class="p">,</span>
             <span class="n">sort_op_by_types_and_names</span><span class="p">,</span>
@@ -721,15 +721,15 @@
 <div class="viewcode-block" id="DJConfigBridge.get_default_config">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_default_config">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all parser fields with their default values (cached).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return all parser fields with their default values (cached)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span>
 
         <span class="n">defaults</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">==</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"dest"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">==</span> <span class="s2">"help"</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">defaults</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">defaults</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_default_config</span> <span class="o">=</span> <span class="n">defaults</span>
         <span class="k">return</span> <span class="n">defaults</span></div>
@@ -740,7 +740,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_system_config</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract system-related fields based on the explicit ``system_fields`` list.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Extract system-related fields based on the explicit ``system_fields`` list."""</span>
         <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">system_fields</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">}</span></div>
 
@@ -750,7 +750,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_dataset_config</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract dataset-related fields.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Extract dataset-related fields."""</span>
         <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataset_fields</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">}</span></div>
 
@@ -760,12 +760,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_agent_managed_config</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract agent-managed fields (auto-set by agent, not by LLM).</span>
+<span class="w">        </span><span class="sd">"""Extract agent-managed fields (auto-set by agent, not by LLM).</span>
 
 <span class="sd">        These fields (e.g. ``project_name``) are programmatically set</span>
 <span class="sd">        during the apply phase and should not be exposed to the LLM for</span>
 <span class="sd">        configuration.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">agent_managed_fields</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">}</span></div>
 
@@ -775,19 +775,19 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_process_config</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract process operator list.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Extract process operator list."""</span>
         <span class="n">config_dict</span> <span class="o">=</span> <span class="n">config</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_config</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="p">[])</span></div>
+        <span class="k">return</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"process"</span><span class="p">,</span> <span class="p">[])</span></div>
 
 
 <div class="viewcode-block" id="DJConfigBridge.get_param_descriptions">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_param_descriptions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_param_descriptions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get help text for all parameters from parser.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get help text for all parameters from parser."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"help"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">_actions</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">&quot;help&quot;</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"dest"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">"help"</span>
         <span class="p">}</span></div>
 
 
@@ -796,7 +796,7 @@
 <div class="viewcode-block" id="DJConfigBridge.validate">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.validate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate a config dict using DJ base parser.</span>
+<span class="w">        </span><span class="sd">"""Validate a config dict using DJ base parser.</span>
 
 <span class="sd">        Checks system/dataset field types and rejects unknown keys.</span>
 <span class="sd">        Does NOT validate process list contents or operator params</span>
@@ -807,7 +807,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ``(is_valid, error_messages)``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">jsonargparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
 
@@ -823,7 +823,7 @@
 <div class="viewcode-block" id="DJConfigBridge.get_op_valid_params">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.DJConfigBridge.get_op_valid_params">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_op_valid_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">],</span> <span class="nb">set</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get valid parameter names for each operator.</span>
+<span class="w">        </span><span class="sd">"""Get valid parameter names for each operator.</span>
 
 <span class="sd">        Registers the requested operators into a fresh parser, then</span>
 <span class="sd">        extracts valid parameter names from the resulting flat actions</span>
@@ -836,7 +836,7 @@
 <span class="sd">            ``(op_param_map, known_op_names)`` where</span>
 <span class="sd">            *op_param_map* is ``{op_name: {param, ...}}`` and</span>
 <span class="sd">            *known_op_names* is the full set of registered DJ operators.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span>
 
@@ -858,12 +858,12 @@
 
         <span class="n">op_param_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">op</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">valid_requested</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"dest"</span><span class="p">):</span>
                 <span class="k">continue</span>
             <span class="n">dest</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span>
-            <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dest</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dest</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">op_name</span><span class="p">,</span> <span class="n">param_name</span> <span class="o">=</span> <span class="n">dest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">op_name</span><span class="p">,</span> <span class="n">param_name</span> <span class="o">=</span> <span class="n">dest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">op_name</span> <span class="ow">in</span> <span class="n">op_param_map</span><span class="p">:</span>
                 <span class="n">op_param_map</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
 
@@ -882,7 +882,7 @@
 <div class="viewcode-block" id="get_dj_config_bridge">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.get_dj_config_bridge">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_dj_config_bridge</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DJConfigBridge</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get singleton DJConfigBridge instance.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get singleton DJConfigBridge instance."""</span>
     <span class="k">global</span> <span class="n">_bridge</span>
     <span class="k">if</span> <span class="n">_bridge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_bridge</span> <span class="o">=</span> <span class="n">DJConfigBridge</span><span class="p">()</span>
@@ -898,15 +898,15 @@
 <div class="viewcode-block" id="coerce_fields">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.dj_config_bridge.html#data_juicer_agents.utils.dj_config_bridge.coerce_fields">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">coerce_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coerce field values to their correct basic Python types via DJ parser.</span>
+<span class="w">    </span><span class="sd">"""Coerce field values to their correct basic Python types via DJ parser.</span>
 
 <span class="sd">    Performs safe conversions for basic types (``bool``, ``int``, ``float``)</span>
-<span class="sd">    by inspecting the DJ parser&#39;s registered default-value types.  Fields</span>
+<span class="sd">    by inspecting the DJ parser's registered default-value types.  Fields</span>
 <span class="sd">    with non-basic target types or fields not registered in the parser are</span>
 <span class="sd">    passed through unchanged.</span>
 
 <span class="sd">    This is used during normalization to ensure values serialise correctly</span>
-<span class="sd">    in recipe YAML (e.g. ``&quot;true&quot;`` -&gt; ``True``, ``&quot;4&quot;`` -&gt; ``4``).</span>
+<span class="sd">    in recipe YAML (e.g. ``"true"`` -&gt; ``True``, ``"4"`` -&gt; ``4``).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fields: Dict of config fields to coerce.</span>
@@ -914,7 +914,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        ``(coerced_fields, errors)`` where *errors* lists human-readable</span>
 <span class="sd">        messages for any field that failed type coercion.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">[]</span>
 
@@ -924,9 +924,9 @@
     <span class="n">action_type_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">known_parser_dests</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">bridge</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"dest"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">"help"</span><span class="p">:</span>
             <span class="n">known_parser_dests</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">)</span>
-            <span class="n">default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="n">action_type_map</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="p">)</span>
@@ -940,8 +940,8 @@
     <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">coerced_known</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">_BOOL_TRUE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">}</span>
-    <span class="n">_BOOL_FALSE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">}</span>
+    <span class="n">_BOOL_TRUE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">}</span>
+    <span class="n">_BOOL_FALSE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"false"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"no"</span><span class="p">}</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">known_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">expected_type</span> <span class="o">=</span> <span class="n">action_type_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -954,19 +954,19 @@
                 <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to bool; kept as-is.&quot;</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to bool; kept as-is."</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="nb">int</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
                 <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to int; kept as-is.&quot;</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to int; kept as-is."</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="nb">float</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
                 <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to float; kept as-is.&quot;</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot coerce </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> to float; kept as-is."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">coerced_known</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 

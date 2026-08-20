@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.tools.plan.build_process_spec.input 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Input models for build_process_spec.&quot;&quot;&quot;</span>
+<span class="sd">"""Input models for build_process_spec."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -557,12 +557,12 @@
 <div class="viewcode-block" id="ProcessOperatorInput">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.plan.build_process_spec.input.html#data_juicer_agents.tools.plan.ProcessOperatorInput">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProcessOperatorInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Canonical operator name.&quot;</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Canonical operator name."</span><span class="p">)</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Operator-specific params object. Fill suitable concrete params for this operator &quot;</span>
-            <span class="s2">&quot;based on the user request, dataset context, and retrieve_operators results. &quot;</span>
-            <span class="s2">&quot;If a threshold, mode, or explicit option is already known, include it here.&quot;</span>
+            <span class="s2">"Operator-specific params object. Fill suitable concrete params for this operator "</span>
+            <span class="s2">"based on the user request, dataset context, and retrieve_operators results. "</span>
+            <span class="s2">"If a threshold, mode, or explicit option is already known, include it here."</span>
         <span class="p">),</span>
     <span class="p">)</span></div>
 
@@ -573,8 +573,8 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">BuildProcessSpecInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">operators</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ProcessOperatorInput</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Ordered operators for this plan. Choose canonical names from retrieve_operators &quot;</span>
-            <span class="s2">&quot;results and fill appropriate params for each operator.&quot;</span>
+            <span class="s2">"Ordered operators for this plan. Choose canonical names from retrieve_operators "</span>
+            <span class="s2">"results and fill appropriate params for each operator."</span>
         <span class="p">),</span>
     <span class="p">)</span></div>
 

@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.process.execute_shell_command.logic</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Pure logic for execute_shell_command.&quot;&quot;&quot;</span>
+<span class="sd">"""Pure logic for execute_shell_command."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -556,17 +556,17 @@
 <div class="viewcode-block" id="execute_shell_command">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.process.execute_shell_command.logic.html#data_juicer_agents.tools.process.execute_shell_command.execute_shell_command">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">execute_shell_command</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">command</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;command&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;command is required for execute_shell_command&quot;</span><span class="p">,</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"missing_required"</span><span class="p">,</span>
+            <span class="s2">"requires"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"command"</span><span class="p">],</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"command is required for execute_shell_command"</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="n">timeout_sec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">to_int</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="n">run_interruptible_subprocess</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout_sec</span><span class="o">=</span><span class="n">timeout_sec</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;execute_shell_command&quot;</span>
+    <span class="n">payload</span><span class="p">[</span><span class="s2">"action"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"execute_shell_command"</span>
     <span class="k">return</span> <span class="n">payload</span></div>
 
 </pre></div>

@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.session_cli 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Interactive session entrypoint for `dj-agents`.&quot;&quot;&quot;</span>
+<span class="sd">"""Interactive session entrypoint for `dj-agents`."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -564,34 +564,34 @@
 <a class="viewcode-back" href="../../api/data_juicer_agents.session_cli.html#data_juicer_agents.session_cli.build_parser">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;dj-agents&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ReAct conversational entry for DJX atomic capabilities (LLM required)&quot;</span><span class="p">,</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">"dj-agents"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"ReAct conversational entry for DJX atomic capabilities (LLM required)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable detailed session logs (tool calls and ReAct console output)&quot;</span><span class="p">,</span>
+        <span class="s2">"--verbose"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Enable detailed session logs (tool calls and ReAct console output)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--dataset&quot;</span><span class="p">,</span>
+        <span class="s2">"--dataset"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional initial dataset path for session memory&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Optional initial dataset path for session memory"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--export&quot;</span><span class="p">,</span>
+        <span class="s2">"--export"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional initial export path for session memory&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Optional initial export path for session memory"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--ui&quot;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;plain&quot;</span><span class="p">,</span> <span class="s2">&quot;tui&quot;</span><span class="p">,</span> <span class="s2">&quot;as_studio&quot;</span><span class="p">],</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;tui&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Session UI mode (default: tui)&quot;</span><span class="p">,</span>
+        <span class="s2">"--ui"</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"plain"</span><span class="p">,</span> <span class="s2">"tui"</span><span class="p">,</span> <span class="s2">"as_studio"</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"tui"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Session UI mode (default: tui)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--studio-url&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DJA_STUDIO_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">),</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;AgentScope Studio URL for --ui as_studio (default: http://localhost:3000)&quot;</span><span class="p">,</span>
+        <span class="s2">"--studio-url"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DJA_STUDIO_URL"</span><span class="p">,</span> <span class="s2">"http://localhost:3000"</span><span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"AgentScope Studio URL for --ui as_studio (default: http://localhost:3000)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -607,9 +607,9 @@
     <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="n">missing_dependency_message</span><span class="p">(</span>
-                <span class="s2">&quot;dj-agents&quot;</span><span class="p">,</span>
-                <span class="n">extras</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">,),</span>
-                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="s2">"dj-agents"</span><span class="p">,</span>
+                <span class="n">extras</span><span class="o">=</span><span class="p">(</span><span class="s2">"core"</span><span class="p">,),</span>
+                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
     <span class="k">return</span> <span class="n">DJSessionAgent</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -621,9 +621,9 @@
     <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="n">missing_dependency_message</span><span class="p">(</span>
-                <span class="s2">&quot;dj-agents&quot;</span><span class="p">,</span>
-                <span class="n">extras</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">,),</span>
-                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="s2">"dj-agents"</span><span class="p">,</span>
+                <span class="n">extras</span><span class="o">=</span><span class="p">(</span><span class="s2">"core"</span><span class="p">,),</span>
+                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
     <span class="k">return</span> <span class="n">TerminalLineReader</span><span class="p">()</span>
@@ -636,9 +636,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_worker</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;reply&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"reply"</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="n">error</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exc</span>
+            <span class="n">error</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="n">exc</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">done</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
@@ -652,14 +652,14 @@
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">interrupt_sent</span> <span class="ow">and</span> <span class="n">agent</span><span class="o">.</span><span class="n">request_interrupt</span><span class="p">():</span>
                 <span class="n">interrupt_sent</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[dj-agents] Interrupt requested (Ctrl+C).&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">[dj-agents] Interrupt requested (Ctrl+C)."</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[dj-agents] Interrupt ignored.&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">[dj-agents] Interrupt ignored."</span><span class="p">)</span>
 
     <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="n">error</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">error</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;reply&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"error"</span> <span class="ow">in</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">error</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"reply"</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_run_plain_session</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -672,23 +672,23 @@
         <span class="p">)</span>
         <span class="n">line_reader</span> <span class="o">=</span> <span class="n">_new_line_reader</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to start dj-agents session: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to start dj-agents session: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DJ session started. Describe your task in natural language. Type `help` or `exit`.&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Press Ctrl+C to interrupt the current turn. Press Ctrl+D to exit the session.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"DJ session started. Describe your task in natural language. Type `help` or `exit`."</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Press Ctrl+C to interrupt the current turn. Press Ctrl+D to exit the session."</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="n">line_reader</span><span class="o">.</span><span class="n">read_line</span><span class="p">(</span><span class="s2">&quot;you&gt; &quot;</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">line_reader</span><span class="o">.</span><span class="n">read_line</span><span class="p">(</span><span class="s2">"you&gt; "</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Session ended.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Session ended."</span><span class="p">)</span>
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[dj-agents] No running task to interrupt. Press Ctrl+D to exit.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">[dj-agents] No running task to interrupt. Press Ctrl+D to exit."</span><span class="p">)</span>
             <span class="k">continue</span>
 
         <span class="n">reply</span> <span class="o">=</span> <span class="n">_run_turn_with_interrupt</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;agent&gt; </span><span class="si">{</span><span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"agent&gt; </span><span class="si">{</span><span class="n">reply</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">stop</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
 
@@ -699,10 +699,10 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
     <span class="n">studio_url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">studio_url</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">run_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dj_agents_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"dj_agents_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-        <span class="n">project</span><span class="o">=</span><span class="s2">&quot;data-juicer-agents&quot;</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dj-agents&quot;</span><span class="p">,</span>
+        <span class="n">project</span><span class="o">=</span><span class="s2">"data-juicer-agents"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"dj-agents"</span><span class="p">,</span>
         <span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">,</span>
         <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
     <span class="p">)</span>
@@ -716,7 +716,7 @@
     <span class="p">)</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">_StudioShell</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
-        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dj-agents&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"dj-agents"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_session_agent</span> <span class="o">=</span> <span class="n">agent</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -730,12 +730,12 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - defensive runtime guard</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
                     <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="s2">"assistant"</span><span class="p">,</span>
                     <span class="n">content</span><span class="o">=</span><span class="p">(</span>
-                        <span class="s2">&quot;AgentScope Studio runtime failed while handling the request.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;error: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="s2">"AgentScope Studio runtime failed while handling the request.</span><span class="se">\n</span><span class="s2">"</span>
+                        <span class="sa">f</span><span class="s2">"error: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">),</span>
-                    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;dj_error&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"dj_error"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
                 <span class="p">)</span>
                 <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">out</span>
@@ -744,14 +744,14 @@
                 <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">turn</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">turn</span><span class="o">.</span><span class="n">msg</span>
 
-    <span class="n">user</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">(</span><span class="s2">"user"</span><span class="p">)</span>
     <span class="n">assistant</span> <span class="o">=</span> <span class="n">_StudioShell</span><span class="p">(</span><span class="n">session_agent</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">user_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">user</span><span class="p">()</span>
         <span class="n">assistant_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">assistant</span><span class="p">(</span><span class="n">user_msg</span><span class="p">)</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">assistant_msg</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dj_stop&quot;</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">assistant_msg</span><span class="p">,</span> <span class="s2">"metadata"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dj_stop"</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">0</span>
 
 
@@ -759,7 +759,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">_run_as_studio_session_async</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to initialize AgentScope Studio session: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to initialize AgentScope Studio session: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
 
 
@@ -769,10 +769,10 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">build_parser</span><span class="p">()</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ui</span> <span class="o">==</span> <span class="s2">&quot;plain&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ui</span> <span class="o">==</span> <span class="s2">"plain"</span><span class="p">:</span>
         <span class="n">install_thinking_warning_filter</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_run_plain_session</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ui</span> <span class="o">==</span> <span class="s2">&quot;as_studio&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ui</span> <span class="o">==</span> <span class="s2">"as_studio"</span><span class="p">:</span>
         <span class="n">install_thinking_warning_filter</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_run_as_studio_session</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
@@ -781,9 +781,9 @@
     <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="n">missing_dependency_message</span><span class="p">(</span>
-                <span class="s2">&quot;dj-agents&quot;</span><span class="p">,</span>
-                <span class="n">extras</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">,),</span>
-                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="s2">"dj-agents"</span><span class="p">,</span>
+                <span class="n">extras</span><span class="o">=</span><span class="p">(</span><span class="s2">"core"</span><span class="p">,),</span>
+                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
@@ -792,7 +792,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </pre></div>
 

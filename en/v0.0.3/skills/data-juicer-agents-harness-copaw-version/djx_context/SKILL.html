@@ -632,7 +632,7 @@
 </section>
 <section id="command">
 <h3>Command<a class="headerlink" href="#command" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;&lt;path&gt;&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"dataset_source": {"path": "&lt;path&gt;"}, "sample_size": 50}'</span>
 </pre></div>
 </div>
 </section>
@@ -771,10 +771,10 @@
 <section id="typical-usage">
 <h2>Typical Usage<a class="headerlink" href="#typical-usage" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Regular inspection</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;}, &quot;sample_size&quot;: 50}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"dataset_source": {"path": "/data/articles.jsonl"}, "sample_size": 50}'</span>
 
 <span class="c1"># Quick check</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;dataset_source&quot;: {&quot;path&quot;: &quot;/data/articles.jsonl&quot;}, &quot;sample_size&quot;: 5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>inspect_dataset<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"dataset_source": {"path": "/data/articles.jsonl"}, "sample_size": 5}'</span>
 
 <span class="c1"># View full schema</span>
 djx<span class="w"> </span>tool<span class="w"> </span>schema<span class="w"> </span>inspect_dataset

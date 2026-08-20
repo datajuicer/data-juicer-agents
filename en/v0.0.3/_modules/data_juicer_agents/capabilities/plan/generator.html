@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.capabilities.plan.generator</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;LLM generator for process operator lists used by CLI plan orchestration.&quot;&quot;&quot;</span>
+<span class="sd">"""LLM generator for process operator lists used by CLI plan orchestration."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -557,7 +557,7 @@
 <div class="viewcode-block" id="ProcessOperatorGenerator">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.generator.ProcessOperatorGenerator">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProcessOperatorGenerator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate an operator list for staged plan assembly.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Generate an operator list for staged plan assembly."""</span>
 
 <div class="viewcode-block" id="ProcessOperatorGenerator.__init__">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.capabilities.plan.generator.html#data_juicer_agents.capabilities.plan.generator.ProcessOperatorGenerator.__init__">[docs]</a>
@@ -569,9 +569,9 @@
         <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">thinking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">model_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">api_key</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">base_url</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">model_name</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">api_key</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">base_url</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thinking</span> <span class="o">=</span> <span class="n">thinking</span></div>
 
 
@@ -583,24 +583,24 @@
         <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">dataset_profile</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">candidates</span> <span class="o">=</span> <span class="n">retrieval_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">retrieval_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"candidates"</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">profile_payload</span> <span class="o">=</span> <span class="n">dataset_profile</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_profile</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="n">dataset_binding</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">binding</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;binding&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">binding</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"binding"</span><span class="p">,</span> <span class="p">{})</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binding</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">dataset_binding</span> <span class="o">=</span> <span class="n">binding</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;You generate only the operator list for a staged deterministic Data-Juicer planner.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Return JSON only with one key: operators.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;operators must be a non-empty array of objects: {name: string, params: object}.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Use canonical operator names from retrieved candidates.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Fill concrete params whenever a threshold, mode, or explicit option is already known.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Do not include modality, text_keys, image_key, risk_notes, estimation, approval_required, workflow, or markdown.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;user_intent: </span><span class="si">{</span><span class="n">user_intent</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;dataset_binding:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dataset_binding</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;retrieved_candidates:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;dataset_profile:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">profile_payload</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">"You generate only the operator list for a staged deterministic Data-Juicer planner.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"Return JSON only with one key: operators.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"operators must be a non-empty array of objects: {name: string, params: object}.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"Use canonical operator names from retrieved candidates.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"Fill concrete params whenever a threshold, mode, or explicit option is already known.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"Do not include modality, text_keys, image_key, risk_notes, estimation, approval_required, workflow, or markdown.</span><span class="se">\n\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"user_intent: </span><span class="si">{</span><span class="n">user_intent</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"dataset_binding:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dataset_binding</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"retrieved_candidates:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"dataset_profile:</span><span class="se">\n</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">profile_payload</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="ProcessOperatorGenerator.generate">
@@ -627,16 +627,16 @@
             <span class="n">thinking</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thinking</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner operator output must be a JSON object&quot;</span><span class="p">)</span>
-        <span class="n">operators</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operators&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"planner operator output must be a JSON object"</span><span class="p">)</span>
+        <span class="n">operators</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"operators"</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operators</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">operators</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner operator output must contain non-empty operators&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;operators&quot;</span><span class="p">:</span> <span class="n">operators</span><span class="p">}</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"planner operator output must contain non-empty operators"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"operators"</span><span class="p">:</span> <span class="n">operators</span><span class="p">}</span></div>
 </div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ProcessOperatorGenerator&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ProcessOperatorGenerator"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

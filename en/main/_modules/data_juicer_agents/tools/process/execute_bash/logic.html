@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.process.execute_bash.logic</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Pure logic for execute_bash — SmartBash execution with structured parsing.&quot;&quot;&quot;</span>
+<span class="sd">"""Pure logic for execute_bash — SmartBash execution with structured parsing."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -559,21 +559,21 @@
 <div class="viewcode-block" id="execute_bash">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.process.execute_bash.logic.html#data_juicer_agents.tools.process.execute_bash.execute_bash">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">execute_bash</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">command</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">command</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing_required&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;command&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;command is required&quot;</span><span class="p">,</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"missing_required"</span><span class="p">,</span>
+            <span class="s2">"requires"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"command"</span><span class="p">],</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"command is required"</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="n">timeout_sec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">to_int</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">raw</span> <span class="o">=</span> <span class="n">run_interruptible_subprocess</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout_sec</span><span class="o">=</span><span class="n">timeout_sec</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">returncode</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;returncode&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stdout&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-    <span class="n">stderr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stderr&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">returncode</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"returncode"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stdout"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
+    <span class="n">stderr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stderr"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
 
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">cmd</span><span class="p">,</span> <span class="n">returncode</span><span class="o">=</span><span class="n">returncode</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
     <span class="n">diag</span><span class="p">,</span> <span class="n">suggestion</span> <span class="o">=</span> <span class="n">diagnose</span><span class="p">(</span>
@@ -581,20 +581,20 @@
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">ok</span><span class="p">,</span>
-        <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;execute_bash&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;flavour&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">flavour</span><span class="p">,</span>
-        <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="n">returncode</span><span class="p">,</span>
-        <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
-        <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">stderr</span><span class="p">,</span>
-        <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">summary</span><span class="p">,</span>
-        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
-        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
-        <span class="s2">&quot;truncated&quot;</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">truncated</span><span class="p">,</span>
-        <span class="s2">&quot;diagnosis&quot;</span><span class="p">:</span> <span class="n">diag</span><span class="p">,</span>
-        <span class="s2">&quot;suggestion&quot;</span><span class="p">:</span> <span class="n">suggestion</span><span class="p">,</span>
-        <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">cmd</span><span class="p">,</span>
-        <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="n">timeout_sec</span><span class="p">,</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">ok</span><span class="p">,</span>
+        <span class="s2">"action"</span><span class="p">:</span> <span class="s2">"execute_bash"</span><span class="p">,</span>
+        <span class="s2">"flavour"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">flavour</span><span class="p">,</span>
+        <span class="s2">"returncode"</span><span class="p">:</span> <span class="n">returncode</span><span class="p">,</span>
+        <span class="s2">"stdout"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+        <span class="s2">"stderr"</span><span class="p">:</span> <span class="n">stderr</span><span class="p">,</span>
+        <span class="s2">"summary"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">summary</span><span class="p">,</span>
+        <span class="s2">"items"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+        <span class="s2">"truncated"</span><span class="p">:</span> <span class="n">parsed</span><span class="o">.</span><span class="n">truncated</span><span class="p">,</span>
+        <span class="s2">"diagnosis"</span><span class="p">:</span> <span class="n">diag</span><span class="p">,</span>
+        <span class="s2">"suggestion"</span><span class="p">:</span> <span class="n">suggestion</span><span class="p">,</span>
+        <span class="s2">"command"</span><span class="p">:</span> <span class="n">cmd</span><span class="p">,</span>
+        <span class="s2">"timeout"</span><span class="p">:</span> <span class="n">timeout_sec</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 </pre></div>

@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.core.tool.catalog</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Discovery-based catalog of built-in tool specifications.&quot;&quot;&quot;</span>
+<span class="sd">"""Discovery-based catalog of built-in tool specifications."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -556,9 +556,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.core.tool.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolSpec</span>
 
 
-<span class="n">_TOOLS_PACKAGE</span> <span class="o">=</span> <span class="s2">&quot;data_juicer_agents.tools&quot;</span>
-<span class="n">_TOOLS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;tools&quot;</span>
-<span class="n">_SKIP_PACKAGES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;__pycache__&quot;</span><span class="p">}</span>
+<span class="n">_TOOLS_PACKAGE</span> <span class="o">=</span> <span class="s2">"data_juicer_agents.tools"</span>
+<span class="n">_TOOLS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="s2">"tools"</span>
+<span class="n">_SKIP_PACKAGES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"__pycache__"</span><span class="p">}</span>
 
 
 <div class="viewcode-block" id="iter_tool_group_names">
@@ -571,8 +571,8 @@
         <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">module_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_SKIP_PACKAGES</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">registry_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">&quot;registry.py&quot;</span>
-        <span class="n">definition_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">&quot;definition.py&quot;</span>
+        <span class="n">registry_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">"registry.py"</span>
+        <span class="n">definition_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">"definition.py"</span>
         <span class="k">if</span> <span class="n">registry_py</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">or</span> <span class="n">definition_py</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span></div>
@@ -582,21 +582,21 @@
 <div class="viewcode-block" id="load_tool_specs_for_group">
 <a class="viewcode-back" href="../../../../api/data_juicer_agents.core.tool.catalog.html#data_juicer_agents.core.tool.catalog.load_tool_specs_for_group">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_tool_specs_for_group</span><span class="p">(</span><span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]:</span>
-    <span class="n">registry_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">group_name</span> <span class="o">/</span> <span class="s2">&quot;registry.py&quot;</span>
-    <span class="n">definition_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">group_name</span> <span class="o">/</span> <span class="s2">&quot;definition.py&quot;</span>
+    <span class="n">registry_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">group_name</span> <span class="o">/</span> <span class="s2">"registry.py"</span>
+    <span class="n">definition_py</span> <span class="o">=</span> <span class="n">_TOOLS_DIR</span> <span class="o">/</span> <span class="n">group_name</span> <span class="o">/</span> <span class="s2">"definition.py"</span>
     <span class="k">if</span> <span class="n">registry_py</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_TOOLS_PACKAGE</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">.registry&quot;</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_TOOLS_PACKAGE</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">.registry"</span>
     <span class="k">elif</span> <span class="n">definition_py</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_TOOLS_PACKAGE</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">.definition&quot;</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_TOOLS_PACKAGE</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">.definition"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no registry.py or definition.py for tool group: </span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no registry.py or definition.py for tool group: </span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;TOOL_SPECS&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">"TOOL_SPECS"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">specs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not define TOOL_SPECS&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not define TOOL_SPECS"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.TOOL_SPECS must be a list or tuple&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.TOOL_SPECS must be a list or tuple"</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">spec</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">ToolSpec</span><span class="p">)]</span></div>
 
 
@@ -616,11 +616,11 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ALL_TOOL_GROUPS&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ALL_TOOL_SPECS&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;iter_tool_group_names&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;load_all_tool_specs&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;load_tool_specs_for_group&quot;</span><span class="p">,</span>
+    <span class="s2">"ALL_TOOL_GROUPS"</span><span class="p">,</span>
+    <span class="s2">"ALL_TOOL_SPECS"</span><span class="p">,</span>
+    <span class="s2">"iter_tool_group_names"</span><span class="p">,</span>
+    <span class="s2">"load_all_tool_specs"</span><span class="p">,</span>
+    <span class="s2">"load_tool_specs_for_group"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

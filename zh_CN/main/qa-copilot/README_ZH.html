@@ -602,41 +602,41 @@
 <ol class="arabic">
 <li><p>安装依赖。</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>..
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;.[copilot]&#39;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'.[copilot]'</span>
 <span class="nb">cd</span><span class="w"> </span>qa-copilot
 </pre></div>
 </div>
 </li>
 <li><p>设置必需环境变量。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your_dashscope_api_key"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">"your_github_token"</span>
 </pre></div>
 </div>
 </li>
 <li><p>可选的会话存储配置。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># 或 &quot;redis&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">"json"</span><span class="w">  </span><span class="c1"># 或 "redis"</span>
 
 <span class="c1"># JSON 模式</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">"./sessions"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">"21600"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">"1800"</span>
 
 <span class="c1"># Redis 模式</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">"localhost"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">"6379"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">"0"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">""</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">"10"</span>
 </pre></div>
 </div>
 </li>
 <li><p>可选的服务配置。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_PORT</span><span class="o">=</span><span class="s2">&quot;8080&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">"127.0.0.1"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_PORT</span><span class="o">=</span><span class="s2">"8080"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">"true"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">"./logs"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">""</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">""</span>
 </pre></div>
 </div>
 </li>
@@ -653,7 +653,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <section id="id6">
 <h3>模型<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
 <ul class="simple">
-<li><p>默认模型：<code class="docutils literal notranslate"><span class="pre">qwen3.6-plus</span></code></p></li>
+<li><p>默认模型：<code class="docutils literal notranslate"><span class="pre">qwen3.7-plus</span></code></p></li>
 <li><p>传输方式：DashScope OpenAI-compatible endpoint</p></li>
 <li><p>流式输出：开启</p></li>
 <li><p>当前运行时会通过 <code class="docutils literal notranslate"><span class="pre">OpenAIChatFormatter</span></code> 在本地执行上下文截断</p></li>
@@ -689,15 +689,53 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;input&quot;: [</span>
+<span class="err">  "input": [</span>
 <span class="err">    {</span>
-<span class="err">      &quot;role&quot;: &quot;user&quot;,</span>
-<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;如何使用 Data-Juicer 做数据清洗？&quot;}]</span>
+<span class="err">      "role": "user",</span>
+<span class="err">      "content": [{"type": "text", "text": "如何使用 Data-Juicer 做数据清洗？"}]</span>
 <span class="err">    }</span>
 <span class="err">  ],</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
+</pre></div>
+</div>
+<p>前端也可以把页面局部资源作为结构化字段附加到请求中，而不是把页面正文拼进用户问题。Agent 会根据问题自行决定是否通过当前页上下文工具读取这些资源。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"input"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w"> </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"这一页讲了什么？"</span><span class="p">}]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"session_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"your_session_id"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_id"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"context_resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"current_page"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"document_page"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sphinx"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"media_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/plain"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test Document"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/docs/test.html"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Current page text..."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"char_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1234</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"truncated"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"extracted_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-06-17T00:00:00.000Z"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"client_environment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"surface"</span><span class="p">:</span><span class="w"> </span><span class="s2">"web_docs"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"integration"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data_juicer_sphinx"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"supports_current_page_context"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"page_context"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"resource_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"current_page"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
@@ -707,8 +745,8 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -719,8 +757,8 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -731,13 +769,13 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;data&quot;: {</span>
-<span class="err">    &quot;message_id&quot;: &quot;message_id_here&quot;,</span>
-<span class="err">    &quot;feedback_type&quot;: &quot;like&quot;,</span>
-<span class="err">    &quot;comment&quot;: &quot;可选评论&quot;</span>
+<span class="err">  "data": {</span>
+<span class="err">    "message_id": "message_id_here",</span>
+<span class="err">    "feedback_type": "like",</span>
+<span class="err">    "comment": "可选评论"</span>
 <span class="err">  },</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -825,32 +863,37 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p>Redis 最大连接数</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_HOST</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_MODEL_NAME</span></code></p></td>
+<td><p>❌ 否</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;qwen3.7-plus&quot;</span></code></p></td>
+<td><p>Agent 使用的 LLM 模型名称</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_HOST</span></code></p></td>
 <td><p>❌ 否</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;127.0.0.1&quot;</span></code></p></td>
 <td><p>服务监听地址</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_PORT</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_SERVICE_PORT</span></code></p></td>
 <td><p>❌ 否</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">8080</span></code></p></td>
 <td><p>服务监听端口</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_ENABLE_LOGGING</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_ENABLE_LOGGING</span></code></p></td>
 <td><p>❌ 否</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;true&quot;</span></code></p></td>
 <td><p>是否启用会话日志</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_LOG_DIR</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DJ_COPILOT_LOG_DIR</span></code></p></td>
 <td><p>❌ 否</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">qa-copilot/logs</span></code></p></td>
 <td><p>日志目录；未设置时会写入 <code class="docutils literal notranslate"><span class="pre">session_logger.py</span></code> 同级的 <code class="docutils literal notranslate"><span class="pre">logs</span></code> 目录</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FASTAPI_CONFIG_PATH</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FASTAPI_CONFIG_PATH</span></code></p></td>
 <td><p>❌ 否</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
 <td><p>可选 FastAPI 配置 JSON 文件</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SAFE_CHECK_HANDLER_PATH</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SAFE_CHECK_HANDLER_PATH</span></code></p></td>
 <td><p>❌ 否</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
 <td><p>可选安全检查处理器模块</p></td>

@@ -76,7 +76,7 @@ Q&A Copilot 是 Data-Juicer Agents 的问答组件。它以 AgentScope Web 服�
 
 ### 模型
 
-- 默认模型：`qwen3.6-plus`
+- 默认模型：`qwen3.7-plus`
 - 传输方式：DashScope OpenAI-compatible endpoint
 - 流式输出：开启
 - 当前运行时会通过 `OpenAIChatFormatter` 在本地执行上下文截断
@@ -113,6 +113,46 @@ Content-Type: application/json
   ],
   "session_id": "your_session_id",
   "user_id": "user_id"
+}
+```
+
+前端也可以把页面局部资源作为结构化字段附加到请求中，而不是把页面正文拼进用户问题。Agent 会根据问题自行决定是否通过当前页上下文工具读取这些资源。
+
+```json
+{
+  "input": [
+    {
+      "role": "user",
+      "content": [{"type": "text", "text": "这一页讲了什么？"}]
+    }
+  ],
+  "session_id": "your_session_id",
+  "user_id": "user_id",
+  "context_resources": [
+    {
+      "id": "current_page",
+      "type": "document_page",
+      "source": "sphinx",
+      "media_type": "text/plain",
+      "title": "Test Document",
+      "url": "https://example.com/docs/test.html",
+      "text": "Current page text...",
+      "char_count": 1234,
+      "truncated": false,
+      "extracted_at": "2026-06-17T00:00:00.000Z"
+    }
+  ],
+  "metadata": {
+    "client_environment": {
+      "surface": "web_docs",
+      "integration": "data_juicer_sphinx",
+      "supports_current_page_context": true
+    },
+    "page_context": {
+      "available": true,
+      "resource_id": "current_page"
+    }
+  }
 }
 ```
 
@@ -192,6 +232,7 @@ npx @agentscope-ai/chat agentscope-runtime-webui --url http://localhost:8080/pro
 | `REDIS_DB` | ❌ 否 | `0` | Redis 数据库编号 |
 | `REDIS_PASSWORD` | ❌ 否 | 未设置 | Redis 密码 |
 | `REDIS_MAX_CONNECTIONS` | ❌ 否 | `10` | Redis 最大连接数 |
+| `DJ_COPILOT_MODEL_NAME` | ❌ 否 | `"qwen3.7-plus"` | Agent 使用的 LLM 模型名称 |
 | `DJ_COPILOT_SERVICE_HOST` | ❌ 否 | `"127.0.0.1"` | 服务监听地址 |
 | `DJ_COPILOT_SERVICE_PORT` | ❌ 否 | `8080` | 服务监听端口 |
 | `DJ_COPILOT_ENABLE_LOGGING` | ❌ 否 | `"true"` | 是否启用会话日志 |

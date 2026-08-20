@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.commands.apply_cmd</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Implementation for `djx apply`.&quot;&quot;&quot;</span>
+<span class="sd">"""Implementation for `djx apply`."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -557,133 +557,133 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_format_dataset_source</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a human-readable dataset source summary from the recipe block.</span>
+<span class="w">    </span><span class="sd">"""Build a human-readable dataset source summary from the recipe block.</span>
 
 <span class="sd">    Exactly one dataset source must be present in the plan.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">source_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span>
-        <span class="nb">bool</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">)),</span>
-        <span class="nb">bool</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset&quot;</span><span class="p">)),</span>
-        <span class="nb">bool</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">)),</span>
+        <span class="nb">bool</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"generated_dataset_config"</span><span class="p">)),</span>
+        <span class="nb">bool</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataset"</span><span class="p">)),</span>
+        <span class="nb">bool</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataset_path"</span><span class="p">)),</span>
     <span class="p">])</span>
 
     <span class="k">if</span> <span class="n">source_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;Plan contains no dataset source. &quot;</span>
-            <span class="s2">&quot;Exactly one of dataset_path, dataset, or generated_dataset_config &quot;</span>
-            <span class="s2">&quot;is required. Please regenerate the plan.&quot;</span>
+            <span class="s2">"Plan contains no dataset source. "</span>
+            <span class="s2">"Exactly one of dataset_path, dataset, or generated_dataset_config "</span>
+            <span class="s2">"is required. Please regenerate the plan."</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">source_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;Plan contains multiple dataset sources. &quot;</span>
-            <span class="s2">&quot;Only one of dataset_path, dataset, or generated_dataset_config &quot;</span>
-            <span class="s2">&quot;is allowed. Please regenerate the plan.&quot;</span>
+            <span class="s2">"Plan contains multiple dataset sources. "</span>
+            <span class="s2">"Only one of dataset_path, dataset, or generated_dataset_config "</span>
+            <span class="s2">"is allowed. Please regenerate the plan."</span>
         <span class="p">)</span>
 
-    <span class="n">generated_cfg</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;generated_dataset_config&quot;</span><span class="p">)</span>
+    <span class="n">generated_cfg</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"generated_dataset_config"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generated_cfg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">formatter_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">generated_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;generated (</span><span class="si">{</span><span class="n">formatter_type</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="n">formatter_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">generated_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"unknown"</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"generated (</span><span class="si">{</span><span class="n">formatter_type</span><span class="si">}</span><span class="s2">)"</span>
 
-    <span class="n">dataset_obj</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+    <span class="n">dataset_obj</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataset"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">configs</span> <span class="o">=</span> <span class="n">dataset_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="n">dataset_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"configs"</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s2">&quot;(empty config)&quot;</span>
+            <span class="k">return</span> <span class="s2">"(empty config)"</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="n">src_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">src_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">entry</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">src_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">src_path</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">src_path</span> <span class="k">else</span> <span class="n">src_type</span>
+            <span class="n">src_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"local"</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">src_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">src_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">src_path</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">src_path</span> <span class="k">else</span> <span class="n">src_type</span>
             <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="k">if</span> <span class="n">parts</span> <span class="k">else</span> <span class="s2">&quot;(empty config)&quot;</span>
+        <span class="k">return</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="k">if</span> <span class="n">parts</span> <span class="k">else</span> <span class="s2">"(empty config)"</span>
 
-    <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">dataset_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataset_path"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">dataset_path</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;local: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"local: </span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">"</span>
 
-    <span class="k">return</span> <span class="s2">&quot;(none)&quot;</span>
+    <span class="k">return</span> <span class="s2">"(none)"</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_confirm</span><span class="p">(</span><span class="n">plan_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">dataset_summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;About to execute plan: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;plan_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modality: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;modality&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"About to execute plan: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'plan_id'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Modality: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'modality'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"recipe"</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">if</span> <span class="n">dataset_summary</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dataset_summary</span> <span class="o">=</span> <span class="n">_format_dataset_source</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><span class="n">dataset_summary</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Export: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;export_path&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Proceed? [y/N]: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">answer</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dataset: </span><span class="si">{</span><span class="n">dataset_summary</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Export: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'export_path'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">"Proceed? [y/N]: "</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"y"</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">}</span>
 
 
 <div class="viewcode-block" id="run_apply">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.commands.apply_cmd.html#data_juicer_agents.commands.apply_cmd.run_apply">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_apply</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">timeout</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout must be &gt; 0&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"timeout must be &gt; 0"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
 
     <span class="n">plan_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">plan</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plan_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plan file not found: </span><span class="si">{</span><span class="n">plan_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan file not found: </span><span class="si">{</span><span class="n">plan_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">plan_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">plan_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">plan_data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plan_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plan file is not a mapping: </span><span class="si">{</span><span class="n">plan_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan file is not a mapping: </span><span class="si">{</span><span class="n">plan_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
 
-    <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"recipe"</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plan recipe is not a mapping&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Plan recipe is not a mapping"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">dataset_summary</span> <span class="o">=</span> <span class="n">_format_dataset_source</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">yes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_confirm</span><span class="p">(</span><span class="n">plan_data</span><span class="p">,</span> <span class="n">dataset_summary</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Execution canceled&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Execution canceled"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span>
 
-    <span class="n">runtime_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.djx&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;recipes&quot;</span>
+    <span class="n">runtime_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">".djx"</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"recipes"</span>
     <span class="n">executor</span> <span class="o">=</span> <span class="n">ApplyUseCase</span><span class="p">()</span>
     <span class="n">result</span><span class="p">,</span> <span class="n">returncode</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
         <span class="n">plan_payload</span><span class="o">=</span><span class="n">plan_data</span><span class="p">,</span>
         <span class="n">runtime_dir</span><span class="o">=</span><span class="n">runtime_dir</span><span class="p">,</span>
         <span class="n">dry_run</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">dry_run</span><span class="p">,</span>
         <span class="n">timeout_seconds</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
-        <span class="n">cancel_check</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;cancel_check&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">cancel_check</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"cancel_check"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="n">interrupted</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;error_type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;interrupted&quot;</span>
+    <span class="n">interrupted</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"error_type"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"interrupted"</span>
     <span class="k">if</span> <span class="n">interrupted</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Execution interrupted by user.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Execution interrupted by user."</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">stdout</span> <span class="ow">and</span> <span class="n">enabled</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;STDOUT:&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stdout</span> <span class="ow">and</span> <span class="n">enabled</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"verbose"</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"STDOUT:"</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">stderr</span> <span class="ow">and</span> <span class="n">enabled</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;STDERR:&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stderr</span> <span class="ow">and</span> <span class="n">enabled</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"verbose"</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"STDERR:"</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">enabled</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
-        <span class="n">emit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;Debug apply payload:&quot;</span><span class="p">)</span>
-        <span class="n">emit_json</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Run Summary:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Execution ID: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">execution_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Recipe: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">generated_recipe_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">error_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">}:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error Type: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">enabled</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"debug"</span><span class="p">):</span>
+        <span class="n">emit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"Debug apply payload:"</span><span class="p">)</span>
+        <span class="n">emit_json</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">level</span><span class="o">=</span><span class="s2">"debug"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Run Summary:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Execution ID: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">execution_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Status: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Recipe: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">generated_recipe_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">error_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">}:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error Type: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">error_message</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">returncode</span></div>
 

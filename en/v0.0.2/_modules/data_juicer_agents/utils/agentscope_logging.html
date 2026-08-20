@@ -544,20 +544,20 @@
                   
   <h1>Source code for data_juicer_agents.utils.agentscope_logging</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Shared logging helpers for AgentScope integration.&quot;&quot;&quot;</span>
+<span class="sd">"""Shared logging helpers for AgentScope integration."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 
-<span class="n">THINKING_BLOCK_WARNING</span> <span class="o">=</span> <span class="s2">&quot;Unsupported block type thinking in the message, skipped.&quot;</span>
+<span class="n">THINKING_BLOCK_WARNING</span> <span class="o">=</span> <span class="s2">"Unsupported block type thinking in the message, skipped."</span>
 
 
 <div class="viewcode-block" id="IgnoreThinkingBlockWarningFilter">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.agentscope_logging.html#data_juicer_agents.utils.agentscope_logging.IgnoreThinkingBlockWarningFilter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IgnoreThinkingBlockWarningFilter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Filter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter only the known formatter warning for thinking blocks.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Filter only the known formatter warning for thinking blocks."""</span>
 
 <div class="viewcode-block" id="IgnoreThinkingBlockWarningFilter.filter">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.agentscope_logging.html#data_juicer_agents.utils.agentscope_logging.IgnoreThinkingBlockWarningFilter.filter">[docs]</a>
@@ -569,8 +569,8 @@
 
 <div class="viewcode-block" id="install_thinking_warning_filter">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.agentscope_logging.html#data_juicer_agents.utils.agentscope_logging.install_thinking_warning_filter">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">install_thinking_warning_filter</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;as&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Install the filter once on the target logger.&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">install_thinking_warning_filter</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"as"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Install the filter once on the target logger."""</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">filters</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">IgnoreThinkingBlockWarningFilter</span><span class="p">):</span>

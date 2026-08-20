@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.cli</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;CLI entrypoint for the ``djx`` command.&quot;&quot;&quot;</span>
+<span class="sd">"""CLI entrypoint for the ``djx`` command."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -557,41 +557,41 @@
 
 
 <span class="n">_COMMAND_HANDLER_SPECS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;plan&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.plan_cmd&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_plan&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx plan&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
+    <span class="s2">"plan"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"data_juicer_agents.commands.plan_cmd"</span><span class="p">,</span>
+        <span class="s2">"handler"</span><span class="p">:</span> <span class="s2">"run_plan"</span><span class="p">,</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="s2">"djx plan"</span><span class="p">,</span>
+        <span class="s2">"extras"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"harness"</span><span class="p">,</span> <span class="s2">"core"</span><span class="p">),</span>
     <span class="p">},</span>
-    <span class="s2">&quot;apply&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.apply_cmd&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_apply&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx apply&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
+    <span class="s2">"apply"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"data_juicer_agents.commands.apply_cmd"</span><span class="p">,</span>
+        <span class="s2">"handler"</span><span class="p">:</span> <span class="s2">"run_apply"</span><span class="p">,</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="s2">"djx apply"</span><span class="p">,</span>
+        <span class="s2">"extras"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"harness"</span><span class="p">,</span> <span class="s2">"core"</span><span class="p">),</span>
     <span class="p">},</span>
-    <span class="s2">&quot;retrieve&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.retrieve_cmd&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_retrieve&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx retrieve&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">,),</span>
+    <span class="s2">"retrieve"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"data_juicer_agents.commands.retrieve_cmd"</span><span class="p">,</span>
+        <span class="s2">"handler"</span><span class="p">:</span> <span class="s2">"run_retrieve"</span><span class="p">,</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="s2">"djx retrieve"</span><span class="p">,</span>
+        <span class="s2">"extras"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"core"</span><span class="p">,),</span>
     <span class="p">},</span>
-    <span class="s2">&quot;dev&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.dev_cmd&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_dev&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx dev&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
+    <span class="s2">"dev"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"data_juicer_agents.commands.dev_cmd"</span><span class="p">,</span>
+        <span class="s2">"handler"</span><span class="p">:</span> <span class="s2">"run_dev"</span><span class="p">,</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="s2">"djx dev"</span><span class="p">,</span>
+        <span class="s2">"extras"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"harness"</span><span class="p">,</span> <span class="s2">"core"</span><span class="p">),</span>
     <span class="p">},</span>
-    <span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.tool_cmd&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_tool&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx tool&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
+    <span class="s2">"tool"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"data_juicer_agents.commands.tool_cmd"</span><span class="p">,</span>
+        <span class="s2">"handler"</span><span class="p">:</span> <span class="s2">"run_tool"</span><span class="p">,</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="s2">"djx tool"</span><span class="p">,</span>
+        <span class="s2">"extras"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"harness"</span><span class="p">,</span> <span class="s2">"core"</span><span class="p">),</span>
     <span class="p">},</span>
-    <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;data_juicer_agents.commands.debug_cmd&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;handler&quot;</span><span class="p">:</span> <span class="s2">&quot;run_debug&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="s2">&quot;djx debug&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">,</span> <span class="s2">&quot;core&quot;</span><span class="p">),</span>
+    <span class="s2">"debug"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"data_juicer_agents.commands.debug_cmd"</span><span class="p">,</span>
+        <span class="s2">"handler"</span><span class="p">:</span> <span class="s2">"run_debug"</span><span class="p">,</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="s2">"djx debug"</span><span class="p">,</span>
+        <span class="s2">"extras"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"harness"</span><span class="p">,</span> <span class="s2">"core"</span><span class="p">),</span>
     <span class="p">},</span>
 <span class="p">}</span>
 
@@ -603,310 +603,310 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
     <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--quiet&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;output_level&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_const&quot;</span><span class="p">,</span>
-        <span class="n">const</span><span class="o">=</span><span class="s2">&quot;quiet&quot;</span><span class="p">,</span>
+        <span class="s2">"--quiet"</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"output_level"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_const"</span><span class="p">,</span>
+        <span class="n">const</span><span class="o">=</span><span class="s2">"quiet"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Summary output (default)&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Summary output (default)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;output_level&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_const&quot;</span><span class="p">,</span>
-        <span class="n">const</span><span class="o">=</span><span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+        <span class="s2">"--verbose"</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"output_level"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_const"</span><span class="p">,</span>
+        <span class="n">const</span><span class="o">=</span><span class="s2">"verbose"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Expand tool execution output&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Expand tool execution output"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;output_level&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_const&quot;</span><span class="p">,</span>
-        <span class="n">const</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+        <span class="s2">"--debug"</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"output_level"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_const"</span><span class="p">,</span>
+        <span class="n">const</span><span class="o">=</span><span class="s2">"debug"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Include raw call details for debugging&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Include raw call details for debugging"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">set_default</span><span class="p">:</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">output_level</span><span class="o">=</span><span class="s2">&quot;quiet&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">output_level</span><span class="o">=</span><span class="s2">"quiet"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../api/data_juicer_agents.cli.html#data_juicer_agents.cli.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;djx&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Agentic CLI for Data-Juicer workflows&quot;</span><span class="p">,</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">"djx"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Agentic CLI for Data-Juicer workflows"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-        <span class="n">version</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;%(prog)s </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">"--version"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"version"</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="sa">f</span><span class="s2">"%(prog)s </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">_add_output_level_args</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">set_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">output_parent</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_add_output_level_args</span><span class="p">(</span><span class="n">output_parent</span><span class="p">,</span> <span class="n">set_default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">sub</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;command&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">plan</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;plan&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate a structured execution plan&quot;</span><span class="p">,</span>
+        <span class="s2">"plan"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Generate a structured execution plan"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;intent&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Natural language task intent&quot;</span><span class="p">)</span>
+    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"intent"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Natural language task intent"</span><span class="p">)</span>
     
     <span class="c1"># Dataset source: mutually exclusive options</span>
     <span class="n">dataset_group</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">dataset_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--dataset&quot;</span><span class="p">,</span>
+        <span class="s2">"--dataset"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input dataset path (single local file)&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Input dataset path (single local file)"</span>
     <span class="p">)</span>
     <span class="n">dataset_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--dataset-config&quot;</span><span class="p">,</span>
+        <span class="s2">"--dataset-config"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;JSON string for complex multi-source dataset config. &quot;</span>
-            <span class="s2">&quot;Use this for mixed sources, per-source weights, or max_sample_num. &quot;</span>
-            <span class="s1">&#39;Example: </span><span class="se">\&#39;</span><span class="s1">{&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;/data/a.jsonl&quot;, &quot;weight&quot;: 0.7}]}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+            <span class="s2">"JSON string for complex multi-source dataset config. "</span>
+            <span class="s2">"Use this for mixed sources, per-source weights, or max_sample_num. "</span>
+            <span class="s1">'Example: </span><span class="se">\'</span><span class="s1">{"configs": [{"type": "local", "path": "/data/a.jsonl", "weight": 0.7}]}</span><span class="se">\'</span><span class="s1">'</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">dataset_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--generated-dataset-config&quot;</span><span class="p">,</span>
+        <span class="s2">"--generated-dataset-config"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;JSON string for dynamically generated dataset via Data-Juicer formatters. &quot;</span>
-            <span class="s2">&quot;Must contain a &#39;type&#39; key matching a registered formatter name. &quot;</span>
-            <span class="s1">&#39;Example: </span><span class="se">\&#39;</span><span class="s1">{&quot;type&quot;: &quot;EmptyFormatter&quot;, &quot;length&quot;: 1000}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+            <span class="s2">"JSON string for dynamically generated dataset via Data-Juicer formatters. "</span>
+            <span class="s2">"Must contain a 'type' key matching a registered formatter name. "</span>
+            <span class="s1">'Example: </span><span class="se">\'</span><span class="s1">{"type": "EmptyFormatter", "length": 1000}</span><span class="se">\'</span><span class="s1">'</span>
         <span class="p">),</span>
     <span class="p">)</span>
     
-    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--export&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output jsonl path&quot;</span><span class="p">)</span>
-    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output plan yaml path&quot;</span><span class="p">)</span>
+    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--export"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Output jsonl path"</span><span class="p">)</span>
+    <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--output"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Output plan yaml path"</span><span class="p">)</span>
     <span class="n">plan</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--custom-operator-paths&quot;</span><span class="p">,</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="s2">"--custom-operator-paths"</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional custom operator directories/files for validation/execution&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Optional custom operator directories/files for validation/execution"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">plan</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;plan&quot;</span><span class="p">)</span>
+    <span class="n">plan</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"plan"</span><span class="p">)</span>
 
     <span class="n">apply_cmd</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;apply&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Apply a generated plan&quot;</span><span class="p">,</span>
+        <span class="s2">"apply"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Apply a generated plan"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--plan&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Plan yaml path&quot;</span><span class="p">)</span>
-    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--yes&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Skip confirmation&quot;</span><span class="p">)</span>
-    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--dry-run&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not execute dj-process&quot;</span><span class="p">)</span>
+    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--plan"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Plan yaml path"</span><span class="p">)</span>
+    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--yes"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Skip confirmation"</span><span class="p">)</span>
+    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--dry-run"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Do not execute dj-process"</span><span class="p">)</span>
     <span class="n">apply_cmd</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--timeout&quot;</span><span class="p">,</span>
+        <span class="s2">"--timeout"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Execution timeout in seconds&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Execution timeout in seconds"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;apply&quot;</span><span class="p">)</span>
+    <span class="n">apply_cmd</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"apply"</span><span class="p">)</span>
 
     <span class="n">retrieve</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Retrieve relevant Data-Juicer operators from natural language intent&quot;</span><span class="p">,</span>
+        <span class="s2">"retrieve"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Retrieve relevant Data-Juicer operators from natural language intent"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;intent&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Natural language operator need&quot;</span><span class="p">)</span>
+    <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"intent"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Natural language operator need"</span><span class="p">)</span>
     <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--top-k&quot;</span><span class="p">,</span>
+        <span class="s2">"--top-k"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum candidate operators to return&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Maximum candidate operators to return"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--mode&quot;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;llm&quot;</span><span class="p">,</span> <span class="s2">&quot;bm25&quot;</span><span class="p">,</span> <span class="s2">&quot;regex&quot;</span><span class="p">,</span> <span class="s2">&quot;grep&quot;</span><span class="p">],</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Retrieval backend mode&quot;</span><span class="p">,</span>
+        <span class="s2">"--mode"</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"llm"</span><span class="p">,</span> <span class="s2">"bm25"</span><span class="p">,</span> <span class="s2">"regex"</span><span class="p">,</span> <span class="s2">"grep"</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Retrieval backend mode"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--type&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;op_type&quot;</span><span class="p">,</span>
+        <span class="s2">"--type"</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"op_type"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter by operator type (e.g. filter, mapper, deduplicator)&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Filter by operator type (e.g. filter, mapper, deduplicator)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--tags&quot;</span><span class="p">,</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="s2">"--tags"</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">"*"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter by operator tags (e.g. text image multimodal)&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Filter by operator tags (e.g. text image multimodal)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">retrieve</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--json&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print machine-readable JSON payload&quot;</span><span class="p">,</span>
+        <span class="s2">"--json"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Print machine-readable JSON payload"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">retrieve</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;retrieve&quot;</span><span class="p">)</span>
+    <span class="n">retrieve</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"retrieve"</span><span class="p">)</span>
 
     <span class="n">dev</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;dev&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate a non-invasive custom Data-Juicer operator scaffold&quot;</span><span class="p">,</span>
+        <span class="s2">"dev"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Generate a non-invasive custom Data-Juicer operator scaffold"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;intent&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Natural language operator requirement&quot;</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"intent"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Natural language operator requirement"</span><span class="p">)</span>
     <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--operator-name&quot;</span><span class="p">,</span>
+        <span class="s2">"--operator-name"</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target operator name (snake_case; suffix inferred if omitted)&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Target operator name (snake_case; suffix inferred if omitted)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span>
+        <span class="s2">"--output-dir"</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory to write generated operator scaffold files&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Directory to write generated operator scaffold files"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--type&quot;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mapper&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">],</span>
+        <span class="s2">"--type"</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"mapper"</span><span class="p">,</span> <span class="s2">"filter"</span><span class="p">],</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional operator type (mapper/filter)&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Optional operator type (mapper/filter)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--from-retrieve&quot;</span><span class="p">,</span>
+        <span class="s2">"--from-retrieve"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional path to djx retrieve JSON output for design context&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Optional path to djx retrieve JSON output for design context"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">dev</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--smoke-check&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run an optional local dj-process smoke check using custom_operator_paths&quot;</span><span class="p">,</span>
+        <span class="s2">"--smoke-check"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Run an optional local dj-process smoke check using custom_operator_paths"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;dev&quot;</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"dev"</span><span class="p">)</span>
 
     <span class="n">tool</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;tool&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inspect or execute atomic built-in tools&quot;</span><span class="p">,</span>
+        <span class="s2">"tool"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Inspect or execute atomic built-in tools"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">tool_sub</span> <span class="o">=</span> <span class="n">tool</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;tool_action&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tool_sub</span> <span class="o">=</span> <span class="n">tool</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">"tool_action"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">tool_list</span> <span class="o">=</span> <span class="n">tool_sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;list&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List all registered tools&quot;</span><span class="p">,</span>
+        <span class="s2">"list"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"List all registered tools"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">tool_list</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--tag&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+        <span class="s2">"--tag"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"append"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional tag filter; may be repeated&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Optional tag filter; may be repeated"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">tool_list</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;tool&quot;</span><span class="p">)</span>
+    <span class="n">tool_list</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"tool"</span><span class="p">)</span>
 
     <span class="n">tool_schema</span> <span class="o">=</span> <span class="n">tool_sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;schema&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show tool metadata and input schema&quot;</span><span class="p">,</span>
+        <span class="s2">"schema"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Show tool metadata and input schema"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">tool_schema</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Registered tool name&quot;</span><span class="p">)</span>
-    <span class="n">tool_schema</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;tool&quot;</span><span class="p">)</span>
+    <span class="n">tool_schema</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"tool_name"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Registered tool name"</span><span class="p">)</span>
+    <span class="n">tool_schema</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"tool"</span><span class="p">)</span>
 
     <span class="n">tool_run</span> <span class="o">=</span> <span class="n">tool_sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;run&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Execute a tool with JSON input&quot;</span><span class="p">,</span>
+        <span class="s2">"run"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Execute a tool with JSON input"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">tool_run</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Registered tool name&quot;</span><span class="p">)</span>
+    <span class="n">tool_run</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"tool_name"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Registered tool name"</span><span class="p">)</span>
     <span class="n">input_group</span> <span class="o">=</span> <span class="n">tool_run</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">input_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--input-json&quot;</span><span class="p">,</span>
+        <span class="s2">"--input-json"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inline JSON object input for the tool&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Inline JSON object input for the tool"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">input_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--input-file&quot;</span><span class="p">,</span>
+        <span class="s2">"--input-file"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a JSON file containing the tool input object&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Path to a JSON file containing the tool input object"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">tool_run</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--working-dir&quot;</span><span class="p">,</span>
+        <span class="s2">"--working-dir"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Working directory used to build ToolContext&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Working directory used to build ToolContext"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">tool_run</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--yes&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Explicitly confirm running write/execute tools&quot;</span><span class="p">,</span>
+        <span class="s2">"--yes"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Explicitly confirm running write/execute tools"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">tool_run</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;tool&quot;</span><span class="p">)</span>
+    <span class="n">tool_run</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"tool"</span><span class="p">)</span>
 
     <span class="n">debug</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Debug context and token usage&quot;</span><span class="p">,</span>
+        <span class="s2">"debug"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Debug context and token usage"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">debug_sub</span> <span class="o">=</span> <span class="n">debug</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;debug_action&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">debug_sub</span> <span class="o">=</span> <span class="n">debug</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">"debug_action"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">token_usage</span> <span class="o">=</span> <span class="n">debug_sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;token-usage&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Compare full vs compact tool-result token usage&quot;</span><span class="p">,</span>
+        <span class="s2">"token-usage"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Compare full vs compact tool-result token usage"</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">output_parent</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Tool name used for compaction rules&quot;</span>
+        <span class="s2">"tool_name"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Tool name used for compaction rules"</span>
     <span class="p">)</span>
     <span class="n">token_input</span> <span class="o">=</span> <span class="n">token_usage</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">token_input</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--input-json&quot;</span><span class="p">,</span>
+        <span class="s2">"--input-json"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inline JSON object containing the full tool payload&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Inline JSON object containing the full tool payload"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">token_input</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--input-file&quot;</span><span class="p">,</span>
+        <span class="s2">"--input-file"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a JSON file containing the full tool payload&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Path to a JSON file containing the full tool payload"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--provider&quot;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;char&quot;</span><span class="p">,</span> <span class="s2">&quot;qwen&quot;</span><span class="p">],</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Token counter: local AgentScope char counter or qwen API usage&quot;</span><span class="p">,</span>
+        <span class="s2">"--provider"</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"char"</span><span class="p">,</span> <span class="s2">"qwen"</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"char"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Token counter: local AgentScope char counter or qwen API usage"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--model&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Model name for provider=qwen&quot;</span>
+        <span class="s2">"--model"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Model name for provider=qwen"</span>
     <span class="p">)</span>
     <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--base-url&quot;</span><span class="p">,</span>
+        <span class="s2">"--base-url"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;OpenAI-compatible base URL for provider=qwen&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"OpenAI-compatible base URL for provider=qwen"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--max-tokens&quot;</span><span class="p">,</span>
+        <span class="s2">"--max-tokens"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Completion max_tokens for provider=qwen usage probes&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Completion max_tokens for provider=qwen usage probes"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">token_usage</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--timeout&quot;</span><span class="p">,</span>
+        <span class="s2">"--timeout"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;HTTP timeout seconds for provider=qwen&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"HTTP timeout seconds for provider=qwen"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">token_usage</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+    <span class="n">token_usage</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">handler_name</span><span class="o">=</span><span class="s2">"debug"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_handler</span><span class="p">(</span><span class="n">handler_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">_COMMAND_HANDLER_SPECS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">handler_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">_COMMAND_HANDLER_SPECS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">handler_name</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown command handler: </span><span class="si">{</span><span class="n">handler_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown command handler: </span><span class="si">{</span><span class="n">handler_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;module&quot;</span><span class="p">]))</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"module"</span><span class="p">]))</span>
     <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="n">missing_dependency_message</span><span class="p">(</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;feature&quot;</span><span class="p">]),</span>
-                <span class="n">extras</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;extras&quot;</span><span class="p">]),</span>
-                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"feature"</span><span class="p">]),</span>
+                <span class="n">extras</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"extras"</span><span class="p">]),</span>
+                <span class="n">missing_module</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
-    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;handler&quot;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"handler"</span><span class="p">]))</span>
 
 
 <div class="viewcode-block" id="main">
@@ -915,7 +915,7 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">build_parser</span><span class="p">()</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">handler</span> <span class="o">=</span> <span class="n">_load_handler</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;handler_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">_load_handler</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"handler_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span>
@@ -923,7 +923,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </pre></div>
 

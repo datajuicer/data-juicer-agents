@@ -657,57 +657,57 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h3>
 <ol class="arabic">
 <li><p>Set required environment variables</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span><span class="w">  </span><span class="c1"># Required: for GitHub MCP integration</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your_dashscope_api_key"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">"your_github_token"</span><span class="w">  </span><span class="c1"># Required: for GitHub MCP integration</span>
 </pre></div>
 </div>
 </li>
 <li><p>Set optional environment variables</p>
 <p><strong>Session Storage Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Session store type: &quot;json&quot; (default) or &quot;redis&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># or &quot;redis&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Session store type: "json" (default) or "redis"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">"json"</span><span class="w">  </span><span class="c1"># or "redis"</span>
 
 <span class="c1"># For JSON mode (default):</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span><span class="w">  </span><span class="c1"># Session file storage directory (default: &quot;./sessions&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span><span class="w">  </span><span class="c1"># Session TTL in seconds (default: 21600 = 6 hours)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span><span class="w">  </span><span class="c1"># Cleanup interval in seconds (default: 1800 = 30 minutes)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">"./sessions"</span><span class="w">  </span><span class="c1"># Session file storage directory (default: "./sessions")</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">"21600"</span><span class="w">  </span><span class="c1"># Session TTL in seconds (default: 21600 = 6 hours)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">"1800"</span><span class="w">  </span><span class="c1"># Cleanup interval in seconds (default: 1800 = 30 minutes)</span>
 
 <span class="c1"># For Redis mode:</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="w">  </span><span class="c1"># Redis server host (default: &quot;localhost&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span><span class="w">  </span><span class="c1"># Redis server port (default: 6379)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="w">  </span><span class="c1"># Redis database number (default: 0)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Redis password (default: None, optional)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="w">  </span><span class="c1"># Redis max connections (default: 10)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">"localhost"</span><span class="w">  </span><span class="c1"># Redis server host (default: "localhost")</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">"6379"</span><span class="w">  </span><span class="c1"># Redis server port (default: 6379)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">"0"</span><span class="w">  </span><span class="c1"># Redis database number (default: 0)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">""</span><span class="w">  </span><span class="c1"># Redis password (default: None, optional)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">"10"</span><span class="w">  </span><span class="c1"># Redis max connections (default: 10)</span>
 <span class="c1"># Note: Redis TTL is handled by Redis server configuration, not by application</span>
 </pre></div>
 </div>
 <p><strong>Model Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">&quot;200000&quot;</span><span class="w">  </span><span class="c1"># Maximum tokens for context window (default: 200000)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">"200000"</span><span class="w">  </span><span class="c1"># Maximum tokens for context window (default: 200000)</span>
 <span class="c1"># Note: This value is multiplied by 3 when passed to DashScopeChatFormatter</span>
 <span class="c1"># because CharTokenCounter counts characters, and ~3 chars ≈ 1 token for mixed CHN &amp; ENG text</span>
 </pre></div>
 </div>
 <p><strong>Qdrant Vector Database:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Qdrant server host (default: &quot;127.0.0.1&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">&quot;6333&quot;</span><span class="w">  </span><span class="c1"># Qdrant server port (default: 6333)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="w">  </span><span class="c1"># Qdrant server host (default: "127.0.0.1")</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">"6333"</span><span class="w">  </span><span class="c1"># Qdrant server port (default: 6333)</span>
 </pre></div>
 </div>
 <p><strong>Service Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Service host address (default: &quot;127.0.0.1&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="w">  </span><span class="c1"># Enable session logging (default: &quot;true&quot;)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="w">  </span><span class="c1"># Log directory (default: &quot;./logs&quot;)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="w">  </span><span class="c1"># Service host address (default: "127.0.0.1")</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">"true"</span><span class="w">  </span><span class="c1"># Enable session logging (default: "true")</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">"./logs"</span><span class="w">  </span><span class="c1"># Log directory (default: "./logs")</span>
 </pre></div>
 </div>
 <p><strong>Advanced Configuration:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Path to FastAPI config JSON file (optional)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Path to custom safe check handler module (optional)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">""</span><span class="w">  </span><span class="c1"># Path to FastAPI config JSON file (optional)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">""</span><span class="w">  </span><span class="c1"># Path to custom safe check handler module (optional)</span>
 </pre></div>
 </div>
 </li>
 <li><p>Configure FAQ file (optional)</p>
 <p>The system uses <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> as the FAQ data source by default. You can edit this file to customize FAQ content. FAQ file format example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_001&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;What is Data-Juicer?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;Data-Juicer is a...&#39;</span>
-<span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_002&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;How to install?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;You can install by...&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'FAQ_001'</span><span class="p">,</span> <span class="s1">'question'</span><span class="p">:</span> <span class="s1">'What is Data-Juicer?'</span><span class="p">,</span> <span class="s1">'answer'</span><span class="p">:</span> <span class="s1">'Data-Juicer is a...'</span>
+<span class="s1">'id'</span><span class="p">:</span> <span class="s1">'FAQ_002'</span><span class="p">,</span> <span class="s1">'question'</span><span class="p">:</span> <span class="s1">'How to install?'</span><span class="p">,</span> <span class="s1">'answer'</span><span class="p">:</span> <span class="s1">'You can install by...'</span>
 </pre></div>
 </div>
 </li>
@@ -736,14 +736,14 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;input&quot;: [</span>
+<span class="err">  "input": [</span>
 <span class="err">    {</span>
-<span class="err">      &quot;role&quot;: &quot;user&quot;, </span>
-<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;How to use Data-Juicer for data cleaning?&quot;}]</span>
+<span class="err">      "role": "user", </span>
+<span class="err">      "content": [{"type": "text", "text": "How to use Data-Juicer for data cleaning?"}]</span>
 <span class="err">    }</span>
 <span class="err">  ],</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -754,8 +754,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -766,8 +766,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -778,13 +778,13 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;data&quot;: {</span>
-<span class="err">    &quot;message_id&quot;: &quot;message_id_here&quot;,</span>
-<span class="err">    &quot;feedback_type&quot;: &quot;like&quot;,</span>
-<span class="err">    &quot;comment&quot;: &quot;optional user comment&quot;</span>
+<span class="err">  "data": {</span>
+<span class="err">    "message_id": "message_id_here",</span>
+<span class="err">    "feedback_type": "like",</span>
+<span class="err">    "comment": "optional user comment"</span>
 <span class="err">  },</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -796,8 +796,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </ul>
 <p><strong>Response example:</strong></p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feedback recorded successfully&quot;</span>
+<span class="w">  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Feedback recorded successfully"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -928,8 +928,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <h3>Model Configuration<a class="headerlink" href="#model-configuration" title="Link to this heading">#</a></h3>
 <p>In <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code>, you can configure the language model to use:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">=</span><span class="n">DashScopeChatModel</span><span class="p">(</span>
-    <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">,</span>  <span class="c1"># Model name</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
+    <span class="s2">"qwen3-max-2026-01-23"</span><span class="p">,</span>  <span class="c1"># Model name</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"DASHSCOPE_API_KEY"</span><span class="p">),</span>
     <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable streaming response</span>
     <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable thinking mode</span>
 <span class="p">)</span>

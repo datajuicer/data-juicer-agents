@@ -641,16 +641,16 @@
 <section id="command-format">
 <h2>Command Format<a class="headerlink" href="#command-format" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Local retrieval (harness default)</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;&lt;description&gt;&quot;, &quot;top_k&quot;: 15}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "&lt;description&gt;", "top_k": 15}'</span>
 
 <span class="c1"># API-backed retrieval (full surface only, not in harness)</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;&lt;description&gt;&quot;, &quot;top_k&quot;: 15}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "&lt;description&gt;", "top_k": 15}'</span>
 
-<span class="c1"># Inspect one operator&#39;s parameter schema</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operator_name&quot;: &quot;&lt;operator_name&gt;&quot;}&#39;</span>
+<span class="c1"># Inspect one operator's parameter schema</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"operator_name": "&lt;operator_name&gt;"}'</span>
 
 <span class="c1"># Browse operator catalog (fallback)</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;include_parameters&quot;: false}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"include_parameters": false}'</span>
 </pre></div>
 </div>
 <blockquote>
@@ -894,15 +894,15 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <p><strong>Do not</strong> retrieve operators for different functionalities in multiple calls. Combine all requirements into a single intent:</p>
 <p><strong>Wrong</strong>: Multiple retrievals</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1st call</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "clean HTML"}'</span>
 <span class="c1"># 2nd call</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;filter short text&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "filter short text"}'</span>
 <span class="c1"># 3rd call</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;deduplicate&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "deduplicate"}'</span>
 </pre></div>
 </div>
 <p><strong>Correct</strong>: One retrieval covering all requirements</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;remove HTML tags, normalize whitespace, fix unicode encoding, filter short text under 50 characters, deduplicate documents&quot;, &quot;top_k&quot;: 15}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "remove HTML tags, normalize whitespace, fix unicode encoding, filter short text under 50 characters, deduplicate documents", "top_k": 15}'</span>
 </pre></div>
 </div>
 </section>
@@ -1024,16 +1024,16 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <p><strong>Example output</strong>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;clean_html_mapper&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mapper&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Remove HTML tags from text fields&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">}}</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"clean_html_mapper"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mapper"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Remove HTML tags from text fields"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"text_key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"str"</span><span class="p">,</span><span class="w"> </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">}}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text_length_filter&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;filter&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Filter text by length&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;min_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;max_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text_length_filter"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"filter"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Filter text by length"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"min_len"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"int"</span><span class="p">,</span><span class="w"> </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">},</span><span class="w"> </span><span class="nt">"max_len"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
@@ -1121,12 +1121,12 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="parameter-name-is-intent-not-query">
 <h3>1. Parameter Name Is intent, Not query<a class="headerlink" href="#parameter-name-is-intent-not-query" title="Link to this heading">#</a></h3>
 <p><strong>Wrong</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;: &quot;clean HTML&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"query": "clean HTML"}'</span>
 <span class="c1"># → input_validation_failed</span>
 </pre></div>
 </div>
 <p><strong>Correct</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "clean HTML"}'</span>
 </pre></div>
 </div>
 </section>
@@ -1134,25 +1134,25 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <h3>2. Do Not Guess Operator Names<a class="headerlink" href="#do-not-guess-operator-names" title="Link to this heading">#</a></h3>
 <p>Retrieval results are the <strong>only source</strong>. Do not use operators from memory or guessing.</p>
 <p><strong>Wrong</strong>: Making up names</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;html_cleaner&quot;</span>,<span class="w"> </span>...<span class="o">}</span><span class="w">  </span><span class="c1"># Does not exist!</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">"name"</span>:<span class="w"> </span><span class="s2">"html_cleaner"</span>,<span class="w"> </span>...<span class="o">}</span><span class="w">  </span><span class="c1"># Does not exist!</span>
 </pre></div>
 </div>
 <p><strong>Correct</strong>: Select from retrieval results</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Retrieve first</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;clean HTML&quot;, &quot;top_k&quot;: 5}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "clean HTML", "top_k": 5}'</span>
 <span class="c1"># Select name from output</span>
-<span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;clean_html_mapper&quot;</span>,<span class="w"> </span>...<span class="o">}</span><span class="w">  </span><span class="c1"># From retrieval results</span>
+<span class="o">{</span><span class="s2">"name"</span>:<span class="w"> </span><span class="s2">"clean_html_mapper"</span>,<span class="w"> </span>...<span class="o">}</span><span class="w">  </span><span class="c1"># From retrieval results</span>
 </pre></div>
 </div>
 </section>
 <section id="local-retrieval-needs-no-api-key">
 <h3>3. Local Retrieval Needs No API Key<a class="headerlink" href="#local-retrieval-needs-no-api-key" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">retrieve_operators</span></code> runs entirely locally. No cloud calls, no API key needed:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;auto&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "...", "mode": "auto"}'</span>
 </pre></div>
 </div>
 <p>For API-backed semantic retrieval (outside harness), use <code class="docutils literal notranslate"><span class="pre">retrieve_operators_api</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;...&quot;, &quot;mode&quot;: &quot;llm&quot;}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "...", "mode": "llm"}'</span>
 </pre></div>
 </div>
 </section>
@@ -1182,28 +1182,28 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="typical-usage">
 <h2>Typical Usage<a class="headerlink" href="#typical-usage" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Standard local retrieval - describe all requirements at once</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;intent&quot;: &quot;remove HTML tags, normalize whitespace, fix unicode encoding, filter text shorter than 50 characters, deduplicate documents&quot;,</span>
-<span class="s1">  &quot;top_k&quot;: 15</span>
-<span class="s1">}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "intent": "remove HTML tags, normalize whitespace, fix unicode encoding, filter text shorter than 50 characters, deduplicate documents",</span>
+<span class="s1">  "top_k": 15</span>
+<span class="s1">}'</span>
 
 <span class="c1"># Regex mode - when operator naming pattern is known</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;.*dedup.*&quot;, &quot;mode&quot;: &quot;regex&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": ".*dedup.*", "mode": "regex"}'</span>
 
 <span class="c1"># BM25 mode - deterministic keyword matching</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;: &quot;filter images by resolution&quot;, &quot;mode&quot;: &quot;bm25&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent": "filter images by resolution", "mode": "bm25"}'</span>
 
-<span class="c1"># Inspect a specific operator&#39;s parameters</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;operator_name&quot;: &quot;text_length_filter&quot;}&#39;</span>
+<span class="c1"># Inspect a specific operator's parameters</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>get_operator_info<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"operator_name": "text_length_filter"}'</span>
 
 <span class="c1"># Browse catalog (fallback when retrieval is insufficient)</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;op_type&quot;: &quot;filter&quot;, &quot;include_parameters&quot;: false, &quot;limit&quot;: 20}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>list_operator_catalog<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"op_type": "filter", "include_parameters": false, "limit": 20}'</span>
 
 <span class="c1"># API-backed retrieval (full surface only, requires API key)</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{</span>
-<span class="s1">  &quot;intent&quot;: &quot;clean HTML artifacts, normalize all whitespace, deduplicate documents&quot;,</span>
-<span class="s1">  &quot;top_k&quot;: 20</span>
-<span class="s1">}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators_api<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">  "intent": "clean HTML artifacts, normalize all whitespace, deduplicate documents",</span>
+<span class="s1">  "top_k": 20</span>
+<span class="s1">}'</span>
 </pre></div>
 </div>
 </section>

@@ -564,19 +564,19 @@ envelope is converted to a <code class="xref py py-class docutils literal notran
 provided.  Providing zero or more than one raises a validation error.</p>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple local file (shortcut)</span>
-<span class="n">DatasetSource</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;/data/train.jsonl&quot;</span><span class="p">)</span>
+<span class="n">DatasetSource</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">"/data/train.jsonl"</span><span class="p">)</span>
 
 <span class="c1"># Structured load config (remote, multi-source, max_sample_num …)</span>
 <span class="n">DatasetSource</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span>
-    <span class="s2">&quot;configs&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/data/a.jsonl&quot;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/data/b.jsonl&quot;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">},</span>
+    <span class="s2">"configs"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"local"</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"/data/a.jsonl"</span><span class="p">,</span> <span class="s2">"weight"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"local"</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"/data/b.jsonl"</span><span class="p">,</span> <span class="s2">"weight"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">},</span>
     <span class="p">],</span>
-    <span class="s2">&quot;max_sample_num&quot;</span><span class="p">:</span> <span class="mi">50000</span><span class="p">,</span>
+    <span class="s2">"max_sample_num"</span><span class="p">:</span> <span class="mi">50000</span><span class="p">,</span>
 <span class="p">})</span>
 
 <span class="c1"># Dynamic generation via Data-Juicer FORMATTERS</span>
-<span class="n">DatasetSource</span><span class="p">(</span><span class="n">generated</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text_formatter&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">})</span>
+<span class="n">DatasetSource</span><span class="p">(</span><span class="n">generated</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text_formatter"</span><span class="p">,</span> <span class="o">...</span><span class="p">})</span>
 </pre></div>
 </div>
 <dl class="py attribute">

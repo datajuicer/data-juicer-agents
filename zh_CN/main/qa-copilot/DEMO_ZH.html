@@ -731,12 +731,12 @@
 <li><p><strong>安装</strong>：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer-agents.git
 <span class="nb">cd</span><span class="w"> </span>data-juicer-agents
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[full]&#39;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[full]'</span>
 </pre></div>
 </div>
 </li>
 <li><p><strong>配置 API Key</strong>：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_api_key&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your_api_key"</span>
 </pre></div>
 </div>
 </li>
@@ -1000,7 +1000,7 @@ pip<span class="w"> </span>install<span class="w"> </span>data-juicer<span class
 <li><p><strong>安装依赖</strong>：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 <span class="c1"># 如果需要所有额外依赖</span>
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[all]"</span>
 </pre></div>
 </div>
 </li>
@@ -1101,21 +1101,21 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <section id="id16">
 <h2>示例：一个简单的文本处理流程<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h2>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># example_recipe.yaml</span>
-<span class="nt">dataset_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your/dataset.jsonl&quot;</span>
-<span class="nt">export_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/output/dataset.jsonl&quot;</span>
+<span class="nt">dataset_path</span><span class="p">:</span><span class="w"> </span><span class="s">"path/to/your/dataset.jsonl"</span>
+<span class="nt">export_path</span><span class="p">:</span><span class="w"> </span><span class="s">"path/to/output/dataset.jsonl"</span>
 
 <span class="nt">process</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span><span class="w"> </span><span class="c1"># 基础过滤</span>
-<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alphanumeric_filter&quot;</span>
+<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">"alphanumeric_filter"</span>
 <span class="w">      </span><span class="nt">args</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">min_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span><span class="w"> </span><span class="c1"># 长度过滤</span>
-<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;text_length_filter&quot;</span>
+<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">"text_length_filter"</span>
 <span class="w">      </span><span class="nt">args</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">min_len</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="w">        </span><span class="nt">max_len</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">deduplicator</span><span class="p">:</span><span class="w"> </span><span class="c1"># 去重</span>
-<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;minhash_deduplicator&quot;</span>
+<span class="w">      </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="s">"minhash_deduplicator"</span>
 <span class="w">      </span><span class="nt">args</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">window_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
 <span class="w">        </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>

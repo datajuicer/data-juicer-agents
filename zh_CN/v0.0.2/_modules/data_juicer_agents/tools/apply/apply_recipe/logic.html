@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.tools.apply.apply_recipe.logic 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Tool-level APIs for deterministic Data-Juicer execution.&quot;&quot;&quot;</span>
+<span class="sd">"""Tool-level APIs for deterministic Data-Juicer execution."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -565,47 +565,47 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
 
-<span class="n">_DEFAULT_PLANNER_MODEL</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DJA_PLANNER_MODEL&quot;</span><span class="p">,</span> <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">)</span>
+<span class="n">_DEFAULT_PLANNER_MODEL</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DJA_PLANNER_MODEL"</span><span class="p">,</span> <span class="s2">"qwen3-max-2026-01-23"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_classify_error</span><span class="p">(</span><span class="n">returncode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stderr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="s2">"none"</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">,</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">130</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;interrupted&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s2">&quot;Execution interrupted by user.&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Adjust plan or timeout and retry when ready.&quot;</span><span class="p">,</span>
+        <span class="k">return</span> <span class="s2">"interrupted"</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s2">"Execution interrupted by user."</span><span class="p">,</span>
+            <span class="s2">"Adjust plan or timeout and retry when ready."</span><span class="p">,</span>
         <span class="p">]</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;command not found&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;not recognized&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;missing_command&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s2">&quot;Install Data-Juicer CLI and verify dj-process is in PATH&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Run `which dj-process` to verify environment&quot;</span><span class="p">,</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">"command not found"</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">"not recognized"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"missing_command"</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s2">"Install Data-Juicer CLI and verify dj-process is in PATH"</span><span class="p">,</span>
+            <span class="s2">"Run `which dj-process` to verify environment"</span><span class="p">,</span>
         <span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;no such file or directory&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;missing_path&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s2">&quot;Check dataset_path and export_path in plan&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Ensure recipe file path exists and is readable&quot;</span><span class="p">,</span>
+    <span class="k">if</span> <span class="s2">"no such file or directory"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"missing_path"</span><span class="p">,</span> <span class="s2">"medium"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s2">"Check dataset_path and export_path in plan"</span><span class="p">,</span>
+            <span class="s2">"Ensure recipe file path exists and is readable"</span><span class="p">,</span>
         <span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;permission denied&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;permission_denied&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s2">&quot;Fix file or directory permissions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Retry with a writable export path&quot;</span><span class="p">,</span>
+    <span class="k">if</span> <span class="s2">"permission denied"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"permission_denied"</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s2">"Fix file or directory permissions"</span><span class="p">,</span>
+            <span class="s2">"Retry with a writable export path"</span><span class="p">,</span>
         <span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;keyerror&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;operators.modules&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;_mapper&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;_deduplicator&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;unsupported_operator&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s2">&quot;Check operator names against installed Data-Juicer version&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Regenerate plan with supported operators&quot;</span><span class="p">,</span>
+    <span class="k">if</span> <span class="s2">"keyerror"</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">"operators.modules"</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">"_mapper"</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s2">"_deduplicator"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"unsupported_operator"</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s2">"Check operator names against installed Data-Juicer version"</span><span class="p">,</span>
+            <span class="s2">"Regenerate plan with supported operators"</span><span class="p">,</span>
         <span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;timeout&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;timeout&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s2">&quot;Reduce dataset size and retry&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Increase execution timeout if needed&quot;</span><span class="p">,</span>
+    <span class="k">if</span> <span class="s2">"timeout"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"timeout"</span><span class="p">,</span> <span class="s2">"medium"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s2">"Reduce dataset size and retry"</span><span class="p">,</span>
+            <span class="s2">"Increase execution timeout if needed"</span><span class="p">,</span>
         <span class="p">]</span>
-    <span class="k">return</span> <span class="s2">&quot;command_failed&quot;</span><span class="p">,</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s2">&quot;Inspect stderr details&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Adjust operator parameters and retry&quot;</span><span class="p">,</span>
+    <span class="k">return</span> <span class="s2">"command_failed"</span><span class="p">,</span> <span class="s2">"low"</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s2">"Inspect stderr details"</span><span class="p">,</span>
+        <span class="s2">"Adjust operator parameters and retry"</span><span class="p">,</span>
     <span class="p">]</span>
 
 
@@ -613,7 +613,7 @@
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyResult">[文档]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApplyResult</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execution summary for one plan apply run.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Execution summary for one plan apply run."""</span>
 
     <span class="n">execution_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>
@@ -634,27 +634,27 @@
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyResult.new_id">[文档]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">new_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;exec_</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"exec_</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span></div>
 
 
 <div class="viewcode-block" id="ApplyResult.to_dict">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyResult.to_dict">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;execution_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_id</span><span class="p">,</span>
-            <span class="s2">&quot;plan_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_id</span><span class="p">,</span>
-            <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
-            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span>
-            <span class="s2">&quot;duration_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_seconds</span><span class="p">,</span>
-            <span class="s2">&quot;model_info&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_info</span><span class="p">),</span>
-            <span class="s2">&quot;generated_recipe_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated_recipe_path</span><span class="p">,</span>
-            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
-            <span class="s2">&quot;artifacts&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span><span class="p">),</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span><span class="p">,</span>
-            <span class="s2">&quot;error_message&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span><span class="p">,</span>
-            <span class="s2">&quot;retry_level&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_level</span><span class="p">,</span>
-            <span class="s2">&quot;next_actions&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_actions</span><span class="p">),</span>
+            <span class="s2">"execution_id"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_id</span><span class="p">,</span>
+            <span class="s2">"plan_id"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_id</span><span class="p">,</span>
+            <span class="s2">"start_time"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
+            <span class="s2">"end_time"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span>
+            <span class="s2">"duration_seconds"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_seconds</span><span class="p">,</span>
+            <span class="s2">"model_info"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_info</span><span class="p">),</span>
+            <span class="s2">"generated_recipe_path"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated_recipe_path</span><span class="p">,</span>
+            <span class="s2">"command"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
+            <span class="s2">"status"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+            <span class="s2">"artifacts"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span><span class="p">),</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span><span class="p">,</span>
+            <span class="s2">"error_message"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span><span class="p">,</span>
+            <span class="s2">"retry_level"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_level</span><span class="p">,</span>
+            <span class="s2">"next_actions"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_actions</span><span class="p">),</span>
         <span class="p">}</span></div>
 </div>
 
@@ -663,12 +663,12 @@
 <div class="viewcode-block" id="ApplyUseCase">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.tools.apply.apply_recipe.logic.html#data_juicer_agents.tools.apply.ApplyUseCase">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApplyUseCase</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute validated plans and return execution summaries.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Execute validated plans and return execution summaries."""</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_plan_payload</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;plan_payload must be a dict object&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"plan_payload must be a dict object"</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
@@ -680,15 +680,15 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_operator_steps</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">plan_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operators&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+        <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">plan_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"operators"</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="p">{})</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-                    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{},</span>
+                    <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"params"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{},</span>
                 <span class="p">}</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">rows</span>
@@ -699,7 +699,7 @@
         <span class="n">command_override</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">command_override</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dj-process&quot;</span><span class="p">,</span> <span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">)]</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"dj-process"</span><span class="p">,</span> <span class="s2">"--config"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">)]</span>
             <span class="k">return</span> <span class="n">command</span><span class="p">,</span> <span class="n">shlex</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command_override</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -708,7 +708,7 @@
             <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">command_override</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;command_override must not be empty&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"command_override must not be empty"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parts</span><span class="p">,</span> <span class="n">shlex</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
 
@@ -716,26 +716,26 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_recipe</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">runtime_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="n">plan</span> <span class="o">=</span> <span class="n">ApplyUseCase</span><span class="o">.</span><span class="n">_normalize_plan_payload</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">)</span>
         <span class="n">runtime_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">plan_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plan_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;plan_apply&quot;</span>
-        <span class="n">recipe_path</span> <span class="o">=</span> <span class="n">runtime_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+        <span class="n">plan_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"plan_id"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"plan_apply"</span>
+        <span class="n">recipe_path</span> <span class="o">=</span> <span class="n">runtime_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">.yaml"</span>
 
-        <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">)</span>
+        <span class="n">recipe</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"recipe"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;plan must contain a &#39;recipe&#39; dict&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"plan must contain a 'recipe' dict"</span><span class="p">)</span>
 
         <span class="n">recipe</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
-        <span class="n">recipe</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;project_name&quot;</span><span class="p">,</span> <span class="n">plan_id</span><span class="p">)</span>
+        <span class="n">recipe</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"project_name"</span><span class="p">,</span> <span class="n">plan_id</span><span class="p">)</span>
 
         <span class="c1"># Normalise process: stored as [{name, params}], DJ expects [{name: params}]</span>
-        <span class="n">raw_process</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_process</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">raw_process</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_process</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">raw_process</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;process&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="p">{</span><span class="n">step</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;params&quot;</span><span class="p">,</span> <span class="p">{})}</span>
+        <span class="n">raw_process</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"process"</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_process</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">raw_process</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_process</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"name"</span> <span class="ow">in</span> <span class="n">raw_process</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">recipe</span><span class="p">[</span><span class="s2">"process"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="n">step</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]:</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="p">{})}</span>
                 <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">raw_process</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="p">]</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">recipe_path</span>
 
@@ -758,15 +758,15 @@
         <span class="k">if</span> <span class="n">dry_run</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">cancel_check</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">cancel_check</span><span class="p">()):</span>
                 <span class="n">returncode</span> <span class="o">=</span> <span class="mi">130</span>
-                <span class="n">stdout</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-                <span class="n">stderr</span> <span class="o">=</span> <span class="s2">&quot;Interrupted by user.&quot;</span>
+                <span class="n">stdout</span> <span class="o">=</span> <span class="s2">""</span>
+                <span class="n">stderr</span> <span class="o">=</span> <span class="s2">"Interrupted by user."</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">returncode</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">stdout</span> <span class="o">=</span> <span class="s2">&quot;dry-run: command not executed&quot;</span>
-                <span class="n">stderr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">stdout</span> <span class="o">=</span> <span class="s2">"dry-run: command not executed"</span>
+                <span class="n">stderr</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">stdout_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">)</span>
-            <span class="n">stderr_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">)</span>
+            <span class="n">stdout_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"w+"</span><span class="p">)</span>
+            <span class="n">stderr_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"w+"</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
                     <span class="n">command_args</span><span class="p">,</span>
@@ -808,7 +808,7 @@
                     <span class="n">stdout_f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">stderr_f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                    <span class="n">stderr</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Interrupted by user.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">stderr</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Interrupted by user."</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">elif</span> <span class="n">timed_out</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">os</span><span class="o">.</span><span class="n">killpg</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
@@ -826,7 +826,7 @@
                     <span class="n">stdout_f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">stderr_f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                    <span class="n">stderr</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Timeout after </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">stderr</span> <span class="o">=</span> <span class="p">(</span><span class="n">stderr_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Timeout after </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
                     <span class="n">returncode</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
@@ -836,32 +836,32 @@
                     <span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr_f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="n">returncode</span> <span class="o">=</span> <span class="mi">124</span>
-                <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">stderr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Timeout after </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2">s&quot;</span>
+                <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
+                <span class="n">stderr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Timeout after </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2">s"</span>
             <span class="k">finally</span><span class="p">:</span>
                 <span class="n">stdout_f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="n">stderr_f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
         <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_dt</span> <span class="o">-</span> <span class="n">start_dt</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;success&quot;</span> <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;interrupted&quot;</span> <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">130</span> <span class="k">else</span> <span class="s2">&quot;failed&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">"success"</span> <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="s2">"interrupted"</span> <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">130</span> <span class="k">else</span> <span class="s2">"failed"</span><span class="p">)</span>
         <span class="n">error_type</span><span class="p">,</span> <span class="n">retry_level</span><span class="p">,</span> <span class="n">next_actions</span> <span class="o">=</span> <span class="n">_classify_error</span><span class="p">(</span><span class="n">returncode</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">ApplyResult</span><span class="p">(</span>
             <span class="n">execution_id</span><span class="o">=</span><span class="n">ApplyResult</span><span class="o">.</span><span class="n">new_id</span><span class="p">(),</span>
-            <span class="n">plan_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plan_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">plan_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"plan_id"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="n">start_time</span><span class="o">=</span><span class="n">start_dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
             <span class="n">end_time</span><span class="o">=</span><span class="n">end_dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
             <span class="n">duration_seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
             <span class="n">model_info</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;planner&quot;</span><span class="p">:</span> <span class="n">_DEFAULT_PLANNER_MODEL</span><span class="p">,</span>
-                <span class="s2">&quot;executor&quot;</span><span class="p">:</span> <span class="s2">&quot;deterministic-cli&quot;</span><span class="p">,</span>
+                <span class="s2">"planner"</span><span class="p">:</span> <span class="n">_DEFAULT_PLANNER_MODEL</span><span class="p">,</span>
+                <span class="s2">"executor"</span><span class="p">:</span> <span class="s2">"deterministic-cli"</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">generated_recipe_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">recipe_path</span><span class="p">),</span>
             <span class="n">command</span><span class="o">=</span><span class="n">command_display</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-            <span class="n">artifacts</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">((</span><span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()},</span>
+            <span class="n">artifacts</span><span class="o">=</span><span class="p">{</span><span class="s2">"export_path"</span><span class="p">:</span> <span class="nb">str</span><span class="p">((</span><span class="n">plan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"recipe"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"export_path"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()},</span>
             <span class="n">error_type</span><span class="o">=</span><span class="n">error_type</span><span class="p">,</span>
-            <span class="n">error_message</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">error_message</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="n">retry_level</span><span class="o">=</span><span class="n">retry_level</span><span class="p">,</span>
             <span class="n">next_actions</span><span class="o">=</span><span class="n">next_actions</span><span class="p">,</span>
         <span class="p">)</span>
@@ -870,7 +870,7 @@
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ApplyResult&quot;</span><span class="p">,</span> <span class="s2">&quot;ApplyUseCase&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ApplyResult"</span><span class="p">,</span> <span class="s2">"ApplyUseCase"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

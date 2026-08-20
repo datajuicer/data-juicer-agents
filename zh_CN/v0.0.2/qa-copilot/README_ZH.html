@@ -661,57 +661,57 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <h3>配置说明<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
 <ol class="arabic">
 <li><p>设置必需环境变量</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your_dashscope_api_key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&quot;your_github_token&quot;</span><span class="w">  </span><span class="c1"># 必需：用于 GitHub MCP 集成</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your_dashscope_api_key"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">"your_github_token"</span><span class="w">  </span><span class="c1"># 必需：用于 GitHub MCP 集成</span>
 </pre></div>
 </div>
 </li>
 <li><p>设置可选环境变量</p>
 <p><strong>会话存储配置：</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 会话存储类型：&quot;json&quot;（默认）或 &quot;redis&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="w">  </span><span class="c1"># 或 &quot;redis&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 会话存储类型："json"（默认）或 "redis"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_TYPE</span><span class="o">=</span><span class="s2">"json"</span><span class="w">  </span><span class="c1"># 或 "redis"</span>
 
 <span class="c1"># JSON 模式（默认）：</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">&quot;./sessions&quot;</span><span class="w">  </span><span class="c1"># 会话文件存储目录（默认：&quot;./sessions&quot;）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;21600&quot;</span><span class="w">  </span><span class="c1"># 会话 TTL（秒）（默认：21600 = 6 小时）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">&quot;1800&quot;</span><span class="w">  </span><span class="c1"># 清理间隔（秒）（默认：1800 = 30 分钟）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_STORE_DIR</span><span class="o">=</span><span class="s2">"./sessions"</span><span class="w">  </span><span class="c1"># 会话文件存储目录（默认："./sessions"）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_TTL_SECONDS</span><span class="o">=</span><span class="s2">"21600"</span><span class="w">  </span><span class="c1"># 会话 TTL（秒）（默认：21600 = 6 小时）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SESSION_CLEANUP_INTERVAL</span><span class="o">=</span><span class="s2">"1800"</span><span class="w">  </span><span class="c1"># 清理间隔（秒）（默认：1800 = 30 分钟）</span>
 
 <span class="c1"># Redis 模式：</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="w">  </span><span class="c1"># Redis 服务器主机（默认：&quot;localhost&quot;）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">&quot;6379&quot;</span><span class="w">  </span><span class="c1"># Redis 服务器端口（默认：6379）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="w">  </span><span class="c1"># Redis 数据库编号（默认：0）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># Redis 密码（默认：None，可选）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="w">  </span><span class="c1"># Redis 最大连接数（默认：10）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_HOST</span><span class="o">=</span><span class="s2">"localhost"</span><span class="w">  </span><span class="c1"># Redis 服务器主机（默认："localhost"）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PORT</span><span class="o">=</span><span class="s2">"6379"</span><span class="w">  </span><span class="c1"># Redis 服务器端口（默认：6379）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_DB</span><span class="o">=</span><span class="s2">"0"</span><span class="w">  </span><span class="c1"># Redis 数据库编号（默认：0）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="s2">""</span><span class="w">  </span><span class="c1"># Redis 密码（默认：None，可选）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_MAX_CONNECTIONS</span><span class="o">=</span><span class="s2">"10"</span><span class="w">  </span><span class="c1"># Redis 最大连接数（默认：10）</span>
 <span class="c1"># 注意：Redis TTL 由 Redis 服务器配置处理，而非应用程序</span>
 </pre></div>
 </div>
 <p><strong>模型配置：</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">&quot;200000&quot;</span><span class="w">  </span><span class="c1"># 上下文窗口最大 token 数（默认：200000）</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MAX_TOKENS</span><span class="o">=</span><span class="s2">"200000"</span><span class="w">  </span><span class="c1"># 上下文窗口最大 token 数（默认：200000）</span>
 <span class="c1"># 注意：此值在传递给 DashScopeChatFormatter 时会乘以 3</span>
 <span class="c1"># 因为 CharTokenCounter 基于字符计数，中英文混合文本约 3 个字符 ≈ 1 个 token</span>
 </pre></div>
 </div>
 <p><strong>Qdrant 向量数据库：</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># Qdrant 服务器主机（默认：&quot;127.0.0.1&quot;）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">&quot;6333&quot;</span><span class="w">  </span><span class="c1"># Qdrant 服务器端口（默认：6333）</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_HOST</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="w">  </span><span class="c1"># Qdrant 服务器主机（默认："127.0.0.1"）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">QDRANT_PORT</span><span class="o">=</span><span class="s2">"6333"</span><span class="w">  </span><span class="c1"># Qdrant 服务器端口（默认：6333）</span>
 </pre></div>
 </div>
 <p><strong>服务配置：</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="w">  </span><span class="c1"># 服务主机地址（默认：&quot;127.0.0.1&quot;）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="w">  </span><span class="c1"># 启用会话日志（默认：&quot;true&quot;）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="w">  </span><span class="c1"># 日志目录（默认：&quot;./logs&quot;）</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_SERVICE_HOST</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="w">  </span><span class="c1"># 服务主机地址（默认："127.0.0.1"）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_ENABLE_LOGGING</span><span class="o">=</span><span class="s2">"true"</span><span class="w">  </span><span class="c1"># 启用会话日志（默认："true"）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJ_COPILOT_LOG_DIR</span><span class="o">=</span><span class="s2">"./logs"</span><span class="w">  </span><span class="c1"># 日志目录（默认："./logs"）</span>
 </pre></div>
 </div>
 <p><strong>高级配置：</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># FastAPI 配置 JSON 文件路径（可选）</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w">  </span><span class="c1"># 自定义安全检查处理器模块路径（可选）</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FASTAPI_CONFIG_PATH</span><span class="o">=</span><span class="s2">""</span><span class="w">  </span><span class="c1"># FastAPI 配置 JSON 文件路径（可选）</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAFE_CHECK_HANDLER_PATH</span><span class="o">=</span><span class="s2">""</span><span class="w">  </span><span class="c1"># 自定义安全检查处理器模块路径（可选）</span>
 </pre></div>
 </div>
 </li>
 <li><p>配置 FAQ 文件（可选）</p>
 <p>系统默认使用 <code class="docutils literal notranslate"><span class="pre">qa-copilot/rag_utils/faq.txt</span></code> 作为 FAQ 数据源。您可以编辑此文件来自定义 FAQ 内容。FAQ 文件格式示例：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_001&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;什么是 Data-Juicer?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;Data-Juicer 是一个...&#39;</span>
-<span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;FAQ_002&#39;</span><span class="p">,</span> <span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;如何安装?&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;您可以通过...&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'FAQ_001'</span><span class="p">,</span> <span class="s1">'question'</span><span class="p">:</span> <span class="s1">'什么是 Data-Juicer?'</span><span class="p">,</span> <span class="s1">'answer'</span><span class="p">:</span> <span class="s1">'Data-Juicer 是一个...'</span>
+<span class="s1">'id'</span><span class="p">:</span> <span class="s1">'FAQ_002'</span><span class="p">,</span> <span class="s1">'question'</span><span class="p">:</span> <span class="s1">'如何安装?'</span><span class="p">,</span> <span class="s1">'answer'</span><span class="p">:</span> <span class="s1">'您可以通过...'</span>
 </pre></div>
 </div>
 </li>
@@ -740,14 +740,14 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;input&quot;: [</span>
+<span class="err">  "input": [</span>
 <span class="err">    {</span>
-<span class="err">      &quot;role&quot;: &quot;user&quot;, </span>
-<span class="err">      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;如何使用 Data-Juicer 进行数据清洗？&quot;}]</span>
+<span class="err">      "role": "user", </span>
+<span class="err">      "content": [{"type": "text", "text": "如何使用 Data-Juicer 进行数据清洗？"}]</span>
 <span class="err">    }</span>
 <span class="err">  ],</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -758,8 +758,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -770,8 +770,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -782,13 +782,13 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <span class="err">Content-Type: application/json</span>
 
 <span class="err">{</span>
-<span class="err">  &quot;data&quot;: {</span>
-<span class="err">    &quot;message_id&quot;: &quot;message_id_here&quot;,</span>
-<span class="err">    &quot;feedback_type&quot;: &quot;like&quot;,</span>
-<span class="err">    &quot;comment&quot;: &quot;可选的用户评论&quot;</span>
+<span class="err">  "data": {</span>
+<span class="err">    "message_id": "message_id_here",</span>
+<span class="err">    "feedback_type": "like",</span>
+<span class="err">    "comment": "可选的用户评论"</span>
 <span class="err">  },</span>
-<span class="err">  &quot;session_id&quot;: &quot;your_session_id&quot;,</span>
-<span class="err">  &quot;user_id&quot;: &quot;user_id&quot;</span>
+<span class="err">  "session_id": "your_session_id",</span>
+<span class="err">  "user_id": "user_id"</span>
 <span class="err">}</span>
 </pre></div>
 </div>
@@ -800,8 +800,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 </ul>
 <p><strong>响应示例：</strong></p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feedback recorded successfully&quot;</span>
+<span class="w">  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Feedback recorded successfully"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -932,8 +932,8 @@ brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"
 <h3>模型配置<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h3>
 <p>在 <code class="docutils literal notranslate"><span class="pre">app_deploy.py</span></code> 文件中，您可以配置所使用的语言模型：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">=</span><span class="n">DashScopeChatModel</span><span class="p">(</span>
-    <span class="s2">&quot;qwen3-max-2026-01-23&quot;</span><span class="p">,</span>  <span class="c1"># 模型名称</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
+    <span class="s2">"qwen3-max-2026-01-23"</span><span class="p">,</span>  <span class="c1"># 模型名称</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"DASHSCOPE_API_KEY"</span><span class="p">),</span>
     <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 启用流式响应</span>
     <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 启用思考模式</span>
 <span class="p">)</span>

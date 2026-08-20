@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.utils.optional_deps</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Helpers for optional dependency and install-profile messaging.&quot;&quot;&quot;</span>
+<span class="sd">"""Helpers for optional dependency and install-profile messaging."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -555,7 +555,7 @@
     <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">ordered</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">extras</span><span class="p">:</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -568,11 +568,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">install_command_for_extras</span><span class="p">(</span><span class="o">*</span><span class="n">extras</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">normalized</span> <span class="o">=</span> <span class="n">_normalize_extras</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;pip install data-juicer-agents&quot;</span>
+        <span class="k">return</span> <span class="s2">"pip install data-juicer-agents"</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;pip install &#39;data-juicer-agents[</span><span class="si">{</span><span class="n">normalized</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">]&#39;&quot;</span>
-    <span class="n">joined</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;pip install &#39;data-juicer-agents[</span><span class="si">{</span><span class="n">joined</span><span class="si">}</span><span class="s2">]&#39;&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"pip install 'data-juicer-agents[</span><span class="si">{</span><span class="n">normalized</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">]'"</span>
+    <span class="n">joined</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"pip install 'data-juicer-agents[</span><span class="si">{</span><span class="n">joined</span><span class="si">}</span><span class="s2">]'"</span></div>
 
 
 
@@ -585,15 +585,15 @@
     <span class="n">missing_module</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">install_cmd</span> <span class="o">=</span> <span class="n">install_command_for_extras</span><span class="p">(</span><span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">extras</span><span class="p">))</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2"> requires optional dependencies that are not installed.&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2"> requires optional dependencies that are not installed."</span>
     <span class="k">if</span> <span class="n">missing_module</span><span class="p">:</span>
-        <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; Missing module: </span><span class="si">{</span><span class="n">missing_module</span><span class="si">}</span><span class="s2">.&quot;</span>
-    <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; Install them with: </span><span class="si">{</span><span class="n">install_cmd</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" Missing module: </span><span class="si">{</span><span class="n">missing_module</span><span class="si">}</span><span class="s2">."</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" Install them with: </span><span class="si">{</span><span class="n">install_cmd</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">return</span> <span class="n">message</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;install_command_for_extras&quot;</span><span class="p">,</span> <span class="s2">&quot;missing_dependency_message&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"install_command_for_extras"</span><span class="p">,</span> <span class="s2">"missing_dependency_message"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

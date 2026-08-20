@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.commands.tool_cmd 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Generic `djx tool` command handlers.&quot;&quot;&quot;</span>
+<span class="sd">"""Generic `djx tool` command handlers."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -560,18 +560,18 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_tool_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">ToolSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-        <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
-        <span class="s2">&quot;effects&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">,</span>
-        <span class="s2">&quot;confirmation&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">,</span>
-        <span class="s2">&quot;input_model&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">input_model</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-        <span class="s2">&quot;output_model&quot;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_model</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s2">"description"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+        <span class="s2">"tags"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
+        <span class="s2">"effects"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">,</span>
+        <span class="s2">"confirmation"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">,</span>
+        <span class="s2">"input_model"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">input_model</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="s2">"output_model"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_model</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_success_payload</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"ok"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span>
 
@@ -585,13 +585,13 @@
     <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span>
-        <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="n">error_type</span><span class="p">,</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"action"</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span>
+        <span class="s2">"error_type"</span><span class="p">:</span> <span class="n">error_type</span><span class="p">,</span>
+        <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="n">tool_name</span><span class="p">:</span>
-        <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;tool_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tool_name</span>
+        <span class="n">payload</span><span class="p">[</span><span class="s2">"tool_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tool_name</span>
     <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span>
 
@@ -601,34 +601,34 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_input_payload</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="n">raw_json</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input_json&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">input_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input_file&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">raw_json</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"input_json"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"input_file"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">raw_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">source</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_json</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid JSON input: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"invalid JSON input: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tool input must decode to a JSON object&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"tool input must decode to a JSON object"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">payload</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_tool_context</span><span class="p">(</span><span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolContext</span><span class="p">:</span>
-    <span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">working_dir</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;./.djx&quot;</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">working_dir</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"./.djx"</span>
     <span class="n">resolved</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">ToolContext</span><span class="p">(</span><span class="n">working_dir</span><span class="o">=</span><span class="n">resolved</span><span class="p">,</span> <span class="n">artifacts_dir</span><span class="o">=</span><span class="n">resolved</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_list</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="n">tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"tag"</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
     <span class="n">specs</span> <span class="o">=</span> <span class="n">list_tool_specs</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="n">_success_payload</span><span class="p">(</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_list&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"tool_list"</span><span class="p">,</span>
         <span class="n">count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">),</span>
         <span class="n">filter_tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
         <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">_tool_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">],</span>
@@ -637,22 +637,22 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_schema</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"tool_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">spec</span> <span class="o">=</span> <span class="n">get_tool_spec</span><span class="p">(</span><span class="n">tool_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">_error_payload</span><span class="p">(</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_schema&quot;</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_not_found&quot;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"tool_schema"</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"tool_not_found"</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">payload</span> <span class="o">=</span> <span class="n">_success_payload</span><span class="p">(</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_schema&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"tool_schema"</span><span class="p">,</span>
         <span class="n">tool</span><span class="o">=</span><span class="n">_tool_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">),</span>
         <span class="n">input_schema</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">input_model</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">(),</span>
     <span class="p">)</span>
@@ -660,29 +660,29 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_execute_run</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">tool_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"tool_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">spec</span> <span class="o">=</span> <span class="n">get_tool_spec</span><span class="p">(</span><span class="n">tool_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">_error_payload</span><span class="p">(</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool_run&quot;</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;tool_not_found&quot;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"tool_run"</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"unknown tool: </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"tool_not_found"</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">tool_name</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span> <span class="o">!=</span> <span class="s2">"none"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">_error_payload</span><span class="p">(</span>
                 <span class="n">action</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;tool &#39;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; requires explicit confirmation; &quot;</span>
-                    <span class="s2">&quot;re-run with --yes to proceed&quot;</span>
+                    <span class="sa">f</span><span class="s2">"tool '</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' requires explicit confirmation; "</span>
+                    <span class="s2">"re-run with --yes to proceed"</span>
                 <span class="p">),</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;confirmation_required&quot;</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"confirmation_required"</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">confirmation</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">,</span>
                 <span class="n">effects</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">,</span>
@@ -697,21 +697,21 @@
             <span class="n">_error_payload</span><span class="p">(</span>
                 <span class="n">action</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;invalid_input&quot;</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"invalid_input"</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">ctx</span> <span class="o">=</span> <span class="n">_build_tool_context</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;working_dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="n">_build_tool_context</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"working_dir"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">raw_input</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">_error_payload</span><span class="p">(</span>
                 <span class="n">action</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;tool input validation failed&quot;</span><span class="p">,</span>
-                <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;input_validation_failed&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">"tool input validation failed"</span><span class="p">,</span>
+                <span class="n">error_type</span><span class="o">=</span><span class="s2">"input_validation_failed"</span><span class="p">,</span>
                 <span class="n">tool_name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">validation_errors</span><span class="o">=</span><span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">(),</span>
             <span class="p">),</span>
@@ -719,28 +719,28 @@
         <span class="p">)</span>
 
     <span class="n">payload</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">to_payload</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;tool_name&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;effects&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">)</span>
-    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;confirmation&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">)</span>
-    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"tool_name"</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"effects"</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">effects</span><span class="p">)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"confirmation"</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">confirmation</span><span class="p">)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"tags"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">payload</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ok</span> <span class="k">else</span> <span class="mi">4</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="run_tool">
 <a class="viewcode-back" href="../../../api/data_juicer_agents.commands.tool_cmd.html#data_juicer_agents.commands.run_tool">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_tool</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="n">action</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;tool_action&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"tool_action"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">"list"</span><span class="p">:</span>
         <span class="n">payload</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">_execute_list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;schema&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">"schema"</span><span class="p">:</span>
         <span class="n">payload</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">_execute_schema</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">"run"</span><span class="p">:</span>
         <span class="n">payload</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">_execute_run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">_error_payload</span><span class="p">(</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;tool&quot;</span><span class="p">,</span>
-            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unsupported tool action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;unsupported_action&quot;</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"tool"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"unsupported tool action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">error_type</span><span class="o">=</span><span class="s2">"unsupported_action"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">code</span> <span class="o">=</span> <span class="mi">2</span>
 
@@ -749,7 +749,7 @@
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run_tool&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"run_tool"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

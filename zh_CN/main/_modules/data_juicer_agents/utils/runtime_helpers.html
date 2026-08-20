@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.utils.runtime_helpers 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Shared runtime helpers for session tools, adapters, and CLI surfaces.&quot;&quot;&quot;</span>
+<span class="sd">"""Shared runtime helpers for session tools, adapters, and CLI surfaces."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -583,9 +583,9 @@
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">default</span>
     <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">}:</span>
+    <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">}:</span>
         <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;off&quot;</span><span class="p">}:</span>
+    <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"no"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"off"</span><span class="p">}:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="n">default</span></div>
 
@@ -602,14 +602,14 @@
         <span class="n">raw</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"["</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">pass</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
     <span class="k">return</span> <span class="p">[]</span></div>
 
 
@@ -620,7 +620,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">limit</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">text</span>
     <span class="n">keep</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">text</span><span class="p">[:</span><span class="n">keep</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">... [truncated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">keep</span><span class="si">}</span><span class="s2"> chars]&quot;</span></div>
+    <span class="k">return</span> <span class="n">text</span><span class="p">[:</span><span class="n">keep</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">... [truncated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">keep</span><span class="si">}</span><span class="s2"> chars]"</span></div>
 
 
 
@@ -628,10 +628,10 @@
 <a class="viewcode-back" href="../../../api/data_juicer_agents.capabilities.session.runtime.html#data_juicer_agents.capabilities.session.runtime.short_log">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">short_log</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">""</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
     <span class="n">tail</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="n">max_lines</span><span class="p">:]</span>
-    <span class="n">merged</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_chars</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">merged</span><span class="p">[</span><span class="o">-</span><span class="n">max_chars</span><span class="p">:]</span>
     <span class="k">return</span> <span class="n">merged</span></div>
@@ -649,17 +649,17 @@
         <span class="n">raw</span> <span class="o">=</span> <span class="n">ranges</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="n">range_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*(-?\d+)\s*[-,:]\s*(-?\d+)\s*$&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span>
+        <span class="n">range_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^\s*(-?\d+)\s*[-,:]\s*(-?\d+)\s*$"</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">range_match</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">range_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">range_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;ranges must be a JSON array like [start, end]&quot;</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"ranges must be a JSON array like [start, end]"</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])],</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;ranges must be two integers [start, end]&quot;</span>
-    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;ranges must be null, [start, end], or JSON string of that list&quot;</span></div>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"ranges must be two integers [start, end]"</span>
+    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"ranges must be null, [start, end], or JSON string of that list"</span></div>
 
 
 
@@ -676,7 +676,7 @@
 <a class="viewcode-back" href="../../../api/data_juicer_agents.utils.runtime_helpers.html#data_juicer_agents.capabilities.session.runtime.to_event_result_preview">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_event_result_preview</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">""</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">rendered</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
@@ -692,8 +692,8 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolResponse</span>
 
     <span class="k">return</span> <span class="n">ToolResponse</span><span class="p">(</span>
-        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-        <span class="n">content</span><span class="o">=</span><span class="p">[</span><span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))],</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"ok"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+        <span class="n">content</span><span class="o">=</span><span class="p">[</span><span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))],</span>
     <span class="p">)</span></div>
 
 
@@ -721,11 +721,11 @@
             <span class="k">if</span> <span class="n">rc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
                 <span class="k">return</span> <span class="p">{</span>
-                    <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="p">),</span>
-                    <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">(</span><span class="n">out</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
-                    <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">(</span><span class="n">err</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
-                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;process finished with returncode=</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">"ok"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">"returncode"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="p">),</span>
+                    <span class="s2">"stdout"</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">(</span><span class="n">out</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
+                    <span class="s2">"stderr"</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">(</span><span class="n">err</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"process finished with returncode=</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                 <span class="p">}</span>
 
             <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">deadline</span><span class="p">:</span>
@@ -748,37 +748,37 @@
                         <span class="k">pass</span>
                 <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
                 <span class="k">return</span> <span class="p">{</span>
-                    <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                    <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;timeout&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">(</span><span class="n">out</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
-                    <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">((</span><span class="n">err</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="mi">8000</span><span class="p">),</span>
-                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;process timeout after </span><span class="si">{</span><span class="n">timeout_sec</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+                    <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"timeout"</span><span class="p">,</span>
+                    <span class="s2">"returncode"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"stdout"</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">(</span><span class="n">out</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
+                    <span class="s2">"stderr"</span><span class="p">:</span> <span class="n">truncate_text</span><span class="p">((</span><span class="n">err</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="mi">8000</span><span class="p">),</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"process timeout after </span><span class="si">{</span><span class="n">timeout_sec</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;execution_failed&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;process execution failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"execution_failed"</span><span class="p">,</span>
+            <span class="s2">"returncode"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"stdout"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+            <span class="s2">"stderr"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"process execution failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;normalize_line_idx&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;parse_line_ranges&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;run_interruptible_subprocess&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;short_log&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_bool&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_event_result_preview&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_int&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_string_list&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_text_response&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;truncate_text&quot;</span><span class="p">,</span>
+    <span class="s2">"normalize_line_idx"</span><span class="p">,</span>
+    <span class="s2">"parse_line_ranges"</span><span class="p">,</span>
+    <span class="s2">"run_interruptible_subprocess"</span><span class="p">,</span>
+    <span class="s2">"short_log"</span><span class="p">,</span>
+    <span class="s2">"to_bool"</span><span class="p">,</span>
+    <span class="s2">"to_event_result_preview"</span><span class="p">,</span>
+    <span class="s2">"to_int"</span><span class="p">,</span>
+    <span class="s2">"to_string_list"</span><span class="p">,</span>
+    <span class="s2">"to_text_response"</span><span class="p">,</span>
+    <span class="s2">"truncate_text"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

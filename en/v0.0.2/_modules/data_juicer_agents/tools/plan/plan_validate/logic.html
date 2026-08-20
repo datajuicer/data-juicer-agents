@@ -544,7 +544,7 @@
                   
   <h1>Source code for data_juicer_agents.tools.plan.plan_validate.logic</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Pure logic for plan_validate.&quot;&quot;&quot;</span>
+<span class="sd">"""Pure logic for plan_validate."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -559,51 +559,51 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_plan_schema</span><span class="p">(</span><span class="n">plan</span><span class="p">:</span> <span class="n">PlanModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">plan_id</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;plan_id is required&quot;</span><span class="p">)</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"plan_id is required"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">user_intent</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;user_intent is required&quot;</span><span class="p">)</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"user_intent is required"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;recipe is required&quot;</span><span class="p">)</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"recipe is required"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_ALLOWED_MODALITIES</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;modality must be one of text/image/audio/video/multimodal/unknown&quot;</span><span class="p">)</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"modality must be one of text/image/audio/video/multimodal/unknown"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;warnings must be an array&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">):</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;text modality requires text_keys&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_key&quot;</span><span class="p">):</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;image modality requires image_key&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio_key&quot;</span><span class="p">):</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;audio modality requires audio_key&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_key&quot;</span><span class="p">):</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;video modality requires video_key&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;multimodal&quot;</span><span class="p">:</span>
-        <span class="n">active</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_keys&quot;</span><span class="p">)),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_key&quot;</span><span class="p">)),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio_key&quot;</span><span class="p">)),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_key&quot;</span><span class="p">))])</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"warnings must be an array"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">"text"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"text_keys"</span><span class="p">):</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"text modality requires text_keys"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">"image"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image_key"</span><span class="p">):</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"image modality requires image_key"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">"audio"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"audio_key"</span><span class="p">):</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"audio modality requires audio_key"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">"video"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"video_key"</span><span class="p">):</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"video modality requires video_key"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">modality</span> <span class="o">==</span> <span class="s2">"multimodal"</span><span class="p">:</span>
+        <span class="n">active</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"text_keys"</span><span class="p">)),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image_key"</span><span class="p">)),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"audio_key"</span><span class="p">)),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"video_key"</span><span class="p">))])</span>
         <span class="k">if</span> <span class="n">active</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;multimodal modality requires at least two bound modalities&quot;</span><span class="p">)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"multimodal modality requires at least two bound modalities"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">errors</span></div>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_recipe_with_dj</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the recipe dict using Data-Juicer&#39;s native config validation.</span>
+<span class="w">    </span><span class="sd">"""Validate the recipe dict using Data-Juicer's native config validation.</span>
 
 <span class="sd">    This catches any unknown keys, type mismatches, or constraint violations</span>
 <span class="sd">    that DJ itself would reject at runtime.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer_agents.utils.dj_config_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dj_config_bridge</span>
         <span class="n">bridge</span> <span class="o">=</span> <span class="n">get_dj_config_bridge</span><span class="p">()</span>
         <span class="n">is_valid</span><span class="p">,</span> <span class="n">dj_errors</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;DJ config error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">dj_errors</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"DJ config error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">dj_errors</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="c1"># DJ not installed or validation unavailable — skip silently</span>
-        <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;DJ validation unavailable: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"DJ validation unavailable: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="PlanValidator">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.html#data_juicer_agents.PlanValidator">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlanValidator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate plan schema and local filesystem preconditions.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Validate plan schema and local filesystem preconditions."""</span>
 
 <div class="viewcode-block" id="PlanValidator.validate">
 <a class="viewcode-back" href="../../../../../api/data_juicer_agents.html#data_juicer_agents.PlanValidator.validate">[docs]</a>
@@ -612,27 +612,27 @@
         <span class="n">errors</span> <span class="o">=</span> <span class="n">validate_plan_schema</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validate_recipe_with_dj</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">))</span>
 
-        <span class="n">dataset_path_str</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">)</span>
+        <span class="n">dataset_path_str</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataset_path"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_path_str</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;recipe.dataset_path is required&quot;</span><span class="p">)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"recipe.dataset_path is required"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dataset_path_str</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dataset_path does not exist: </span><span class="si">{</span><span class="n">dataset_path_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dataset_path does not exist: </span><span class="si">{</span><span class="n">dataset_path_str</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="n">export_path_str</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_path&quot;</span><span class="p">)</span>
+        <span class="n">export_path_str</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"export_path"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path_str</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;recipe.export_path is required&quot;</span><span class="p">)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"recipe.export_path is required"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">export_parent</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">export_path_str</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">export_parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;export parent directory does not exist: </span><span class="si">{</span><span class="n">export_parent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"export parent directory does not exist: </span><span class="si">{</span><span class="n">export_parent</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">raw_path</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;custom_operator_paths&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"custom_operator_paths"</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">raw_path</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">recipe</span><span class="p">[</span><span class="s2">"custom_operator_paths"</span><span class="p">]:</span>
                 <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">raw_path</span><span class="p">))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;custom_operator_path does not exist: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"custom_operator_path does not exist: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">errors</span></div>
 </div>
@@ -646,24 +646,24 @@
         <span class="n">plan</span> <span class="o">=</span> <span class="n">PlanModel</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">plan_payload</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;plan_invalid_payload&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;failed to load plan payload: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"plan_invalid_payload"</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"failed to load plan payload: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="n">errors</span> <span class="o">=</span> <span class="n">PlanValidator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;plan_id&quot;</span><span class="p">:</span> <span class="n">plan</span><span class="o">.</span><span class="n">plan_id</span><span class="p">,</span>
-        <span class="s2">&quot;operator_names&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">operator_names</span><span class="p">),</span>
-        <span class="s2">&quot;validation_errors&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
-        <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">warnings</span><span class="p">),</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;plan is valid&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">&quot;plan validation failed&quot;</span><span class="p">,</span>
+        <span class="s2">"ok"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"plan_id"</span><span class="p">:</span> <span class="n">plan</span><span class="o">.</span><span class="n">plan_id</span><span class="p">,</span>
+        <span class="s2">"operator_names"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">operator_names</span><span class="p">),</span>
+        <span class="s2">"validation_errors"</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
+        <span class="s2">"warnings"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">warnings</span><span class="p">),</span>
+        <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"plan is valid"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">"plan validation failed"</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlanValidator&quot;</span><span class="p">,</span> <span class="s2">&quot;plan_validate&quot;</span><span class="p">,</span> <span class="s2">&quot;validate_plan_schema&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"PlanValidator"</span><span class="p">,</span> <span class="s2">"plan_validate"</span><span class="p">,</span> <span class="s2">"validate_plan_schema"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

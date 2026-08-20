@@ -608,32 +608,32 @@
 <h2>Configuration Options<a class="headerlink" href="#configuration-options" title="Link to this heading">#</a></h2>
 <section id="cloud-dashscope-default">
 <h3>Cloud: DashScope (Default)<a class="headerlink" href="#cloud-dashscope-default" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;sk-your-api-key-here&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"sk-your-api-key-here"</span>
 
 <span class="c1"># Optional overrides</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen-max"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"qwen-max"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">"true"</span>
 </pre></div>
 </div>
 </section>
 <section id="cloud-custom-openai-compatible-endpoint">
 <h3>Cloud: Custom OpenAI-Compatible Endpoint<a class="headerlink" href="#cloud-custom-openai-compatible-endpoint" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;https://your-custom-endpoint.com/v1&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-endpoint-api-key&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">"https://your-custom-endpoint.com/v1"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"your-endpoint-api-key"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"gpt-4o"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"gpt-4o"</span>
 </pre></div>
 </div>
 </section>
 <section id="local-ollama">
 <h3>Local: Ollama<a class="headerlink" href="#local-ollama" title="Link to this heading">#</a></h3>
 <p>See <strong>djx_local_model</strong> skill for details. Quick configuration:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;http://localhost:11434/v1&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;ollama&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;false&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">"http://localhost:11434/v1"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"ollama"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen3.5:0.8b"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"qwen3.5:0.8b"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">"false"</span>
 </pre></div>
 </div>
 </section>
@@ -651,10 +651,10 @@
 <section id="verify-configuration">
 <h2>Verify Configuration<a class="headerlink" href="#verify-configuration" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check current configuration</span>
-env<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;DASHSCOPE|DJA_|MODELSCOPE&quot;</span>
+env<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"DASHSCOPE|DJA_|MODELSCOPE"</span>
 
 <span class="c1"># Test connection</span>
-djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">&#39;{&quot;intent&quot;:&quot;test&quot;,&quot;top_k&quot;:1,&quot;mode&quot;:&quot;llm&quot;}&#39;</span>
+djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </span>retrieve_operators<span class="w"> </span>--input-json<span class="w"> </span><span class="s1">'{"intent":"test","top_k":1,"mode":"llm"}'</span>
 </pre></div>
 </div>
 </section>
@@ -694,23 +694,23 @@ djx<span class="w"> </span>tool<span class="w"> </span>run<span class="w"> </spa
 <section id="update-all-variables-when-switching-backends">
 <h3>2. Update All Variables When Switching Backends<a class="headerlink" href="#update-all-variables-when-switching-backends" title="Link to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Switch to local</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">&quot;http://localhost:11434/v1&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">&quot;ollama&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">&quot;qwen3.5:0.8b&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">&quot;false&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_OPENAI_BASE_URL</span><span class="o">=</span><span class="s2">"http://localhost:11434/v1"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span><span class="s2">"ollama"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_SESSION_MODEL</span><span class="o">=</span><span class="s2">"qwen3.5:0.8b"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_PLANNER_MODEL</span><span class="o">=</span><span class="s2">"qwen3.5:0.8b"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DJA_LLM_THINKING</span><span class="o">=</span><span class="s2">"false"</span>
 </pre></div>
 </div>
 </section>
 <section id="verify-configuration-before-execution">
 <h3>3. Verify Configuration Before Execution<a class="headerlink" href="#verify-configuration-before-execution" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>env<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;DASHSCOPE|DJA_&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>env<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"DASHSCOPE|DJA_"</span>
 </pre></div>
 </div>
 </section>
 <section id="use-fallbacks-in-production">
 <h3>4. Use Fallbacks in Production<a class="headerlink" href="#use-fallbacks-in-production" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_MODEL_FALLBACKS</span><span class="o">=</span><span class="s2">&quot;qwen-max,qwen-plus,qwen-turbo&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DJA_MODEL_FALLBACKS</span><span class="o">=</span><span class="s2">"qwen-max,qwen-plus,qwen-turbo"</span>
 </pre></div>
 </div>
 </section>

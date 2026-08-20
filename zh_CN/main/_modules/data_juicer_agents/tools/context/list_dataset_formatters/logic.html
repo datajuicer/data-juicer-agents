@@ -545,7 +545,7 @@
                   
   <h1>data_juicer_agents.tools.context.list_dataset_formatters.logic 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Pure logic for list_dataset_formatters.&quot;&quot;&quot;</span>
+<span class="sd">"""Pure logic for list_dataset_formatters."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -559,7 +559,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">include_ray</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List available dataset formatters from Data-Juicer.</span>
+<span class="w">    </span><span class="sd">"""List available dataset formatters from Data-Juicer.</span>
 
 <span class="sd">    Discovers which dataset formatters (dynamic data generators) are registered</span>
 <span class="sd">    in the current Data-Juicer installation by comparing OPSearcher results</span>
@@ -569,34 +569,34 @@
 <span class="sd">        include_ray: Whether to include Ray-specific formatters.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Dict with &#39;formatters&#39; list and metadata.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Dict with 'formatters' list and metadata.</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.tools.op_search</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPSearcher</span>
 
         <span class="n">searcher</span> <span class="o">=</span> <span class="n">OPSearcher</span><span class="p">(</span><span class="n">include_formatter</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">formatter_entries</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="s2">&quot;formatter&quot;</span><span class="p">)</span>
+        <span class="n">formatter_entries</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="s2">"formatter"</span><span class="p">)</span>
 
         <span class="c1"># Optionally filter out Ray-specific formatters</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">include_ray</span><span class="p">:</span>
             <span class="n">formatter_entries</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">entry</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">formatter_entries</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Ray&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Ray"</span><span class="p">)</span>
             <span class="p">]</span>
 
         <span class="n">formatters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">formatter_entries</span><span class="p">:</span>
             <span class="n">formatter_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span>
+                <span class="s2">"description"</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"desc"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="p">}</span>
 
             <span class="c1"># Extract parameter info from signature</span>
-            <span class="n">signature</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sig&quot;</span><span class="p">)</span>
+            <span class="n">signature</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sig"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">signature</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="s2">&quot;kwargs&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"self"</span><span class="p">,</span> <span class="s2">"args"</span><span class="p">,</span> <span class="s2">"kwargs"</span><span class="p">):</span>
                         <span class="k">continue</span>
                     <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span>
                         <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span><span class="p">,</span>
@@ -604,49 +604,49 @@
                     <span class="p">):</span>
                         <span class="k">continue</span>
 
-                    <span class="n">param_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param_name</span><span class="p">}</span>
+                    <span class="n">param_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">param_name</span><span class="p">}</span>
 
                     <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-                        <span class="n">param_info</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
+                        <span class="n">param_info</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-                        <span class="n">param_info</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span>
+                        <span class="n">param_info</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">param_info</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">param_info</span><span class="p">[</span><span class="s2">"required"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
                     <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_info</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
-                    <span class="n">formatter_info</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
+                    <span class="n">formatter_info</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
 
             <span class="n">formatters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatter_info</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">formatters</span><span class="p">)</span><span class="si">}</span><span class="s2"> dataset formatters&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;formatters&quot;</span><span class="p">:</span> <span class="n">formatters</span><span class="p">,</span>
-            <span class="s2">&quot;total_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">formatters</span><span class="p">),</span>
-            <span class="s2">&quot;include_ray&quot;</span><span class="p">:</span> <span class="n">include_ray</span><span class="p">,</span>
-            <span class="s2">&quot;usage_hint&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="s2">&quot;Use the formatter &#39;name&#39; as the &#39;type&#39; value in &quot;</span>
-                <span class="s2">&quot;dataset_source.generated when calling build_dataset_spec. &quot;</span>
-                <span class="s2">&quot;Example: dataset_source={</span><span class="se">\&quot;</span><span class="s2">generated</span><span class="se">\&quot;</span><span class="s2">: {</span><span class="se">\&quot;</span><span class="s2">type</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">EmptyFormatter</span><span class="se">\&quot;</span><span class="s2">, &quot;</span>
-                <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">length</span><span class="se">\&quot;</span><span class="s2">: 1000, </span><span class="se">\&quot;</span><span class="s2">feature_keys</span><span class="se">\&quot;</span><span class="s2">: [</span><span class="se">\&quot;</span><span class="s2">text</span><span class="se">\&quot;</span><span class="s2">]}}&quot;</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">formatters</span><span class="p">)</span><span class="si">}</span><span class="s2"> dataset formatters"</span><span class="p">,</span>
+            <span class="s2">"formatters"</span><span class="p">:</span> <span class="n">formatters</span><span class="p">,</span>
+            <span class="s2">"total_count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">formatters</span><span class="p">),</span>
+            <span class="s2">"include_ray"</span><span class="p">:</span> <span class="n">include_ray</span><span class="p">,</span>
+            <span class="s2">"usage_hint"</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">"Use the formatter 'name' as the 'type' value in "</span>
+                <span class="s2">"dataset_source.generated when calling build_dataset_spec. "</span>
+                <span class="s2">"Example: dataset_source={</span><span class="se">\"</span><span class="s2">generated</span><span class="se">\"</span><span class="s2">: {</span><span class="se">\"</span><span class="s2">type</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="s2">EmptyFormatter</span><span class="se">\"</span><span class="s2">, "</span>
+                <span class="s2">"</span><span class="se">\"</span><span class="s2">length</span><span class="se">\"</span><span class="s2">: 1000, </span><span class="se">\"</span><span class="s2">feature_keys</span><span class="se">\"</span><span class="s2">: [</span><span class="se">\"</span><span class="s2">text</span><span class="se">\"</span><span class="s2">]}}"</span>
             <span class="p">),</span>
         <span class="p">}</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Failed to list dataset formatters: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;formatters&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;total_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;include_ray&quot;</span><span class="p">:</span> <span class="n">include_ray</span><span class="p">,</span>
+            <span class="s2">"ok"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Failed to list dataset formatters: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"formatters"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"total_count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"include_ray"</span><span class="p">:</span> <span class="n">include_ray</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;list_dataset_formatters&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"list_dataset_formatters"</span><span class="p">]</span>
 </pre></div>
 
                 </article>
