@@ -76,7 +76,7 @@ You can chat with ***Juicer*** on the official [Data-Juicer documentation site](
 
 ### Model
 
-- Default model: `qwen3.6-plus`
+- Default model: `qwen3.7-plus`
 - Transport: DashScope OpenAI-compatible endpoint
 - Streaming: enabled
 - The runtime applies local formatter-based truncation with `OpenAIChatFormatter`.
@@ -113,6 +113,48 @@ Content-Type: application/json
   ],
   "session_id": "your_session_id",
   "user_id": "user_id"
+}
+```
+
+The frontend may also attach page-local resources without injecting them into
+the user message. The agent can decide whether to read them through its
+current-page context tool.
+
+```json
+{
+  "input": [
+    {
+      "role": "user",
+      "content": [{"type": "text", "text": "What does this page talk about?"}]
+    }
+  ],
+  "session_id": "your_session_id",
+  "user_id": "user_id",
+  "context_resources": [
+    {
+      "id": "current_page",
+      "type": "document_page",
+      "source": "sphinx",
+      "media_type": "text/plain",
+      "title": "Test Document",
+      "url": "https://example.com/docs/test.html",
+      "text": "Current page text...",
+      "char_count": 1234,
+      "truncated": false,
+      "extracted_at": "2026-06-17T00:00:00.000Z"
+    }
+  ],
+  "metadata": {
+    "client_environment": {
+      "surface": "web_docs",
+      "integration": "data_juicer_sphinx",
+      "supports_current_page_context": true
+    },
+    "page_context": {
+      "available": true,
+      "resource_id": "current_page"
+    }
+  }
 }
 ```
 
@@ -192,6 +234,7 @@ JSON session settings only apply when `SESSION_STORE_TYPE=json`. Redis settings 
 | `REDIS_DB` | ❌ No | `0` | Redis database number |
 | `REDIS_PASSWORD` | ❌ No | unset | Redis password |
 | `REDIS_MAX_CONNECTIONS` | ❌ No | `10` | Redis max connections |
+| `DJ_COPILOT_MODEL_NAME` | ❌ No | `"qwen3.7-plus"` | LLM model name for the agent |
 | `DJ_COPILOT_SERVICE_HOST` | ❌ No | `"127.0.0.1"` | Service host |
 | `DJ_COPILOT_SERVICE_PORT` | ❌ No | `8080` | Service port |
 | `DJ_COPILOT_ENABLE_LOGGING` | ❌ No | `"true"` | Enable session logging |

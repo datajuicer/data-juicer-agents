@@ -25,7 +25,7 @@ import asyncio
 import time
 import traceback
 from loguru import logger
-from typing import Optional, Any, List, Literal, Callable, Awaitable, Dict
+from typing import Optional, Any, List, Literal, Callable, Awaitable
 from pydantic import BaseModel, Field
 
 from agentscope.mcp import HttpStatelessClient
@@ -35,8 +35,6 @@ from agentscope.memory import InMemoryMemory, RedisMemory
 from agentscope.agent import AgentBase
 from agentscope.message import Msg
 from redis.asyncio import ConnectionPool
-
-from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
 
 from operator_tools_adapter import register_qa_operator_tools
 
