@@ -1,593 +1,149 @@
-
 <!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Data-Juicer Q&amp;A Copilot Demo — data-juicer-agents</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" id="pygments-dark-css" href="../_static/pygments_dark.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/ask-ai-widget.css" type="text/css" />
+  <link rel="icon" href="../_static/icon.png" />
 
-<html lang="en" data-content_root="../" >
-
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Data-Juicer Q&amp;A Copilot Demo &#8212; Data Juicer Agents</title>
-  
-  
-  
-  <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  <script>
+  (function(){var t=localStorage.getItem('dj-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var d=document.getElementById('pygments-dark-css');if(d){d.disabled=(t!=='dark')}})();
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button class="sidebar-toggle" aria-label="Toggle sidebar" id="sidebar-toggle">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <a href="../index.html" class="navbar-brand">
+          <img src="../_static/images/icon.png" alt="data-juicer-agents" class="navbar-logo" />
+          <span class="navbar-title">data-juicer-agents</span>
+        </a>
+      </div>
 
-    </style>
-  </noscript>
-  
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+      <nav class="navbar-center">
+        <a href="https://datajuicer.github.io/data-juicer/en/main/" class="navbar-link" target="_blank" rel="noopener">Core<svg class="external-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 1.5h7v7M10.5 1.5L4 8"/></svg></a>
+        <a href="https://datajuicer.github.io/data-juicer-sandbox/en/main/" class="navbar-link" target="_blank" rel="noopener">Sandbox<svg class="external-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 1.5h7v7M10.5 1.5L4 8"/></svg></a>
+        <a href="https://datajuicer.github.io/data-juicer-hub/en/main/" class="navbar-link" target="_blank" rel="noopener">Hub<svg class="external-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 1.5h7v7M10.5 1.5L4 8"/></svg></a>
+      </nav>
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
-    <link rel="stylesheet" type="text/css" href="../_static/ask-ai-widget.css?v=028e49fc" />
-  
-  <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
-
-    <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
-    <script src="../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'qa-copilot/DEMO';</script>
-    <script src="../_static/sidebar.js?v=3fc1065c"></script>
-    <script src="../_static/switcher-mobile.js?v=07875724"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="../_static/ask-ai-widget.js?v=7a5b498f"></script>
-    <link rel="icon" href="../_static/icon.png"/>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Data-Juicer Q&amp;A Copilot" href="README.html" />
-    <link rel="prev" title="Tools Architecture" href="../docs/tools.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
-  </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
-  
-  
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
-  
-  <div id="pst-scroll-pixel-helper"></div>
-  
-  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
-  
-  <dialog id="pst-search-dialog">
-    
-<form class="bd-search d-flex align-items-center"
-      action="../search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         placeholder="Search docs..."
-         aria-label="Search docs..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
-
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-
-  
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
-  
-  
-  <div class="col-lg-3 navbar-header-items__start">
-    
-      <div class="navbar-item">
-
-  
-    
-  
-
-<a class="navbar-brand logo" href="../index.html">
-  
-  
-  
-  
-  
-    
-    
-      
-    
-    
-    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
-    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
-  
-  
-    <p class="title logo__title">Data Juicer Agents</p>
-  
-</a></div>
-    
-  </div>
-  
-  <div class="col-lg-9 navbar-header-items">
-    
-    <div class="me-auto navbar-header-items__center">
-      
-        <div class="navbar-item">
-<nav>
-  <ul class="bd-navbar-elements navbar-nav">
-    
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../docs_index.html">
-    DOCS
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api.html">
-    API
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
-    Core
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
-    Sandbox
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
-    Hub
-  </a>
-</li>
-
-  </ul>
-</nav></div>
-      
-    </div>
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+      <div class="navbar-right">
+        <button class="search-trigger" id="search-trigger" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14" stroke-linecap="round"/></svg>
+          <span>Search...</span>
+          <kbd>⌘K</kbd>
+        </button>
+        <div class="dropdown" id="lang-dropdown">
+          <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+            <svg class="dropdown-icon-svg" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c-2 2.5-2 10.5 0 13M8 1.5c2 2.5 2 10.5 0 13"/></svg>
+            <span class="dropdown-text">en</span>
+            <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </button>
+          <div class="dropdown-panel">
+            <a href="../../../en/v0.0.2/qa-copilot/DEMO.html" class="dropdown-item active">English</a>
+            <a href="../../../zh_CN/v0.0.2/qa-copilot/DEMO_ZH.html" class="dropdown-item">简体中文</a>
+          </div>
         </div>
-      
-      
-        <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-</ul></div>
-      
-        <div class="navbar-item">
+        <div class="dropdown" id="version-dropdown"
+             data-versions-url="https://datajuicer.github.io/data-juicer-agents/versions.json"
+             data-link-prefix="../../"
+             data-page="qa-copilot/DEMO"
+             data-current="v0.0.2">
+          <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+            <svg class="dropdown-icon-svg" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4l5.5 2.5L13.5 4M8 6.5V14"/><path d="M13.5 4v6l-5.5 4L2.5 10V4L8 1.5 13.5 4z"/></svg>
+            <span class="dropdown-text">v0.0.2</span>
+            <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </button>
+          <div class="dropdown-panel">
+            <a href="../../main/qa-copilot/DEMO.html" class="dropdown-item">main</a>
+            <a href="../../v0.0.3/qa-copilot/DEMO.html" class="dropdown-item">v0.0.3</a>
+            <a href="../../v0.0.2/qa-copilot/DEMO.html" class="dropdown-item active">v0.0.2</a>
+          </div>
+        </div>
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
-      
-        <div class="navbar-item"><div class="navbar-switcher-container">
-  
-  <div class="navbar-dropdown language-dropdown">
-    <button type="button" 
-            class="navbar-dropdown-trigger" 
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-label="Select language: en">
-      <span class="switcher-icon" aria-hidden="true">🌐</span>
-      <span class="switcher-text">en</span>
-      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
-    </button>
-    <div class="navbar-dropdown-panel" role="menu">
-      <div class="dropdown-content">
-        
-          
-          
-          <a href="../../../en/v0.0.2/qa-copilot/DEMO.html"
-             class="dropdown-item active"
-             role="menuitem"
-             aria-current="true">
-            English
-          </a>
-        
-          
-          
-          <a href="../../../zh_CN/v0.0.2/qa-copilot/DEMO_ZH.html"
-             class="dropdown-item "
-             role="menuitem"
-             >
-            简体中文
-          </a>
-        
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.7 3.7l1.4 1.4M12.9 12.9l1.4 1.4M3.7 14.3l1.4-1.4M12.9 5.1l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M15.75 9.59A6.75 6.75 0 1 1 8.41 2.25 5.25 5.25 0 0 0 15.75 9.59z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <a href="https://github.com/datajuicer/data-juicer-agents" class="navbar-icon-link" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
       </div>
     </div>
-  </div>
-  
+  </header>
 
-  
-  <div class="navbar-dropdown version-dropdown">
-    <button type="button" 
-            class="navbar-dropdown-trigger" 
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-label="Select version: v0.0.2">
-      <span class="switcher-icon" aria-hidden="true">📦</span>
-      <span class="switcher-text">v0.0.2</span>
-      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
-    </button>
-    <div class="navbar-dropdown-panel" role="menu">
-      <div class="dropdown-content">
-        
-        <a href="../../main/qa-copilot/DEMO.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          main
-        </a>
-        
-        <a href="../../v0.0.3/qa-copilot/DEMO.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          v0.0.3
-        </a>
-        
-        <a href="../../v0.0.2/qa-copilot/DEMO.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          v0.0.2
-        </a>
-        
-      </div>
-    </div>
-  </div>
-  
-</div></div>
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-    </div>
-  
-
-  
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
-</div>
-
-    </header>
-  
-
-  <div class="bd-container">
-    <div class="bd-container__inner bd-page-width">
-      
-      
-      
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
-        
-
-  
-  <div class="sidebar-header-items sidebar-primary__section">
-    
-    
-      <div class="sidebar-header-items__center">
-        
-          
-          
-            <div class="navbar-item">
-<nav>
-  <ul class="bd-navbar-elements navbar-nav">
-    
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../docs_index.html">
-    DOCS
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api.html">
-    API
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer/en/main/">
-    Core
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
-    Sandbox
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
-    Hub
-  </a>
-</li>
-
-  </ul>
-</nav></div>
-          
-        
-      </div>
-    
-    
-    
-      <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/datajuicer/data-juicer-agents" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-</ul></div>
-        
-          <div class="navbar-item">
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
-        
-          <div class="navbar-item"><div class="navbar-switcher-container">
-  
-  <div class="navbar-dropdown language-dropdown">
-    <button type="button" 
-            class="navbar-dropdown-trigger" 
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-label="Select language: en">
-      <span class="switcher-icon" aria-hidden="true">🌐</span>
-      <span class="switcher-text">en</span>
-      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
-    </button>
-    <div class="navbar-dropdown-panel" role="menu">
-      <div class="dropdown-content">
-        
-          
-          
-          <a href="../../../en/v0.0.2/qa-copilot/DEMO.html"
-             class="dropdown-item active"
-             role="menuitem"
-             aria-current="true">
-            English
-          </a>
-        
-          
-          
-          <a href="../../../zh_CN/v0.0.2/qa-copilot/DEMO_ZH.html"
-             class="dropdown-item "
-             role="menuitem"
-             >
-            简体中文
-          </a>
-        
-      </div>
-    </div>
-  </div>
-  
-
-  
-  <div class="navbar-dropdown version-dropdown">
-    <button type="button" 
-            class="navbar-dropdown-trigger" 
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-label="Select version: v0.0.2">
-      <span class="switcher-icon" aria-hidden="true">📦</span>
-      <span class="switcher-text">v0.0.2</span>
-      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
-    </button>
-    <div class="navbar-dropdown-panel" role="menu">
-      <div class="dropdown-content">
-        
-        <a href="../../main/qa-copilot/DEMO.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          main
-        </a>
-        
-        <a href="../../v0.0.3/qa-copilot/DEMO.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          v0.0.3
-        </a>
-        
-        <a href="../../v0.0.2/qa-copilot/DEMO.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          v0.0.2
-        </a>
-        
-      </div>
-    </div>
-  </div>
-  
-</div></div>
-        
-      </div>
-    
-  </div>
-  
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../docs/overview.html">Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../docs/quick_start.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../docs/cli.html">DJX CLI Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../docs/tools.html">Tools Architecture</a></li>
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <ul class="sidebar-home">
+            <li class="">
+              <a href="../index.html">Home</a>
+            </li>
+          </ul>
+          <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../docs_index.html">DOCS</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../docs/overview.html">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/quick_start.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/cli.html">DJX CLI Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/tools.html">Tools Architecture</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Data-Juicer Q&amp;A Copilot Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">🧩 <strong>Prerequisites</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-installation">🚀 <strong>Basic Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-based-installation">🎯 <strong>Scenario-Based Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-installation-patterns">📦 <strong>Common Installation Patterns</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-from-source">🛠️ <strong>Install from Source</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#op-based-recipe-based-installation">⚙️ <strong>OP-Based / Recipe-Based Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker-installation">🐳 <strong>Docker Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notes-troubleshooting">📌 <strong>Notes &amp; Troubleshooting</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#start-with-minimal-examples">✅ 1. <strong>Start with Minimal Examples</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#leverage-pre-built-recipes-from-dj-hub">✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-only-what-you-need">✅ 3. <strong>Install Only What You Need</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choose-the-right-operators">✅ 4. <strong>Choose the Right Operators</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-3-rule-for-hyperparameter-tuning">✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-with-benchmarks">✅ 6. <strong>Validate with Benchmarks</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#automate-dependency-installation">✅ 7. <strong>Automate Dependency Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-docker-for-reproducibility">✅ 8. <strong>Use Docker for Reproducibility</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contribute-back-to-the-community">✅ 9. <strong>Contribute Back to the Community</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#monitor-retention-rates-quality-metrics">✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html">Data-Juicer Q&amp;A Copilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Data-Juicer Q&amp;A Copilot Demo</a></li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="README.html">Data-Juicer Q&amp;A Copilot</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../interactive_recipe/README.html">🔧 InteRecipe: Interactive Recipe Generation Workflow</a></li>
+</li>
 </ul>
-</div>
-</nav></div>
-    </div>
-  
-  
-  <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
-  </div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_juicer_agents.html">data_juicer_agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_juicer_agents.tools.html">data_juicer_agents.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_juicer_agents.cli.html">data_juicer_agents.cli module</a></li>
+</ul>
+</li>
+</ul>
 
 
+        </nav>
       </div>
-      
-      <main id="main-content" class="bd-main" role="main">
-        
-        
-          <div class="bd-content">
-            <div class="bd-article-container">
-              
-              <div class="bd-header-article d-print-none">
-<div class="header-article-items header-article__inner">
-  
-    <div class="header-article-items__start">
-      
-        <div class="header-article-item">
+    </aside>
 
-<nav aria-label="Breadcrumb" class="d-print-none">
-  <ul class="bd-breadcrumbs">
-    
-    <li class="breadcrumb-item breadcrumb-home">
-      <a href="../index.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
-      </a>
-    </li>
-    
-    <li class="breadcrumb-item"><a href="../docs_index.html" class="nav-link">DOCS</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data-Juicer Q&amp;A Copilot Demo</span></li>
-  </ul>
-</nav>
-</div>
-      
-    </div>
-  
-  
-</div>
-</div>
-              
-              
-              
-                
-<div id="searchbox"></div>
-                <article class="bd-article">
-                  
+    <main class="main-content">
+      <div class="content-wrapper">
+        <article class="article" role="main">
   <section id="data-juicer-q-a-copilot-demo">
-<h1>Data-Juicer Q&amp;A Copilot Demo<a class="headerlink" href="#data-juicer-q-a-copilot-demo" title="Link to this heading">#</a></h1>
+<h1>Data-Juicer Q&amp;A Copilot Demo<a class="headerlink" href="#data-juicer-q-a-copilot-demo" title="Link to this heading">¶</a></h1>
 <p>This document shows end-to-end examples of the QA Copilot. Each case lists the <strong>user query (input)</strong> and the <strong>assistant answer (output)</strong>.</p>
 <p>You can chat with our <a class="reference internal" href="README.html"><span class="std std-doc">Q&amp;A Copilot</span></a> <em><strong>Juicer</strong></em> on the official <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">documentation site</a> of Data-Juicer! Feel free to ask <em><strong>Juicer</strong></em> anything related to Data-Juicer ecosystem.</p>
 <div align="center">
@@ -595,7 +151,7 @@
 </div>
 <hr class="docutils" />
 <section id="case-1-operator-introduction-alphanumeric-filter-en">
-<h2>Case 1 · Operator Introduction (alphanumeric_filter, EN)<a class="headerlink" href="#case-1-operator-introduction-alphanumeric-filter-en" title="Link to this heading">#</a></h2>
+<h2>Case 1 · Operator Introduction (alphanumeric_filter, EN)<a class="headerlink" href="#case-1-operator-introduction-alphanumeric-filter-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">operator_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -609,7 +165,7 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">alphanumeric_filter</span></code> is a Data-Juicer operator designed to filter text samples based on the ratio of alphanumeric characters (or tokens) to the total number of characters (or tokens). It helps ensure data quality by retaining only those samples that fall within a specified alphanumeric ratio range.</p>
 </section>
 <section id="key-features">
-<h2>Key Features:<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h2>
+<h2>Key Features:<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Character-based or Token-based</strong>: Depending on the <code class="docutils literal notranslate"><span class="pre">tokenization</span></code> parameter, it can calculate the ratio either by counting characters or by using a Hugging Face tokenizer to count tokens.</p></li>
 <li><p><strong>Caching Metrics</strong>: The computed metric — <code class="docutils literal notranslate"><span class="pre">'alpha_token_ratio'</span></code> (if tokenized) or <code class="docutils literal notranslate"><span class="pre">'alnum_ratio'</span></code> (if character-based) — is cached in the sample’s stats field for potential reuse.</p></li>
@@ -617,7 +173,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>):<br />
 If <code class="docutils literal notranslate"><span class="pre">True</span></code>, uses tokenization via Hugging Face tokenizer; if <code class="docutils literal notranslate"><span class="pre">False</span></code>, counts characters directly.</p></li>
@@ -628,7 +184,7 @@ Maximum acceptable alphanumeric ratio.</p></li>
 </ul>
 </section>
 <section id="example-usage-in-config">
-<h2>Example Usage in Config:<a class="headerlink" href="#example-usage-in-config" title="Link to this heading">#</a></h2>
+<h2>Example Usage in Config:<a class="headerlink" href="#example-usage-in-config" title="Link to this heading">¶</a></h2>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alphanumeric_filter</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">tokenization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
@@ -641,7 +197,7 @@ Maximum acceptable alphanumeric ratio.</p></li>
 </section>
 <hr class="docutils" />
 <section id="case-2-module-introduction-dj-agents-en">
-<h2>Case 2 · Module Introduction (DJ-Agents, EN)<a class="headerlink" href="#case-2-module-introduction-dj-agents-en" title="Link to this heading">#</a></h2>
+<h2>Case 2 · Module Introduction (DJ-Agents, EN)<a class="headerlink" href="#case-2-module-introduction-dj-agents-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">submodule_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -655,7 +211,7 @@ Maximum acceptable alphanumeric ratio.</p></li>
 <p>Data-Juicer Agents (DJ-Agents) is an intelligent, agent-based framework designed to assist users in interactively creating and optimizing Data-Juicer recipes through natural language conversations. It leverages large language models (LLMs) via DashScope API to interpret user intent, recommend suitable operators, generate configuration code, and even support custom operator development.</p>
 </section>
 <section id="id1">
-<h2>Key Features:<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>Key Features:<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <ol class="arabic">
 <li><p><strong>Interactive Recipe Generation</strong><br />
 Users can describe their data processing goals in plain language (e.g., “I want to filter out non-English text”), and DJ-Agents will automatically suggest appropriate operators and generate a working recipe.</p></li>
@@ -696,7 +252,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 <hr class="docutils" />
 <section id="case-3-concept-question-base-operator-en">
-<h2>Case 3 · Concept Question (Base Operator, EN)<a class="headerlink" href="#case-3-concept-question-base-operator-en" title="Link to this heading">#</a></h2>
+<h2>Case 3 · Concept Question (Base Operator, EN)<a class="headerlink" href="#case-3-concept-question-base-operator-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">concept_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -723,7 +279,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 <hr class="docutils" />
 <section id="case-4-quick-start-install-dj-en">
-<h2>Case 4 · Quick Start (Install DJ, EN)<a class="headerlink" href="#case-4-quick-start-install-dj-en" title="Link to this heading">#</a></h2>
+<h2>Case 4 · Quick Start (Install DJ, EN)<a class="headerlink" href="#case-4-quick-start-install-dj-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">quick_start_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -739,7 +295,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 </section>
 <section id="prerequisites">
-<h1>🧩 <strong>Prerequisites</strong><a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h1>
+<h1>🧩 <strong>Prerequisites</strong><a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h1>
 <ul>
 <li><p>Python version: <code class="docutils literal notranslate"><span class="pre">&gt;=</span> <span class="pre">3.10</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;=</span> <span class="pre">3.12</span></code></p></li>
 <li><p>Git (if installing from source)</p></li>
@@ -756,7 +312,7 @@ pip<span class="w"> </span>install<span class="w"> </span>uv
 <hr class="docutils" />
 </section>
 <section id="basic-installation">
-<h1>🚀 <strong>Basic Installation</strong><a class="headerlink" href="#basic-installation" title="Link to this heading">#</a></h1>
+<h1>🚀 <strong>Basic Installation</strong><a class="headerlink" href="#basic-installation" title="Link to this heading">¶</a></h1>
 <p>Install the minimal version from PyPI (core data processing only):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>py-data-juicer
 </pre></div>
@@ -771,16 +327,16 @@ pip<span class="w"> </span>install<span class="w"> </span>uv
 <hr class="docutils" />
 </section>
 <section id="scenario-based-installation">
-<h1>🎯 <strong>Scenario-Based Installation</strong><a class="headerlink" href="#scenario-based-installation" title="Link to this heading">#</a></h1>
+<h1>🎯 <strong>Scenario-Based Installation</strong><a class="headerlink" href="#scenario-based-installation" title="Link to this heading">¶</a></h1>
 <p>Install extra components based on your use case:</p>
 <section id="core-ml-dl">
-<h2>Core ML/DL<a class="headerlink" href="#core-ml-dl" title="Link to this heading">#</a></h2>
+<h2>Core ML/DL<a class="headerlink" href="#core-ml-dl" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic]"</span>
 </pre></div>
 </div>
 </section>
 <section id="domain-specific">
-<h2>Domain-Specific<a class="headerlink" href="#domain-specific" title="Link to this heading">#</a></h2>
+<h2>Domain-Specific<a class="headerlink" href="#domain-specific" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Computer Vision</span>
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[vision]"</span>
 
@@ -793,7 +349,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </div>
 </section>
 <section id="additional-features">
-<h2>Additional Features<a class="headerlink" href="#additional-features" title="Link to this heading">#</a></h2>
+<h2>Additional Features<a class="headerlink" href="#additional-features" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Distributed Computing</span>
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[distributed]"</span>
 
@@ -808,27 +364,27 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </section>
 </section>
 <section id="common-installation-patterns">
-<h1>📦 <strong>Common Installation Patterns</strong><a class="headerlink" href="#common-installation-patterns" title="Link to this heading">#</a></h1>
+<h1>📦 <strong>Common Installation Patterns</strong><a class="headerlink" href="#common-installation-patterns" title="Link to this heading">¶</a></h1>
 <section id="text-processing">
-<h2>1. Text Processing<a class="headerlink" href="#text-processing" title="Link to this heading">#</a></h2>
+<h2>1. Text Processing<a class="headerlink" href="#text-processing" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic,nlp]"</span>
 </pre></div>
 </div>
 </section>
 <section id="vision-processing">
-<h2>2. Vision Processing<a class="headerlink" href="#vision-processing" title="Link to this heading">#</a></h2>
+<h2>2. Vision Processing<a class="headerlink" href="#vision-processing" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic,vision]"</span>
 </pre></div>
 </div>
 </section>
 <section id="full-pipeline">
-<h2>3. Full Pipeline<a class="headerlink" href="#full-pipeline" title="Link to this heading">#</a></h2>
+<h2>3. Full Pipeline<a class="headerlink" href="#full-pipeline" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[generic,nlp,vision,distributed]"</span>
 </pre></div>
 </div>
 </section>
 <section id="complete-installation">
-<h2>4. Complete Installation<a class="headerlink" href="#complete-installation" title="Link to this heading">#</a></h2>
+<h2>4. Complete Installation<a class="headerlink" href="#complete-installation" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"py-data-juicer[all]"</span>
 </pre></div>
 </div>
@@ -836,7 +392,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </section>
 </section>
 <section id="install-from-source">
-<h1>🛠️ <strong>Install from Source</strong><a class="headerlink" href="#install-from-source" title="Link to this heading">#</a></h1>
+<h1>🛠️ <strong>Install from Source</strong><a class="headerlink" href="#install-from-source" title="Link to this heading">¶</a></h1>
 <p>For latest features or development:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/datajuicer/data-juicer.git
 <span class="nb">cd</span><span class="w"> </span>data-juicer
@@ -851,7 +407,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="op-based-recipe-based-installation">
-<h1>⚙️ <strong>OP-Based / Recipe-Based Installation</strong><a class="headerlink" href="#op-based-recipe-based-installation" title="Link to this heading">#</a></h1>
+<h1>⚙️ <strong>OP-Based / Recipe-Based Installation</strong><a class="headerlink" href="#op-based-recipe-based-installation" title="Link to this heading">¶</a></h1>
 <p>For lightweight setups targeting specific operators or recipes:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dependencies for a specific config file</span>
 python<span class="w"> </span>tools/dj_install.py<span class="w"> </span>--config<span class="w"> </span>path_to_your_config_file
@@ -865,7 +421,7 @@ dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_c
 <hr class="docutils" />
 </section>
 <section id="docker-installation">
-<h1>🐳 <strong>Docker Installation</strong><a class="headerlink" href="#docker-installation" title="Link to this heading">#</a></h1>
+<h1>🐳 <strong>Docker Installation</strong><a class="headerlink" href="#docker-installation" title="Link to this heading">¶</a></h1>
 <p>Pull pre-built image:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;
 <span class="c1"># e.g., docker pull datajuicer/data-juicer:v0.2.0</span>
@@ -878,7 +434,7 @@ dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_c
 <hr class="docutils" />
 </section>
 <section id="notes-troubleshooting">
-<h1>📌 <strong>Notes &amp; Troubleshooting</strong><a class="headerlink" href="#notes-troubleshooting" title="Link to this heading">#</a></h1>
+<h1>📌 <strong>Notes &amp; Troubleshooting</strong><a class="headerlink" href="#notes-troubleshooting" title="Link to this heading">¶</a></h1>
 <p>✅ <strong>Verify Installation</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dj</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
@@ -899,7 +455,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </ul>
 <hr class="docutils" />
 <section id="references">
-<h2>🔗 References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2>🔗 References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/tutorial/Installation.md">Installation Guide</a></p></li>
 </ul>
@@ -907,7 +463,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </section>
 <hr class="docutils" />
 <section id="case-5-processing-guidance-dirty-words-filter-en">
-<h2>Case 5 · Processing Guidance (Dirty Words Filter, EN)<a class="headerlink" href="#case-5-processing-guidance-dirty-words-filter-en" title="Link to this heading">#</a></h2>
+<h2>Case 5 · Processing Guidance (Dirty Words Filter, EN)<a class="headerlink" href="#case-5-processing-guidance-dirty-words-filter-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">processing_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -922,14 +478,14 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </section>
 <hr class="docutils" />
 <section id="how-to-use-flagged-words-filter">
-<h2>✅ How to Use <code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code><a class="headerlink" href="#how-to-use-flagged-words-filter" title="Link to this heading">#</a></h2>
+<h2>✅ How to Use <code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code><a class="headerlink" href="#how-to-use-flagged-words-filter" title="Link to this heading">¶</a></h2>
 <p>This operator:</p>
 <ul class="simple">
 <li><p>Computes the ratio of flagged words in each text sample.</p></li>
 <li><p>Keeps only those samples where the flagged-word ratio falls within your defined range (e.g., <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0.1]</span></code> to allow up to 10% flagged words).</p></li>
 </ul>
 <section id="example-configuration-in-a-recipe-yaml">
-<h3>Example Configuration in a Recipe (YAML):<a class="headerlink" href="#example-configuration-in-a-recipe-yaml" title="Link to this heading">#</a></h3>
+<h3>Example Configuration in a Recipe (YAML):<a class="headerlink" href="#example-configuration-in-a-recipe-yaml" title="Link to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
 <span class="nt">process</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">flagged_words_filter</span><span class="p">:</span>
@@ -942,7 +498,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </div>
 </section>
 <section id="id2">
-<h3>Parameters:<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3>Parameters:<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">lang</span></code>: Language of the text (default: <code class="docutils literal notranslate"><span class="pre">&quot;en&quot;</span></code>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code>: Whether to tokenize text before matching (default: <code class="docutils literal notranslate"><span class="pre">false</span></code>).</p></li>
@@ -953,7 +509,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </section>
 <hr class="docutils" />
 <section id="notes">
-<h2>📌 Notes:<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<h2>📌 Notes:<a class="headerlink" href="#notes" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>You can customize the list of flagged words by providing your own dictionary file via the <code class="docutils literal notranslate"><span class="pre">words_file</span></code> parameter.</p></li>
 <li><p>The default flagged word list covers common profanity and sensitive terms in multiple languages.</p></li>
@@ -961,7 +517,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </section>
 <hr class="docutils" />
 <section id="next-step">
-<h2>🔍 Next Step:<a class="headerlink" href="#next-step" title="Link to this heading">#</a></h2>
+<h2>🔍 Next Step:<a class="headerlink" href="#next-step" title="Link to this heading">¶</a></h2>
 <p>If you need details on how to provide a custom flagged word list or see code examples, I can retrieve the full operator documentation for you.</p>
 <hr class="docutils" />
 <p><strong>References</strong>:</p>
@@ -976,7 +532,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </section>
 <hr class="docutils" />
 <section id="case-6-best-practices-using-dj-en">
-<h2>Case 6 · Best Practices (Using DJ, EN)<a class="headerlink" href="#case-6-best-practices-using-dj-en" title="Link to this heading">#</a></h2>
+<h2>Case 6 · Best Practices (Using DJ, EN)<a class="headerlink" href="#case-6-best-practices-using-dj-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">best_practice_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -992,7 +548,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 </section>
 </section>
 <section id="start-with-minimal-examples">
-<h1>✅ 1. <strong>Start with Minimal Examples</strong><a class="headerlink" href="#start-with-minimal-examples" title="Link to this heading">#</a></h1>
+<h1>✅ 1. <strong>Start with Minimal Examples</strong><a class="headerlink" href="#start-with-minimal-examples" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>Use the <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/tree/main/demo">Minimal Example Recipes</a> to get familiar with DJ’s basic functionality.</p></li>
 <li><p>These recipes demonstrate core workflows and help you understand configuration structure.</p></li>
@@ -1000,7 +556,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 <hr class="docutils" />
 </section>
 <section id="leverage-pre-built-recipes-from-dj-hub">
-<h1>✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong><a class="headerlink" href="#leverage-pre-built-recipes-from-dj-hub" title="Link to this heading">#</a></h1>
+<h1>✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong><a class="headerlink" href="#leverage-pre-built-recipes-from-dj-hub" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>Explore the <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Recipe Gallery</a> for real-world use cases:</p>
 <ul>
@@ -1024,7 +580,7 @@ Install <strong>FFmpeg</strong> and ensure it’s in your <code class="docutils 
 <hr class="docutils" />
 </section>
 <section id="install-only-what-you-need">
-<h1>✅ 3. <strong>Install Only What You Need</strong><a class="headerlink" href="#install-only-what-you-need" title="Link to this heading">#</a></h1>
+<h1>✅ 3. <strong>Install Only What You Need</strong><a class="headerlink" href="#install-only-what-you-need" title="Link to this heading">¶</a></h1>
 <ul>
 <li><p>Use modular installation to avoid bloat:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For text processing</span>
@@ -1046,7 +602,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="choose-the-right-operators">
-<h1>✅ 4. <strong>Choose the Right Operators</strong><a class="headerlink" href="#choose-the-right-operators" title="Link to this heading">#</a></h1>
+<h1>✅ 4. <strong>Choose the Right Operators</strong><a class="headerlink" href="#choose-the-right-operators" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>DJ provides over 180 operators categorized into 8 types:</p>
 <ul>
@@ -1063,7 +619,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="use-3-rule-for-hyperparameter-tuning">
-<h1>✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong><a class="headerlink" href="#use-3-rule-for-hyperparameter-tuning" title="Link to this heading">#</a></h1>
+<h1>✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong><a class="headerlink" href="#use-3-rule-for-hyperparameter-tuning" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>In many refined recipes (e.g., RedPajama), thresholds for filters are set using a <strong>3-sigma statistical rule</strong> — keep values within 3 standard deviations from the mean.</p></li>
 <li><p>This ensures you retain high-quality samples while removing outliers.</p></li>
@@ -1071,7 +627,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="validate-with-benchmarks">
-<h1>✅ 6. <strong>Validate with Benchmarks</strong><a class="headerlink" href="#validate-with-benchmarks" title="Link to this heading">#</a></h1>
+<h1>✅ 6. <strong>Validate with Benchmarks</strong><a class="headerlink" href="#validate-with-benchmarks" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>After processing, validate performance improvements:</p>
 <ul>
@@ -1084,7 +640,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="automate-dependency-installation">
-<h1>✅ 7. <strong>Automate Dependency Installation</strong><a class="headerlink" href="#automate-dependency-installation" title="Link to this heading">#</a></h1>
+<h1>✅ 7. <strong>Automate Dependency Installation</strong><a class="headerlink" href="#automate-dependency-installation" title="Link to this heading">¶</a></h1>
 <ul>
 <li><p>If installing from source, use:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/dj_install.py<span class="w"> </span>--config<span class="w"> </span>your_config.yaml
@@ -1100,7 +656,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="use-docker-for-reproducibility">
-<h1>✅ 8. <strong>Use Docker for Reproducibility</strong><a class="headerlink" href="#use-docker-for-reproducibility" title="Link to this heading">#</a></h1>
+<h1>✅ 8. <strong>Use Docker for Reproducibility</strong><a class="headerlink" href="#use-docker-for-reproducibility" title="Link to this heading">¶</a></h1>
 <ul>
 <li><p>Pull official images:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;
@@ -1112,7 +668,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="contribute-back-to-the-community">
-<h1>✅ 9. <strong>Contribute Back to the Community</strong><a class="headerlink" href="#contribute-back-to-the-community" title="Link to this heading">#</a></h1>
+<h1>✅ 9. <strong>Contribute Back to the Community</strong><a class="headerlink" href="#contribute-back-to-the-community" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>Submit your own recipes to <a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">data-juicer-hub</a>.</p></li>
 <li><p>Add new operators following the <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/main/docs/DeveloperGuide.md">Developer Guide</a>.</p></li>
@@ -1120,7 +676,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <hr class="docutils" />
 </section>
 <section id="monitor-retention-rates-quality-metrics">
-<h1>✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong><a class="headerlink" href="#monitor-retention-rates-quality-metrics" title="Link to this heading">#</a></h1>
+<h1>✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong><a class="headerlink" href="#monitor-retention-rates-quality-metrics" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>Track how many samples survive each filtering stage.</p></li>
 <li><p>Compare before/after model performance to quantify impact.</p></li>
@@ -1130,7 +686,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <p>By following these practices, you’ll maximize efficiency, reproducibility, and effectiveness when using Data-Juicer for your data processing pipelines.</p>
 <hr class="docutils" />
 <section id="id3">
-<h2>📚 References:<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>📚 References:<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/tree/main/demo">Data-Juicer Minimal Example Recipes</a></p></li>
 <li><p><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub/blob/main/docs/RecipeGallery.md">Recipe Gallery</a></p></li>
@@ -1141,7 +697,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </section>
 <hr class="docutils" />
 <section id="case-7-off-topic-question-weather-en">
-<h2>Case 7 · Off-topic Question (Weather, EN)<a class="headerlink" href="#case-7-off-topic-question-weather-en" title="Link to this heading">#</a></h2>
+<h2>Case 7 · Off-topic Question (Weather, EN)<a class="headerlink" href="#case-7-off-topic-question-weather-en" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: <code class="docutils literal notranslate"><span class="pre">off_topic_qa</span></code></p></li>
 <li><p><strong>Language</strong>: <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
@@ -1158,176 +714,113 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </section>
 
 
-                </article>
-              
-              
-              
-              
-              
-                <footer class="prev-next-footer d-print-none">
-                  
-<div class="prev-next-area">
-    <a class="left-prev"
-       href="../docs/tools.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Tools Architecture</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="README.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Data-Juicer Q&amp;A Copilot</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
-</div>
-                </footer>
-              
-            </div>
-            
-            
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Data-Juicer Q&amp;A Copilot Demo</a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-1-operator-introduction-alphanumeric-filter-en">Case 1 · Operator Introduction (alphanumeric_filter, EN)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage-in-config">Example Usage in Config:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-2-module-introduction-dj-agents-en">Case 2 · Module Introduction (DJ-Agents, EN)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Key Features:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-3-concept-question-base-operator-en">Case 3 · Concept Question (Base Operator, EN)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-4-quick-start-install-dj-en">Case 4 · Quick Start (Install DJ, EN)</a></li>
+        </article>
+        <aside class="toc-sidebar">
+          <div class="toc-sidebar-inner">
+            <p class="toc-title">On this page</p>
+            <ul>
+<li><a class="reference internal" href="#">Data-Juicer Q&amp;A Copilot Demo</a><ul>
+<li><a class="reference internal" href="#case-1-operator-introduction-alphanumeric-filter-en">Case 1 · Operator Introduction (alphanumeric_filter, EN)</a></li>
+<li><a class="reference internal" href="#key-features">Key Features:</a></li>
+<li><a class="reference internal" href="#parameters">Parameters:</a></li>
+<li><a class="reference internal" href="#example-usage-in-config">Example Usage in Config:</a></li>
+<li><a class="reference internal" href="#case-2-module-introduction-dj-agents-en">Case 2 · Module Introduction (DJ-Agents, EN)</a></li>
+<li><a class="reference internal" href="#id1">Key Features:</a></li>
+<li><a class="reference internal" href="#case-3-concept-question-base-operator-en">Case 3 · Concept Question (Base Operator, EN)</a></li>
+<li><a class="reference internal" href="#case-4-quick-start-install-dj-en">Case 4 · Quick Start (Install DJ, EN)</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">🧩 <strong>Prerequisites</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-installation">🚀 <strong>Basic Installation</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-based-installation">🎯 <strong>Scenario-Based Installation</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-ml-dl">Core ML/DL</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#domain-specific">Domain-Specific</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a></li>
+<li><a class="reference internal" href="#prerequisites">🧩 <strong>Prerequisites</strong></a></li>
+<li><a class="reference internal" href="#basic-installation">🚀 <strong>Basic Installation</strong></a></li>
+<li><a class="reference internal" href="#scenario-based-installation">🎯 <strong>Scenario-Based Installation</strong></a><ul>
+<li><a class="reference internal" href="#core-ml-dl">Core ML/DL</a></li>
+<li><a class="reference internal" href="#domain-specific">Domain-Specific</a></li>
+<li><a class="reference internal" href="#additional-features">Additional Features</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#common-installation-patterns">📦 <strong>Common Installation Patterns</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#text-processing">1. Text Processing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vision-processing">2. Vision Processing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-pipeline">3. Full Pipeline</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-installation">4. Complete Installation</a></li>
+<li><a class="reference internal" href="#common-installation-patterns">📦 <strong>Common Installation Patterns</strong></a><ul>
+<li><a class="reference internal" href="#text-processing">1. Text Processing</a></li>
+<li><a class="reference internal" href="#vision-processing">2. Vision Processing</a></li>
+<li><a class="reference internal" href="#full-pipeline">3. Full Pipeline</a></li>
+<li><a class="reference internal" href="#complete-installation">4. Complete Installation</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#install-from-source">🛠️ <strong>Install from Source</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#op-based-recipe-based-installation">⚙️ <strong>OP-Based / Recipe-Based Installation</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-installation">🐳 <strong>Docker Installation</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-troubleshooting">📌 <strong>Notes &amp; Troubleshooting</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">🔗 References</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-5-processing-guidance-dirty-words-filter-en">Case 5 · Processing Guidance (Dirty Words Filter, EN)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-use-flagged-words-filter">✅ How to Use <code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-configuration-in-a-recipe-yaml">Example Configuration in a Recipe (YAML):</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Parameters:</a></li>
+<li><a class="reference internal" href="#install-from-source">🛠️ <strong>Install from Source</strong></a></li>
+<li><a class="reference internal" href="#op-based-recipe-based-installation">⚙️ <strong>OP-Based / Recipe-Based Installation</strong></a></li>
+<li><a class="reference internal" href="#docker-installation">🐳 <strong>Docker Installation</strong></a></li>
+<li><a class="reference internal" href="#notes-troubleshooting">📌 <strong>Notes &amp; Troubleshooting</strong></a><ul>
+<li><a class="reference internal" href="#references">🔗 References</a></li>
+<li><a class="reference internal" href="#case-5-processing-guidance-dirty-words-filter-en">Case 5 · Processing Guidance (Dirty Words Filter, EN)</a></li>
+<li><a class="reference internal" href="#how-to-use-flagged-words-filter">✅ How to Use <code class="docutils literal notranslate"><span class="pre">flagged_words_filter</span></code></a><ul>
+<li><a class="reference internal" href="#example-configuration-in-a-recipe-yaml">Example Configuration in a Recipe (YAML):</a></li>
+<li><a class="reference internal" href="#id2">Parameters:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">📌 Notes:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-step">🔍 Next Step:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-6-best-practices-using-dj-en">Case 6 · Best Practices (Using DJ, EN)</a></li>
+<li><a class="reference internal" href="#notes">📌 Notes:</a></li>
+<li><a class="reference internal" href="#next-step">🔍 Next Step:</a></li>
+<li><a class="reference internal" href="#case-6-best-practices-using-dj-en">Case 6 · Best Practices (Using DJ, EN)</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#start-with-minimal-examples">✅ 1. <strong>Start with Minimal Examples</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#leverage-pre-built-recipes-from-dj-hub">✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#install-only-what-you-need">✅ 3. <strong>Install Only What You Need</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-the-right-operators">✅ 4. <strong>Choose the Right Operators</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#use-3-rule-for-hyperparameter-tuning">✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-with-benchmarks">✅ 6. <strong>Validate with Benchmarks</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#automate-dependency-installation">✅ 7. <strong>Automate Dependency Installation</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#use-docker-for-reproducibility">✅ 8. <strong>Use Docker for Reproducibility</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contribute-back-to-the-community">✅ 9. <strong>Contribute Back to the Community</strong></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#monitor-retention-rates-quality-metrics">✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">📚 References:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#case-7-off-topic-question-weather-en">Case 7 · Off-topic Question (Weather, EN)</a></li>
+<li><a class="reference internal" href="#start-with-minimal-examples">✅ 1. <strong>Start with Minimal Examples</strong></a></li>
+<li><a class="reference internal" href="#leverage-pre-built-recipes-from-dj-hub">✅ 2. <strong>Leverage Pre-Built Recipes from DJ-Hub</strong></a></li>
+<li><a class="reference internal" href="#install-only-what-you-need">✅ 3. <strong>Install Only What You Need</strong></a></li>
+<li><a class="reference internal" href="#choose-the-right-operators">✅ 4. <strong>Choose the Right Operators</strong></a></li>
+<li><a class="reference internal" href="#use-3-rule-for-hyperparameter-tuning">✅ 5. <strong>Use 3-σ Rule for Hyperparameter Tuning</strong></a></li>
+<li><a class="reference internal" href="#validate-with-benchmarks">✅ 6. <strong>Validate with Benchmarks</strong></a></li>
+<li><a class="reference internal" href="#automate-dependency-installation">✅ 7. <strong>Automate Dependency Installation</strong></a></li>
+<li><a class="reference internal" href="#use-docker-for-reproducibility">✅ 8. <strong>Use Docker for Reproducibility</strong></a></li>
+<li><a class="reference internal" href="#contribute-back-to-the-community">✅ 9. <strong>Contribute Back to the Community</strong></a></li>
+<li><a class="reference internal" href="#monitor-retention-rates-quality-metrics">✅ 10. <strong>Monitor Retention Rates &amp; Quality Metrics</strong></a><ul>
+<li><a class="reference internal" href="#id3">📚 References:</a></li>
+<li><a class="reference internal" href="#case-7-off-topic-question-weather-en">Case 7 · Off-topic Question (Weather, EN)</a></li>
 </ul>
 </li>
 </ul>
 
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/qa-copilot/DEMO.md.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
-
-</div></div>
-              
-            
           </div>
-          <footer class="bd-footer-content">
-            
-          </footer>
-        
-      </main>
+        </aside>
+      </div>
+      <nav class="prev-next">
+        <a href="../docs/tools.html" class="prev-next-link prev">
+          <span class="prev-next-label">Previous</span>
+          <span class="prev-next-title">Tools Architecture</span>
+        </a>
+        <a href="README.html" class="prev-next-link next">
+          <span class="prev-next-label">Next</span>
+          <span class="prev-next-title">Data-Juicer Q&amp;A Copilot</span>
+        </a>
+      </nav>
+      <footer class="footer">
+        <p>© 2024, Data-Juicer Team — Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> &amp; Data-Juicer Theme</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Search Modal -->
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-modal">
+      <div class="search-modal-input">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14" stroke-linecap="round"/></svg>
+        <input type="text" id="search-modal-input" placeholder="Search documentation..." autocomplete="off" />
+      </div>
+      <div class="search-modal-results" id="search-modal-results"></div>
+      <div class="search-modal-footer">
+        <span><kbd>↵</kbd> to select</span>
+        <span><kbd>↑↓</kbd> to navigate</span>
+        <span><kbd>esc</kbd> to close</span>
+      </div>
     </div>
   </div>
-  
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
-
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
-
-  <p class="copyright">
-    
-      © Copyright 2024, Data-Juicer Team.
-      <br/>
-    
-  </p>
-</div>
-      
-    </div>
-  
-  
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-    <br/>
-  </p>
-</div>
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
-</p></div>
-      
-    </div>
-  
-</div>
-
-  </footer>
-  </body>
+  <script src="../_static/js/theme.js"></script>
+  <script>window.JUICER_API_URL = 'https://datajuicer.online:443';</script>
+  <script src="../_static/documentation_options.js"></script>
+  <script src="../_static/doctools.js"></script>
+  <script src="../_static/sphinx_highlight.js"></script>
+  <script src="../_static/clipboard.min.js"></script>
+  <script src="../_static/copybutton.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="../_static/ask-ai-widget.js"></script>
+</body>
 </html>
