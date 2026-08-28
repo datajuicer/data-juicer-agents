@@ -32,13 +32,13 @@ core = [
     "mcp>=1.22,<2",
     "openai",
     "prompt-toolkit>=3.0.36",
-    "py-data-juicer>=1.5.5",
+    "py-data-juicer>=1.5.1",
     "PyYAML",
     "rich>=13.7.0",
 ]
 harness = [
     "openai",
-    "py-data-juicer>=1.5.5",
+    "py-data-juicer>=1.5.1",
     "PyYAML",
 ]
 full = [
@@ -54,7 +54,7 @@ full = [
     "oyaml",
     "pandas",
     "prompt-toolkit>=3.0.36",
-    "py-data-juicer>=1.5.5",
+    "py-data-juicer>=1.5.1",
     "PyYAML",
     "redis",
     "requests",
@@ -71,7 +71,7 @@ copilot = [
     "dashscope",
     "loguru",
     "openai",
-    "py-data-juicer>=1.5.5",
+    "py-data-juicer>=1.5.1",
     "redis",
     "socksio",
 ]
@@ -84,7 +84,7 @@ interecipe = [
     "openai",
     "oyaml",
     "pandas",
-    "py-data-juicer>=1.5.5",
+    "py-data-juicer>=1.5.1",
     "PyYAML",
     "requests",
     "scipy",
@@ -107,7 +107,7 @@ dev = [
     "oyaml",
     "pandas",
     "prompt-toolkit>=3.0.36",
-    "py-data-juicer>=1.5.5",
+    "py-data-juicer>=1.5.1",
     "PyYAML",
     "pytest>=7,<8",
     "pytest-cov>=4",

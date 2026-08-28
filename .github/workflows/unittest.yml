@@ -33,6 +33,10 @@ jobs:
         uv pip install --system --upgrade pip
         uv pip install --system -e ".[dev]"
 
+    - name: Install DJ from source (preflight not yet on PyPI)
+      run: |
+        uv pip install --system "py-data-juicer @ git+https://github.com/datajuicer/data-juicer.git@main"
+
     - name: Verify DJ preflight availability
       run: |
         python -c "from data_juicer.core.preflight import pre_instantiation_check; print('DJ preflight OK')"
