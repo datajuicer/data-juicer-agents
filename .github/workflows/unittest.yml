@@ -33,6 +33,10 @@ jobs:
         uv pip install --system --upgrade pip
         uv pip install --system -e ".[dev]"
 
+    - name: Verify DJ preflight availability
+      run: |
+        python -c "from data_juicer.core.preflight import pre_instantiation_check; print('DJ preflight OK')"
+
     - name: Run tests with pytest
       env:
         OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
