@@ -35,30 +35,12 @@ def validate_plan_schema(plan: PlanModel) -> List[str]:
             errors.append("multimodal modality requires at least two bound modalities")
     return errors
 
-def validate_recipe_with_dj(recipe: Dict[str, Any]) -> List[str]:
-    """Validate the recipe dict using Data-Juicer's native config validation.
-
-    This catches any unknown keys, type mismatches, or constraint violations
-    that DJ itself would reject at runtime.
-    """
-    try:
-        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
-        bridge = get_dj_config_bridge()
-        is_valid, dj_errors = bridge.validate(recipe)
-        if not is_valid:
-            return [f"DJ config error: {err}" for err in dj_errors]
-    except Exception as exc:
-        # DJ not installed or validation unavailable — skip silently
-        return [f"DJ validation unavailable: {exc}"]
-    return []
-
 class PlanValidator:
     """Validate plan schema and local filesystem preconditions."""
 
     @staticmethod
     def validate(plan: PlanModel) -> List[str]:
         errors = validate_plan_schema(plan)
-        errors.extend(validate_recipe_with_dj(plan.recipe))
 
         has_dataset_path = bool(plan.recipe.get("dataset_path"))
         has_dataset = bool(plan.recipe.get("dataset"))

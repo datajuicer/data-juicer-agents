@@ -8,10 +8,6 @@ from typing import Any, Dict, List, Tuple
 from .normalize import normalize_params
 from .schema import ProcessOperator, ProcessSpec
 
-PROCESS_SPEC_DEFERRED_WARNING = (
-    "operator parameter validation deferred; runtime errors will be used as the repair signal"
-)
-
 
 def normalize_process_spec(process_spec: ProcessSpec | Dict[str, Any]) -> ProcessSpec:
     """Normalize process spec: strip names, ensure params are dicts."""
@@ -40,7 +36,13 @@ def normalize_process_spec(process_spec: ProcessSpec | Dict[str, Any]) -> Proces
 def validate_process_spec_payload(
     process_spec: ProcessSpec | Dict[str, Any],
 ) -> Tuple[List[str], List[str]]:
-    """Validate process spec structure and operator names/params via DJ bridge."""
+    """Validate process spec structure and operator names via DJ preflight.
+
+    Structural checks (empty operators, missing names, non-dict params) are
+    performed here. Operator name existence, parameter name validity, and
+    parameter type checking are delegated to DJ's pre_instantiation_check
+    which provides fuzzy-match suggestions.
+    """
     if isinstance(process_spec, dict):
         process_spec = ProcessSpec.from_dict(process_spec)
 
@@ -56,40 +58,41 @@ def validate_process_spec_payload(
         if not isinstance(op.params, dict):
             errors.append(f"operators[{idx}].params must be an object")
 
-    # DJ bridge validation (two steps)
+    # Skip DJ preflight if structural errors already found
+    if errors:
+        return errors, warnings
+
+    # Delegate op name + param validation to DJ's preflight module
     try:
-        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
+        from data_juicer.core.preflight import (
+            PipelineConfigError,
+            pre_instantiation_check,
+        )
+    except ImportError:
+        warnings.append(
+            "operator name/param validation skipped: DJ preflight unavailable"
+        )
+        return errors, warnings
 
-        bridge = get_dj_config_bridge()
-
-        # Step 1: op_registry validation (dj-agents-side business logic)
-        # ProcessSpec structure is natural for this: use op.name / op.params directly
-        op_names = {op.name for op in process_spec.operators if op.name}
-        op_param_map, known_op_names = bridge.get_op_valid_params(op_names)
-        for idx, op in enumerate(process_spec.operators):
-            if not op.name:
-                continue
-            if op.name not in known_op_names:
-                errors.append(f"operators[{idx}]: unknown operator '{op.name}'")
-            elif op.name in op_param_map:
-                for param_key in (op.params or {}):
-                    if param_key not in op_param_map[op.name]:
-                        errors.append(
-                            f"operators[{idx}].{op.name}: unknown param '{param_key}'"
-                        )
-
+    try:
+        process_list = [
+            {op.name: op.params if op.params else None}
+            for op in process_spec.operators
+            if op.name
+        ]
+        pre_instantiation_check(process_list)
+    except PipelineConfigError as exc:
+        for err in exc.errors:
+            errors.append(str(err))
     except Exception:
         warnings.append(
-            "operator name/param validation skipped: DJ bridge unavailable"
+            "operator name/param validation skipped: DJ preflight unavailable"
         )
 
-    if PROCESS_SPEC_DEFERRED_WARNING not in warnings:
-        warnings.append(PROCESS_SPEC_DEFERRED_WARNING)
     return errors, warnings
 
 
 __all__ = [
-    "PROCESS_SPEC_DEFERRED_WARNING",
     "normalize_process_spec",
     "validate_process_spec_payload",
 ]

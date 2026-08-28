@@ -232,41 +232,6 @@ def validate_dataset_spec_payload(
         if not io.generated_dataset_config.type:
             errors.append('generated_dataset_config must have a non-empty "type" field')
 
-    # DJ parser validation for dataset fields
-    try:
-        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
-
-        bridge = get_dj_config_bridge()
-        dataset_dict: Dict[str, Any] = {}
-        if io.dataset_path:
-            dataset_dict["dataset_path"] = io.dataset_path
-        if io.export_path:
-            dataset_dict["export_path"] = io.export_path
-        if binding.text_keys:
-            dataset_dict["text_keys"] = list(binding.text_keys)
-        if binding.image_key:
-            dataset_dict["image_key"] = binding.image_key
-        if binding.audio_key:
-            dataset_dict["audio_key"] = binding.audio_key
-        if binding.video_key:
-            dataset_dict["video_key"] = binding.video_key
-        if binding.image_bytes_key:
-            dataset_dict["image_bytes_key"] = binding.image_bytes_key
-        if io.dataset:
-            dataset_dict["dataset"] = io.dataset.to_dict()
-        if io.generated_dataset_config:
-            dataset_dict["generated_dataset_config"] = io.generated_dataset_config.to_dict()
-        # Merge extra dataset fields (export_type, export_shard_size, suffixes, etc.)
-        # so that the DJ parser can validate them as well.
-        if io._extra_fields:
-            dataset_dict.update(io._extra_fields)
-        if dataset_dict:
-            is_valid, dj_errors = bridge.validate(dataset_dict)
-            if not is_valid:
-                errors.extend(dj_errors)
-    except Exception:
-        pass
-
     return errors, warnings
 
 

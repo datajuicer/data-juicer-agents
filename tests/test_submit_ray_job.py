@@ -178,3 +178,66 @@ def test_classify_ray_error_categories():
     error_type, message = _classify_ray_error(2, "something else")
     assert error_type == "submission_failed"
     assert "exit code 2" in message
+
+
+# ---------------------------------------------------------------------------
+# _build_ray_rewrite_map — dynamic discovery e2e tests
+# ---------------------------------------------------------------------------
+
+from data_juicer_agents.tools.apply.submit_ray_job.logic import _build_ray_rewrite_map
+
+
+def test_build_ray_rewrite_map_discovers_expected_ops():
+    """Dynamic discovery must produce the same result as the old hardcoded map."""
+    rewrite, drop = _build_ray_rewrite_map()
+    # Must find all three known dedup rewrites
+    assert "image_deduplicator" in rewrite
+    assert "document_deduplicator" in rewrite
+    assert "video_deduplicator" in rewrite
+    # Targets must be ray_ prefixed
+    for std, ray in rewrite.items():
+        assert ray == f"ray_{std}"
+
+
+def test_build_ray_rewrite_map_detects_param_drops():
+    """Dynamic param diff must detect consider_text as incompatible."""
+    _, drop = _build_ray_rewrite_map()
+    assert "consider_text" in drop.get("ray_image_deduplicator", set())
+    assert "consider_text" in drop.get("ray_video_deduplicator", set())
+
+
+def test_build_ray_rewrite_map_excludes_non_deduplicator_ray_ops():
+    """ray_ ops that are not Deduplicator subclasses must not be rewritten."""
+    rewrite, _ = _build_ray_rewrite_map()
+    # All values in the rewrite map must correspond to Deduplicator subclasses
+    from data_juicer.ops.base_op import OPERATORS, Deduplicator
+    for std_name in rewrite:
+        std_cls = OPERATORS.modules[std_name]
+        assert issubclass(std_cls, Deduplicator), f"{std_name} is not a Deduplicator"
+
+
+def test_build_ray_rewrite_map_graceful_without_dj(monkeypatch):
+    """If DJ is not importable, function returns empty dicts (no crash)."""
+    import builtins
+    real_import = builtins.__import__
+
+    def _block_dj(name, *args, **kwargs):
+        if name.startswith("data_juicer"):
+            raise ImportError("simulated missing DJ")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", _block_dj)
+    rewrite, drop = _build_ray_rewrite_map()
+    assert rewrite == {}
+    assert drop == {}
+
+
+def test_module_level_maps_match_fresh_build():
+    """Module-level _RAY_DEDUP_REWRITE/_RAY_DEDUP_DROP_PARAMS equal fresh call."""
+    from data_juicer_agents.tools.apply.submit_ray_job.logic import (
+        _RAY_DEDUP_REWRITE as loaded_rewrite,
+        _RAY_DEDUP_DROP_PARAMS as loaded_drop,
+    )
+    fresh_rewrite, fresh_drop = _build_ray_rewrite_map()
+    assert loaded_rewrite == fresh_rewrite
+    assert loaded_drop == fresh_drop
