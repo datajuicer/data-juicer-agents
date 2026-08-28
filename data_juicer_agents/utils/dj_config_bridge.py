@@ -154,24 +154,6 @@ class DJConfigBridge:
             self._parser = build_base_parser()
         return self._parser
 
-    def _build_parser_with_ops(self, used_ops: Optional[set] = None):
-        """Build a fresh parser with OP arguments registered."""
-        from data_juicer.config.config import (
-            build_base_parser,
-            sort_op_by_types_and_names,
-            _collect_config_info_from_class_docs,
-        )
-        from data_juicer.ops.base_op import OPERATORS
-
-        parser = build_base_parser()
-        if used_ops:
-            ops_sorted = sort_op_by_types_and_names(OPERATORS.modules.items())
-            _collect_config_info_from_class_docs(
-                [(name, cls) for name, cls in ops_sorted if name in used_ops],
-                parser,
-            )
-        return parser
-
     # -- config extraction --------------------------------------------------
 
     def get_default_config(self) -> Dict[str, Any]:
@@ -235,8 +217,8 @@ class DJConfigBridge:
         """Validate a config dict using DJ base parser.
 
         Checks system/dataset field types and rejects unknown keys.
-        Does NOT validate process list contents or operator params
-        (that is handled by get_op_valid_params in the agents layer).
+        Process list contents and operator params are validated by DJ's
+        own preflight module at execution time.
 
         Args:
             config: Config dict to validate.
@@ -255,51 +237,14 @@ class DJConfigBridge:
 
     # -- operator introspection ---------------------------------------------
 
-    def get_op_valid_params(self, op_names: set) -> Tuple[Dict[str, set], set]:
-        """Get valid parameter names for each operator.
-
-        Registers the requested operators into a fresh parser, then
-        extracts valid parameter names from the resulting flat actions
-        (e.g. ``text_length_filter.min_len`` -> ``min_len``).
-
-        Args:
-            op_names: Set of operator names to look up.
-
-        Returns:
-            ``(op_param_map, known_op_names)`` where
-            *op_param_map* is ``{op_name: {param, ...}}`` and
-            *known_op_names* is the full set of registered DJ operators.
-        """
+    def get_known_op_names(self) -> set:
+        """Return the set of all registered DJ operator names."""
         try:
             from data_juicer.ops.base_op import OPERATORS
 
-            known_op_names: set = set(OPERATORS.modules.keys())
+            return set(OPERATORS.modules.keys())
         except Exception:
-            known_op_names = set()
-
-        if not op_names:
-            return {}, known_op_names
-
-        valid_requested = op_names & known_op_names
-        if not valid_requested:
-            return {}, known_op_names
-
-        try:
-            parser = self._build_parser_with_ops(valid_requested)
-        except Exception:
-            return {}, known_op_names
-
-        op_param_map: Dict[str, set] = {op: set() for op in valid_requested}
-        for action in parser._actions:
-            if not hasattr(action, "dest"):
-                continue
-            dest = action.dest
-            if "." not in dest:
-                continue
-            op_name, param_name = dest.split(".", 1)
-            if op_name in op_param_map:
-                op_param_map[op_name].add(param_name)
-        return op_param_map, known_op_names
+            return set()
 
     def get_implemented_load_strategies(
         self, executor_type: str = "default"

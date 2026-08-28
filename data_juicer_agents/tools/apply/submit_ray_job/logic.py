@@ -53,22 +53,58 @@ _RECIPE_ALLOWED_KEYS = {
     "custom_operator_paths",
 }
 
-# When executor_type=ray, single-machine deduplicators are incompatible with
-# Ray's streaming DAG (they raise TypeError). Map them to their ray-native
-# equivalents. Only 1:1 equivalents whose params migrate safely are listed;
-# the minhash family is intentionally excluded (param signatures differ).
-_RAY_DEDUP_REWRITE = {
-    "image_deduplicator": "ray_image_deduplicator",
-    "document_deduplicator": "ray_document_deduplicator",
-    "video_deduplicator": "ray_video_deduplicator",
-}
+# ---------------------------------------------------------------------------
+# Dynamic ray-variant discovery from DJ's operator registry.
+# When executor_type=ray, single-machine deduplicators run per-partition only
+# and miss cross-partition duplicates.  Their ray_ variants use distributed
+# state (ray actors / redis) for global dedup.  We auto-discover the mapping
+# and the incompatible params at import time from the live registry.
+# ---------------------------------------------------------------------------
 
-# Params accepted by the single-machine op but NOT by the ray-native variant;
-# they must be dropped on rewrite to avoid a constructor TypeError.
-_RAY_DEDUP_DROP_PARAMS = {
-    "ray_image_deduplicator": {"consider_text"},
-    "ray_video_deduplicator": {"consider_text"},
-}
+
+def _build_ray_rewrite_map() -> tuple:
+    """Discover standard->ray op rewrites and incompatible params dynamically."""
+    import inspect
+
+    try:
+        from data_juicer.ops.base_op import OPERATORS
+    except ImportError:
+        return {}, {}
+
+    rewrite_map = {}
+    drop_params = {}
+
+    ray_prefixed = {n for n in OPERATORS.modules if n.startswith("ray_")}
+    for ray_name in ray_prefixed:
+        standard_name = ray_name[4:]
+        if standard_name not in OPERATORS.modules:
+            continue
+        std_cls = OPERATORS.modules[standard_name]
+        ray_cls = OPERATORS.modules[ray_name]
+        # Only rewrite Deduplicator subclasses (the semantic mismatch case)
+        try:
+            from data_juicer.ops.base_op import Deduplicator
+            if not issubclass(std_cls, Deduplicator):
+                continue
+        except ImportError:
+            continue
+
+        rewrite_map[standard_name] = ray_name
+
+        # Detect params in standard __init__ that ray variant doesn't accept
+        try:
+            std_sig = set(inspect.signature(std_cls.__init__).parameters.keys()) - {"self", "args", "kwargs"}
+            ray_sig = set(inspect.signature(ray_cls.__init__).parameters.keys()) - {"self", "args", "kwargs"}
+            incompatible = std_sig - ray_sig
+            if incompatible:
+                drop_params[ray_name] = incompatible
+        except (ValueError, TypeError):
+            pass
+
+    return rewrite_map, drop_params
+
+
+_RAY_DEDUP_REWRITE, _RAY_DEDUP_DROP_PARAMS = _build_ray_rewrite_map()
 
 
 def _to_dj_process(raw_process: list) -> list:

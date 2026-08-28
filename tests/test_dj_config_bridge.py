@@ -288,12 +288,13 @@ def test_validate_passes_empty_dict():
     assert errors == []
 
 
-def test_get_op_valid_params_returns_dict():
-    """Test that bridge.get_op_valid_params() returns a tuple of (dict, set)."""
+def test_get_known_op_names_returns_set():
+    """Test that bridge.get_known_op_names() returns a non-empty set."""
     bridge = get_dj_config_bridge()
-    op_param_map, known_ops = bridge.get_op_valid_params({"text_length_filter"})
-    assert isinstance(op_param_map, dict)
+    known_ops = bridge.get_known_op_names()
     assert isinstance(known_ops, set)
+    assert len(known_ops) > 0
+    assert "text_length_filter" in known_ops
 
 
 # --- Field classification tests ---

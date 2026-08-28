@@ -108,22 +108,6 @@ def validate_system_spec_payload(
     if int(system_spec.np or 0) <= 0:
         errors.append("np must be >= 1")
 
-    # DJ parser validation
-    try:
-        from data_juicer_agents.utils.dj_config_bridge import get_dj_config_bridge
-
-        bridge = get_dj_config_bridge()
-        system_dict = system_spec.to_dict()
-        # Remove non-DJ fields before validation
-        dj_dict = {k: v for k, v in system_dict.items() if k != "warnings"}
-        is_valid, dj_errors = bridge.validate(dj_dict)
-
-        if not is_valid:
-            errors.extend(dj_errors)
-    except Exception as exc:
-        _logger.debug("DJ validation failed: %s", exc)
-        pass
-
     # --- Semantic validation (mirrors DJ init_setup_from_cfg) -------------
 
     # fusion_strategy must be in FUSION_STRATEGIES when op_fusion is on

@@ -154,7 +154,6 @@ def test_session_agent_staged_plan_validate_save_with_explicit_payloads(tmp_path
         raw_kwargs={"process_spec": process_spec["process_spec"]},
     )
     assert validated_process["ok"] is True
-    assert any("deferred" in item for item in validated_process["warnings"])
 
     assembled = invoke_tool_spec(
         registry.get("assemble_plan"),
